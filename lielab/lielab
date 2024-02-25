@@ -1,0 +1,23 @@
+// Package metadata
+#include "__release__.hpp"
+
+// Completely independent submodules
+#include "abstract.hpp"
+#include "constants.hpp"
+#include "lielab.hpp"
+#include "utils.hpp"
+
+// Submodules with some inter-dependencies
+#include "domain"
+
+#include "dynamics.hpp"
+#include "src/dynamics/dynamics.hpp"
+
+#include "functions"
+
+#include "kinematics.hpp"
+#include "optim.hpp"
+
+#include "topos"
+
+#include "transform.hpp"

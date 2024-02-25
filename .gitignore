@@ -1,0 +1,12 @@
+build/
+conan/
+doc/
+include/
+__pycache__
+*.dll
+*.pyc
+*.pyd
+*egg-info/
+
+# Ignore CMake
+CMakeUserPresets.json

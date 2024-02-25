@@ -1,0 +1,4 @@
+# Include C++ binaries
+include lielab/*.pyd
+
+#include *.txt
