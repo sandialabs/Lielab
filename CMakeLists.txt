@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.23)
 
 project("Lielab"
-        VERSION 0.1.1
+        VERSION 0.3.0
         LANGUAGES CXX)
 
 if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
@@ -14,8 +14,8 @@ else()
 endif()
 
 option(LIELAB_INSTALL_LIBRARY "Install Lielab into default locations." ${IS_TOPLEVEL_PROJECT})
-option(LIELAB_BUILD_TESTS "Build lielab tests" ${IS_TOPLEVEL_PROJECT})
-option(LIELAB_BUILD_PYTHON "Build lielab python module" ${IS_TOPLEVEL_PROJECT})
+option(LIELAB_BUILD_TESTS "Build Lielab tests" ${IS_TOPLEVEL_PROJECT})
+option(LIELAB_BUILD_PYTHON "Build Lielab python module" ${IS_TOPLEVEL_PROJECT})
 
 ################################
 # Make the main project
@@ -29,7 +29,7 @@ add_library(Lielab::Lielab ALIAS Lielab)
 
 target_include_directories(Lielab INTERFACE 
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/lielab>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Lielab>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
@@ -72,13 +72,13 @@ if (LIELAB_INSTALL_LIBRARY)
     #         DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/Lielab/cmake)
 
     # Copy the extra files in the root
-    # install(FILES Lielab.hpp
-    #         DESTINATION include)
+    install(FILES Lielab.hpp
+            DESTINATION include)
     install(FILES LICENSE
             DESTINATION licenses)
 
     # Copy the whole "lielab" directory
-    install(DIRECTORY ${PROJECT_SOURCE_DIR}/lielab DESTINATION include)
+    install(DIRECTORY ${PROJECT_SOURCE_DIR}/Lielab DESTINATION include)
 endif()
 
 

@@ -1,5 +1,5 @@
 from lielab import ALGO_STATUS
-from lielab.domain import halie, hmlie
+from lielab.domain import CompositeAlgebra, CompositeManifold
 from lielab.topos import IntegralCurve
 from lielab.cppLielab.topos import Flow as _Flow
 from lielab.cppLielab.topos import MuntheKaas as _MuntheKaas
@@ -68,7 +68,7 @@ class CustomMuntheKaas(_TimeStepper):
         self._t0 = t0
         self._y0 = y0
         self._dt = dt
-        self._KK = [halie()]*self.n
+        self._KK = [CompositeAlgebra()]*self.n
         self._KK[0] = dy0
         self._dy = dy0
         self._U = 0*dy0
@@ -145,7 +145,7 @@ class Flow(_Flow):
     stepper = MuntheKaas()
 
     def __call__(self, vectorfield, tspan, y0, *args):
-        from lielab.domain import rn, RN, halie, hmlie
+        from lielab.domain import rn, RN, CompositeAlgebra, CompositeManifold
 
         # Check if the solution we're running has an event
         has_event = False
@@ -159,13 +159,13 @@ class Flow(_Flow):
         if isinstance(dy0, np.ndarray) or isinstance(dy0, list):
             # NumPy and list type inputs, we need to wrap these in
             # sophus objects
-            _y0 = hmlie([RN(y0)])
+            _y0 = CompositeManifold([RN(y0)])
             def _vectorfield(_t, M):
                 _RN = M.space[0]
                 _states = _RN.serialize()
                 gradient = vectorfield(_t, _states)
                 dx = rn(gradient)
-                return halie([dx])
+                return CompositeAlgebra([dx])
             
             if has_event:
                 def _event(_t, M):
@@ -193,14 +193,14 @@ class Flow(_Flow):
                 next = self.stepper(_vectorfield, self._ynext, self._out.t[self.iterations], self._dt)
                 if has_event:
                     if _event(self._out.t[self.iterations], self._ynext) > 0 and _event(self._out.t[self.iterations] + self._dt, next.high) <= 0:
-                        self.search.lower = halie([rn([self.tol])])
-                        self.search.upper = halie([rn([self._dt])])
+                        self.search.lower = CompositeAlgebra([rn([self.tol])])
+                        self.search.upper = CompositeAlgebra([rn([self._dt])])
 
                         def sfun(sdt):
                             _sdt = sdt.space[0](0)
                             return _event(self._out.t[self.iterations] + _sdt, self.stepper(_vectorfield, self._ynext, self._out.t[self.iterations], _sdt).high)
 
-                        temp_dt = self.search(sfun, halie([rn([self._dt/2])]))
+                        temp_dt = self.search(sfun, CompositeAlgebra([rn([self._dt/2])]))
                         self._dt = temp_dt.space[0](0)
                         next = self.stepper(_vectorfield, self._ynext, self._out.t[self.iterations], self._dt)
 

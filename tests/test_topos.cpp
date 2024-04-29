@@ -22,15 +22,15 @@ TEST_CASE("MuntheKaas_vfex1", "[topos]")
     * Tests the MuntheKaas function with vfex1.
     */
 
-    lielab::domain::SO y0(3);
-    lielab::topos::MuntheKaas ts;
-    lielab::dynamics::vectorfield vf = lielab::dynamics::vfex1();
+    Lielab::domain::SO y0(3);
+    Lielab::topos::MuntheKaas ts;
+    Lielab::dynamics::vectorfield vf = Lielab::dynamics::vfex1();
 
-    lielab::domain::hmlie M0{y0};
+    Lielab::domain::CompositeManifold M0{y0};
 
-    lielab::topos::TSOutput out = ts(vf, M0, 1.0, 0.02);
+    Lielab::topos::TSOutput out = ts(vf, M0, 1.0, 0.02);
 
-    lielab::domain::SO y1 = std::get<lielab::domain::SO>(out.low.space[0]);
+    Lielab::domain::SO y1 = std::get<Lielab::domain::SO>(out.low.space[0]);
 
     CHECK(std::abs(y1(0,0) - 0.999596034819844) < TOL_FINE);
     CHECK(std::abs(y1(0,1) - 0.020398551422611) < TOL_FINE);
@@ -49,19 +49,19 @@ TEST_CASE("MuntheKaas_vfex2", "[topos]")
     * Tests the MuntheKaas function with vfex2.
     */
 
-    lielab::domain::RN y0(4);
-    lielab::topos::MuntheKaas ts;
-    lielab::dynamics::vectorfield vf = lielab::dynamics::vfex2();
+    Lielab::domain::RN y0(4);
+    Lielab::topos::MuntheKaas ts;
+    Lielab::dynamics::vectorfield vf = Lielab::dynamics::vfex2();
 
     y0(0) = 25.0;
     y0(1) = 0.0;
     y0(2) = -20.0;
 
-    lielab::domain::hmlie M0{y0};
+    Lielab::domain::CompositeManifold M0{y0};
 
-    lielab::topos::TSOutput out = ts(vf, M0, 0.0, 0.02);
+    Lielab::topos::TSOutput out = ts(vf, M0, 0.0, 0.02);
 
-    lielab::domain::RN y1 = std::get<lielab::domain::RN>(out.low.space[0]);
+    Lielab::domain::RN y1 = std::get<Lielab::domain::RN>(out.low.space[0]);
     
     CHECK(std::abs(y1(0) - 24.425986197956878) < TOL_FINE);
     CHECK(std::abs(y1(1) + 3.596428324678375) < TOL_FINE);
@@ -74,11 +74,11 @@ TEST_CASE("Flow_fails", "[topos]")
     * Test cases where Flow should fail.
     */
 
-    lielab::domain::SO y0(3);
-    lielab::domain::hmlie M0{y0};
-    lielab::dynamics::vectorfield vf = lielab::dynamics::vfex1();
+    Lielab::domain::SO y0(3);
+    Lielab::domain::CompositeManifold M0{y0};
+    Lielab::dynamics::vectorfield vf = Lielab::dynamics::vfex1();
     std::vector<double> tspan;
-    lielab::topos::Flow f;
+    Lielab::topos::Flow f;
 
     // tspan has no values
     CHECK_THROWS(f(vf, tspan, M0));
@@ -94,7 +94,7 @@ TEST_CASE("Flow_copy_output", "[topos]")
     * Tests that Flows outputs are copied.
     */
 
-    lielab::topos::Flow f;
+    Lielab::topos::Flow f;
 
     std::function<Eigen::VectorXd(double, Eigen::VectorXd)> vf = [](const double t, const Eigen::VectorXd & y)
     {
@@ -113,8 +113,8 @@ TEST_CASE("Flow_copy_output", "[topos]")
     y0_1 << 1.0, 0.0;
     y0_2 << 2.0, 0.0;
 
-    lielab::topos::IntegralCurve curve1 = f(vf, tspan, y0_1);
-    lielab::topos::IntegralCurve curve2 = f(vf, tspan, y0_2);
+    Lielab::topos::IntegralCurve curve1 = f(vf, tspan, y0_1);
+    Lielab::topos::IntegralCurve curve2 = f(vf, tspan, y0_2);
 
     const size_t L1 = curve1.t.size();
     const size_t L2 = curve2.t.size();
@@ -126,24 +126,24 @@ TEST_CASE("Flow_copy_output", "[topos]")
 
 TEST_CASE("Flow_vfex2_rk45_fixed", "[topos]")
 {
-    lielab::domain::RN y0(4);
-    lielab::dynamics::vectorfield vf = lielab::dynamics::vfex2();
+    Lielab::domain::RN y0(4);
+    Lielab::dynamics::vectorfield vf = Lielab::dynamics::vfex2();
 
     y0(0) = 25.0;
     y0(1) = 0.0;
     y0(2) = -20.0;
 
-    lielab::domain::hmlie M0{y0};
+    Lielab::domain::CompositeManifold M0{y0};
 
     std::vector<double> tspan;
     tspan.push_back(0.0);
     tspan.push_back(5.0);
 
-    lielab::topos::Flow f;
+    Lielab::topos::Flow f;
     f.variable_time_step = false;
     f.dt = 0.02;
 
-    lielab::topos::IntegralCurve curve = f(vf, tspan, M0);
+    Lielab::topos::IntegralCurve curve = f(vf, tspan, M0);
 
     CHECK(std::abs(curve.t(0) - 0.0) < TOL_FINE);
     CHECK(curve.y(0, 0) == y0(0));
@@ -160,23 +160,23 @@ TEST_CASE("Flow_vfex2_rk45_fixed", "[topos]")
 
 TEST_CASE("Flow_vfex2_rk45_variable", "[topos]")
 {
-    lielab::domain::RN y0(4);
-    lielab::dynamics::vectorfield vf = lielab::dynamics::vfex2();
+    Lielab::domain::RN y0(4);
+    Lielab::dynamics::vectorfield vf = Lielab::dynamics::vfex2();
 
     y0(0) = 25.0;
     y0(1) = 0.0;
     y0(2) = -20.0;
 
-    lielab::domain::hmlie M0{y0};
+    Lielab::domain::CompositeManifold M0{y0};
 
     std::vector<double> tspan;
     tspan.push_back(0.0);
     tspan.push_back(5.0);
 
-    lielab::topos::Flow f;
+    Lielab::topos::Flow f;
     f.variable_time_step = true;
     f.dt = 0.02;
-    lielab::topos::IntegralCurve curve = f(vf, tspan, M0);
+    Lielab::topos::IntegralCurve curve = f(vf, tspan, M0);
 
     CHECK(std::abs(curve.t(0) - 0.0) < TOL_FINE);
     CHECK(std::abs(curve.t(1) - 0.007703769593747) < TOL_COARSE);
@@ -212,10 +212,10 @@ TEST_CASE("Flow_unwrapped_rk45_variable", "[topos]")
     tspan.push_back(0.0);
     tspan.push_back(5.0);
 
-    lielab::topos::Flow f;
+    Lielab::topos::Flow f;
     f.variable_time_step = true;
     f.dt = 0.02;
-    lielab::topos::IntegralCurve curve = f(eoms_lorenz_unwrapped, tspan, y0);
+    Lielab::topos::IntegralCurve curve = f(eoms_lorenz_unwrapped, tspan, y0);
 
     CHECK(std::abs(curve.t(0) - 0.0) < TOL_FINE);
     CHECK(std::abs(curve.t(1) - 0.007703769593747) < TOL_COARSE);
@@ -248,7 +248,7 @@ TEST_CASE("A1_vector", "[topos]")
     * Oak Ridge National Lab., TN (USA), 1987.
     */
 
-    lielab::topos::Flow f;
+    Lielab::topos::Flow f;
 
     std::function<Eigen::VectorXd(double, Eigen::VectorXd)> vf = [](const double t, const Eigen::VectorXd & y)
     {
@@ -273,7 +273,7 @@ TEST_CASE("A1_vector", "[topos]")
     Eigen::VectorXd y0 = Eigen::VectorXd::Zero(2);
     y0 << 0.0, 0.0;
 
-    lielab::topos::IntegralCurve out = f(vf, tspan, y0, vf_event);
+    Lielab::topos::IntegralCurve out = f(vf, tspan, y0, vf_event);
 
     const size_t L = out.t.size();
 
@@ -299,23 +299,23 @@ TEST_CASE("A1_hom", "[topos]")
     * Oak Ridge National Lab., TN (USA), 1987.
     */
 
-    lielab::topos::Flow f;
+    Lielab::topos::Flow f;
 
-    std::function<lielab::domain::halie(double, lielab::domain::hmlie)> vf = [](const double t, const lielab::domain::hmlie & M)
+    std::function<Lielab::domain::CompositeAlgebra(double, Lielab::domain::CompositeManifold)> vf = [](const double t, const Lielab::domain::CompositeManifold & M)
     {
         const double m = 1.0/4.0;
         const double w = 8.0;
         const double k = 2.0;
-        const lielab::domain::RN y = std::get<lielab::domain::RN>(M.space[0]);
+        const Lielab::domain::RN y = std::get<Lielab::domain::RN>(M.space[0]);
 
-        const lielab::domain::rn dy{y(1), (w - k*y(1))/m};
-        return lielab::domain::halie{dy};
+        const Lielab::domain::rn dy{y(1), (w - k*y(1))/m};
+        return Lielab::domain::CompositeAlgebra{dy};
     };
 
-    std::function<double(double, lielab::domain::hmlie)> vf_event = [](const double t, const lielab::domain::hmlie & M)
+    std::function<double(double, Lielab::domain::CompositeManifold)> vf_event = [](const double t, const Lielab::domain::CompositeManifold & M)
     {
         const double H = 10.0;
-        const lielab::domain::RN y = std::get<lielab::domain::RN>(M.space[0]);
+        const Lielab::domain::RN y = std::get<Lielab::domain::RN>(M.space[0]);
         return H - y(0);
     };
 
@@ -323,10 +323,10 @@ TEST_CASE("A1_hom", "[topos]")
     tspan.push_back(0.0);
     tspan.push_back(5.0);
 
-    const lielab::domain::RN a1y0{0.0, 0.0};
-    const lielab::domain::hmlie a1M0{a1y0};
+    const Lielab::domain::RN a1y0{0.0, 0.0};
+    const Lielab::domain::CompositeManifold a1M0{a1y0};
 
-    lielab::topos::IntegralCurve out = f(vf, tspan, a1M0, vf_event);
+    Lielab::topos::IntegralCurve out = f(vf, tspan, a1M0, vf_event);
 
     const size_t L = out.t.size();
 
@@ -352,7 +352,7 @@ TEST_CASE("A2_vector", "[topos]")
     * Oak Ridge National Lab., TN (USA), 1987.
     */
 
-    lielab::topos::Flow f;
+    Lielab::topos::Flow f;
     f.dt_max = 10000.0;
 
     const double g = 32.0;
@@ -382,7 +382,7 @@ TEST_CASE("A2_vector", "[topos]")
 
     Eigen::VectorXd y0 = Eigen::VectorXd::Zero(1);
     y0 << H - 1.0e-6;
-    lielab::topos::IntegralCurve out = f(vf, tspan, y0, vf_event);
+    Lielab::topos::IntegralCurve out = f(vf, tspan, y0, vf_event);
 
     const size_t L = out.t.size();
 
@@ -402,23 +402,23 @@ TEST_CASE("A2_hom", "[topos]")
     * Oak Ridge National Lab., TN (USA), 1987.
     */
 
-    lielab::topos::Flow f;
+    Lielab::topos::Flow f;
     f.dt_max = 10000.0;
 
     const double g = 32.0;
     const double R = 4000.0 * 5280.0;
     const double H = 237000.0 * 5280.0;
 
-    std::function<lielab::domain::halie(double, lielab::domain::hmlie)> vf = [g, R, H](const double t, const lielab::domain::hmlie & M)
+    std::function<Lielab::domain::CompositeAlgebra(double, Lielab::domain::CompositeManifold)> vf = [g, R, H](const double t, const Lielab::domain::CompositeManifold & M)
     {
-        const lielab::domain::RN y = std::get<lielab::domain::RN>(M.space[0]);
-        lielab::domain::rn dy{-std::sqrt(2.0*g*std::pow(R, 2.0)) * std::sqrt((H - y(0))/(H*y(0)))};
-        return lielab::domain::halie{dy};
+        const Lielab::domain::RN y = std::get<Lielab::domain::RN>(M.space[0]);
+        Lielab::domain::rn dy{-std::sqrt(2.0*g*std::pow(R, 2.0)) * std::sqrt((H - y(0))/(H*y(0)))};
+        return Lielab::domain::CompositeAlgebra{dy};
     };
 
-    std::function<double(double, lielab::domain::hmlie)> vf_event = [g, R, H](const double t, const lielab::domain::hmlie & M)
+    std::function<double(double, Lielab::domain::CompositeManifold)> vf_event = [g, R, H](const double t, const Lielab::domain::CompositeManifold & M)
     {
-        lielab::domain::RN y = std::get<lielab::domain::RN>(M.space[0]);
+        Lielab::domain::RN y = std::get<Lielab::domain::RN>(M.space[0]);
         return y(0) - R;
     };
 
@@ -431,8 +431,8 @@ TEST_CASE("A2_hom", "[topos]")
     tspan.push_back(0.0);
     tspan.push_back(800000.0);
 
-    lielab::domain::RN y0{H - 1.0e-6};
-    lielab::topos::IntegralCurve out = f(vf, tspan, lielab::domain::hmlie{y0}, vf_event);
+    Lielab::domain::RN y0{H - 1.0e-6};
+    Lielab::topos::IntegralCurve out = f(vf, tspan, Lielab::domain::CompositeManifold{y0}, vf_event);
 
     const size_t L = out.t.size();
 
@@ -452,8 +452,8 @@ TEST_CASE("A4_vector", "[topos]")
     * Oak Ridge National Lab., TN (USA), 1987.
     */
 
-    lielab::topos::Flow f;
-    constexpr double PI = lielab::constants::PI<double>;
+    Lielab::topos::Flow f;
+    constexpr double PI = Lielab::constants::PI<double>;
 
     std::function<Eigen::VectorXd(double, Eigen::VectorXd)> vf = [](const double t, const Eigen::VectorXd & y)
     {
@@ -479,7 +479,7 @@ TEST_CASE("A4_vector", "[topos]")
     Eigen::VectorXd y0 = Eigen::VectorXd::Zero(2);
     y0 << 1.0, 0.5;
     
-    lielab::topos::IntegralCurve out = f(vf, tspan, y0);
+    Lielab::topos::IntegralCurve out = f(vf, tspan, y0);
 
     const size_t L = out.t.size();
 
@@ -506,14 +506,14 @@ TEST_CASE("A4_hom", "[topos]")
     * Oak Ridge National Lab., TN (USA), 1987.
     */
 
-    lielab::topos::Flow f;
-    constexpr double PI = lielab::constants::PI<double>;
+    Lielab::topos::Flow f;
+    constexpr double PI = Lielab::constants::PI<double>;
 
-    std::function<lielab::domain::halie(double, lielab::domain::hmlie)> vf = [](const double t, const lielab::domain::hmlie & M)
+    std::function<Lielab::domain::CompositeAlgebra(double, Lielab::domain::CompositeManifold)> vf = [](const double t, const Lielab::domain::CompositeManifold & M)
     {
-        lielab::domain::RN y = std::get<lielab::domain::RN>(M.space[0]);
-        lielab::domain::rn dy{y(1), -(16.0 * std::pow(PI, 2) * std::exp(-2.0*t) - 1.0/4.0)*y(0)};
-        return lielab::domain::halie{dy};
+        Lielab::domain::RN y = std::get<Lielab::domain::RN>(M.space[0]);
+        Lielab::domain::rn dy{y(1), -(16.0 * std::pow(PI, 2) * std::exp(-2.0*t) - 1.0/4.0)*y(0)};
+        return Lielab::domain::CompositeAlgebra{dy};
     };
 
     std::function<double(double)> t_to_y1 = [](const double t)
@@ -530,9 +530,9 @@ TEST_CASE("A4_hom", "[topos]")
     tspan.push_back(0.0);
     tspan.push_back(std::log(8.0) - std::log(1.0)); // Root at k=1
 
-    lielab::domain::RN y0{1.0, 0.5};
+    Lielab::domain::RN y0{1.0, 0.5};
     
-    lielab::topos::IntegralCurve out = f(vf, tspan, lielab::domain::hmlie{y0});
+    Lielab::topos::IntegralCurve out = f(vf, tspan, Lielab::domain::CompositeManifold{y0});
 
     const size_t L = out.t.size();
 
@@ -558,8 +558,8 @@ TEST_CASE("A5_vector", "[topos]")
     * Oak Ridge National Lab., TN (USA), 1987.
     */
 
-    lielab::topos::Flow f;
-    constexpr double PI = lielab::constants::PI<double>;
+    Lielab::topos::Flow f;
+    constexpr double PI = Lielab::constants::PI<double>;
 
     std::function<Eigen::VectorXd(double, Eigen::VectorXd)> vf = [](const double t, const Eigen::VectorXd & y)
     {
@@ -589,7 +589,7 @@ TEST_CASE("A5_vector", "[topos]")
     Eigen::VectorXd y0 = Eigen::VectorXd::Zero(2);
     y0 << 1.0, -8.0;
     
-    lielab::topos::IntegralCurve out = f(vf, tspan, y0, vf_event);
+    Lielab::topos::IntegralCurve out = f(vf, tspan, y0, vf_event);
 
     const size_t L = out.t.size();
 
@@ -614,19 +614,19 @@ TEST_CASE("A5_hom", "[topos]")
     * Oak Ridge National Lab., TN (USA), 1987.
     */
 
-    lielab::topos::Flow f;
-    constexpr double PI = lielab::constants::PI<double>;
+    Lielab::topos::Flow f;
+    constexpr double PI = Lielab::constants::PI<double>;
 
-    std::function<lielab::domain::halie(double, lielab::domain::hmlie)> vf = [](const double t, const lielab::domain::hmlie & M)
+    std::function<Lielab::domain::CompositeAlgebra(double, Lielab::domain::CompositeManifold)> vf = [](const double t, const Lielab::domain::CompositeManifold & M)
     {
-        lielab::domain::RN y = std::get<lielab::domain::RN>(M.space[0]);
-        lielab::domain::rn dy{y(1), -16.0 * std::cos(PI*t/2.0)*y(1) - (64.0 * std::pow(PI, 2) + 64.0*std::pow(std::cos(PI*t/2.0), 2) - 4.0*PI*std::sin(PI*t/2.0))*y(0)};
-        return lielab::domain::halie{dy};
+        Lielab::domain::RN y = std::get<Lielab::domain::RN>(M.space[0]);
+        Lielab::domain::rn dy{y(1), -16.0 * std::cos(PI*t/2.0)*y(1) - (64.0 * std::pow(PI, 2) + 64.0*std::pow(std::cos(PI*t/2.0), 2) - 4.0*PI*std::sin(PI*t/2.0))*y(0)};
+        return Lielab::domain::CompositeAlgebra{dy};
     };
 
-    std::function<double(double, lielab::domain::hmlie)> vf_event = [](const double t, const lielab::domain::hmlie & M)
+    std::function<double(double, Lielab::domain::CompositeManifold)> vf_event = [](const double t, const Lielab::domain::CompositeManifold & M)
     {
-        lielab::domain::RN y = std::get<lielab::domain::RN>(M.space[0]);
+        Lielab::domain::RN y = std::get<Lielab::domain::RN>(M.space[0]);
         if ((t > 1.07) && (t < 1.30))
         {
             return -y(0);
@@ -643,9 +643,9 @@ TEST_CASE("A5_hom", "[topos]")
     tspan.push_back(0.0);
     tspan.push_back(2.0);
 
-    lielab::domain::RN y0{1.0, -8.0};
+    Lielab::domain::RN y0{1.0, -8.0};
     
-    lielab::topos::IntegralCurve out = f(vf, tspan, lielab::domain::hmlie{y0}, vf_event);
+    Lielab::topos::IntegralCurve out = f(vf, tspan, Lielab::domain::CompositeManifold{y0}, vf_event);
 
     const size_t L = out.t.size();
 
@@ -670,7 +670,7 @@ TEST_CASE("B1_vector", "[topos]")
     * Oak Ridge National Lab., TN (USA), 1987.
     */
 
-    lielab::topos::Flow f;
+    Lielab::topos::Flow f;
 
     const double K = 5.0/3.0;
     const double L = 1.0/4.0;
@@ -725,7 +725,7 @@ TEST_CASE("B1_vector", "[topos]")
     Eigen::VectorXd y0 = Eigen::VectorXd::Zero(2);
     y0 << 1.0, 1.0;
     
-    lielab::topos::IntegralCurve out = f(vf, tspan, y0);
+    Lielab::topos::IntegralCurve out = f(vf, tspan, y0);
 
     const size_t len = out.t.size();
 
@@ -751,18 +751,18 @@ TEST_CASE("B1_hom", "[topos]")
     * Oak Ridge National Lab., TN (USA), 1987.
     */
 
-    lielab::topos::Flow f;
+    Lielab::topos::Flow f;
 
-    std::function<lielab::domain::hmlie(lielab::domain::hmlie, lielab::domain::hmlie)> action = [](const lielab::domain::hmlie & G, const lielab::domain::hmlie & M)
+    std::function<Lielab::domain::CompositeManifold(Lielab::domain::CompositeManifold, Lielab::domain::CompositeManifold)> action = [](const Lielab::domain::CompositeManifold & G, const Lielab::domain::CompositeManifold & M)
     {
-        const lielab::domain::GL _G0 = std::get<lielab::domain::GL>(g.space[0]);
-        const lielab::domain::RN _G1 = std::get<lielab::domain::RN>(g.space[1]);
-        const lielab::domain::RN _Y0 = std::get<lielab::domain::RN>(M.space[0]);
-        const lielab::domain::RN _Y1 = std::get<lielab::domain::RN>(M.space[1]);
+        const Lielab::domain::GL _G0 = std::get<Lielab::domain::GL>(g.space[0]);
+        const Lielab::domain::RN _G1 = std::get<Lielab::domain::RN>(g.space[1]);
+        const Lielab::domain::RN _Y0 = std::get<Lielab::domain::RN>(M.space[0]);
+        const Lielab::domain::RN _Y1 = std::get<Lielab::domain::RN>(M.space[1]);
         
-        const lielab::domain::RN _Y0next = lielab::domain::RN(_G0._data*_Y0._data);
-        const lielab::domain::RN _Y1next = _G1*_Y1;
-        return lielab::domain::hmlie{_Y0next, _Y1next};
+        const Lielab::domain::RN _Y0next = Lielab::domain::RN(_G0._data*_Y0._data);
+        const Lielab::domain::RN _Y1next = _G1*_Y1;
+        return Lielab::domain::CompositeManifold{_Y0next, _Y1next};
     };
 
     f.stepper.action = action;
@@ -770,10 +770,10 @@ TEST_CASE("B1_hom", "[topos]")
     const double K = 5.0/3.0;
     const double L = 1.0/4.0;
 
-    std::function<lielab::domain::halie(double, lielab::domain::hmlie)> vf = [K, L](const double t, const lielab::domain::hmlie & M)
+    std::function<Lielab::domain::CompositeAlgebra(double, Lielab::domain::CompositeManifold)> vf = [K, L](const double t, const Lielab::domain::CompositeManifold & M)
     {
-        lielab::domain::RN _y0 = std::get<lielab::domain::RN>(M.space[0]);
-        lielab::domain::RN _y1 = std::get<lielab::domain::RN>(M.space[1]);
+        Lielab::domain::RN _y0 = std::get<Lielab::domain::RN>(M.space[0]);
+        Lielab::domain::RN _y1 = std::get<Lielab::domain::RN>(M.space[1]);
 
         const double y0 = _y0(0);
         const double y1 = _y1(0);
@@ -795,7 +795,7 @@ TEST_CASE("B1_hom", "[topos]")
             dy1 = L;
         }
 
-        return lielab::domain::halie{lielab::domain::gl::basis(0,1), dy1*lielab::domain::rn::basis(0,2)};
+        return Lielab::domain::CompositeAlgebra{Lielab::domain::gl::basis(0,1), dy1*Lielab::domain::rn::basis(0,2)};
     };
 
     const double t1 = 0.1569;
@@ -820,9 +820,9 @@ TEST_CASE("B1_hom", "[topos]")
     tspan.push_back(0.0);
     tspan.push_back(0.5);
 
-    lielab::domain::hmlie m0{lielab::domain::RN{1.0}, lielab::domain::RN{1.0}};
+    Lielab::domain::CompositeManifold m0{Lielab::domain::RN{1.0}, Lielab::domain::RN{1.0}};
     
-    lielab::topos::IntegralCurve out = f(vf, tspan, m0);
+    Lielab::topos::IntegralCurve out = f(vf, tspan, m0);
 
     const size_t len = out.t.size();
 

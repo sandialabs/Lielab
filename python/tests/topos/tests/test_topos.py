@@ -21,7 +21,7 @@ def test_MuntheKaas_vfex1():
     Tests the MuntheKaas function with vfex1.
     """
 
-    from lielab.domain import SO, hmlie
+    from lielab.domain import SO, CompositeManifold
     from lielab.dynamics import vfex1
     from lielab.topos import MuntheKaas
 
@@ -29,7 +29,7 @@ def test_MuntheKaas_vfex1():
     vf = vfex1()
 
     y0 = SO(3)
-    M0 = hmlie([y0])
+    M0 = CompositeManifold([y0])
 
     out = ts(vf, M0, 1.0, 0.02)
 
@@ -51,7 +51,7 @@ def test_MuntheKaas_vfex2():
     Tests the MuntheKaas function with vfex2.
     """
 
-    from lielab.domain import RN, hmlie
+    from lielab.domain import RN, CompositeManifold
     from lielab.dynamics import vfex2
     from lielab.topos import MuntheKaas
 
@@ -59,7 +59,7 @@ def test_MuntheKaas_vfex2():
     vf = vfex2()
 
     y0 = RN([25.0, 0.0, -20.0])
-    M0 = hmlie([y0])
+    M0 = CompositeManifold([y0])
 
     out = ts(vf, M0, 0.0, 0.02)
 
@@ -75,12 +75,12 @@ def test_Flow_fails():
     Tests cases where Flow should fail.
     """
 
-    from lielab.domain import SO, hmlie
+    from lielab.domain import SO, CompositeManifold
     from lielab.dynamics import vfex1
     from lielab.topos import Flow
 
     y0 = SO(3)
-    M0 = hmlie([y0])
+    M0 = CompositeManifold([y0])
     vf = vfex1()
     tspan = []
     f = Flow()
@@ -120,7 +120,7 @@ def test_Flow_copy_output():
 
 
 def test_Flow_vfex2_rk45_fixed():
-    from lielab.domain import RN, hmlie
+    from lielab.domain import RN, CompositeManifold
     from lielab.dynamics import vfex2
     from lielab.topos import Flow
 
@@ -131,7 +131,7 @@ def test_Flow_vfex2_rk45_fixed():
 
     tspan = [0.0, 5.0]
     y0 = RN([25.0, 0.0, -20.0])
-    M0 = hmlie([y0])
+    M0 = CompositeManifold([y0])
 
     curve = flow(vf, tspan, M0)
 
@@ -149,7 +149,7 @@ def test_Flow_vfex2_rk45_fixed():
 
 
 def test_Flow_vfex2_rk45_variable():
-    from lielab.domain import RN, hmlie
+    from lielab.domain import RN, CompositeManifold
     from lielab.dynamics import vfex2
     from lielab.topos import Flow
 
@@ -160,7 +160,7 @@ def test_Flow_vfex2_rk45_variable():
 
     tspan = [0.0, 5.0]
     y0 = RN([25.0, 0.0, -20.0])
-    M0 = hmlie([y0])
+    M0 = CompositeManifold([y0])
 
     curve = flow(vf, tspan, M0)
 
@@ -268,7 +268,7 @@ def test_Flow_A1_hom():
     Oak Ridge National Lab., TN (USA), 1987.
     """
     
-    from lielab.domain import rn, RN, halie, hmlie
+    from lielab.domain import rn, RN, CompositeAlgebra, CompositeManifold
     from lielab.topos import Flow
     import numpy as np
 
@@ -280,7 +280,7 @@ def test_Flow_A1_hom():
         k = 2.0
         y = M.space[0]
         dy = rn([y(1), (w - k*y(1))/m])
-        return halie([dy])
+        return CompositeAlgebra([dy])
 
     def vf_event(t, M):
         H = 10.0
@@ -288,7 +288,7 @@ def test_Flow_A1_hom():
         return H - y(0)
 
     tspan = np.array([0.0, 5.0])
-    a1M0 = hmlie([RN([0.0, 0.0])])
+    a1M0 = CompositeManifold([RN([0.0, 0.0])])
 
     out = f(vf, tspan, a1M0, vf_event)
 
@@ -349,7 +349,7 @@ def test_Flow_A2_hom():
     Oak Ridge National Lab., TN (USA), 1987.
     """
 
-    from lielab.domain import rn, RN, halie, hmlie
+    from lielab.domain import rn, RN, CompositeAlgebra, CompositeManifold
     from lielab.topos import Flow
     import numpy as np
     from math import acos
@@ -364,7 +364,7 @@ def test_Flow_A2_hom():
     def vf(t, M):
         y = M.space[0]
         dy = rn([-np.sqrt(2*g*R**2) * np.sqrt((H - y(0))/(H*y(0)))])
-        return halie([dy])
+        return CompositeAlgebra([dy])
 
     def vf_event(t, M):
         y = M.space[0]
@@ -373,7 +373,7 @@ def test_Flow_A2_hom():
     def h_to_t(h):
         return (H**(3/2) / (8*h))*(np.sqrt(h/H - (h/H)**2) + 1/2*acos(2*h/H - 1))
     
-    out = f(vf, [0.0, 800000.0], hmlie([RN([H - 1e-6])]), vf_event)
+    out = f(vf, [0.0, 800000.0], CompositeManifold([RN([H - 1e-6])]), vf_event)
 
     assert abs(out.t[0] - 0.0) <= 1.0e-14
     assert abs(out.t[-1] - h_to_t(out.y[-1, 0])) <= 1e-1
@@ -429,7 +429,7 @@ def test_Flow_A4_hom():
     Oak Ridge National Lab., TN (USA), 1987.
     """
 
-    from lielab.domain import rn, RN, halie, hmlie
+    from lielab.domain import rn, RN, CompositeAlgebra, CompositeManifold
     from lielab.topos import Flow
     import numpy as np
 
@@ -439,7 +439,7 @@ def test_Flow_A4_hom():
         y = M.space[0]
         y1d = y(1)
         y2d = -(16.0 * np.pi**2 * np.exp(-2.0*t) - 1.0/4.0)*y(0)
-        return halie([rn([y1d, y2d])])
+        return CompositeAlgebra([rn([y1d, y2d])])
     
     def t_to_y1(t):
         return np.exp(t/2.0)*np.cos(4*np.pi*np.exp(-t))
@@ -447,7 +447,7 @@ def test_Flow_A4_hom():
     def t_to_y2(t):
         return np.exp(t/2)*(4*np.pi*np.exp(-t)*np.sin(4*np.pi*np.exp(-t)) + 1/2*np.cos(4*np.pi*np.exp(-t)))
     
-    out = f(vf, [0.0, np.log(8) - np.log(1)], hmlie([RN([1.0, 0.5])]))
+    out = f(vf, [0.0, np.log(8) - np.log(1)], CompositeManifold([RN([1.0, 0.5])]))
 
     assert abs(out.t[0] - 0.0) <= 1.0e-14
     assert abs(out.y[-1, 0] - 0.0) <= 1e-5
@@ -506,7 +506,7 @@ def test_Flow_A5_hom():
     Oak Ridge National Lab., TN (USA), 1987.
     """
 
-    from lielab.domain import rn, RN, halie, hmlie
+    from lielab.domain import rn, RN, CompositeAlgebra, CompositeManifold
     from lielab.topos import Flow
     import numpy as np
 
@@ -516,7 +516,7 @@ def test_Flow_A5_hom():
         y = M.space[0]
         y1d = y(1)
         y2d = -16.0 * np.cos(np.pi*t/2.0)*y(1) - (64.0 * np.pi**2 + 64.0*np.cos(np.pi*t/2.0)**2 - 4.0*np.pi*np.sin(np.pi*t/2.0))*y(0)
-        return halie([rn([y1d, y2d])])
+        return CompositeAlgebra([rn([y1d, y2d])])
     
     def vf_event(t, M):
         y = M.space[0]
@@ -527,7 +527,7 @@ def test_Flow_A5_hom():
     def t_to_y1(t):
         return np.exp(-16/np.pi*np.sin(np.pi*t/2))*np.cos(8*np.pi*t)
     
-    out = f(vf, [0.0, 2.0], hmlie([RN([1.0, -8.0])]), vf_event)
+    out = f(vf, [0.0, 2.0], CompositeManifold([RN([1.0, -8.0])]), vf_event)
 
     assert abs(out.t[0] - 0.0) <= 1.0e-14
     assert abs(out.t[-1] - (2*10-1)/16.0) <= 1e-6
@@ -603,7 +603,7 @@ def test_Flow_B1_hom():
     Oak Ridge National Lab., TN (USA), 1987.
     """
 
-    from lielab.domain import halie, hmlie, rn, RN, gl
+    from lielab.domain import CompositeAlgebra, CompositeManifold, rn, RN, gl
     from lielab.topos import Flow, CustomMuntheKaas
     from lielab.functions import exp
     import numpy as np
@@ -619,7 +619,7 @@ def test_Flow_B1_hom():
 
         Y0next = RN(np.dot(_G0._data, _Y0._data))
         Y1next = _G1*_Y1
-        return hmlie([Y0next, Y1next])
+        return CompositeManifold([Y0next, Y1next])
     
     f.stepper.action = action
 
@@ -641,7 +641,7 @@ def test_Flow_B1_hom():
         else:
             dy1 = 0
 
-        return halie([gl.basis(0,1), dy1*rn.basis(0,2)])
+        return CompositeAlgebra([gl.basis(0,1), dy1*rn.basis(0,2)])
     
     t1 = 0.1569
     y2t1 = 1.0199
@@ -654,7 +654,7 @@ def test_Flow_B1_hom():
             return K/(K+1)*np.exp(t) + 1/(K+1)*np.exp(-K*t)
         return L*(t - t1) + y2t1
     
-    out = f(vf, [0.0, 0.5], hmlie([RN([1.0]), RN([1.0])]))
+    out = f(vf, [0.0, 0.5], CompositeManifold([RN([1.0]), RN([1.0])]))
 
     assert abs(out.t[0] - 0.0) <= 1.0e-14
     assert abs(out.t[-1] - 0.5) <= 1.0e-14

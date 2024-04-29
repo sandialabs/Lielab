@@ -3,7 +3,7 @@
 
 #include "test_utils.hpp"
 
-using lielab::functions::commutator;
+using Lielab::functions::commutator;
 
 /*!
 * Checks each algebra up to the shape specified. Can get very expensive at
@@ -12,7 +12,7 @@ using lielab::functions::commutator;
 constexpr size_t TEST_UP_TO_THIS_SHAPE = 4;
 
 
-template <lielab::abstract::Algebra T>
+template <Lielab::abstract::Algebra T>
 void is_algebra(const std::vector<T> & basis)
 {
     /*!
@@ -50,7 +50,7 @@ void is_algebra(const std::vector<T> & basis)
     }
 }
 
-template <lielab::abstract::Algebra T>
+template <Lielab::abstract::Algebra T>
 void is_liealgebra(const std::vector<T> & basis)
 {
     /*!
@@ -92,7 +92,7 @@ void is_liealgebra(const std::vector<T> & basis)
     }
 }
 
-template <lielab::abstract::Group T>
+template <Lielab::abstract::Group T>
 void is_group(const std::vector<T> & elements, const T & identity)
 {
     /*!
@@ -137,20 +137,20 @@ TEST_CASE("gl algebra", "[domain]")
 
     for (size_t shape = 1; shape <= TEST_UP_TO_THIS_SHAPE; shape++)
     {
-        const size_t D = lielab::domain::gl::basis(0, shape).get_dimension();
+        const size_t D = Lielab::domain::gl::basis(0, shape).get_dimension();
 
         // Construct the gl basis
-        std::vector<lielab::domain::gl> basis;
+        std::vector<Lielab::domain::gl> basis;
         for (size_t ii = 0; ii < D; ii++)
         {
-            basis.push_back(lielab::domain::gl::basis(ii, shape));
+            basis.push_back(Lielab::domain::gl::basis(ii, shape));
         }
 
-        is_algebra<lielab::domain::gl>(basis);
-        is_liealgebra<lielab::domain::gl>(basis);
+        is_algebra<Lielab::domain::gl>(basis);
+        is_liealgebra<Lielab::domain::gl>(basis);
     }
    
-    lielab::domain::gl one(1), two(2), three(3), four(4), five(5), six(6), seven(7), eight(8);
+    Lielab::domain::gl one(1), two(2), three(3), four(4), five(5), six(6), seven(7), eight(8);
 
     // Dimensions
     CHECK(one.get_dimension() == 1);
@@ -171,20 +171,20 @@ TEST_CASE("rn algebra", "[domain]")
 
     for (size_t shape = 2; shape <= TEST_UP_TO_THIS_SHAPE; shape++)
     {
-        const size_t D = lielab::domain::rn::basis(0, shape).get_dimension();
+        const size_t D = Lielab::domain::rn::basis(0, shape).get_dimension();
 
         // Construct the rn basis
-        std::vector<lielab::domain::rn> basis;
+        std::vector<Lielab::domain::rn> basis;
         for (size_t ii = 0; ii < D; ii++)
         {
-            basis.push_back(lielab::domain::rn::basis(ii, shape));
+            basis.push_back(Lielab::domain::rn::basis(ii, shape));
         }
 
-        is_algebra<lielab::domain::rn>(basis);
-        is_liealgebra<lielab::domain::rn>(basis);
+        is_algebra<Lielab::domain::rn>(basis);
+        is_liealgebra<Lielab::domain::rn>(basis);
     }
    
-    lielab::domain::rn one(1), two(2), three(3), four(4), five(5), six(6), seven(7), eight(8);
+    Lielab::domain::rn one(1), two(2), three(3), four(4), five(5), six(6), seven(7), eight(8);
 
     // Dimensions
     CHECK(one.get_dimension() == 0);
@@ -205,20 +205,20 @@ TEST_CASE("se algebra", "[domain]")
 
     for (size_t shape = 2; shape <= TEST_UP_TO_THIS_SHAPE; shape++)
     {
-        const size_t D = lielab::domain::se::basis(0, shape).get_dimension();
+        const size_t D = Lielab::domain::se::basis(0, shape).get_dimension();
 
         // Construct the so basis
-        std::vector<lielab::domain::se> basis;
+        std::vector<Lielab::domain::se> basis;
         for (size_t ii = 0; ii < D; ii++)
         {
-            basis.push_back(lielab::domain::se::basis(ii, shape));
+            basis.push_back(Lielab::domain::se::basis(ii, shape));
         }
 
-        is_algebra<lielab::domain::se>(basis);
-        is_liealgebra<lielab::domain::se>(basis);
+        is_algebra<Lielab::domain::se>(basis);
+        is_liealgebra<Lielab::domain::se>(basis);
     }
    
-    lielab::domain::se one(1), two(2), four(4), five(5), six(6), seven(7), eight(8);
+    Lielab::domain::se one(1), two(2), four(4), five(5), six(6), seven(7), eight(8);
 
     // Dimensions
     CHECK(one.get_dimension() == 0);
@@ -237,13 +237,13 @@ TEST_CASE("se4", "[domain]")
     * Tests the se algebra with se(4).
     */
 
-    lielab::domain::se x = lielab::domain::se::basis(0, 4);
-    lielab::domain::se y = lielab::domain::se::basis(1, 4);
-    lielab::domain::se z = lielab::domain::se::basis(2, 4);
-    lielab::domain::se u = lielab::domain::se::basis(3, 4);
-    lielab::domain::se v = lielab::domain::se::basis(4, 4);
-    lielab::domain::se w = lielab::domain::se::basis(5, 4);
-    lielab::domain::se zero = x*0;
+    Lielab::domain::se x = Lielab::domain::se::basis(0, 4);
+    Lielab::domain::se y = Lielab::domain::se::basis(1, 4);
+    Lielab::domain::se z = Lielab::domain::se::basis(2, 4);
+    Lielab::domain::se u = Lielab::domain::se::basis(3, 4);
+    Lielab::domain::se v = Lielab::domain::se::basis(4, 4);
+    Lielab::domain::se w = Lielab::domain::se::basis(5, 4);
+    Lielab::domain::se zero = x*0;
 
     assert_domain(commutator(x, y), zero);
     assert_domain(commutator(y, z), zero);
@@ -273,20 +273,20 @@ TEST_CASE("so algebra", "[domain]")
 
     for (size_t shape = 2; shape <= TEST_UP_TO_THIS_SHAPE; shape++)
     {
-        const size_t D = lielab::domain::so::basis(0, shape).get_dimension();
+        const size_t D = Lielab::domain::so::basis(0, shape).get_dimension();
 
         // Construct the so basis
-        std::vector<lielab::domain::so> basis;
+        std::vector<Lielab::domain::so> basis;
         for (size_t ii = 0; ii < D; ii++)
         {
-            basis.push_back(lielab::domain::so::basis(ii, shape));
+            basis.push_back(Lielab::domain::so::basis(ii, shape));
         }
 
-        is_algebra<lielab::domain::so>(basis);
-        is_liealgebra<lielab::domain::so>(basis);
+        is_algebra<Lielab::domain::so>(basis);
+        is_liealgebra<Lielab::domain::so>(basis);
     }
    
-    lielab::domain::so one(1), two(2), four(4), five(5), six(6), seven(7), eight(8);
+    Lielab::domain::so one(1), two(2), four(4), five(5), six(6), seven(7), eight(8);
 
     // Dimensions
     CHECK(one.get_dimension() == 0);
@@ -305,10 +305,10 @@ TEST_CASE("so3", "[domain]")
     * Tests the so algebra with so(3).
     */
 
-    lielab::domain::so x = lielab::domain::so::basis(0,3);
-    lielab::domain::so y = lielab::domain::so::basis(1,3);
-    lielab::domain::so z = lielab::domain::so::basis(2,3);
-    lielab::domain::so zero = x*0;
+    Lielab::domain::so x = Lielab::domain::so::basis(0,3);
+    Lielab::domain::so y = Lielab::domain::so::basis(1,3);
+    Lielab::domain::so z = Lielab::domain::so::basis(2,3);
+    Lielab::domain::so zero = x*0;
 
     assert_domain(commutator(x, y), z);
     assert_domain(commutator(y, z), x);
@@ -326,20 +326,20 @@ TEST_CASE("sp algebra", "[domain]")
 
     for (size_t shape = 2; shape <= TEST_UP_TO_THIS_SHAPE; shape += 2)
     {
-        const size_t D = lielab::domain::sp::basis(0, shape).get_dimension();
+        const size_t D = Lielab::domain::sp::basis(0, shape).get_dimension();
 
         // Construct the sp basis
-        std::vector<lielab::domain::sp> basis;
+        std::vector<Lielab::domain::sp> basis;
         for (size_t ii = 0; ii < D; ii++)
         {
-            basis.push_back(lielab::domain::sp::basis(ii, shape));
+            basis.push_back(Lielab::domain::sp::basis(ii, shape));
         }
 
-        is_algebra<lielab::domain::sp>(basis);
-        is_liealgebra<lielab::domain::sp>(basis);
+        is_algebra<Lielab::domain::sp>(basis);
+        is_liealgebra<Lielab::domain::sp>(basis);
     }
    
-    lielab::domain::sp two(2), four(4), six(6), eight(8);
+    Lielab::domain::sp two(2), four(4), six(6), eight(8);
 
     // Dimensions
     CHECK(two.get_dimension() == 3);
@@ -356,17 +356,17 @@ TEST_CASE("su", "[domain]")
 
     for (size_t shape = 2; shape <= TEST_UP_TO_THIS_SHAPE; shape++)
     {
-        const size_t D = lielab::domain::su::basis(0, shape).get_dimension();
+        const size_t D = Lielab::domain::su::basis(0, shape).get_dimension();
 
         // Construct the su basis
-        std::vector<lielab::domain::su> basis;
+        std::vector<Lielab::domain::su> basis;
         for (size_t ii = 0; ii < D; ii++)
         {
-            basis.push_back(lielab::domain::su::basis(ii, shape));
+            basis.push_back(Lielab::domain::su::basis(ii, shape));
         }
 
-        is_algebra<lielab::domain::su>(basis);
-        is_liealgebra<lielab::domain::su>(basis);
+        is_algebra<Lielab::domain::su>(basis);
+        is_liealgebra<Lielab::domain::su>(basis);
     }
 }
 
@@ -376,13 +376,13 @@ TEST_CASE("su2", "[domain]")
     * Tests the su algebra with su(2).
     */
 
-    const size_t D = lielab::domain::su::basis(0, 2).get_dimension();
+    const size_t D = Lielab::domain::su::basis(0, 2).get_dimension();
 
     // Construct the su2 basis
-    std::vector<lielab::domain::su> b;
+    std::vector<Lielab::domain::su> b;
     for (size_t ii = 0; ii < D; ii++)
     {
-        b.push_back(lielab::domain::su::basis(ii, 2));
+        b.push_back(Lielab::domain::su::basis(ii, 2));
     }
 
     // su2 specific identities
@@ -415,13 +415,13 @@ TEST_CASE("su3", "[domain]")
     * Tests the su algebra with su(3).
     */
 
-    const size_t D = lielab::domain::su::basis(0, 3).get_dimension();
+    const size_t D = Lielab::domain::su::basis(0, 3).get_dimension();
 
     // Construct the su3 basis
-    std::vector<lielab::domain::su> b;
+    std::vector<Lielab::domain::su> b;
     for (size_t ii = 0; ii < D; ii++)
     {
-        b.push_back(lielab::domain::su::basis(ii, 3));
+        b.push_back(Lielab::domain::su::basis(ii, 3));
     }
 
     // TODO: Implement these. It's tough to work out what these should be with GGM
@@ -446,18 +446,18 @@ TEST_CASE("GL", "[domain]")
 
     for (size_t shape = 1; shape <= TEST_UP_TO_THIS_SHAPE; shape++)
     {
-        const size_t D = lielab::domain::gl::basis(0, shape).get_dimension();
+        const size_t D = Lielab::domain::gl::basis(0, shape).get_dimension();
 
         // Construct the GL elements
-        std::vector<lielab::domain::GL> elements;
+        std::vector<Lielab::domain::GL> elements;
         for (size_t ii = 0; ii < D; ii++)
         {
-            elements.push_back(lielab::functions::exp(lielab::domain::gl::basis(ii, shape)));
+            elements.push_back(Lielab::functions::exp(Lielab::domain::gl::basis(ii, shape)));
         }
 
-        const lielab::domain::GL identity(shape);
+        const Lielab::domain::GL identity(shape);
 
-        is_group<lielab::domain::GL>(elements, identity);
+        is_group<Lielab::domain::GL>(elements, identity);
     }
 }
 
@@ -469,18 +469,18 @@ TEST_CASE("RN", "[domain]")
 
     for (size_t shape = 2; shape <= TEST_UP_TO_THIS_SHAPE; shape++)
     {
-        const size_t D = lielab::domain::rn::basis(0, shape).get_dimension();
+        const size_t D = Lielab::domain::rn::basis(0, shape).get_dimension();
 
         // Construct the RN elements
-        std::vector<lielab::domain::RN> elements;
+        std::vector<Lielab::domain::RN> elements;
         for (size_t ii = 0; ii < D; ii++)
         {
-            elements.push_back(lielab::functions::exp(lielab::domain::rn::basis(ii, shape)));
+            elements.push_back(Lielab::functions::exp(Lielab::domain::rn::basis(ii, shape)));
         }
 
-        const lielab::domain::RN identity(shape);
+        const Lielab::domain::RN identity(shape);
 
-        is_group<lielab::domain::RN>(elements, identity);
+        is_group<Lielab::domain::RN>(elements, identity);
     }
 }
 
@@ -492,18 +492,18 @@ TEST_CASE("SO", "[domain]")
 
     for (size_t shape = 2; shape <= TEST_UP_TO_THIS_SHAPE; shape++)
     {
-        const size_t D = lielab::domain::so::basis(0, shape).get_dimension();
+        const size_t D = Lielab::domain::so::basis(0, shape).get_dimension();
 
         // Construct the SO elements
-        std::vector<lielab::domain::SO> elements;
+        std::vector<Lielab::domain::SO> elements;
         for (size_t ii = 0; ii < D; ii++)
         {
-            elements.push_back(lielab::functions::exp(lielab::domain::so::basis(ii, shape)));
+            elements.push_back(Lielab::functions::exp(Lielab::domain::so::basis(ii, shape)));
         }
 
-        const lielab::domain::SO identity(shape);
+        const Lielab::domain::SO identity(shape);
 
-        is_group<lielab::domain::SO>(elements, identity);
+        is_group<Lielab::domain::SO>(elements, identity);
     }
 }
 
@@ -515,18 +515,18 @@ TEST_CASE("SP", "[domain]")
 
     for (size_t shape = 2; shape <= TEST_UP_TO_THIS_SHAPE; shape += 2)
     {
-        const size_t D = lielab::domain::sp::basis(0, shape).get_dimension();
+        const size_t D = Lielab::domain::sp::basis(0, shape).get_dimension();
 
         // Construct the SP elements
-        std::vector<lielab::domain::SP> elements;
+        std::vector<Lielab::domain::SP> elements;
         for (size_t ii = 0; ii < D; ii++)
         {
-            elements.push_back(lielab::functions::exp(lielab::domain::sp::basis(ii, shape)));
+            elements.push_back(Lielab::functions::exp(Lielab::domain::sp::basis(ii, shape)));
         }
 
-        const lielab::domain::SP identity(shape);
+        const Lielab::domain::SP identity(shape);
 
-        is_group<lielab::domain::SP>(elements, identity);
+        is_group<Lielab::domain::SP>(elements, identity);
     }
 }
 
@@ -538,18 +538,18 @@ TEST_CASE("SU", "[domain]")
 
     for (size_t shape = 2; shape <= TEST_UP_TO_THIS_SHAPE; shape++)
     {
-        const size_t D = lielab::domain::su::basis(0, shape).get_dimension();
+        const size_t D = Lielab::domain::su::basis(0, shape).get_dimension();
 
         // Construct the SU elements
-        std::vector<lielab::domain::SU> elements;
+        std::vector<Lielab::domain::SU> elements;
         for (size_t ii = 0; ii < D; ii++)
         {
-            elements.push_back(lielab::functions::exp(lielab::domain::su::basis(ii, shape)));
+            elements.push_back(Lielab::functions::exp(Lielab::domain::su::basis(ii, shape)));
         }
 
-        const lielab::domain::SU identity(shape);
+        const Lielab::domain::SU identity(shape);
 
-        is_group<lielab::domain::SU>(elements, identity);
+        is_group<Lielab::domain::SU>(elements, identity);
     }
 }
 
@@ -559,18 +559,18 @@ TEST_CASE("Quaternion", "[domain]")
     * Tests quaternions against well-known identities.
     */
 
-    lielab::domain::SU q1 = lielab::domain::SU::Quaternion();
-    lielab::domain::SU qm1 = lielab::domain::SU::Quaternion(-1.0, 0.0, 0.0, 0.0);
-    lielab::domain::SU qi = lielab::domain::SU::Quaternion(0.0, 1.0, 0.0, 0.0);
-    lielab::domain::SU qj = lielab::domain::SU::Quaternion(0.0, 0.0, 1.0, 0.0);
-    lielab::domain::SU qk = lielab::domain::SU::Quaternion(0.0, 0.0, 0.0, 1.0);
+    Lielab::domain::SU q1 = Lielab::domain::SU::Quaternion();
+    Lielab::domain::SU qm1 = Lielab::domain::SU::Quaternion(-1.0, 0.0, 0.0, 0.0);
+    Lielab::domain::SU qi = Lielab::domain::SU::Quaternion(0.0, 1.0, 0.0, 0.0);
+    Lielab::domain::SU qj = Lielab::domain::SU::Quaternion(0.0, 0.0, 1.0, 0.0);
+    Lielab::domain::SU qk = Lielab::domain::SU::Quaternion(0.0, 0.0, 0.0, 1.0);
 
-    std::vector<lielab::domain::SU> elements;
+    std::vector<Lielab::domain::SU> elements;
     elements.push_back(qi);
     elements.push_back(qj);
     elements.push_back(qk);
 
-    is_group<lielab::domain::SU>(elements, q1);
+    is_group<Lielab::domain::SU>(elements, q1);
 
     // Hamilton's identities
     // i^2 = j^2 = k^2 = -1

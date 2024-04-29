@@ -7,7 +7,7 @@ double optimfun(Eigen::VectorXd x)
 
 TEST_CASE("opt_golden", "[optim]")
 {
-    lielab::optim::opt_golden search;
+    Lielab::optim::opt_golden search;
     Eigen::VectorXd lower(1);
     lower(0) = 0.0;
     Eigen::VectorXd upper(1);
@@ -70,7 +70,7 @@ TEST_CASE("opt_golden", "[optim]")
     CHECK(std::abs(opt(0) - 0.816496623231839) < TOL_FINE);
     CHECK(search.iterations == 31);
     CHECK(search.success == true);
-    CHECK(search.algo_status == lielab::ALGO_STATUS::FINISHED);
+    CHECK(search.algo_status == Lielab::ALGO_STATUS::FINISHED);
 
     search.init();
     search.max_iterations = 5;
@@ -79,13 +79,13 @@ TEST_CASE("opt_golden", "[optim]")
 
     CHECK(search.success == false);
     CHECK(search.iterations == 5);
-    CHECK(search.algo_status == lielab::ALGO_STATUS::MAXITER);
+    CHECK(search.algo_status == Lielab::ALGO_STATUS::MAXITER);
 
 }
 
-double optfun2(const lielab::domain::halie & m)
+double optfun2(const Lielab::domain::CompositeAlgebra & m)
 {
-    lielab::domain::rn y = std::get<lielab::domain::rn>(m.space[0]);
+    Lielab::domain::rn y = std::get<Lielab::domain::rn>(m.space[0]);
     return std::pow(y(0), 2) - 1;
 }
 
@@ -93,13 +93,13 @@ TEST_CASE("hnewton", "[optim]")
 {
     Eigen::VectorXd _y01(1);
     _y01 << 0.5;
-    lielab::domain::rn _y02(_y01);
-    lielab::domain::halie y01{_y02};
+    Lielab::domain::rn _y02(_y01);
+    Lielab::domain::CompositeAlgebra y01{_y02};
 
-    lielab::optim::hnewton search;
+    Lielab::optim::hnewton search;
 
-    lielab::domain::halie yopt = search(optfun2, y01);
-    lielab::domain::rn yopt2 = std::get<lielab::domain::rn>(yopt.space[0]);
+    Lielab::domain::CompositeAlgebra yopt = search(optfun2, y01);
+    Lielab::domain::rn yopt2 = std::get<Lielab::domain::rn>(yopt.space[0]);
 
     CHECK(std::abs(yopt2(0) - 1.0) <= TOL_FINE);
 }
@@ -111,7 +111,7 @@ double myfun(double x)
 
 // TEST_CASE("search_linearx", "[optim]")
 // {
-//     lielab::optim::search_linearx search;
+//     Lielab::optim::search_linearx search;
 //     double x = 5.0;
 
 //     search.lower = 4.0;

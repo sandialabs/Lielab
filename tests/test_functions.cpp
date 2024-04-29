@@ -8,11 +8,11 @@ TEST_CASE("Ad", "[Ad]")
     /*!
     * Tests the Ad function.
     */
-    lielab::domain::so u(3);
-    lielab::domain::so v(3);
-    lielab::domain::so w(3);
-    lielab::domain::so ansso(3);
-    lielab::domain::SO Gso(3);
+    Lielab::domain::so u(3);
+    Lielab::domain::so v(3);
+    Lielab::domain::so w(3);
+    Lielab::domain::so ansso(3);
+    Lielab::domain::SO Gso(3);
 
     Eigen::VectorXd xx(3);
     xx << 1.0, 0.0, 0.0;
@@ -25,10 +25,10 @@ TEST_CASE("Ad", "[Ad]")
     u.set_vector(xx);
     v.set_vector(yy);
     w.set_vector(zz);
-    Gso = lielab::functions::exp(v);
+    Gso = Lielab::functions::exp(v);
 
     // GuG^-1
-    ansso = lielab::functions::Ad(Gso, u);
+    ansso = Lielab::functions::Ad(Gso, u);
     truthso << 0, 0.841470984807896, 0,
               -0.841470984807897, 0, -0.540302305868140,
                0, 0.540302305868140, 0;
@@ -36,12 +36,12 @@ TEST_CASE("Ad", "[Ad]")
     assert_matrix(ansso.get_ados_representation(), truthso);
 
     // GvG^-1 = v when G = exp(v)
-    ansso = lielab::functions::Ad(Gso, v);
+    ansso = Lielab::functions::Ad(Gso, v);
     
     assert_matrix(ansso.get_ados_representation(), v.get_ados_representation());
 
     // GwG^-1
-    ansso = lielab::functions::Ad(Gso, w);
+    ansso = Lielab::functions::Ad(Gso, w);
     truthso << 0, -0.540302305868140, 0,
                0.540302305868140, 0, -0.841470984807897,
                0, 0.841470984807897, 0;
@@ -55,19 +55,19 @@ TEST_CASE("cayley1", "[cayley1]")
     * Tests the cayley1 function
     */
 
-    const lielab::domain::so rx({1.0, 0.0, 0.0});
-    const lielab::domain::so ry({0.0, 1.0, 0.0});
+    const Lielab::domain::so rx({1.0, 0.0, 0.0});
+    const Lielab::domain::so ry({0.0, 1.0, 0.0});
     Eigen::MatrixXd ans(3, 3);
 
     // Values calculated by hand
-    const lielab::domain::SO ex1 = lielab::functions::cayley1(rx);
+    const Lielab::domain::SO ex1 = Lielab::functions::cayley1(rx);
     ans << 1.0, 0.0, 0.0,
            0.0, 0.6,-0.8,
            0.0, 0.8, 0.6;
 
     assert_matrix(ex1.get_ados_representation(), ans);
 
-    const lielab::domain::SO ex2 = lielab::functions::cayley1(ry);
+    const Lielab::domain::SO ex2 = Lielab::functions::cayley1(ry);
     ans << 0.6, 0.0, 0.8,
            0.0, 1.0, 0.0,
            -0.8, 0.0, 0.6;
@@ -81,19 +81,19 @@ TEST_CASE("cayley2", "[functions]")
     * Tests the cayley2 function.
     */
 
-    const lielab::domain::so rx({1.0, 0.0, 0.0});
-    const lielab::domain::so ry({0.0, 1.0, 0.0});
+    const Lielab::domain::so rx({1.0, 0.0, 0.0});
+    const Lielab::domain::so ry({0.0, 1.0, 0.0});
     Eigen::MatrixXd ans(3, 3);
 
     // Values calculated by hand
-    const lielab::domain::SO ex1 = lielab::functions::cayley2(rx);
+    const Lielab::domain::SO ex1 = Lielab::functions::cayley2(rx);
     ans << 1.0, 0.0, 0.0,
            0.0, 0.6, -0.8,
            0.0, 0.8, 0.6;
     
     assert_matrix(ex1.get_ados_representation(), ans);
 
-    const lielab::domain::SO ex2 = lielab::functions::cayley2(rx + 2*ry);
+    const Lielab::domain::SO ex2 = Lielab::functions::cayley2(rx + 2*ry);
     ans << 0.0, 0.0, 1.0,
            0.8, 0.6, 0.0,
            -0.6, 0.8, 0.0;
@@ -108,11 +108,11 @@ TEST_CASE("cayley 1 and 2", "[functions]")
     */
 
     // Identity cayley1 = cayley2 for all basis elements
-    const size_t dim = lielab::domain::so::basis(0,10).get_dimension();
+    const size_t dim = Lielab::domain::so::basis(0,10).get_dimension();
     for (size_t ii = 0; ii < dim; ii++)
     {
-        const lielab::domain::so g = lielab::domain::so::basis(ii, 10);
-        assert_domain(lielab::functions::cayley1(g), lielab::functions::cayley2(g));
+        const Lielab::domain::so g = Lielab::domain::so::basis(ii, 10);
+        assert_domain(Lielab::functions::cayley1(g), Lielab::functions::cayley2(g));
     }
 }
 
@@ -124,19 +124,19 @@ TEST_CASE("Killing", "[functions]")
     * Tests the Killing function.
     */
 
-    lielab::domain::so rx({1.0, 0.0, 0.0});
-    lielab::domain::so ry({0.0, 1.0, 0.0});
-    lielab::domain::so rz({0.0, 0.0, 1.0});
+    Lielab::domain::so rx({1.0, 0.0, 0.0});
+    Lielab::domain::so ry({0.0, 1.0, 0.0});
+    Lielab::domain::so rz({0.0, 0.0, 1.0});
 
-    CHECK(std::abs(lielab::functions::Killing(rx,rx) + 2.0) <= TOL_FINE);
-    CHECK(std::abs(lielab::functions::Killing(rx,ry) + 0.0) <= TOL_FINE);
-    CHECK(std::abs(lielab::functions::Killing(rx,rz) + 0.0) <= TOL_FINE);
-    CHECK(std::abs(lielab::functions::Killing(ry,rx) + 0.0) <= TOL_FINE);
-    CHECK(std::abs(lielab::functions::Killing(ry,ry) + 2.0) <= TOL_FINE);
-    CHECK(std::abs(lielab::functions::Killing(ry,rz) + 0.0) <= TOL_FINE);
-    CHECK(std::abs(lielab::functions::Killing(rz,rx) + 0.0) <= TOL_FINE);
-    CHECK(std::abs(lielab::functions::Killing(rz,ry) + 0.0) <= TOL_FINE);
-    CHECK(std::abs(lielab::functions::Killing(rz,rz) + 2.0) <= TOL_FINE);
+    CHECK(std::abs(Lielab::functions::Killing(rx,rx) + 2.0) <= TOL_FINE);
+    CHECK(std::abs(Lielab::functions::Killing(rx,ry) + 0.0) <= TOL_FINE);
+    CHECK(std::abs(Lielab::functions::Killing(rx,rz) + 0.0) <= TOL_FINE);
+    CHECK(std::abs(Lielab::functions::Killing(ry,rx) + 0.0) <= TOL_FINE);
+    CHECK(std::abs(Lielab::functions::Killing(ry,ry) + 2.0) <= TOL_FINE);
+    CHECK(std::abs(Lielab::functions::Killing(ry,rz) + 0.0) <= TOL_FINE);
+    CHECK(std::abs(Lielab::functions::Killing(rz,rx) + 0.0) <= TOL_FINE);
+    CHECK(std::abs(Lielab::functions::Killing(rz,ry) + 0.0) <= TOL_FINE);
+    CHECK(std::abs(Lielab::functions::Killing(rz,rz) + 2.0) <= TOL_FINE);
 }
 
 TEST_CASE("Killingform", "[functions]")
@@ -145,17 +145,17 @@ TEST_CASE("Killingform", "[functions]")
     * Tests the killing form function.
     */
 
-    lielab::domain::so rx({1.0, 0.0, 0.0});
+    Lielab::domain::so rx({1.0, 0.0, 0.0});
 
-    Eigen::MatrixXd K = lielab::functions::Killingform(rx);
+    Eigen::MatrixXd K = Lielab::functions::Killingform(rx);
     Eigen::MatrixXd Id = Eigen::MatrixXd::Identity(rx.get_dimension(), rx.get_dimension());
 
     CHECK(std::abs(K.trace() + 6) <= TOL_FINE);
     assert_matrix(K*K.inverse(), Id);
 
-    lielab::domain::so so6 = lielab::domain::so::basis(0,6);
+    Lielab::domain::so so6 = Lielab::domain::so::basis(0,6);
 
-    K = lielab::functions::Killingform(so6);
+    K = Lielab::functions::Killingform(so6);
     Id = Eigen::MatrixXd::Identity(so6.get_dimension(), so6.get_dimension());
 
     CHECK(std::abs(K.trace() + 120) <= TOL_FINE);
@@ -174,9 +174,9 @@ TEST_CASE("dcayley1inv", "[dcayley1inv]")
     /*!
     * Tests the inverse of the dcayley1 function
     */
-    lielab::domain::so u(3);
-    lielab::domain::so v(3);
-    lielab::domain::so ansso(3);
+    Lielab::domain::so u(3);
+    Lielab::domain::so v(3);
+    Lielab::domain::so ansso(3);
 
     Eigen::VectorXd xx(3);
     xx << 1.0, 0.0, 0.0;
@@ -187,14 +187,14 @@ TEST_CASE("dcayley1inv", "[dcayley1inv]")
     u.set_vector(xx);
     v.set_vector(yy);
 
-    ansso = lielab::functions::dcayley1inv(u, v);
+    ansso = Lielab::functions::dcayley1inv(u, v);
     truthso << 0.0, 0.5, 1.0,
               -0.5, 0.0, 0.0,
               -1.0, 0.0, 0.0;
 
     assert_matrix(ansso.get_ados_representation(), truthso);
 
-    ansso = lielab::functions::dcayley1inv(v, u);
+    ansso = Lielab::functions::dcayley1inv(v, u);
     truthso << 0.0,-0.5, 0.0,
                0.5, 0.0,-1.0,
                0.0, 1.0, 0.0;
@@ -207,9 +207,9 @@ TEST_CASE("dexp", "[dexp]")
     /*!
     * Tests the dexp function.
     */
-    lielab::domain::so u(3);
-    lielab::domain::so v(3);
-    lielab::domain::so ansso(3);
+    Lielab::domain::so u(3);
+    Lielab::domain::so v(3);
+    Lielab::domain::so ansso(3);
 
     Eigen::VectorXd xx(3);
     xx << 1.0, 0.0, 0.0;
@@ -222,7 +222,7 @@ TEST_CASE("dexp", "[dexp]")
 
 
     // order = 0
-    ansso = lielab::functions::dexp(u, v, 0);
+    ansso = Lielab::functions::dexp(u, v, 0);
     truthso << 0.0, 0.0, 1.0,
                0.0, 0.0, 0.0,
               -1.0, 0.0, 0.0;
@@ -230,7 +230,7 @@ TEST_CASE("dexp", "[dexp]")
     assert_matrix(ansso.get_ados_representation(), truthso);
 
     // order = 1
-    ansso = lielab::functions::dexp(u, v, 1);
+    ansso = Lielab::functions::dexp(u, v, 1);
     truthso << 0.0, -0.5, 1.0,
                0.5, 0.0, 0.0,
               -1.0, 0.0, 0.0;
@@ -238,7 +238,7 @@ TEST_CASE("dexp", "[dexp]")
     assert_matrix(ansso.get_ados_representation(), truthso);
 
     // order = 2
-    ansso = lielab::functions::dexp(u, v, 2);
+    ansso = Lielab::functions::dexp(u, v, 2);
     truthso << 0.0, -0.5, 0.833333333333333,
                0.5, 0.0, 0.0,
               -0.833333333333333, 0.0, 0.0;
@@ -246,7 +246,7 @@ TEST_CASE("dexp", "[dexp]")
     assert_matrix(ansso.get_ados_representation(), truthso);
 
     // order = 3
-    ansso = lielab::functions::dexp(u, v, 3);
+    ansso = Lielab::functions::dexp(u, v, 3);
     truthso << 0.0, -0.458333333333333, 0.833333333333333,
                0.458333333333333, 0.0, 0.0,
               -0.833333333333333, 0.0, 0.0;
@@ -255,7 +255,7 @@ TEST_CASE("dexp", "[dexp]")
 
 
     // order = 4
-    ansso = lielab::functions::dexp(u, v, 4);
+    ansso = Lielab::functions::dexp(u, v, 4);
     truthso << 0.0, -0.458333333333333, 0.841666666666667,
                0.458333333333333, 0.0, 0.0,
               -0.841666666666667, 0.0, 0.0;
@@ -263,22 +263,22 @@ TEST_CASE("dexp", "[dexp]")
     assert_matrix(ansso.get_ados_representation(), truthso);
 
     // order = 8
-    ansso = lielab::functions::dexp(u, v, 8);
+    ansso = Lielab::functions::dexp(u, v, 8);
     truthso << 0.0, -0.459697420634921, 0.841471009700176,
                0.459697420634921, 0.0, 0.0,
               -0.841471009700176, 0.0, 0.0;
 
     assert_matrix(ansso.get_ados_representation(), truthso);
 
-    lielab::domain::rn x(4);
-    lielab::domain::rn y(4);
-    lielab::domain::rn ansrn(4);
+    Lielab::domain::rn x(4);
+    Lielab::domain::rn y(4);
+    Lielab::domain::rn ansrn(4);
     Eigen::MatrixXd truthrn(4,4);
     x.set_vector(xx);
     y.set_vector(yy);
 
     // default order
-    ansrn = lielab::functions::dexp(x, y);
+    ansrn = Lielab::functions::dexp(x, y);
     truthrn << 0, 0, 0, 0,
                0, 0, 0, 1,
                0, 0, 0, 0,
@@ -287,7 +287,7 @@ TEST_CASE("dexp", "[dexp]")
     assert_matrix(ansrn.get_ados_representation(), truthrn);
 
     // ridiculous order (checks abelian speedhack)
-    ansrn = lielab::functions::dexp(x, y, 999999999);
+    ansrn = Lielab::functions::dexp(x, y, 999999999);
     truthrn << 0, 0, 0, 0,
                0, 0, 0, 1,
                0, 0, 0, 0,
@@ -301,9 +301,9 @@ TEST_CASE("dexpinv", "[dexpinv]")
     /*!
     * Tests the dexpinv function.
     */
-    lielab::domain::so u(3);
-    lielab::domain::so v(3);
-    lielab::domain::so ansso(3);
+    Lielab::domain::so u(3);
+    Lielab::domain::so v(3);
+    Lielab::domain::so ansso(3);
 
     Eigen::VectorXd xx(3);
     xx << 1.0, 0.0, 0.0;
@@ -316,7 +316,7 @@ TEST_CASE("dexpinv", "[dexpinv]")
 
 
     // order = 0
-    ansso = lielab::functions::dexpinv(u, v, 0);
+    ansso = Lielab::functions::dexpinv(u, v, 0);
     truthso << 0.0, 0.0, 0.0,
                0.0, 0.0, 0.0,
                0.0, 0.0, 0.0;
@@ -324,7 +324,7 @@ TEST_CASE("dexpinv", "[dexpinv]")
     assert_matrix(ansso.get_ados_representation(), truthso);
 
     // order = 1
-    ansso = lielab::functions::dexpinv(u, v, 1);
+    ansso = Lielab::functions::dexpinv(u, v, 1);
     truthso << 0.0, 0.0, 1.0,
                0.0, 0.0, 0.0,
               -1.0, 0.0, 0.0;
@@ -332,7 +332,7 @@ TEST_CASE("dexpinv", "[dexpinv]")
     assert_matrix(ansso.get_ados_representation(), truthso);
 
     // order = 2
-    ansso = lielab::functions::dexpinv(u, v, 2);
+    ansso = Lielab::functions::dexpinv(u, v, 2);
     truthso << 0.0, 0.5, 1.0,
               -0.5, 0.0, 0.0,
               -1.0, 0.0, 0.0;
@@ -340,7 +340,7 @@ TEST_CASE("dexpinv", "[dexpinv]")
     assert_matrix(ansso.get_ados_representation(), truthso);
 
     // order = 4
-    ansso = lielab::functions::dexpinv(u, v, 4);
+    ansso = Lielab::functions::dexpinv(u, v, 4);
     truthso << 0.0, 0.5, 0.916666666666667,
               -0.5, 0.0, 0.0,
               -0.916666666666667, 0.0, 0.0;
@@ -348,22 +348,22 @@ TEST_CASE("dexpinv", "[dexpinv]")
     assert_matrix(ansso.get_ados_representation(), truthso);
 
     // order = 12
-    ansso = lielab::functions::dexpinv(u, v, 12);
+    ansso = Lielab::functions::dexpinv(u, v, 12);
     truthso << 0.0, 0.500000000000000, 0.915243861398375,
               -0.500000000000000, 0.0, 0.0,
               -0.915243861398375, 0.0, 0.0;
 
     assert_matrix(ansso.get_ados_representation(), truthso);
 
-    lielab::domain::rn x(4);
-    lielab::domain::rn y(4);
-    lielab::domain::rn ansrn(4);
+    Lielab::domain::rn x(4);
+    Lielab::domain::rn y(4);
+    Lielab::domain::rn ansrn(4);
     Eigen::MatrixXd truthrn(4,4);
     x.set_vector(xx);
     y.set_vector(yy);
 
     // default order
-    ansrn = lielab::functions::dexpinv(x, y);
+    ansrn = Lielab::functions::dexpinv(x, y);
     truthrn << 0, 0, 0, 0,
                0, 0, 0, 1,
                0, 0, 0, 0,
@@ -372,7 +372,7 @@ TEST_CASE("dexpinv", "[dexpinv]")
     assert_matrix(ansrn.get_ados_representation(), truthrn);
 
     // ridiculous order (checks abelian speedhack)
-    ansrn = lielab::functions::dexpinv(x, y, 999999999);
+    ansrn = Lielab::functions::dexpinv(x, y, 999999999);
     truthrn << 0, 0, 0, 0,
                0, 0, 0, 1,
                0, 0, 0, 0,

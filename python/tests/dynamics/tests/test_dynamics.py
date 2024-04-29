@@ -7,12 +7,12 @@ def test_vfex1():
     Tests vfex1.
     """
 
-    from lielab.domain import SO, hmlie
+    from lielab.domain import SO, CompositeManifold
     from lielab.dynamics import vfex1
 
     vf = vfex1()
     y0 = SO(3)
-    M0 = hmlie([y0])
+    M0 = CompositeManifold([y0])
 
     out = vf(2.0, M0)
 

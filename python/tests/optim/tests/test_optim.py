@@ -83,12 +83,12 @@ def optfun2(m):
 
 def test_hnewton():
     
-    from lielab.domain import rn, halie
+    from lielab.domain import rn, CompositeAlgebra
     from lielab.optim import hnewton
 
     _y01 = np.array([0.5])
     _y02 = rn(_y01)
-    y01 = halie([_y02])
+    y01 = CompositeAlgebra([_y02])
 
     search = hnewton()
 

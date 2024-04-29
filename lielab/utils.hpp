@@ -7,7 +7,7 @@
 
 #include <Eigen/Core>
 
-namespace lielab
+namespace Lielab
 {
     namespace utils
     {
