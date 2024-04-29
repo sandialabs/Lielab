@@ -30,6 +30,18 @@ namespace Lielab
         }
 
         template <>
+        Lielab::domain::cn log(const Lielab::domain::CN & G, const bool optimize)
+        {
+            /*!
+            * CN log overload
+            */
+
+            Lielab::domain::cn out(G.shape);
+            out._data = G._data;
+            return out;
+        }
+
+        template <>
         Lielab::domain::rn log(const Lielab::domain::RN & G, const bool optimize)
         {
             /*!

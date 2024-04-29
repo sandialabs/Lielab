@@ -1,3 +1,6 @@
+#include "Errorx.hpp"
+
+#include "liegroups/CN.hpp"
 #include "liegroups/GL.hpp"
 #include "liegroups/RN.hpp"
 #include "liegroups/SE.hpp"

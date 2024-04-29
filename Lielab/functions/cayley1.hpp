@@ -31,6 +31,21 @@ namespace Lielab
         }
 
         template <>
+        Lielab::domain::CN cayley1(const Lielab::domain::cn & a)
+        {
+            /*
+            * Cayley1 overload for cn
+            *
+            * Needed since cn is complex
+            */
+
+            const Eigen::MatrixXcd m = a.get_ados_representation();
+            const Eigen::MatrixXcd Id = Eigen::MatrixXcd::Identity(a.shape, a.shape);
+
+            return (Id + m/2.0)*(Id - m/2.0).inverse();
+        }
+
+        template <>
         Lielab::domain::SU cayley1(const Lielab::domain::su & a)
         {
             /*
@@ -42,7 +57,7 @@ namespace Lielab
             const Eigen::MatrixXcd m = a.get_ados_representation();
             const Eigen::MatrixXcd Id = Eigen::MatrixXcd::Identity(a.shape, a.shape);
 
-            return (Id + m/2)*(Id - m/2).inverse();
+            return (Id + m/2.0)*(Id - m/2.0).inverse();
         }
     }
 }

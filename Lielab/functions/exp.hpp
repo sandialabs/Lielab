@@ -33,6 +33,17 @@ namespace Lielab
         }
 
         template<>
+        Lielab::domain::CN exp(const Lielab::domain::cn & la)
+        {
+            /*! \f{equation*}{ \mathfrak{cn} \rightarrow CN \f}
+            *
+            * cn exponential overload
+            */
+
+            return la._data;
+        }
+
+        template<>
         Lielab::domain::RN exp(const Lielab::domain::rn & la)
         {
             /*! \f{equation*}{ \mathfrak{rn} \rightarrow RN \f}

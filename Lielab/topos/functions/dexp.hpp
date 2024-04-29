@@ -19,7 +19,12 @@ Lielab::domain::CompositeAlgebra dexp(const Lielab::domain::CompositeAlgebra & a
     for (int ii = 0; ii < a.space.size(); ii++)
     {
         const size_t ind = a.space[ii].index();
-        if (ind == Lielab::domain::CompositeAlgebra::INDEX_gl)
+        if (ind == Lielab::domain::CompositeAlgebra::INDEX_cn)
+        {
+            out.space.push_back(Lielab::functions::dexp(std::get<Lielab::domain::cn>(a.space[ii]),
+                                                        std::get<Lielab::domain::cn>(b.space[ii]), order));
+        }
+        else if (ind == Lielab::domain::CompositeAlgebra::INDEX_gl)
         {
             out.space.push_back(Lielab::functions::dexp(std::get<Lielab::domain::gl>(a.space[ii]),
                                                         std::get<Lielab::domain::gl>(b.space[ii]), order));

@@ -1,14 +1,6 @@
 #ifndef _LIELAB_DOMAIN_LIEALGEBRAS_gl_HPP
 #define _LIELAB_DOMAIN_LIEALGEBRAS_gl_HPP
 
-struct Errorx : public std::exception
-{
-   std::string s;
-   Errorx(std::string ss) : s(ss) {}
-   ~Errorx() throw () {}
-   const char* what() const throw() { return s.c_str(); }
-};
-
 #include "../../abstract/abstract_all.hpp"
 
 #include <Eigen/Core>

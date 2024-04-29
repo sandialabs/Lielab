@@ -129,6 +129,41 @@ void is_group(const std::vector<T> & elements, const T & identity)
 }
 
 
+TEST_CASE("cn algebra", "[domain]")
+{
+    /*!
+    * Tests the cn algebra.
+    */
+
+    for (size_t shape = 2; shape <= TEST_UP_TO_THIS_SHAPE; shape++)
+    {
+        const size_t D = Lielab::domain::cn::basis(0, shape).get_dimension();
+
+        // Construct the rn basis
+        std::vector<Lielab::domain::cn> basis;
+        for (size_t ii = 0; ii < D; ii++)
+        {
+            basis.push_back(Lielab::domain::cn::basis(ii, shape));
+        }
+
+        is_algebra<Lielab::domain::cn>(basis);
+        is_liealgebra<Lielab::domain::cn>(basis);
+    }
+   
+    Lielab::domain::cn one(1), two(2), three(3), four(4), five(5), six(6), seven(7), eight(8);
+
+    // Dimensions
+    CHECK(one.get_dimension() == 0);
+    CHECK(two.get_dimension() == 2);
+    CHECK(three.get_dimension() == 4);
+    CHECK(four.get_dimension() == 6);
+    CHECK(five.get_dimension() == 8);
+    CHECK(six.get_dimension() == 10);
+    CHECK(seven.get_dimension() == 12);
+    CHECK(eight.get_dimension() == 14);
+}
+
+
 TEST_CASE("gl algebra", "[domain]")
 {
     /*!
@@ -436,6 +471,29 @@ TEST_CASE("su3", "[domain]")
     // TODO: Why aren't these evaluating true?
     // assert_domain( commutator(t4, t5), _i*t8 * std::sqrt(3.0) / 2.0);
     // assert_domain( commutator(t6, t7), _i*t8 * std::sqrt(3.0) / 2.0);
+}
+
+TEST_CASE("CN", "[domain]")
+{
+    /*!
+    * Tests CN against well-known identities.
+    */
+
+    for (size_t shape = 2; shape <= TEST_UP_TO_THIS_SHAPE; shape++)
+    {
+        const size_t D = Lielab::domain::cn::basis(0, shape).get_dimension();
+
+        // Construct the RN elements
+        std::vector<Lielab::domain::CN> elements;
+        for (size_t ii = 0; ii < D; ii++)
+        {
+            elements.push_back(Lielab::functions::exp(Lielab::domain::cn::basis(ii, shape)));
+        }
+
+        const Lielab::domain::CN identity(shape);
+
+        is_group<Lielab::domain::CN>(elements, identity);
+    }
 }
 
 TEST_CASE("GL", "[domain]")

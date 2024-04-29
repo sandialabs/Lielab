@@ -6,6 +6,67 @@ import pytest
 
 from lielab.testing import *
 
+def test_cn():
+    """
+    Checks the basic cn class
+    """
+
+    from lielab.domain import cn
+    from lielab.functions import commutator
+
+    one = cn(1)
+    two = cn(2)
+    three = cn(3)
+    four = cn(4)
+    five = cn(5)
+    six = cn(6)
+    seven = cn(7)
+    eight = cn(8)
+
+    # Dimensions
+    assert one.get_dimension() == 0
+    assert two.get_dimension() == 2
+    assert three.get_dimension() == 4
+    assert four.get_dimension() == 6
+    assert five.get_dimension() == 8
+    assert six.get_dimension() == 10
+    assert seven.get_dimension() == 12
+    assert eight.get_dimension() == 14
+
+    x = cn.basis(0,4)
+    y = cn.basis(1,4)
+    z = cn.basis(2,4)
+    zero = x*0
+
+    # Unary subtraction
+    -x
+
+    # Vector Addition
+    x + y
+    assert_domain(x + y, y + x)
+
+    # Vector Subtraction
+    x - y
+    assert_domain(x - y, -(y - x))
+
+    # Scalar Multiplication
+    an_int*x
+    a_double*x
+    x*an_int
+    x*a_double
+    assert_domain(an_int*x, x*an_int)
+    assert_domain(a_double*x, x*a_double)
+
+    # Scalar division
+    x/an_int
+    x/a_double
+
+    # Vector multiplication
+    x * y
+    assert_domain(commutator(x,y), -commutator(y,x))
+    assert_domain(commutator(x,y), commutator(y,x)) # Abelian check
+
+
 def test_gl():
     """
     Checks the basic gl class
@@ -64,6 +125,7 @@ def test_gl():
     # Vector multiplication
     x * y
     assert_domain(commutator(x,y), -commutator(y,x))
+
 
 def test_rn():
     """
@@ -700,6 +762,27 @@ def test_su3():
     # assert_domain( commutator(t2, t5), 1j*t7 / 2.0)
     # assert_domain( commutator(t3, t4), 1j*t5 / 2.0)
     # assert_domain(-commutator(t3, t6), 1j*t7 / 2.0)
+
+
+def test_CN():
+    """
+    Tests CN against well-known identities.
+    """
+
+    from lielab.domain import CN
+
+    x = CN([1,0,0])
+    y = CN([0,1,0])
+    z = CN([0,0,1])
+
+    # Group multiplication
+    x*y
+    assert_domain(x*y, (y.inverse()*x.inverse()).inverse())
+    assert_domain(x*y, y*x) # Group is abelian
+
+    # Group inverse
+    x.inverse()
+    assert_domain(x.inverse(), CN(-x._data))
 
 
 def test_GL():

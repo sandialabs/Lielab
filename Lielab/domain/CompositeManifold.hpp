@@ -31,25 +31,29 @@ class CompositeManifold
 {
     public:
 
-    static constexpr size_t INDEX_GL = 0;
-    static constexpr size_t INDEX_RN = 1;
-    static constexpr size_t INDEX_SE = 2;
-    static constexpr size_t INDEX_SO = 3;
-    static constexpr size_t INDEX_SP = 4;
-    static constexpr size_t INDEX_SU = 5;
-    static constexpr size_t INDEX_gl = 6;
-    static constexpr size_t INDEX_rn = 7;
-    static constexpr size_t INDEX_se = 8;
-    static constexpr size_t INDEX_so = 9;
-    static constexpr size_t INDEX_sp = 10;
-    static constexpr size_t INDEX_su = 11;
+    static constexpr size_t INDEX_CN = 0;
+    static constexpr size_t INDEX_GL = 1;
+    static constexpr size_t INDEX_RN = 2;
+    static constexpr size_t INDEX_SE = 3;
+    static constexpr size_t INDEX_SO = 4;
+    static constexpr size_t INDEX_SP = 5;
+    static constexpr size_t INDEX_SU = 6;
+    static constexpr size_t INDEX_cn = 7;
+    static constexpr size_t INDEX_gl = 8;
+    static constexpr size_t INDEX_rn = 9;
+    static constexpr size_t INDEX_se = 10;
+    static constexpr size_t INDEX_so = 11;
+    static constexpr size_t INDEX_sp = 12;
+    static constexpr size_t INDEX_su = 13;
 
-    typedef std::variant<Lielab::domain::GL,
+    typedef std::variant<Lielab::domain::CN,
+                         Lielab::domain::GL,
                          Lielab::domain::RN,
                          Lielab::domain::SE,
                          Lielab::domain::SO,
                          Lielab::domain::SP,
                          Lielab::domain::SU,
+                         Lielab::domain::cn,
                          Lielab::domain::gl,
                          Lielab::domain::rn,
                          Lielab::domain::se,
@@ -99,7 +103,11 @@ class CompositeManifold
         for (int ii = 0; ii < space.size(); ii++)
         {
             const size_t ind = space[ii].index();
-            if (ind == INDEX_GL)
+            if (ind == INDEX_CN)
+            {
+                out(ii) = static_cast<int>(std::get<Lielab::domain::CN>(space[ii]).shape);
+            }
+            else if (ind == INDEX_GL)
             {
                 out(ii) = static_cast<int>(std::get<Lielab::domain::GL>(space[ii]).shape);
             }
@@ -122,6 +130,10 @@ class CompositeManifold
             else if (ind == INDEX_SU)
             {
                 out(ii) = static_cast<int>(std::get<Lielab::domain::SU>(space[ii]).shape);
+            }
+            else if (ind == INDEX_cn)
+            {
+                out(ii) = static_cast<int>(std::get<Lielab::domain::cn>(space[ii]).shape);
             }
             else if (ind == INDEX_gl)
             {
@@ -167,7 +179,11 @@ class CompositeManifold
         {
             const size_t ind = space[ii].index();
 
-            if (ind == INDEX_GL)
+            if (ind == INDEX_CN)
+            {
+                serials.push_back(std::get<Lielab::domain::CN>(space[ii]).serialize());
+            }
+            else if (ind == INDEX_GL)
             {
                 serials.push_back(std::get<Lielab::domain::GL>(space[ii]).serialize());
             }
@@ -190,6 +206,10 @@ class CompositeManifold
             else if (ind == INDEX_SU)
             {
                 serials.push_back(std::get<Lielab::domain::SU>(space[ii]).serialize());
+            }
+            else if (ind == INDEX_cn)
+            {
+                serials.push_back(std::get<Lielab::domain::cn>(space[ii]).get_vector());
             }
             else if (ind == INDEX_gl)
             {
@@ -231,7 +251,12 @@ class CompositeManifold
             const size_t ind = M.index();
             jj += sz;
 
-            if (ind == INDEX_GL)
+            if (ind == INDEX_CN)
+            {
+                sz = std::get<Lielab::domain::CN>(M).get_size();
+                std::get<Lielab::domain::CN>(M).unserialize(vec(Eigen::seqN(jj, sz)));
+            }
+            else if (ind == INDEX_GL)
             {
                 sz = std::get<Lielab::domain::GL>(M).get_size();
                 std::get<Lielab::domain::GL>(M).unserialize(vec(Eigen::seqN(jj, sz)));
@@ -260,6 +285,11 @@ class CompositeManifold
             {
                 sz = std::get<Lielab::domain::SU>(M).get_size();
                 std::get<Lielab::domain::SU>(M).unserialize(vec(Eigen::seqN(jj, sz)));
+            }
+            else if (ind == INDEX_cn)
+            {
+                sz = std::get<Lielab::domain::cn>(M).get_dimension();
+                std::get<Lielab::domain::cn>(M).set_vector(vec(Eigen::seqN(jj, sz)));
             }
             else if (ind == INDEX_gl)
             {
@@ -301,7 +331,11 @@ class CompositeManifold
         for (int ii = 0; ii < this->space.size(); ii++)
         {
             const size_t ind = this->space[ii].index();
-            if (ind == INDEX_GL)
+            if (ind == INDEX_CN)
+            {
+                out.space.push_back(std::get<Lielab::domain::CN>(this->space[ii]) * std::get<Lielab::domain::CN>(other.space[ii]));
+            }
+            else if (ind == INDEX_GL)
             {
                 out.space.push_back(std::get<Lielab::domain::GL>(this->space[ii]) * std::get<Lielab::domain::GL>(other.space[ii]));
             }
@@ -324,6 +358,10 @@ class CompositeManifold
             else if (ind == INDEX_SU)
             {
                 out.space.push_back(std::get<Lielab::domain::SU>(this->space[ii]) * std::get<Lielab::domain::SU>(other.space[ii]));
+            }
+            else if (ind == INDEX_cn)
+            {
+                out.space.push_back(std::get<Lielab::domain::cn>(this->space[ii]) + std::get<Lielab::domain::cn>(other.space[ii]));
             }
             else if (ind == INDEX_gl)
             {
@@ -361,7 +399,11 @@ class CompositeManifold
         for (int ii = 0; ii < this->space.size(); ii++)
         {
             const size_t ind = this->space[ii].index();
-            if (ind == INDEX_GL)
+            if (ind == INDEX_CN)
+            {
+                std::get<Lielab::domain::CN>(this->space[ii]) *= std::get<Lielab::domain::CN>(other.space[ii]);
+            }
+            else if (ind == INDEX_GL)
             {
                 std::get<Lielab::domain::GL>(this->space[ii]) *= std::get<Lielab::domain::GL>(other.space[ii]);
             }
@@ -384,6 +426,10 @@ class CompositeManifold
             else if (ind == INDEX_SU)
             {
                 std::get<Lielab::domain::SU>(this->space[ii]) *= std::get<Lielab::domain::SU>(other.space[ii]);
+            }
+            else if (ind == INDEX_cn)
+            {
+                std::get<Lielab::domain::cn>(this->space[ii]) += std::get<Lielab::domain::cn>(other.space[ii]);
             }
             else if (ind == INDEX_gl)
             {
@@ -421,6 +467,10 @@ class CompositeManifold
         for (int ii = 0; ii < this->space.size(); ii++)
         {
             const size_t ind = this->space[ii].index();
+            if (ind == INDEX_CN)
+            {
+                out.space.push_back(std::get<Lielab::domain::CN>(this->space[ii]).inverse());
+            }
             if (ind == INDEX_GL)
             {
                 out.space.push_back(std::get<Lielab::domain::GL>(this->space[ii]).inverse());
@@ -444,6 +494,10 @@ class CompositeManifold
             else if (ind == INDEX_SU)
             {
                 out.space.push_back(std::get<Lielab::domain::SU>(this->space[ii]).inverse());
+            }
+            else if (ind == INDEX_cn)
+            {
+                out.space.push_back(-std::get<Lielab::domain::cn>(this->space[ii]));
             }
             else if (ind == INDEX_gl)
             {
@@ -483,7 +537,11 @@ class CompositeManifold
         for (int ii = 0; ii < sz; ii++)
         {
             const size_t ind = this->space[ii].index();
-            if (ind == INDEX_GL)
+            if (ind == INDEX_CN)
+            {
+                out += "CN(" + std::to_string(shapes(ii)) + ")";
+            }
+            else if (ind == INDEX_GL)
             {
                 out += "GL(" + std::to_string(shapes(ii)) + ")";
             }
@@ -506,6 +564,10 @@ class CompositeManifold
             else if (ind == INDEX_SU)
             {
                 out += "SU(" + std::to_string(shapes(ii)) + ")";
+            }
+            else if (ind == INDEX_cn)
+            {
+                out += "cn(" + std::to_string(shapes(ii)) + ")";
             }
             else if (ind == INDEX_gl)
             {
