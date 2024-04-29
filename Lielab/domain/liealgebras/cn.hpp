@@ -231,7 +231,7 @@ namespace Lielab
                 */
 
                 const size_t dim = vector.size();
-                Eigen::VectorXcd temp = Eigen::VectorXcd::Zero(this->shape - 1);
+                Eigen::VectorXcd temp = Eigen::VectorXcd::Zero(static_cast<ptrdiff_t>(dim/2.0));
 
                 ptrdiff_t kk = 0;
                 for (ptrdiff_t ii = 0; ii < static_cast<ptrdiff_t>(dim/2); ii++)
@@ -240,7 +240,7 @@ namespace Lielab
                     kk += 2;
                 }
 
-                this->_data = vector;
+                this->_data = temp;
                 this->shape = this->_data.size() + 1;
             }
 
