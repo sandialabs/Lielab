@@ -26,6 +26,11 @@ lielab::domain::halie dexp(const lielab::domain::halie & a, const lielab::domain
             out.space.push_back(lielab::functions::dexp(std::get<lielab::domain::rn>(a.space[ii]),
                                                         std::get<lielab::domain::rn>(b.space[ii]), order));
         }
+        else if (ind == lielab::domain::halie::INDEX_se)
+        {
+            out.space.push_back(lielab::functions::dexp(std::get<lielab::domain::se>(a.space[ii]),
+                                                        std::get<lielab::domain::se>(b.space[ii]), order));
+        }
         else if (ind == lielab::domain::halie::INDEX_so)
         {
             out.space.push_back(lielab::functions::dexp(std::get<lielab::domain::so>(a.space[ii]),

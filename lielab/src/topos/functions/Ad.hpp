@@ -26,6 +26,11 @@ lielab::domain::halie Ad(const lielab::domain::hmlie & A, const lielab::domain::
             out.space.push_back(lielab::functions::Ad(std::get<lielab::domain::RN>(A.space[ii]),
                                                         std::get<lielab::domain::rn>(b.space[ii])));
         }
+        else if (ind == lielab::domain::halie::INDEX_se)
+        {
+            out.space.push_back(lielab::functions::Ad(std::get<lielab::domain::SE>(A.space[ii]),
+                                                        std::get<lielab::domain::se>(b.space[ii])));
+        }
         else if (ind == lielab::domain::halie::INDEX_so)
         {
             out.space.push_back(lielab::functions::Ad(std::get<lielab::domain::SO>(A.space[ii]),

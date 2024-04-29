@@ -5,6 +5,7 @@ namespace lielab
 {
 namespace topos
 {
+
 lielab::domain::halie log(const lielab::domain::hmlie &M)
 {
     /*!
@@ -24,6 +25,10 @@ lielab::domain::halie log(const lielab::domain::hmlie &M)
         {
             out.space.push_back(lielab::functions::log(std::get<lielab::domain::RN>(M.space[ii])));
         }
+        else if (ind == lielab::domain::hmlie::INDEX_SE)
+        {
+            out.space.push_back(lielab::functions::log(std::get<lielab::domain::SE>(M.space[ii])));
+        }
         else if (ind == lielab::domain::hmlie::INDEX_SO)
         {
             out.space.push_back(lielab::functions::log(std::get<lielab::domain::SO>(M.space[ii])));
@@ -40,6 +45,7 @@ lielab::domain::halie log(const lielab::domain::hmlie &M)
 
     return out;
 }
+
 }
 }
 

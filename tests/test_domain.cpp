@@ -197,6 +197,74 @@ TEST_CASE("rn algebra", "[domain]")
     CHECK(eight.get_dimension() == 7);
 }
 
+TEST_CASE("se algebra", "[domain]")
+{
+    /*!
+    * Tests the se algebra.
+    */
+
+    for (size_t shape = 2; shape <= TEST_UP_TO_THIS_SHAPE; shape++)
+    {
+        const size_t D = lielab::domain::se::basis(0, shape).get_dimension();
+
+        // Construct the so basis
+        std::vector<lielab::domain::se> basis;
+        for (size_t ii = 0; ii < D; ii++)
+        {
+            basis.push_back(lielab::domain::se::basis(ii, shape));
+        }
+
+        is_algebra<lielab::domain::se>(basis);
+        is_liealgebra<lielab::domain::se>(basis);
+    }
+   
+    lielab::domain::se one(1), two(2), four(4), five(5), six(6), seven(7), eight(8);
+
+    // Dimensions
+    CHECK(one.get_dimension() == 0);
+    CHECK(two.get_dimension() == 1);
+    CHECK(three.get_dimension() == 3)
+    CHECK(four.get_dimension() == 6);
+    CHECK(five.get_dimension() == 10);
+    CHECK(six.get_dimension() == 15);
+    CHECK(seven.get_dimension() == 21);
+    CHECK(eight.get_dimension() == 28);
+}
+
+TEST_CASE("se4", "[domain]")
+{
+    /*!
+    * Tests the se algebra with se(4).
+    */
+
+    lielab::domain::se x = lielab::domain::se::basis(0, 4);
+    lielab::domain::se y = lielab::domain::se::basis(1, 4);
+    lielab::domain::se z = lielab::domain::se::basis(2, 4);
+    lielab::domain::se u = lielab::domain::se::basis(3, 4);
+    lielab::domain::se v = lielab::domain::se::basis(4, 4);
+    lielab::domain::se w = lielab::domain::se::basis(5, 4);
+    lielab::domain::se zero = x*0;
+
+    assert_domain(commutator(x, y), zero);
+    assert_domain(commutator(y, z), zero);
+    assert_domain(commutator(z, x), zero);
+    assert_domain(commutator(y, x), zero);
+    assert_domain(commutator(z, y), zero);
+    assert_domain(commutator(x, z), zero);
+    assert_domain(commutator(x, v), z);
+    assert_domain(commutator(y, w), x);
+    assert_domain(commutator(z, u), y);
+    assert_domain(commutator(y, u), -z);
+    assert_domain(commutator(z, v), -x);
+    assert_domain(commutator(x, w), -y);
+    assert_domain(commutator(u, v), w);
+    assert_domain(commutator(v, w), u);
+    assert_domain(commutator(w, u), v);
+    assert_domain(commutator(v, u), -w);
+    assert_domain(commutator(w, v), -u);
+    assert_domain(commutator(u, w), -v);
+}
+
 TEST_CASE("so algebra", "[domain]")
 {
     /*!

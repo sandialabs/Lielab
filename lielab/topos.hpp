@@ -41,10 +41,20 @@ namespace lielab
             for (int ii = 0; ii < a.space.size(); ii++)
             {
                 const size_t ind = a.space[ii].index();
-                if (ind == lielab::domain::halie::INDEX_rn)
+                if (ind == lielab::domain::halie::INDEX_gl)
+                {
+                    out.space.push_back(lielab::functions::dcayley1inv(std::get<lielab::domain::gl>(a.space[ii]),
+                                                                       std::get<lielab::domain::gl>(b.space[ii])));
+                }
+                else if (ind == lielab::domain::halie::INDEX_rn)
                 {
                     out.space.push_back(lielab::functions::dcayley1inv(std::get<lielab::domain::rn>(a.space[ii]),
                                                                        std::get<lielab::domain::rn>(b.space[ii])));
+                }
+                else if (ind == lielab::domain::halie::INDEX_se)
+                {
+                    out.space.push_back(lielab::functions::dcayley1inv(std::get<lielab::domain::se>(a.space[ii]),
+                                                                       std::get<lielab::domain::se>(b.space[ii])));
                 }
                 else if (ind == lielab::domain::halie::INDEX_so)
                 {
@@ -86,6 +96,11 @@ namespace lielab
                 {
                     out.space.push_back(lielab::functions::dexpinv(std::get<lielab::domain::rn>(a.space[ii]),
                                                                    std::get<lielab::domain::rn>(b.space[ii]), order));
+                }
+                else if (ind == lielab::domain::halie::INDEX_se)
+                {
+                    out.space.push_back(lielab::functions::dexpinv(std::get<lielab::domain::se>(a.space[ii]),
+                                                                   std::get<lielab::domain::se>(b.space[ii]), order));
                 }
                 else if (ind == lielab::domain::halie::INDEX_so)
                 {

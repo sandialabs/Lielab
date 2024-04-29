@@ -32,12 +32,14 @@ class halie
     public:
     static constexpr size_t INDEX_gl = 0;
     static constexpr size_t INDEX_rn = 1;
-    static constexpr size_t INDEX_so = 2;
-    static constexpr size_t INDEX_sp = 3;
-    static constexpr size_t INDEX_su = 4;
+    static constexpr size_t INDEX_se = 2;
+    static constexpr size_t INDEX_so = 3;
+    static constexpr size_t INDEX_sp = 4;
+    static constexpr size_t INDEX_su = 5;
 
     typedef std::variant<lielab::domain::gl,
                          lielab::domain::rn,
+                         lielab::domain::se,
                          lielab::domain::so,
                          lielab::domain::sp,
                          lielab::domain::su> TYPES;
@@ -92,6 +94,10 @@ class halie
             {
                 dim += std::get<lielab::domain::rn>(space[ii]).get_dimension();
             }
+            else if (ind == INDEX_se)
+            {
+                dim += std::get<lielab::domain::se>(space[ii]).get_dimension();
+            }
             else if (ind == INDEX_so)
             {
                 dim += std::get<lielab::domain::so>(space[ii]).get_dimension();
@@ -124,6 +130,10 @@ class halie
             {
                 out(ii) = static_cast<int>(std::get<lielab::domain::rn>(space[ii]).shape);
             }
+            else if (ind == INDEX_se)
+            {
+                out(ii) = static_cast<int>(std::get<lielab::domain::se>(space[ii]).shape);
+            }
             else if (ind == INDEX_so)
             {
                 out(ii) = static_cast<int>(std::get<lielab::domain::so>(space[ii]).shape);
@@ -155,6 +165,10 @@ class halie
             else if (ind == INDEX_rn)
             {
                 vectors[ii] = std::get<lielab::domain::rn>(this->space[ii]).get_vector();
+            }
+            else if (ind == INDEX_se)
+            {
+                vectors[ii] = std::get<lielab::domain::se>(this->space[ii]).get_vector();
             }
             else if (ind == INDEX_so)
             {
@@ -189,6 +203,12 @@ class halie
             {
                 const size_t dim = std::get<lielab::domain::rn>(this->space[ii]).get_dimension();
                 std::get<lielab::domain::rn>(this->space[ii]).set_vector(vec(Eigen::seqN(jj, dim)));
+                jj += dim;
+            }
+            else if (ind == INDEX_se)
+            {
+                const size_t dim = std::get<lielab::domain::se>(this->space[ii]).get_dimension();
+                std::get<lielab::domain::se>(this->space[ii]).set_vector(vec(Eigen::seqN(jj, dim)));
                 jj += dim;
             }
             else if (ind == INDEX_so)
@@ -229,6 +249,10 @@ class halie
             {
                 out.space.push_back(std::get<lielab::domain::rn>(this->space[ii]) + std::get<lielab::domain::rn>(other.space[ii]));
             }
+            else if (ind == INDEX_se)
+            {
+                out.space.push_back(std::get<lielab::domain::se>(this->space[ii]) + std::get<lielab::domain::se>(other.space[ii]));
+            }
             else if (ind == INDEX_so)
             {
                 out.space.push_back(std::get<lielab::domain::so>(this->space[ii]) + std::get<lielab::domain::so>(other.space[ii]));
@@ -260,6 +284,10 @@ class halie
             else if (ind == INDEX_rn)
             {
                 std::get<lielab::domain::rn>(this->space[ii]) += std::get<lielab::domain::rn>(other.space[ii]);
+            }
+            else if (ind == INDEX_se)
+            {
+                std::get<lielab::domain::se>(this->space[ii]) += std::get<lielab::domain::se>(other.space[ii]);
             }
             else if (ind == INDEX_so)
             {
@@ -293,6 +321,10 @@ class halie
             {
                 out.space.push_back(std::get<lielab::domain::rn>(this->space[ii]) - std::get<lielab::domain::rn>(other.space[ii]));
             }
+            else if (ind == INDEX_se)
+            {
+                out.space.push_back(std::get<lielab::domain::se>(this->space[ii]) - std::get<lielab::domain::se>(other.space[ii]));
+            }
             else if (ind == INDEX_so)
             {
                 out.space.push_back(std::get<lielab::domain::so>(this->space[ii]) - std::get<lielab::domain::so>(other.space[ii]));
@@ -324,6 +356,10 @@ class halie
             else if (ind == INDEX_rn)
             {
                 std::get<lielab::domain::rn>(this->space[ii]) -= std::get<lielab::domain::rn>(other.space[ii]);
+            }
+            else if (ind == INDEX_se)
+            {
+                std::get<lielab::domain::se>(this->space[ii]) -= std::get<lielab::domain::se>(other.space[ii]);
             }
             else if (ind == INDEX_so)
             {
@@ -357,6 +393,10 @@ class halie
             {
                 out.space.push_back(-std::get<lielab::domain::rn>(this->space[ii]));
             }
+            else if (ind == INDEX_se)
+            {
+                out.space.push_back(-std::get<lielab::domain::se>(this->space[ii]));
+            }
             else if (ind == INDEX_so)
             {
                 out.space.push_back(-std::get<lielab::domain::so>(this->space[ii]));
@@ -389,6 +429,10 @@ class halie
             {
                 out.space.push_back(std::get<lielab::domain::rn>(this->space[ii]) * other);
             }
+            else if (ind == INDEX_se)
+            {
+                out.space.push_back(std::get<lielab::domain::se>(this->space[ii]) * other);
+            }
             else if (ind == INDEX_so)
             {
                 out.space.push_back(std::get<lielab::domain::so>(this->space[ii]) * other);
@@ -418,6 +462,10 @@ class halie
             else if (ind == INDEX_rn)
             {
                 std::get<lielab::domain::rn>(this->space[ii]) *= other;
+            }
+            else if (ind == INDEX_se)
+            {
+                std::get<lielab::domain::se>(this->space[ii]) *= other;
             }
             else if (ind == INDEX_so)
             {
@@ -451,6 +499,10 @@ class halie
             {
                 out.space.push_back(std::get<lielab::domain::rn>(this->space[ii]) * std::get<lielab::domain::rn>(other.space[ii]));
             }
+            else if (ind == INDEX_se)
+            {
+                out.space.push_back(std::get<lielab::domain::se>(this->space[ii]) * std::get<lielab::domain::se>(other.space[ii]));
+            }
             else if (ind == INDEX_so)
             {
                 out.space.push_back(std::get<lielab::domain::so>(this->space[ii]) * std::get<lielab::domain::so>(other.space[ii]));
@@ -482,6 +534,10 @@ class halie
             else if (ind == INDEX_rn)
             {
                 std::get<lielab::domain::rn>(this->space[ii]) *= std::get<lielab::domain::rn>(other.space[ii]);
+            }
+            else if (ind == INDEX_se)
+            {
+                std::get<lielab::domain::se>(this->space[ii]) *= std::get<lielab::domain::se>(other.space[ii]);
             }
             else if (ind == INDEX_so)
             {
@@ -515,6 +571,10 @@ class halie
             {
                 out.space.push_back(std::get<lielab::domain::rn>(this->space[ii]) / other);
             }
+            else if (ind == INDEX_se)
+            {
+                out.space.push_back(std::get<lielab::domain::se>(this->space[ii]) / other);
+            }
             else if (ind == INDEX_so)
             {
                 out.space.push_back(std::get<lielab::domain::so>(this->space[ii]) / other);
@@ -544,6 +604,10 @@ class halie
             else if (ind == INDEX_rn)
             {
                 std::get<lielab::domain::rn>(this->space[ii]) /= other;
+            }
+            else if (ind == INDEX_se)
+            {
+                std::get<lielab::domain::se>(this->space[ii]) /= other;
             }
             else if (ind == INDEX_so)
             {
@@ -578,6 +642,10 @@ class halie
             else if (ind == INDEX_rn)
             {
                 out += "rn(" + std::to_string(shapes(ii)) + ")";
+            }
+            else if (ind == INDEX_se)
+            {
+                out += "se(" + std::to_string(shapes(ii)) + ")";
             }
             else if (ind == INDEX_so)
             {

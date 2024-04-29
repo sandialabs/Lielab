@@ -154,6 +154,57 @@ PYBIND11_MODULE(cppLielab, m) {
         {
             return matstr(self._data);
         });
+    
+    /*!
+    * Bindings for lielab::domain::se
+    */
+
+    py::class_<lielab::domain::se>(m_domain, "se")
+        .def_readwrite("_data", &lielab::domain::se::_data)
+        .def_readwrite("shape", &lielab::domain::se::shape)
+        .def_readonly_static("abelian", &lielab::domain::se::abelian)
+        .def(py::init<>())
+        .def(py::init<const size_t>())
+        .def(py::init<const Eigen::MatrixXd &>())
+        .def("basis", &lielab::domain::se::basis)
+        // .def("project", &lielab::domain::se::project)
+        .def("get_dimension", &lielab::domain::se::get_dimension)
+        .def("get_vector", &lielab::domain::se::get_vector)
+        .def("get_ados_representation", &lielab::domain::se::get_ados_representation)
+        .def("set_vector", &lielab::domain::se::set_vector)
+        .def("__call__", [](const lielab::domain::se & self, const size_t index)
+        {
+            return self(index);
+        })
+        .def("__call__", [](const lielab::domain::se & self, const size_t index1, const size_t index2)
+        {
+            return self(index1, index2);
+        })
+        .def(py::self + py::self)
+        .def(py::self += py::self)
+        .def(py::self - py::self)
+        .def(py::self -= py::self)
+        .def(-py::self)
+        .def(py::self * int())
+        .def(py::self * double())
+        .def(py::self * py::self)
+        .def(py::self *= int())
+        .def(py::self *= double())
+        .def(py::self *= py::self)
+        .def(py::self / int())
+        .def(py::self / double())
+        .def(py::self /= int())
+        .def(py::self /= double())
+        .def(int() * py::self)
+        .def(double() * py::self)
+        .def("__repr__", [](const lielab::domain::se & self)
+        {
+            return "<lielab.domain.se>";
+        })
+        .def("__str__", [](const lielab::domain::se & self)
+        {
+            return matstr(self._data);
+        });
 
 
     /*!
@@ -384,6 +435,33 @@ PYBIND11_MODULE(cppLielab, m) {
             return matstr(self._data);
         });
 
+    py::class_<lielab::domain::SE>(m_domain, "SE")
+        .def_readwrite("_data", &lielab::domain::SE::_data)
+        .def_readwrite("shape", &lielab::domain::SE::shape)
+        .def_readonly_static("abelian", &lielab::domain::SE::abelian)
+        .def(py::init<>())
+        .def(py::init<int>())
+        .def(py::init<Eigen::MatrixXd>())
+        // .def("project", &lielab::domain::SE::project)
+        .def("get_dimension", &lielab::domain::SE::get_dimension)
+        .def("get_ados_representation", &lielab::domain::SE::get_ados_representation)
+        .def("inverse", &lielab::domain::SE::inverse)
+        .def("serialize", &lielab::domain::SE::serialize)
+        .def("unserialize", &lielab::domain::SE::unserialize)
+        .def("__call__", [](const lielab::domain::SE & self, const size_t index1, const size_t index2)
+        {
+            return self(index1, index2);
+        })
+        .def(py::self * py::self)
+        .def(py::self *= py::self)
+        .def("__repr__", [](const lielab::domain::SE & self)
+        {
+            return "<lielab.domain.SE>";
+        })
+        .def("__str__", [](const lielab::domain::SE & self)
+        {
+            return matstr(self._data);
+        });
 
     py::class_<lielab::domain::SO>(m_domain, "SO")
         .def_readwrite("_data", &lielab::domain::SO::_data)
@@ -543,8 +621,9 @@ PYBIND11_MODULE(cppLielab, m) {
     */
 
     py::module m_functions = m.def_submodule("functions", "The functions submodule.");
-    // m_functions.def("pair", &lielab::functions::pair<lielab::domain::gl>, "The pair function.");
+    m_functions.def("pair", &lielab::functions::pair<lielab::domain::gl>, "The pair function.");
     m_functions.def("pair", &lielab::functions::pair<lielab::domain::rn>, "The pair function.");
+    m_functions.def("pair", &lielab::functions::pair<lielab::domain::se>, "The pair function.");
     m_functions.def("pair", &lielab::functions::pair<lielab::domain::so>, "The pair function.");
     m_functions.def("pair", &lielab::functions::pair<lielab::domain::sp>, "The pair function.");
     m_functions.def("pair", &lielab::functions::pair<lielab::domain::su>, "The pair function.");
@@ -556,35 +635,43 @@ PYBIND11_MODULE(cppLielab, m) {
     m_functions.def("factorial", &lielab::functions::factorial, "The factorial function");
     m_functions.def("Ad", &lielab::functions::Ad<lielab::domain::gl>, "The Ad function.");
     m_functions.def("Ad", &lielab::functions::Ad<lielab::domain::rn>, "The Ad function.");
+    m_functions.def("Ad", &lielab::functions::Ad<lielab::domain::se>, "The Ad function.");
     m_functions.def("Ad", &lielab::functions::Ad<lielab::domain::so>, "The Ad function.");
     m_functions.def("Ad", &lielab::functions::Ad<lielab::domain::sp>, "The Ad function.");
     m_functions.def("Ad", &lielab::functions::Ad<lielab::domain::su>, "The Ad function.");
     m_functions.def("commutator", &lielab::functions::commutator<lielab::domain::gl>, "The commutator function.");
     m_functions.def("commutator", &lielab::functions::commutator<lielab::domain::rn>, "The commutator function.");
+    m_functions.def("commutator", &lielab::functions::commutator<lielab::domain::se>, "The commutator function.");
     m_functions.def("commutator", &lielab::functions::commutator<lielab::domain::so>, "The commutator function.");
     m_functions.def("commutator", &lielab::functions::commutator<lielab::domain::sp>, "The commutator function.");
     m_functions.def("commutator", &lielab::functions::commutator<lielab::domain::su>, "The commutator function.");
     // m_functions.def("cayley1", &lielab::functions::cayley1<lielab::domain::gl>, "The cayley1 function.");
     m_functions.def("cayley1", &lielab::functions::cayley1<lielab::domain::rn>, "The cayley1 function.");
+    // m_functions.def("cayley1", &lielab::functions::cayley1<lielab::domain::se>, "The cayley1 function.");
     m_functions.def("cayley1", &lielab::functions::cayley1<lielab::domain::so>, "The cayley1 function.");
     m_functions.def("cayley1", &lielab::functions::cayley1<lielab::domain::sp>, "The cayley1 function.");
     m_functions.def("cayley1", &lielab::functions::cayley1<lielab::domain::su>, "The cayley1 function.");
-    // m_functions.def("cayley1", &lielab::functions::cayley2<lielab::domain::gl>, "The cayley2 function.");
+    // m_functions.def("cayley2", &lielab::functions::cayley2<lielab::domain::gl>, "The cayley2 function.");
     m_functions.def("cayley2", &lielab::functions::cayley2<lielab::domain::rn>, "The cayley2 function.");
+    // m_functions.def("cayley2", &lielab::functions::cayley1<lielab::domain::se>, "The cayley2 function.");
     m_functions.def("cayley2", &lielab::functions::cayley2<lielab::domain::so>, "The cayley2 function.");
     m_functions.def("cayley2", &lielab::functions::cayley2<lielab::domain::sp>, "The cayley2 function.");
     // m_functions.def("cayley2", &lielab::functions::cayley2<lielab::domain::su>, "The cayley2 function.");
+    // m_functions.def("Killing", &lielab::functions::Killing<lielab::domain::gl>, "The Killing function.");
     m_functions.def("Killing", &lielab::functions::Killing<lielab::domain::rn>, "The Killing function.");
+    // m_functions.def("Killing", &lielab::functions::Killing<lielab::domain::se>, "The Killing function.");
     m_functions.def("Killing", &lielab::functions::Killing<lielab::domain::so>, "The Killing function.");
     m_functions.def("Killing", &lielab::functions::Killing<lielab::domain::sp>, "The Killing function.");
     // m_functions.def("Killing", &lielab::functions::Killing<lielab::domain::su>, "The Killing function.");
     m_functions.def("Killingform", &lielab::functions::Killingform<lielab::domain::gl>, "The Killingform function.");
+    // m_functions.def("Killingform", &lielab::functions::Killingform<lielab::domain::se>, "The Killingform function.");
     m_functions.def("Killingform", &lielab::functions::Killingform<lielab::domain::rn>, "The Killingform function.");
     m_functions.def("Killingform", &lielab::functions::Killingform<lielab::domain::so>, "The Killingform function.");
     m_functions.def("Killingform", &lielab::functions::Killingform<lielab::domain::sp>, "The Killingform function.");
     // m_functions.def("Killingform", &lielab::functions::Killingform<lielab::domain::su>, "The Killingform function.");
     // m_functions.def("ad", &lielab::functions::ad<lielab::domain::gl>, "The ad function.");
     m_functions.def("ad", &lielab::functions::ad<lielab::domain::rn>, "The ad function.");
+    // m_functions.def("ad", &lielab::functions::ad<lielab::domain::se>, "The ad function.");
     m_functions.def("ad", &lielab::functions::ad<lielab::domain::so>, "The ad function.");
     m_functions.def("ad", &lielab::functions::ad<lielab::domain::sp>, "The ad function.");
     m_functions.def("ad", &lielab::functions::ad<lielab::domain::su>, "The ad function.");
@@ -600,28 +687,32 @@ PYBIND11_MODULE(cppLielab, m) {
     // m_functions.def("coad", &lielab::functions::coad<lielab::domain::su>, "The coad function."); // TODO: su needs basis()
     m_functions.def("exp", &lielab::functions::exp<lielab::domain::gl>, "The exponential function.");
     m_functions.def("exp", &lielab::functions::exp<lielab::domain::rn>, "The exponential function.");
+    m_functions.def("exp", &lielab::functions::exp<lielab::domain::se>, "The exponential function.");
     m_functions.def("exp", &lielab::functions::exp<lielab::domain::so>, "The exponential function.");
     m_functions.def("exp", &lielab::functions::exp<lielab::domain::sp>, "The exponential function.");
     m_functions.def("exp", &lielab::functions::exp<lielab::domain::su>, "The exponential function.");
     m_functions.def("log", &lielab::functions::log<lielab::domain::GL>, "The logarithm function.", py::arg("G"), py::arg("optimize") = false);
     m_functions.def("log", &lielab::functions::log<lielab::domain::RN>, "The logarithm function.", py::arg("G"), py::arg("optimize") = false);
+    m_functions.def("log", &lielab::functions::log<lielab::domain::SE>, "The logarithm function.", py::arg("G"), py::arg("optimize") = false);
     m_functions.def("log", &lielab::functions::log<lielab::domain::SO>, "The logarithm function.", py::arg("G"), py::arg("optimize") = false);
     m_functions.def("log", &lielab::functions::log<lielab::domain::SP>, "The logarithm function.", py::arg("G"), py::arg("optimize") = false);
     m_functions.def("log", &lielab::functions::log<lielab::domain::SU>, "The logarithm function.", py::arg("G"), py::arg("optimize") = false);
     m_functions.def("bernoulli", &lielab::functions::bernoulli, "The bernoulli function.");
-    // m_functions.def("log", &lielab::functions::log<lielab::domain::Quaternion>, "The logarithm function."); // TODO: Correctly implement this
     m_functions.def("dcayley1inv", &lielab::functions::dcayley1inv<lielab::domain::gl>, "The dcayley1inv function.");
     m_functions.def("dcayley1inv", &lielab::functions::dcayley1inv<lielab::domain::rn>, "The dcayley1inv function.");
+    // m_functions.def("dcayley1inv", &lielab::functions::dcayley1inv<lielab::domain::se>, "The dcayley1inv function.");
     m_functions.def("dcayley1inv", &lielab::functions::dcayley1inv<lielab::domain::so>, "The dcayley1inv function.");
     m_functions.def("dcayley1inv", &lielab::functions::dcayley1inv<lielab::domain::sp>, "The dcayley1inv function.");
     m_functions.def("dcayley1inv", &lielab::functions::dcayley1inv<lielab::domain::su>, "The dcayley1inv function.");
     m_functions.def("dexp", &lielab::functions::dexp<lielab::domain::gl>, "The dexp function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
     m_functions.def("dexp", &lielab::functions::dexp<lielab::domain::rn>, "The dexp function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
+    m_functions.def("dexp", &lielab::functions::dexp<lielab::domain::se>, "The dexp function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
     m_functions.def("dexp", &lielab::functions::dexp<lielab::domain::so>, "The dexp function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
     m_functions.def("dexp", &lielab::functions::dexp<lielab::domain::sp>, "The dexp function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
     m_functions.def("dexp", &lielab::functions::dexp<lielab::domain::su>, "The dexp function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
     m_functions.def("dexpinv", &lielab::functions::dexpinv<lielab::domain::gl>, "The dexpinv function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
     m_functions.def("dexpinv", &lielab::functions::dexpinv<lielab::domain::rn>, "The dexpinv function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
+    m_functions.def("dexpinv", &lielab::functions::dexpinv<lielab::domain::se>, "The dexpinv function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
     m_functions.def("dexpinv", &lielab::functions::dexpinv<lielab::domain::so>, "The dexpinv function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
     m_functions.def("dexpinv", &lielab::functions::dexpinv<lielab::domain::sp>, "The dexpinv function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
     m_functions.def("dexpinv", &lielab::functions::dexpinv<lielab::domain::su>, "The dexpinv function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);

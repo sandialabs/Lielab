@@ -33,22 +33,26 @@ class hmlie
 
     static constexpr size_t INDEX_GL = 0;
     static constexpr size_t INDEX_RN = 1;
-    static constexpr size_t INDEX_SO = 2;
-    static constexpr size_t INDEX_SP = 3;
-    static constexpr size_t INDEX_SU = 4;
-    static constexpr size_t INDEX_gl = 5;
-    static constexpr size_t INDEX_rn = 6;
-    static constexpr size_t INDEX_so = 7;
-    static constexpr size_t INDEX_sp = 8;
-    static constexpr size_t INDEX_su = 9;
+    static constexpr size_t INDEX_SE = 2;
+    static constexpr size_t INDEX_SO = 3;
+    static constexpr size_t INDEX_SP = 4;
+    static constexpr size_t INDEX_SU = 5;
+    static constexpr size_t INDEX_gl = 6;
+    static constexpr size_t INDEX_rn = 7;
+    static constexpr size_t INDEX_se = 8;
+    static constexpr size_t INDEX_so = 9;
+    static constexpr size_t INDEX_sp = 10;
+    static constexpr size_t INDEX_su = 11;
 
     typedef std::variant<lielab::domain::GL,
                          lielab::domain::RN,
+                         lielab::domain::SE,
                          lielab::domain::SO,
                          lielab::domain::SP,
                          lielab::domain::SU,
                          lielab::domain::gl,
                          lielab::domain::rn,
+                         lielab::domain::se,
                          lielab::domain::so,
                          lielab::domain::sp,
                          lielab::domain::su> TYPES;
@@ -103,6 +107,10 @@ class hmlie
             {
                 out(ii) = static_cast<int>(std::get<lielab::domain::RN>(space[ii]).shape);
             }
+            else if (ind == INDEX_SE)
+            {
+                out(ii) = static_cast<int>(std::get<lielab::domain::SE>(space[ii]).shape);
+            }
             else if (ind == INDEX_SO)
             {
                 out(ii) = static_cast<int>(std::get<lielab::domain::SO>(space[ii]).shape);
@@ -122,6 +130,10 @@ class hmlie
             else if (ind == INDEX_rn)
             {
                 out(ii) = static_cast<int>(std::get<lielab::domain::rn>(space[ii]).shape);
+            }
+            else if (ind == INDEX_se)
+            {
+                out(ii) = static_cast<int>(std::get<lielab::domain::se>(space[ii]).shape);
             }
             else if (ind == INDEX_so)
             {
@@ -163,6 +175,10 @@ class hmlie
             {
                 serials.push_back(std::get<lielab::domain::RN>(space[ii]).serialize());
             }
+            else if (ind == INDEX_SE)
+            {
+                serials.push_back(std::get<lielab::domain::SE>(space[ii]).serialize());
+            }
             else if (ind == INDEX_SO)
             {
                 serials.push_back(std::get<lielab::domain::SO>(space[ii]).serialize());
@@ -182,6 +198,10 @@ class hmlie
             else if (ind == INDEX_rn)
             {
                 serials.push_back(std::get<lielab::domain::rn>(space[ii]).get_vector());
+            }
+            else if (ind == INDEX_se)
+            {
+                serials.push_back(std::get<lielab::domain::se>(space[ii]).get_vector());
             }
             else if (ind == INDEX_so)
             {
@@ -221,6 +241,11 @@ class hmlie
                 sz = std::get<lielab::domain::RN>(M).get_size();
                 std::get<lielab::domain::RN>(M).unserialize(vec(Eigen::seqN(jj, sz)));
             }
+            else if (ind == INDEX_SE)
+            {
+                sz = std::get<lielab::domain::SE>(M).get_size();
+                std::get<lielab::domain::SE>(M).unserialize(vec(Eigen::seqN(jj, sz)));
+            }
             else if (ind == INDEX_SO)
             {
                 sz = std::get<lielab::domain::SO>(M).get_size();
@@ -245,6 +270,11 @@ class hmlie
             {
                 sz = std::get<lielab::domain::rn>(M).get_dimension();
                 std::get<lielab::domain::rn>(M).set_vector(vec(Eigen::seqN(jj, sz)));
+            }
+            else if (ind == INDEX_se)
+            {
+                sz = std::get<lielab::domain::se>(M).get_dimension();
+                std::get<lielab::domain::se>(M).set_vector(vec(Eigen::seqN(jj, sz)));
             }
             else if (ind == INDEX_so)
             {
@@ -279,6 +309,10 @@ class hmlie
             {
                 out.space.push_back(std::get<lielab::domain::RN>(this->space[ii]) * std::get<lielab::domain::RN>(other.space[ii]));
             }
+            else if (ind == INDEX_SE)
+            {
+                out.space.push_back(std::get<lielab::domain::SE>(this->space[ii]) * std::get<lielab::domain::SE>(other.space[ii]));
+            }
             else if (ind == INDEX_SO)
             {
                 out.space.push_back(std::get<lielab::domain::SO>(this->space[ii]) * std::get<lielab::domain::SO>(other.space[ii]));
@@ -298,6 +332,10 @@ class hmlie
             else if (ind == INDEX_rn)
             {
                 out.space.push_back(std::get<lielab::domain::rn>(this->space[ii]) + std::get<lielab::domain::rn>(other.space[ii]));
+            }
+            else if (ind == INDEX_se)
+            {
+                out.space.push_back(std::get<lielab::domain::se>(this->space[ii]) + std::get<lielab::domain::se>(other.space[ii]));
             }
             else if (ind == INDEX_so)
             {
@@ -331,6 +369,10 @@ class hmlie
             {
                 std::get<lielab::domain::RN>(this->space[ii]) *= std::get<lielab::domain::RN>(other.space[ii]);
             }
+            else if (ind == INDEX_SE)
+            {
+                std::get<lielab::domain::SE>(this->space[ii]) *= std::get<lielab::domain::SE>(other.space[ii]);
+            }
             else if (ind == INDEX_SO)
             {
                 std::get<lielab::domain::SO>(this->space[ii]) *= std::get<lielab::domain::SO>(other.space[ii]);
@@ -350,6 +392,10 @@ class hmlie
             else if (ind == INDEX_rn)
             {
                 std::get<lielab::domain::rn>(this->space[ii]) += std::get<lielab::domain::rn>(other.space[ii]);
+            }
+            else if (ind == INDEX_se)
+            {
+                std::get<lielab::domain::se>(this->space[ii]) += std::get<lielab::domain::se>(other.space[ii]);
             }
             else if (ind == INDEX_so)
             {
@@ -383,6 +429,10 @@ class hmlie
             {
                 out.space.push_back(std::get<lielab::domain::RN>(this->space[ii]).inverse());
             }
+            else if (ind == INDEX_SE)
+            {
+                out.space.push_back(std::get<lielab::domain::SE>(this->space[ii]).inverse());
+            }
             else if (ind == INDEX_SO)
             {
                 out.space.push_back(std::get<lielab::domain::SO>(this->space[ii]).inverse());
@@ -402,6 +452,10 @@ class hmlie
             else if (ind == INDEX_rn)
             {
                 out.space.push_back(-std::get<lielab::domain::rn>(this->space[ii]));
+            }
+            else if (ind == INDEX_se)
+            {
+                out.space.push_back(-std::get<lielab::domain::se>(this->space[ii]));
             }
             else if (ind == INDEX_so)
             {
@@ -437,6 +491,10 @@ class hmlie
             {
                 out += "RN(" + std::to_string(shapes(ii)) + ")";
             }
+            else if (ind == INDEX_SE)
+            {
+                out += "SE(" + std::to_string(shapes(ii)) + ")";
+            }
             else if (ind == INDEX_SO)
             {
                 out += "SO(" + std::to_string(shapes(ii)) + ")";
@@ -456,6 +514,10 @@ class hmlie
             else if (ind == INDEX_rn)
             {
                 out += "rn(" + std::to_string(shapes(ii)) + ")";
+            }
+            else if (ind == INDEX_se)
+            {
+                out += "se(" + std::to_string(shapes(ii)) + ")";
             }
             else if (ind == INDEX_so)
             {

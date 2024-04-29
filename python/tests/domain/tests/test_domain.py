@@ -126,6 +126,169 @@ def test_rn():
     assert_domain(commutator(x,y), commutator(y,x)) # Abelian check
 
 
+def test_se():
+    """
+    Checks the basic se class
+    """
+
+    from lielab.domain import se
+    from lielab.functions import commutator
+
+    two = se(2)
+    three = se(3)
+    four = se(4)
+    five = se(5)
+    six = se(6)
+    seven = se(7)
+
+    # Dimensions
+    assert two.get_dimension() == 1
+    assert three.get_dimension() == 3
+    assert four.get_dimension() == 6
+    assert five.get_dimension() == 10
+    assert six.get_dimension() == 15
+    assert seven.get_dimension() == 21
+
+    x = se.basis(0, 4)
+    y = se.basis(1, 4)
+    z = se.basis(2, 4)
+    u = se.basis(3, 4)
+    v = se.basis(4, 4)
+    w = se.basis(5, 4)
+    zero = x*0
+
+    # Unary subtraction
+    -x
+
+    # Vector Addition
+    x + y
+    assert_domain(x + y, y + x)
+
+    # Vector Subtraction
+    x - y
+    assert_domain(x - y, -(y - x))
+
+    # Scalar Multiplication
+    an_int*x
+    a_double*x
+    x*an_int
+    x*a_double
+    assert_domain(an_int*x, x*an_int)
+    assert_domain(a_double*x, x*a_double)
+
+    # Scalar division
+    x/an_int
+    x/a_double
+
+    # Vector multiplication
+    x * y
+    assert_domain(commutator(u,v), -commutator(v,u))
+
+
+def test_se4():
+    """
+    Tests the se algebra with se(4)
+    """
+
+    from lielab.domain import se
+    from lielab.functions import commutator
+
+    x = se.basis(0, 4)
+    y = se.basis(1, 4)
+    z = se.basis(2, 4)
+    u = se.basis(3, 4)
+    v = se.basis(4, 4)
+    w = se.basis(5, 4)
+    zero = se(4)
+
+    # Vector addition
+    x + y
+    x + z
+    x + u
+    x + v
+    x + w
+    y + z
+    y + u
+    y + v
+    y + w
+    z + u
+    z + v
+    z + w
+    u + v
+    u + w
+    v + w
+
+    # Vector subtraction
+    x - y
+    x - z
+    x - u
+    x - v
+    x - w
+    y - z
+
+    # Right distributive
+    assert_domain((x + y) * z, x * z + y * z)
+
+    # Left distributive
+    assert_domain(x * (y + z), x * y + x * z)
+
+    # Scalar multiplication
+    assert_domain((a_double * x) * (a_double * y), (a_double * a_double) * (x * y))
+
+    # Bilinearity
+    assert_domain(commutator(a_double * x + a_double * y, z), a_double * commutator(x, z) + a_double * commutator(y, z))
+
+    # Alternating
+    assert_domain(commutator(x, x), zero)
+    assert_domain(commutator(y, y), zero)
+    assert_domain(commutator(z, z), zero)
+    assert_domain(commutator(u, u), zero)
+    assert_domain(commutator(v, v), zero)
+    assert_domain(commutator(w, w), zero)
+
+    # Jacobi identity
+    assert_domain(commutator(x, commutator(y, z)) + commutator(z, commutator(x, y)) + commutator(y, commutator(z, x)), zero)
+
+    # Anticommutivity
+    assert_domain(commutator(x, y), -commutator(y, x))
+    assert_domain(commutator(x, z), -commutator(z, x))
+    assert_domain(commutator(y, z), -commutator(z, y))
+    assert_domain(commutator(u, v), -commutator(v, u))
+    assert_domain(commutator(u, w), -commutator(w, u))
+    assert_domain(commutator(v, w), -commutator(w, v))
+
+    # se3 specific identities
+    assert_domain(commutator(x, y), zero)
+    assert_domain(commutator(y, z), zero)
+    assert_domain(commutator(z, x), zero)
+    assert_domain(commutator(y, x), zero)
+    assert_domain(commutator(z, y), zero)
+    assert_domain(commutator(x, z), zero)
+    assert_domain(commutator(x, v), z)
+    assert_domain(commutator(y, w), x)
+    assert_domain(commutator(z, u), y)
+    assert_domain(commutator(y, u), -z)
+    assert_domain(commutator(z, v), -x)
+    assert_domain(commutator(x, w), -y)
+    assert_domain(commutator(u, v), w)
+    assert_domain(commutator(v, w), u)
+    assert_domain(commutator(w, u), v)
+    assert_domain(commutator(v, u), -w)
+    assert_domain(commutator(w, v), -u)
+    assert_domain(commutator(u, w), -v)
+
+    # se3 specific vectors
+    assert abs(u(0,0) - 0.0) < TOL_FINE
+    assert abs(u(0,1) - 0.0) < TOL_FINE
+    assert abs(u(0,2) - 0.0) < TOL_FINE
+    assert abs(u(1,0) - 0.0) < TOL_FINE
+    assert abs(u(1,1) - 0.0) < TOL_FINE
+    assert abs(u(1,2) + 1.0) < TOL_FINE
+    assert abs(u(2,0) - 0.0) < TOL_FINE
+    assert abs(u(2,1) - 1.0) < TOL_FINE
+    assert abs(u(2,2) - 0.0) < TOL_FINE
+
+
 def test_so():
     """
     Checks the basic so class
