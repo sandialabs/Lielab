@@ -1134,8 +1134,8 @@ def test_eanglebody123_to_dcm():
 
     # Rotate by a random angle
     dcm = eanglebody123_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_ados_representation()) - 1) < TOL_FINE
-    assert abs((dcm.get_ados_representation() @ dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE
+    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
+    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
 
 
 def test_eanglebody231_to_dcm():
@@ -1163,8 +1163,8 @@ def test_eanglebody231_to_dcm():
 
     # Rotate by a random angle
     dcm = eanglebody231_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_ados_representation()) - 1) < TOL_FINE
-    assert abs((dcm.get_ados_representation() @ dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE
+    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
+    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
 
 
 def test_eanglebody312_to_dcm():
@@ -1192,8 +1192,8 @@ def test_eanglebody312_to_dcm():
 
     # Rotate by a random angle
     dcm = eanglebody312_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_ados_representation()) - 1) < TOL_FINE
-    assert abs((dcm.get_ados_representation() @ dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE
+    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
+    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
 
 
 def test_eanglebody132_to_dcm():
@@ -1221,8 +1221,8 @@ def test_eanglebody132_to_dcm():
 
     # Rotate by a random angle
     dcm = eanglebody132_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_ados_representation()) - 1) < TOL_FINE
-    assert abs((dcm.get_ados_representation() @ dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE
+    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
+    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
 
 
 def test_eanglebody213_to_dcm():
@@ -1250,8 +1250,8 @@ def test_eanglebody213_to_dcm():
 
     # Rotate by a random angle
     dcm = eanglebody213_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_ados_representation()) - 1) < TOL_FINE
-    assert abs((dcm.get_ados_representation() @ dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE
+    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
+    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
 
 
 def test_eanglebody321_to_dcm():
@@ -1279,8 +1279,8 @@ def test_eanglebody321_to_dcm():
 
     # Rotate by a random angle
     dcm = eanglebody321_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_ados_representation()) - 1) < TOL_FINE
-    assert abs((dcm.get_ados_representation() @ dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE
+    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
+    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
 
 
 def test_eanglebody121_to_dcm():
@@ -1312,8 +1312,8 @@ def test_eanglebody121_to_dcm():
 
     # Rotate by a random angle
     dcm = eanglebody121_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_ados_representation()) - 1) < TOL_FINE
-    assert abs((dcm.get_ados_representation() @ dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE
+    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
+    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
 
 
 def test_eanglebody131_to_dcm():
@@ -1345,8 +1345,8 @@ def test_eanglebody131_to_dcm():
 
     # Rotate by a random angle
     dcm = eanglebody131_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_ados_representation()) - 1) < TOL_FINE
-    assert abs((dcm.get_ados_representation() @ dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE
+    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
+    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
 
 
 def test_eanglebody212_to_dcm():
@@ -1378,8 +1378,8 @@ def test_eanglebody212_to_dcm():
 
     # Rotate by a random angle
     dcm = eanglebody212_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_ados_representation()) - 1) < TOL_FINE
-    assert abs((dcm.get_ados_representation() @ dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE
+    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
+    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
 
 
 def test_eanglebody232_to_dcm():
@@ -1411,8 +1411,8 @@ def test_eanglebody232_to_dcm():
 
     # Rotate by a random angle
     dcm = eanglebody232_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_ados_representation()) - 1) < TOL_FINE
-    assert abs((dcm.get_ados_representation() @ dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE
+    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
+    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
 
 
 def test_eanglebody313_to_dcm():
@@ -1444,8 +1444,8 @@ def test_eanglebody313_to_dcm():
 
     # Rotate by a random angle
     dcm = eanglebody313_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_ados_representation()) - 1) < TOL_FINE
-    assert abs((dcm.get_ados_representation() @ dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE
+    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
+    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
 
 
 def test_eanglebody323_to_dcm():
@@ -1477,8 +1477,8 @@ def test_eanglebody323_to_dcm():
 
     # Rotate by a random angle
     dcm = eanglebody323_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_ados_representation()) - 1) < TOL_FINE
-    assert abs((dcm.get_ados_representation() @ dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE
+    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
+    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
 
 
 def test_eanglespace123_to_dcm():
@@ -1506,8 +1506,8 @@ def test_eanglespace123_to_dcm():
 
     # Rotate by a random angle
     dcm = eanglespace123_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_ados_representation()) - 1) < TOL_FINE
-    assert abs((dcm.get_ados_representation() @ dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE
+    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
+    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
 
 
 def test_eanglespace231_to_dcm():
@@ -1535,8 +1535,8 @@ def test_eanglespace231_to_dcm():
 
     # Rotate by a random angle
     dcm = eanglespace231_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_ados_representation()) - 1) < TOL_FINE
-    assert abs((dcm.get_ados_representation() @ dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE
+    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
+    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
 
 
 def test_eanglespace312_to_dcm():
@@ -1564,8 +1564,8 @@ def test_eanglespace312_to_dcm():
 
     # Rotate by a random angle
     dcm = eanglespace312_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_ados_representation()) - 1) < TOL_FINE
-    assert abs((dcm.get_ados_representation() @ dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE
+    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
+    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
 
 
 def test_eanglespace132_to_dcm():
@@ -1593,8 +1593,8 @@ def test_eanglespace132_to_dcm():
 
     # Rotate by a random angle
     dcm = eanglespace132_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_ados_representation()) - 1) < TOL_FINE
-    assert abs((dcm.get_ados_representation() @ dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE
+    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
+    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
 
 
 def test_eanglespace213_to_dcm():
@@ -1622,8 +1622,8 @@ def test_eanglespace213_to_dcm():
 
     # Rotate by a random angle
     dcm = eanglespace213_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_ados_representation()) - 1) < TOL_FINE
-    assert abs((dcm.get_ados_representation() @ dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE
+    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
+    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
 
 
 def test_eanglespace321_to_dcm():
@@ -1651,8 +1651,8 @@ def test_eanglespace321_to_dcm():
 
     # Rotate by a random angle
     dcm = eanglespace321_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_ados_representation()) - 1) < TOL_FINE
-    assert abs((dcm.get_ados_representation() @ dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE
+    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
+    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
 
 
 def test_eanglespace121_to_dcm():
@@ -1684,8 +1684,8 @@ def test_eanglespace121_to_dcm():
 
     # Rotate by a random angle
     dcm = eanglespace121_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_ados_representation()) - 1) < TOL_FINE
-    assert abs((dcm.get_ados_representation() @ dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE
+    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
+    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
 
 
 def test_eanglespace131_to_dcm():
@@ -1717,8 +1717,8 @@ def test_eanglespace131_to_dcm():
 
     # Rotate by a random angle
     dcm = eanglespace131_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_ados_representation()) - 1) < TOL_FINE
-    assert abs((dcm.get_ados_representation() @ dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE
+    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
+    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
 
 
 def test_eanglespace212_to_dcm():
@@ -1750,8 +1750,8 @@ def test_eanglespace212_to_dcm():
 
     # Rotate by a random angle
     dcm = eanglespace212_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_ados_representation()) - 1) < TOL_FINE
-    assert abs((dcm.get_ados_representation() @ dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE
+    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
+    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
 
 
 def test_eanglespace232_to_dcm():
@@ -1783,8 +1783,8 @@ def test_eanglespace232_to_dcm():
 
     # Rotate by a random angle
     dcm = eanglespace232_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_ados_representation()) - 1) < TOL_FINE
-    assert abs((dcm.get_ados_representation() @ dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE
+    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
+    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
 
 
 def test_eanglespace313_to_dcm():
@@ -1816,8 +1816,8 @@ def test_eanglespace313_to_dcm():
 
     # Rotate by a random angle
     dcm = eanglespace313_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_ados_representation()) - 1) < TOL_FINE
-    assert abs((dcm.get_ados_representation() @ dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE
+    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
+    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
 
 
 def test_eanglespace323_to_dcm():
@@ -1849,8 +1849,8 @@ def test_eanglespace323_to_dcm():
 
     # Rotate by a random angle
     dcm = eanglespace323_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_ados_representation()) - 1) < TOL_FINE
-    assert abs((dcm.get_ados_representation() @ dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE
+    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
+    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
 
 
 def test_quaternion_to_dcm():

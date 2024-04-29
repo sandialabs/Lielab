@@ -194,11 +194,20 @@ namespace Lielab
                 return _data;
             }
 
-            Eigen::MatrixXd get_ados_representation() const
+            Eigen::MatrixXd get_matrix() const
             {
                 /*! \f{equation*}{ () \rightarrow \mathbb{R}^{n \times n} \f}
                 * 
                 * Returns a matrix representation.
+                * 
+                * Formerly called "get_ados_representation()".
+                * 
+                * Ado, Igor D. "Note on the representation of finite continuous groups by
+                *               means of linear substitutions, Izv. Fiz." Mat. Obsch.(Kazan)
+                *               7.1 (1935): 935.
+                * 
+                * Ado, Igor D. "The representation of Lie algebras by matrices." Uspekhi
+                *               Matematicheskikh Nauk 2.6 (1947): 159-173.
                 */
 
                 Eigen::MatrixXd out = Eigen::MatrixXd::Zero(shape, shape);
@@ -250,19 +259,8 @@ namespace Lielab
                 * Gets a value in the square matrix representation.
                 */
                 
-                Eigen::MatrixXd mat = get_ados_representation();
+                Eigen::MatrixXd mat = this->get_matrix();
                 return mat(index1, index2);
-            }
-
-            rn operator+(const rn & other) const
-            {
-                /*! \f{equation*}{ (\mathfrak{rn}, \mathfrak{rn}) \rightarrow \mathfrak{rn} \f}
-                *
-                * Addition of two vectors in the algebra.
-                */
-                
-                assert(this->shape == other.shape);
-                return this->_data + other._data;
             }
 
             rn & operator+=(const rn & other)
@@ -275,17 +273,6 @@ namespace Lielab
                 assert(this->shape == other.shape);
                 this->_data += other._data;
                 return *this;
-            }
-
-            rn operator-(const rn & other) const
-            {
-                /*! \f{equation*}{ (\mathfrak{rn}, \mathfrak{rn}) \rightarrow \mathfrak{rn} \f}
-                *
-                * Subtraction of two vectors in the algebra.
-                */
-
-                assert(this->shape == other.shape);
-                return this->_data - other._data;
             }
 
             rn & operator-=(const rn & other)
@@ -329,17 +316,6 @@ namespace Lielab
 
                 this->_data *= other;
                 return *this;
-            }
-
-            rn operator*(const rn & other) const
-            {
-                /*! \f{equation*}{ (\mathfrak{rn}, \mathfrak{rn}) \rightarrow \mathbb{R}^{n \times n} \notin \mathfrak{rn} \f}
-                *
-                * Vector product.
-                */
-
-                assert(this->shape == other.shape);
-                return Eigen::VectorXd::Zero(shape-1);
             }
 
             rn & operator*=(const rn & other)

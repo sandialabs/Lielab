@@ -24,7 +24,7 @@ namespace Lielab
             * TODO: Check that this works with SU. Math says no but simulations say otherwise.
             */
 
-            const Eigen::MatrixXd m = g.get_ados_representation();
+            const Eigen::MatrixXd m = g.get_matrix();
             const Eigen::MatrixXd Id = Eigen::MatrixXd::Identity(g.shape, g.shape);
 
             return (Id + m/2.0)*(Id - m/2.0).inverse();
@@ -39,7 +39,7 @@ namespace Lielab
             * Needed since cn is complex
             */
 
-            const Eigen::MatrixXcd m = a.get_ados_representation();
+            const Eigen::MatrixXcd m = a.get_matrix();
             const Eigen::MatrixXcd Id = Eigen::MatrixXcd::Identity(a.shape, a.shape);
 
             return (Id + m/2.0)*(Id - m/2.0).inverse();
@@ -54,7 +54,7 @@ namespace Lielab
             * Needed since glc is complex
             */
 
-            const Eigen::MatrixXcd m = a.get_ados_representation();
+            const Eigen::MatrixXcd m = a.get_matrix();
             const Eigen::MatrixXcd Id = Eigen::MatrixXcd::Identity(a.shape, a.shape);
 
             return (Id + m/2.0)*(Id - m/2.0).inverse();
@@ -69,7 +69,7 @@ namespace Lielab
             * Needed since su is complex
             */
 
-            const Eigen::MatrixXcd m = a.get_ados_representation();
+            const Eigen::MatrixXcd m = a.get_matrix();
             const Eigen::MatrixXcd Id = Eigen::MatrixXcd::Identity(a.shape, a.shape);
 
             return (Id + m/2.0)*(Id - m/2.0).inverse();

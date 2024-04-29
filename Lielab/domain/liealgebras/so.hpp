@@ -182,11 +182,20 @@ namespace Lielab
                 return out;
             }
 
-            Eigen::MatrixXd get_ados_representation() const
+            Eigen::MatrixXd get_matrix() const
             {
                 /*! \f{equation*}{ () \rightarrow \mathbb{R}^{n \times n} \f}
                 * 
                 * Returns a matrix representation.
+                * 
+                * Formerly called "get_ados_representation()".
+                * 
+                * Ado, Igor D. "Note on the representation of finite continuous groups by
+                *               means of linear substitutions, Izv. Fiz." Mat. Obsch.(Kazan)
+                *               7.1 (1935): 935.
+                * 
+                * Ado, Igor D. "The representation of Lie algebras by matrices." Uspekhi
+                *               Matematicheskikh Nauk 2.6 (1947): 159-173.
                 */
                
                 return _data;
@@ -246,18 +255,6 @@ namespace Lielab
                 return _data(index1, index2);
             }
 
-            so operator+(const so & other) const
-            {
-                /*! \f{equation*}{ (\mathfrak{so}, \mathfrak{so}) \rightarrow \mathfrak{so} \f}
-                *
-                * Addition of two vectors in the algebra.
-                */
-                
-                assert(this->shape == other.shape);
-                so out = this->_data + other._data;
-                return out;
-            }
-
             so & operator+=(const so & other)
             {
                 /*! \f{equation*}{ (\mathfrak{so}, \mathfrak{so}) \rightarrow \mathfrak{so} \f}
@@ -268,18 +265,6 @@ namespace Lielab
                 assert(this->shape == other.shape);
                 this->_data += other._data;
                 return *this;
-            }
-
-            so operator-(const so & other) const
-            {
-                /*! \f{equation*}{ (\mathfrak{so}, \mathfrak{so}) \rightarrow \mathfrak{so} \f}
-                *
-                * Subtraction of two vectors in the algebra.
-                */
-
-                assert(this->shape == other.shape);
-                Eigen::MatrixXd out = this->_data - other._data;
-                return out;
             }
 
             so & operator-=(const so & other)
@@ -324,18 +309,6 @@ namespace Lielab
 
                 this->_data *= other;
                 return *this;
-            }
-
-            so operator*(const so & other) const
-            {
-                /*! \f{equation*}{ (\mathfrak{so}, \mathfrak{so}) \rightarrow \mathbb{R}^{n \times n} \notin \mathfrak{so} \f}
-                *
-                * Vector product.
-                */
-
-                assert(this->shape == other.shape);
-                so out = this->_data * other._data;
-                return out;
             }
 
             so & operator*=(const so & other)

@@ -12,7 +12,7 @@ def assert_matrix(mat1: np.ndarray, mat2: np.ndarray) -> None:
     if isinstance(mat1, np.ndarray):
         pass
     else:
-        mat1 = mat1.get_ados_representation()
+        mat1 = mat1.get_matrix()
 
     r1 = mat1.shape[0]
     if len(mat1.shape) == 1:
@@ -23,7 +23,7 @@ def assert_matrix(mat1: np.ndarray, mat2: np.ndarray) -> None:
     if isinstance(mat2, np.ndarray):
         pass
     else:
-        mat2 = mat2.get_ados_representation()
+        mat2 = mat2.get_matrix()
     
     r2 = mat2.shape[0]
     if len(mat2.shape) == 1:
@@ -43,4 +43,4 @@ def assert_matrix(mat1: np.ndarray, mat2: np.ndarray) -> None:
             assert abs(mat1[ii] - mat2[ii]) < TOL_FINE
 
 def assert_domain(d1, d2):
-    assert_matrix(d1.get_ados_representation(), d2.get_ados_representation())
+    assert_matrix(d1.get_matrix(), d2.get_matrix())

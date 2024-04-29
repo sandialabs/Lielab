@@ -162,7 +162,7 @@ namespace Lielab
                 size_t zz = this->shape;
                 size_t yy = this->shape - 1;
                 k = out.size() - 1;
-                Eigen::MatrixXcd temp = this->get_ados_representation();
+                Eigen::MatrixXcd temp = this->get_matrix();
                 for (size_t yy = this->shape - 1; yy >= 1; yy--)
                 {
                     const double multiplier = std::sqrt(2.0/((zz-1)*(zz)));
@@ -180,11 +180,20 @@ namespace Lielab
                 return out;
             }
 
-            Eigen::MatrixXcd get_ados_representation() const
+            Eigen::MatrixXcd get_matrix() const
             {
                 /*! \f{equation*}{ () \rightarrow \mathbb{R}^{n \times n} \f}
                 * 
                 * Returns a matrix representation.
+                * 
+                * Formerly called "get_ados_representation()".
+                * 
+                * Ado, Igor D. "Note on the representation of finite continuous groups by
+                *               means of linear substitutions, Izv. Fiz." Mat. Obsch.(Kazan)
+                *               7.1 (1935): 935.
+                * 
+                * Ado, Igor D. "The representation of Lie algebras by matrices." Uspekhi
+                *               Matematicheskikh Nauk 2.6 (1947): 159-173.
                 */
 
                 return _data;
@@ -287,18 +296,6 @@ namespace Lielab
                 return _data(index1, index2);
             }
 
-            su operator+(const su & other) const
-            {
-                /*! \f{equation*}{ (\mathfrak{su}, \mathfrak{su}) \rightarrow \mathfrak{su} \f}
-                *
-                * Addition of two vectors in the algebra.
-                */
-
-                assert(this->shape == other.shape);
-                Eigen::MatrixXcd out = _data + other._data;
-                return out;
-            }
-
             su & operator+=(const su & other)
             {
                 /*! \f{equation*}{ (\mathfrak{su}, \mathfrak{su}) \rightarrow \mathfrak{su} \f}
@@ -309,18 +306,6 @@ namespace Lielab
                 assert(this->shape == other.shape);
                 this->_data += other._data;
                 return *this;
-            }
-
-            su operator-(const su & other) const
-            {
-                /*! \f{equation*}{ (\mathfrak{su}, \mathfrak{su}) \rightarrow \mathfrak{su} \f}
-                *
-                * Subtraction of two vectors in the algebra.
-                */
-
-                assert(this->shape == other.shape);
-                Eigen::MatrixXcd out = _data - other._data;
-                return out;
             }
 
             su & operator-=(const su & other)
@@ -366,18 +351,6 @@ namespace Lielab
 
                 this->_data *= other;
                 return *this;
-            }
-
-            su operator*(const su & other) const
-            {
-                /*! \f{equation*}{ (\mathfrak{su}, \mathfrak{su}) \rightarrow \mathbb{C}^{n \times n} \notin \mathfrak{su} \f}
-                *
-                * Vector product.
-                */
-
-                assert(this->shape == other.shape);
-                Eigen::MatrixXcd out = _data * other._data;
-                return out;
             }
 
             su & operator*=(const su & other)

@@ -1,5 +1,5 @@
 #include <cmath>
-#include "lielab.hpp"
+#include <lielab.hpp>
 
 constexpr double PI = Lielab::constants::PI<double>;
 const Lielab::domain::SO DCMId(3);
@@ -1108,8 +1108,8 @@ TEST_CASE("eanglebody123_to_dcm", "[transform]")
 
     // Rotate by a random angle
     dcm = Lielab::transform::eanglebody123_to_dcm<double>(some_angle, some_angle, some_angle);
-    CHECK(std::abs(dcm.get_ados_representation().determinant() - 1) < TOL_FINE);
-    CHECK(std::abs((dcm.get_ados_representation()*dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE);
+    CHECK(std::abs(dcm.get_matrix().determinant() - 1) < TOL_FINE);
+    CHECK(std::abs((dcm.get_matrix()*dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE);
 }
 
 TEST_CASE("eanglebody231_to_dcm", "[transform]")
@@ -1136,8 +1136,8 @@ TEST_CASE("eanglebody231_to_dcm", "[transform]")
 
     // Rotate by a random angle
     dcm = Lielab::transform::eanglebody231_to_dcm<double>(some_angle, some_angle, some_angle);
-    CHECK(std::abs(dcm.get_ados_representation().determinant() - 1) < TOL_FINE);
-    CHECK(std::abs((dcm.get_ados_representation()*dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE);
+    CHECK(std::abs(dcm.get_matrix().determinant() - 1) < TOL_FINE);
+    CHECK(std::abs((dcm.get_matrix()*dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE);
 }
 
 TEST_CASE("eanglebody312_to_dcm", "[transform]")
@@ -1164,8 +1164,8 @@ TEST_CASE("eanglebody312_to_dcm", "[transform]")
 
     // Rotate by a random angle
     dcm = Lielab::transform::eanglebody312_to_dcm<double>(some_angle, some_angle, some_angle);
-    CHECK(std::abs(dcm.get_ados_representation().determinant() - 1) < TOL_FINE);
-    CHECK(std::abs((dcm.get_ados_representation()*dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE);
+    CHECK(std::abs(dcm.get_matrix().determinant() - 1) < TOL_FINE);
+    CHECK(std::abs((dcm.get_matrix()*dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE);
 }
 
 TEST_CASE("eanglebody132_to_dcm", "[transform]")
@@ -1192,8 +1192,8 @@ TEST_CASE("eanglebody132_to_dcm", "[transform]")
 
     // Rotate by a random angle
     dcm = Lielab::transform::eanglebody132_to_dcm<double>(some_angle, some_angle, some_angle);
-    CHECK(std::abs(dcm.get_ados_representation().determinant() - 1) < TOL_FINE);
-    CHECK(std::abs((dcm.get_ados_representation()*dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE);
+    CHECK(std::abs(dcm.get_matrix().determinant() - 1) < TOL_FINE);
+    CHECK(std::abs((dcm.get_matrix()*dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE);
 }
 
 TEST_CASE("eanglebody213_to_dcm", "[transform]")
@@ -1220,8 +1220,8 @@ TEST_CASE("eanglebody213_to_dcm", "[transform]")
 
     // Rotate by a random angle
     dcm = Lielab::transform::eanglebody213_to_dcm<double>(some_angle, some_angle, some_angle);
-    CHECK(std::abs(dcm.get_ados_representation().determinant() - 1) < TOL_FINE);
-    CHECK(std::abs((dcm.get_ados_representation()*dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE);
+    CHECK(std::abs(dcm.get_matrix().determinant() - 1) < TOL_FINE);
+    CHECK(std::abs((dcm.get_matrix()*dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE);
 }
 
 TEST_CASE("eanglebody321_to_dcm", "[transform]")
@@ -1248,8 +1248,8 @@ TEST_CASE("eanglebody321_to_dcm", "[transform]")
 
     // Rotate by a random angle
     dcm = Lielab::transform::eanglebody321_to_dcm<double>(some_angle, some_angle, some_angle);
-    CHECK(std::abs(dcm.get_ados_representation().determinant() - 1) < TOL_FINE);
-    CHECK(std::abs((dcm.get_ados_representation()*dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE);
+    CHECK(std::abs(dcm.get_matrix().determinant() - 1) < TOL_FINE);
+    CHECK(std::abs((dcm.get_matrix()*dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE);
 }
 
 TEST_CASE("eanglebody121_to_dcm", "[transform]")
@@ -1280,8 +1280,8 @@ TEST_CASE("eanglebody121_to_dcm", "[transform]")
 
     // Rotate by a random angle
     dcm = Lielab::transform::eanglebody121_to_dcm<double>(some_angle, some_angle, some_angle);
-    CHECK(std::abs(dcm.get_ados_representation().determinant() - 1) < TOL_FINE);
-    CHECK(std::abs((dcm.get_ados_representation()*dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE);
+    CHECK(std::abs(dcm.get_matrix().determinant() - 1) < TOL_FINE);
+    CHECK(std::abs((dcm.get_matrix()*dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE);
 }
 
 TEST_CASE("eanglebody131_to_dcm", "[transform]")
@@ -1312,8 +1312,8 @@ TEST_CASE("eanglebody131_to_dcm", "[transform]")
 
     // Rotate by a random angle
     dcm = Lielab::transform::eanglebody131_to_dcm<double>(some_angle, some_angle, some_angle);
-    CHECK(std::abs(dcm.get_ados_representation().determinant() - 1) < TOL_FINE);
-    CHECK(std::abs((dcm.get_ados_representation()*dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE);
+    CHECK(std::abs(dcm.get_matrix().determinant() - 1) < TOL_FINE);
+    CHECK(std::abs((dcm.get_matrix()*dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE);
 }
 
 TEST_CASE("eanglebody212_to_dcm", "[transform]")
@@ -1344,8 +1344,8 @@ TEST_CASE("eanglebody212_to_dcm", "[transform]")
 
     // Rotate by a random angle
     dcm = Lielab::transform::eanglebody212_to_dcm<double>(some_angle, some_angle, some_angle);
-    CHECK(std::abs(dcm.get_ados_representation().determinant() - 1) < TOL_FINE);
-    CHECK(std::abs((dcm.get_ados_representation()*dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE);
+    CHECK(std::abs(dcm.get_matrix().determinant() - 1) < TOL_FINE);
+    CHECK(std::abs((dcm.get_matrix()*dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE);
 }
 
 TEST_CASE("eanglebody232_to_dcm", "[transform]")
@@ -1376,8 +1376,8 @@ TEST_CASE("eanglebody232_to_dcm", "[transform]")
 
     // Rotate by a random angle
     dcm = Lielab::transform::eanglebody232_to_dcm<double>(some_angle, some_angle, some_angle);
-    CHECK(std::abs(dcm.get_ados_representation().determinant() - 1) < TOL_FINE);
-    CHECK(std::abs((dcm.get_ados_representation()*dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE);
+    CHECK(std::abs(dcm.get_matrix().determinant() - 1) < TOL_FINE);
+    CHECK(std::abs((dcm.get_matrix()*dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE);
 }
 
 TEST_CASE("eanglebody313_to_dcm", "[transform]")
@@ -1408,8 +1408,8 @@ TEST_CASE("eanglebody313_to_dcm", "[transform]")
 
     // Rotate by a random angle
     dcm = Lielab::transform::eanglebody313_to_dcm<double>(some_angle, some_angle, some_angle);
-    CHECK(std::abs(dcm.get_ados_representation().determinant() - 1) < TOL_FINE);
-    CHECK(std::abs((dcm.get_ados_representation()*dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE);
+    CHECK(std::abs(dcm.get_matrix().determinant() - 1) < TOL_FINE);
+    CHECK(std::abs((dcm.get_matrix()*dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE);
 }
 
 TEST_CASE("eanglebody323_to_dcm", "[transform]")
@@ -1440,8 +1440,8 @@ TEST_CASE("eanglebody323_to_dcm", "[transform]")
 
     // Rotate by a random angle
     dcm = Lielab::transform::eanglebody323_to_dcm<double>(some_angle, some_angle, some_angle);
-    CHECK(std::abs(dcm.get_ados_representation().determinant() - 1) < TOL_FINE);
-    CHECK(std::abs((dcm.get_ados_representation()*dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE);
+    CHECK(std::abs(dcm.get_matrix().determinant() - 1) < TOL_FINE);
+    CHECK(std::abs((dcm.get_matrix()*dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE);
 }
 
 TEST_CASE("eanglespace123_to_dcm", "[transform]")
@@ -1468,8 +1468,8 @@ TEST_CASE("eanglespace123_to_dcm", "[transform]")
 
     // Rotate by a random angle
     dcm = Lielab::transform::eanglespace123_to_dcm<double>(some_angle, some_angle, some_angle);
-    CHECK(std::abs(dcm.get_ados_representation().determinant() - 1) < TOL_FINE);
-    CHECK(std::abs((dcm.get_ados_representation()*dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE);
+    CHECK(std::abs(dcm.get_matrix().determinant() - 1) < TOL_FINE);
+    CHECK(std::abs((dcm.get_matrix()*dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE);
 }
 
 TEST_CASE("eanglespace231_to_dcm", "[transform]")
@@ -1496,8 +1496,8 @@ TEST_CASE("eanglespace231_to_dcm", "[transform]")
 
     // Rotate by a random angle
     dcm = Lielab::transform::eanglespace231_to_dcm<double>(some_angle, some_angle, some_angle);
-    CHECK(std::abs(dcm.get_ados_representation().determinant() - 1) < TOL_FINE);
-    CHECK(std::abs((dcm.get_ados_representation()*dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE);
+    CHECK(std::abs(dcm.get_matrix().determinant() - 1) < TOL_FINE);
+    CHECK(std::abs((dcm.get_matrix()*dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE);
 }
 
 TEST_CASE("eanglespace312_to_dcm", "[transform]")
@@ -1524,8 +1524,8 @@ TEST_CASE("eanglespace312_to_dcm", "[transform]")
 
     // Rotate by a random angle
     dcm = Lielab::transform::eanglespace312_to_dcm<double>(some_angle, some_angle, some_angle);
-    CHECK(std::abs(dcm.get_ados_representation().determinant() - 1) < TOL_FINE);
-    CHECK(std::abs((dcm.get_ados_representation()*dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE);
+    CHECK(std::abs(dcm.get_matrix().determinant() - 1) < TOL_FINE);
+    CHECK(std::abs((dcm.get_matrix()*dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE);
 }
 
 TEST_CASE("eanglespace132_to_dcm", "[transform]")
@@ -1552,8 +1552,8 @@ TEST_CASE("eanglespace132_to_dcm", "[transform]")
 
     // Rotate by a random angle
     dcm = Lielab::transform::eanglespace132_to_dcm<double>(some_angle, some_angle, some_angle);
-    CHECK(std::abs(dcm.get_ados_representation().determinant() - 1) < TOL_FINE);
-    CHECK(std::abs((dcm.get_ados_representation()*dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE);
+    CHECK(std::abs(dcm.get_matrix().determinant() - 1) < TOL_FINE);
+    CHECK(std::abs((dcm.get_matrix()*dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE);
 }
 
 TEST_CASE("eanglespace213_to_dcm", "[transform]")
@@ -1580,8 +1580,8 @@ TEST_CASE("eanglespace213_to_dcm", "[transform]")
 
     // Rotate by a random angle
     dcm = Lielab::transform::eanglespace213_to_dcm<double>(some_angle, some_angle, some_angle);
-    CHECK(std::abs(dcm.get_ados_representation().determinant() - 1) < TOL_FINE);
-    CHECK(std::abs((dcm.get_ados_representation()*dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE);
+    CHECK(std::abs(dcm.get_matrix().determinant() - 1) < TOL_FINE);
+    CHECK(std::abs((dcm.get_matrix()*dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE);
 }
 
 TEST_CASE("eanglespace321_to_dcm", "[transform]")
@@ -1608,8 +1608,8 @@ TEST_CASE("eanglespace321_to_dcm", "[transform]")
 
     // Rotate by a random angle
     dcm = Lielab::transform::eanglespace321_to_dcm<double>(some_angle, some_angle, some_angle);
-    CHECK(std::abs(dcm.get_ados_representation().determinant() - 1) < TOL_FINE);
-    CHECK(std::abs((dcm.get_ados_representation()*dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE);
+    CHECK(std::abs(dcm.get_matrix().determinant() - 1) < TOL_FINE);
+    CHECK(std::abs((dcm.get_matrix()*dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE);
 }
 
 TEST_CASE("eanglespace121_to_dcm", "[transform]")
@@ -1640,8 +1640,8 @@ TEST_CASE("eanglespace121_to_dcm", "[transform]")
 
     // Rotate by a random angle
     dcm = Lielab::transform::eanglespace121_to_dcm<double>(some_angle, some_angle, some_angle);
-    CHECK(std::abs(dcm.get_ados_representation().determinant() - 1) < TOL_FINE);
-    CHECK(std::abs((dcm.get_ados_representation()*dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE);
+    CHECK(std::abs(dcm.get_matrix().determinant() - 1) < TOL_FINE);
+    CHECK(std::abs((dcm.get_matrix()*dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE);
 }
 
 TEST_CASE("eanglespace131_to_dcm", "[transform]")
@@ -1672,8 +1672,8 @@ TEST_CASE("eanglespace131_to_dcm", "[transform]")
 
     // Rotate by a random angle
     dcm = Lielab::transform::eanglespace131_to_dcm<double>(some_angle, some_angle, some_angle);
-    CHECK(std::abs(dcm.get_ados_representation().determinant() - 1) < TOL_FINE);
-    CHECK(std::abs((dcm.get_ados_representation()*dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE);
+    CHECK(std::abs(dcm.get_matrix().determinant() - 1) < TOL_FINE);
+    CHECK(std::abs((dcm.get_matrix()*dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE);
 }
 
 TEST_CASE("eanglespace212_to_dcm", "[transform]")
@@ -1704,8 +1704,8 @@ TEST_CASE("eanglespace212_to_dcm", "[transform]")
 
     // Rotate by a random angle
     dcm = Lielab::transform::eanglespace212_to_dcm<double>(some_angle, some_angle, some_angle);
-    CHECK(std::abs(dcm.get_ados_representation().determinant() - 1) < TOL_FINE);
-    CHECK(std::abs((dcm.get_ados_representation()*dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE);
+    CHECK(std::abs(dcm.get_matrix().determinant() - 1) < TOL_FINE);
+    CHECK(std::abs((dcm.get_matrix()*dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE);
 }
 
 TEST_CASE("eanglespace232_to_dcm", "[transform]")
@@ -1736,8 +1736,8 @@ TEST_CASE("eanglespace232_to_dcm", "[transform]")
 
     // Rotate by a random angle
     dcm = Lielab::transform::eanglespace232_to_dcm<double>(some_angle, some_angle, some_angle);
-    CHECK(std::abs(dcm.get_ados_representation().determinant() - 1) < TOL_FINE);
-    CHECK(std::abs((dcm.get_ados_representation()*dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE);
+    CHECK(std::abs(dcm.get_matrix().determinant() - 1) < TOL_FINE);
+    CHECK(std::abs((dcm.get_matrix()*dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE);
 }
 
 TEST_CASE("eanglespace313_to_dcm", "[transform]")
@@ -1768,8 +1768,8 @@ TEST_CASE("eanglespace313_to_dcm", "[transform]")
 
     // Rotate by a random angle
     dcm = Lielab::transform::eanglespace313_to_dcm<double>(some_angle, some_angle, some_angle);
-    CHECK(std::abs(dcm.get_ados_representation().determinant() - 1) < TOL_FINE);
-    CHECK(std::abs((dcm.get_ados_representation()*dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE);
+    CHECK(std::abs(dcm.get_matrix().determinant() - 1) < TOL_FINE);
+    CHECK(std::abs((dcm.get_matrix()*dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE);
 }
 
 TEST_CASE("eanglespace323_to_dcm", "[transform]")
@@ -1800,8 +1800,8 @@ TEST_CASE("eanglespace323_to_dcm", "[transform]")
 
     // Rotate by a random angle
     dcm = Lielab::transform::eanglespace323_to_dcm<double>(some_angle, some_angle, some_angle);
-    CHECK(std::abs(dcm.get_ados_representation().determinant() - 1) < TOL_FINE);
-    CHECK(std::abs((dcm.get_ados_representation()*dcm.get_ados_representation().transpose()).trace() - 3) < TOL_FINE);
+    CHECK(std::abs(dcm.get_matrix().determinant() - 1) < TOL_FINE);
+    CHECK(std::abs((dcm.get_matrix()*dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE);
 }
 
 TEST_CASE("quaternion_to_dcm", "[transform]")

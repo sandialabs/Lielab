@@ -19,7 +19,7 @@ namespace Lielab
             out = b;
             adjc = b;
 
-            // Special case where order = b returns b
+            // Special case where order = 0 returns b
             if (order == 0)
             {
                 return out;
@@ -43,7 +43,7 @@ namespace Lielab
             // TODO: Munthe Kaas splits the G-action on g as d/dt exp(A) = dexp_(A)(d/dt A) exp(A)
             //       Do this operation inside or outside dexp? Need to solve the above TODO first though.
             // Lielab::domain::lieiii<LA> G = Lielab::functions::exp(a);
-            // return LA(out.get_ados_representation()*G.get_ados_representation());
+            // return LA(out.get_matrix()*G.get_matrix());
 
             return out;
         }

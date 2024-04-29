@@ -16,7 +16,7 @@ namespace Lielab
             * function.
             */
             
-            return (G.get_ados_representation()).log();
+            return (G.get_matrix()).log();
         }
 
         template<typename LG>
@@ -66,7 +66,7 @@ namespace Lielab
             * 
             * Engø's formula is a local solution. Do not use when theta >= pi/2
             *
-            * TODO: This directly uses _data. Replace with get_ados_representation().
+            * TODO: This directly uses _data. Replace with get_matrix().
             */
 
             if (optimize && G.shape == 3)

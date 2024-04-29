@@ -18,7 +18,7 @@ namespace Lielab
             * numerical process.
             */
 
-            return (la.get_ados_representation()).exp();
+            return (la.get_matrix()).exp();
         }
 
         template<typename LA>

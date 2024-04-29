@@ -172,7 +172,7 @@ class glc
         */
         
         const ptrdiff_t dim = this->get_dimension();
-        const Eigen::MatrixXcd A = this->get_ados_representation();
+        const Eigen::MatrixXcd A = this->get_matrix();
 
         Eigen::VectorXd out = Eigen::VectorXd::Zero(dim);
         ptrdiff_t kk = 0;
@@ -189,14 +189,23 @@ class glc
         return out;
     }
 
-    Eigen::MatrixXcd get_ados_representation() const
+    Eigen::MatrixXcd get_matrix() const
     {
         /*! \f{equation*}{ () \rightarrow \mathbb{C}^{n \times n} \f}
         * 
         * Returns a matrix representation.
+        * 
+        * Formerly called "get_ados_representation()".
+        * 
+        * Ado, Igor D. "Note on the representation of finite continuous groups by
+        *               means of linear substitutions, Izv. Fiz." Mat. Obsch.(Kazan)
+        *               7.1 (1935): 935.
+        * 
+        * Ado, Igor D. "The representation of Lie algebras by matrices." Uspekhi
+        *               Matematicheskikh Nauk 2.6 (1947): 159-173.
         */
 
-        return _data;
+        return this->_data.cast<std::complex<double>>();
     }
 
     void set_vector(const Eigen::VectorXd & vector) 
@@ -262,17 +271,6 @@ class glc
         return _data(index1, index2);
     }
 
-    glc operator+(const glc & other) const
-    {
-        /*! \f{equation*}{ (\mathfrak{glc}, \mathfrak{glc}) \rightarrow \mathfrak{glc} \f}
-        *
-        * Addition of two vectors in the algebra.
-        */
-
-        assert(this->shape == other.shape);
-        return this->_data + other._data;
-    }
-
     glc & operator+=(const glc & other)
     {
         /*! \f{equation*}{ (\mathfrak{glc}, \mathfrak{glc}) \rightarrow \mathfrak{glc} \f}
@@ -280,20 +278,12 @@ class glc
         * In place addition of two vectors in the algebra.
         */
 
-        assert(this->shape == other.shape);
-        this->_data += other._data;
-        return *this;
-    }
+        const size_t new_shape = std::min(this->shape, other.shape);
+        const Eigen::ArithmeticSequence slice = Eigen::seqN(0, new_shape);
+        const Eigen::MatrixXcd other_matrix = other.get_matrix();
 
-    glc operator-(const glc & other) const
-    {
-        /*! \f{equation*}{ (\mathfrak{glc}}, \mathfrak{glc}) \rightarrow \mathfrak{glc}} \f}
-        *
-        * Subtraction of two vectors in the algebra.
-        */
-        
-        assert(this->shape == other.shape);
-        return this->_data - other._data;
+        this->_data += other_matrix(slice, slice);
+        return *this;
     }
 
     glc & operator-=(const glc & other)
@@ -303,8 +293,11 @@ class glc
         * In place subtraction of two vectors in the algebra.
         */
 
-        assert(this->shape == other.shape);
-        this->_data -= other._data;
+        const size_t new_shape = std::min(this->shape, other.shape);
+        const Eigen::ArithmeticSequence slice = Eigen::seqN(0, new_shape);
+        const Eigen::MatrixXcd other_matrix = other.get_matrix();
+
+        this->_data -= other_matrix(slice, slice);
         return *this;
     }
 
@@ -315,7 +308,9 @@ class glc
         * Unary negative of the vector.
         */
 
-        return -this->_data;
+        const Eigen::MatrixXcd this_matrix = this->get_matrix();
+
+        return -this_matrix;
     }
 
     glc operator*(const Imaginary auto other) const
@@ -325,7 +320,9 @@ class glc
         * Scalar product.
         */
 
-        return this->_data * other;
+        const Eigen::MatrixXcd this_matrix = this->get_matrix();
+
+        return this_matrix * other;
     }
 
     glc & operator*=(const Imaginary auto other)
@@ -339,17 +336,6 @@ class glc
         return *this;
     }
 
-    glc operator*(const glc & other) const
-    {
-        /*! \f{equation*}{ (\mathfrak{glc}, \mathfrak{glc}) \rightarrow \mathfrak{glc} \f}
-        *
-        * Vector product.
-        */
-
-        assert(this->shape == other.shape);
-        return this->_data * other._data;
-    }
-
     glc & operator*=(const glc & other)
     {
         /*! \f{equation*}{ (\mathfrak{glc}, \mathfrak{glc}) \rightarrow \mathfrak{glc} \f}
@@ -357,8 +343,11 @@ class glc
         * In place product of two vectors in the algebra.
         */
 
-        assert(this->shape == other.shape);
-        this->_data *= other._data;
+        const size_t new_shape = std::min(this->shape, other.shape);
+        const Eigen::ArithmeticSequence slice = Eigen::seqN(0, new_shape);
+        const Eigen::MatrixXcd other_matrix = other.get_matrix();
+
+        this->_data *= other_matrix(slice, slice);
         return *this;
     }
 
@@ -369,7 +358,8 @@ class glc
         * Scalar division.
         */
 
-        return this->_data / other;
+        const Eigen::MatrixXcd this_matrix = this->get_matrix();
+        return this_matrix / other;
     }
 
     glc & operator/=(const Imaginary auto other)

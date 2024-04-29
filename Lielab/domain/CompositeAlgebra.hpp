@@ -16,7 +16,7 @@
 #include <Eigen/Core>
 #include <Eigen/Dense>
 
-// lielab dependencies
+// Lielab dependencies
 #include "constants.hpp"
 
 using Lielab::abstract::Real;

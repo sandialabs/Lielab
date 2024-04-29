@@ -206,11 +206,20 @@ namespace Lielab
                 return out;
             }
 
-            Eigen::MatrixXcd get_ados_representation() const
+            Eigen::MatrixXcd get_matrix() const
             {
                 /*! \f{equation*}{ () \rightarrow \mathbb{C}^{n \times n} \f}
                 * 
                 * Returns a matrix representation.
+                * 
+                * Formerly called "get_ados_representation()".
+                * 
+                * Ado, Igor D. "Note on the representation of finite continuous groups by
+                *               means of linear substitutions, Izv. Fiz." Mat. Obsch.(Kazan)
+                *               7.1 (1935): 935.
+                * 
+                * Ado, Igor D. "The representation of Lie algebras by matrices." Uspekhi
+                *               Matematicheskikh Nauk 2.6 (1947): 159-173.
                 */
 
                 Eigen::MatrixXcd out = Eigen::MatrixXcd::Zero(shape, shape);
@@ -271,19 +280,8 @@ namespace Lielab
                 * Gets a value in the square matrix representation.
                 */
                 
-                Eigen::MatrixXcd mat = get_ados_representation();
+                Eigen::MatrixXcd mat = this->get_matrix();
                 return mat(index1, index2);
-            }
-
-            cn operator+(const cn & other) const
-            {
-                /*! \f{equation*}{ (\mathfrak{cn}, \mathfrak{cn}) \rightarrow \mathfrak{cn} \f}
-                *
-                * Addition of two vectors in the algebra.
-                */
-                
-                assert(this->shape == other.shape);
-                return this->_data + other._data;
             }
 
             cn & operator+=(const cn & other)
@@ -296,17 +294,6 @@ namespace Lielab
                 assert(this->shape == other.shape);
                 this->_data += other._data;
                 return *this;
-            }
-
-            cn operator-(const cn & other) const
-            {
-                /*! \f{equation*}{ (\mathfrak{cn}, \mathfrak{cn}) \rightarrow \mathfrak{cn} \f}
-                *
-                * Subtraction of two vectors in the algebra.
-                */
-
-                assert(this->shape == other.shape);
-                return this->_data - other._data;
             }
 
             cn & operator-=(const cn & other)
@@ -350,17 +337,6 @@ namespace Lielab
 
                 this->_data *= other;
                 return *this;
-            }
-
-            cn operator*(const cn & other) const
-            {
-                /*! \f{equation*}{ (\mathfrak{cn}, \mathfrak{cn}) \rightarrow \mathbb{C}^{n \times n} \notin \mathfrak{cn} \f}
-                *
-                * Vector product.
-                */
-
-                assert(this->shape == other.shape);
-                return Eigen::VectorXcd::Zero(shape-1);
             }
 
             cn & operator*=(const cn & other)

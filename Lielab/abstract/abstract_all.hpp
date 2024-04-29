@@ -60,7 +60,7 @@ template <typename T>
 concept LieAlgebra = Algebra<T> && requires (T x)
 {
     {x.shape};
-    {x.get_ados_representation()};
+    {x.get_matrix()};
 };
 
 template <typename T>
@@ -73,7 +73,7 @@ template <typename T>
 concept LieGroup = Group<T> && requires (T x)
 {
     {x.shape};
-    {x.get_ados_representation()};
+    {x.get_matrix()};
 };
 }
 }

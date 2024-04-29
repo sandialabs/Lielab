@@ -22,7 +22,7 @@ namespace Lielab
             */
             
             assert(G.shape == g.shape);
-            return G.get_ados_representation()*g.get_ados_representation()*G.get_ados_representation().inverse();
+            return G.get_matrix()*g.get_matrix()*(G.get_matrix().inverse());
         }
     }
 }

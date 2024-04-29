@@ -1,5 +1,7 @@
 #include <functional>
 
+#include <Lielab.hpp>
+
 // Lorenz EOMs
 Eigen::VectorXd eoms_lorenz_unwrapped(double t, Eigen::VectorXd X)
 {
@@ -16,6 +18,58 @@ Eigen::VectorXd eoms_lorenz_unwrapped(double t, Eigen::VectorXd X)
     return dx;
 }
 
+std::function<Lielab::domain::CompositeAlgebra(double, Lielab::domain::CompositeManifold)> vfex1()
+{
+    /*!
+    * Constructs and returns eom vfex1.
+    * 
+    * Engø, Kenth, Arne Marthinsen, and Hans Z. Munthe-Kaas. "DiffMan: An object-oriented MATLAB
+    * toolbox for solving differential equations on manifolds." Applied numerical mathematics
+    * 39.3-4 (2001): 323-347.
+    */
+
+    std::function<Lielab::domain::CompositeAlgebra(double, Lielab::domain::CompositeManifold)> out = [](const double t, const Lielab::domain::CompositeManifold & M)
+    {
+        Lielab::domain::SO y = std::get<Lielab::domain::SO>(M.space[0]);
+        Lielab::domain::so dy{std::pow(t, 2), 1.0, -t};
+        return Lielab::domain::CompositeAlgebra{dy};
+    };
+
+    return out;
+}
+
+std::function<Lielab::domain::CompositeAlgebra(double, Lielab::domain::CompositeManifold)> vfex2()
+{
+    /*!
+     * Constructs and returns eom vfex2.
+     *
+     * Engø, Kenth, Arne Marthinsen, and Hans Z. Munthe-Kaas. "DiffMan: An object-oriented MATLAB
+     * toolbox for solving differential equations on manifolds." Applied numerical mathematics
+     * 39.3-4 (2001): 323-347.
+     */
+
+    std::function<Lielab::domain::CompositeAlgebra(double, Lielab::domain::CompositeManifold)> out = [](const double t, const Lielab::domain::CompositeManifold & M)
+    {
+        Lielab::domain::RN y = std::get<Lielab::domain::RN>(M.space[0]);
+
+        const double sigma = 10.0;
+        const double rho = 28.0;
+        const double b1 = 8.0;
+        const double b2 = 3.0;
+        const double beta = b1/b2;
+
+        Lielab::domain::rn dx(4);
+        dx(0) = -beta*y(0) + y(1)*y(2);
+        dx(1) = -sigma*y(1) + sigma*y(2);
+        dx(2) = -y(0)*y(1) + rho*y(1) - y(2);
+
+        return Lielab::domain::CompositeAlgebra{dx};
+    };
+
+    return out;
+}
+
+
 TEST_CASE("MuntheKaas_vfex1", "[topos]")
 {
     /*!
@@ -24,7 +78,7 @@ TEST_CASE("MuntheKaas_vfex1", "[topos]")
 
     Lielab::domain::SO y0(3);
     Lielab::topos::MuntheKaas ts;
-    Lielab::dynamics::vectorfield vf = Lielab::dynamics::vfex1();
+    std::function<Lielab::domain::CompositeAlgebra(double, Lielab::domain::CompositeManifold)> vf = vfex1();
 
     Lielab::domain::CompositeManifold M0{y0};
 
@@ -51,7 +105,7 @@ TEST_CASE("MuntheKaas_vfex2", "[topos]")
 
     Lielab::domain::RN y0(4);
     Lielab::topos::MuntheKaas ts;
-    Lielab::dynamics::vectorfield vf = Lielab::dynamics::vfex2();
+    std::function<Lielab::domain::CompositeAlgebra(double, Lielab::domain::CompositeManifold)> vf = vfex2();
 
     y0(0) = 25.0;
     y0(1) = 0.0;
@@ -76,7 +130,7 @@ TEST_CASE("Flow_fails", "[topos]")
 
     Lielab::domain::SO y0(3);
     Lielab::domain::CompositeManifold M0{y0};
-    Lielab::dynamics::vectorfield vf = Lielab::dynamics::vfex1();
+    std::function<Lielab::domain::CompositeAlgebra(double, Lielab::domain::CompositeManifold)> vf = vfex1();
     std::vector<double> tspan;
     Lielab::topos::Flow f;
 
@@ -127,7 +181,7 @@ TEST_CASE("Flow_copy_output", "[topos]")
 TEST_CASE("Flow_vfex2_rk45_fixed", "[topos]")
 {
     Lielab::domain::RN y0(4);
-    Lielab::dynamics::vectorfield vf = Lielab::dynamics::vfex2();
+    std::function<Lielab::domain::CompositeAlgebra(double, Lielab::domain::CompositeManifold)> vf = vfex2();
 
     y0(0) = 25.0;
     y0(1) = 0.0;
@@ -161,7 +215,7 @@ TEST_CASE("Flow_vfex2_rk45_fixed", "[topos]")
 TEST_CASE("Flow_vfex2_rk45_variable", "[topos]")
 {
     Lielab::domain::RN y0(4);
-    Lielab::dynamics::vectorfield vf = Lielab::dynamics::vfex2();
+    std::function<Lielab::domain::CompositeAlgebra(double, Lielab::domain::CompositeManifold)> vf = vfex2();
 
     y0(0) = 25.0;
     y0(1) = 0.0;
@@ -755,8 +809,8 @@ TEST_CASE("B1_hom", "[topos]")
 
     std::function<Lielab::domain::CompositeManifold(Lielab::domain::CompositeManifold, Lielab::domain::CompositeManifold)> action = [](const Lielab::domain::CompositeManifold & G, const Lielab::domain::CompositeManifold & M)
     {
-        const Lielab::domain::GL _G0 = std::get<Lielab::domain::GL>(g.space[0]);
-        const Lielab::domain::RN _G1 = std::get<Lielab::domain::RN>(g.space[1]);
+        const Lielab::domain::GL _G0 = std::get<Lielab::domain::GL>(G.space[0]);
+        const Lielab::domain::RN _G1 = std::get<Lielab::domain::RN>(G.space[1]);
         const Lielab::domain::RN _Y0 = std::get<Lielab::domain::RN>(M.space[0]);
         const Lielab::domain::RN _Y1 = std::get<Lielab::domain::RN>(M.space[1]);
         

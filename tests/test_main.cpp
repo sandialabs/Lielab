@@ -11,7 +11,7 @@
 // Additional includes (extra code, etc)
 #include <catch2/catch_all.hpp>
 #include <Eigen/Core>
-#include <lielab>
+#include <Lielab.hpp>
 
 // Include test utils specific for lielab
 #include "test_utils.hpp"

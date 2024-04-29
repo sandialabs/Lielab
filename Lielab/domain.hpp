@@ -1,6 +1,7 @@
 // Submodules
 #include "domain/liealgebras.hpp"
 #include "domain/liegroups.hpp"
+#include "domain/operators.hpp"
 
 // Lie III macro
 #include "domain/lieiii.hpp"

@@ -33,12 +33,12 @@ TEST_CASE("Ad", "[Ad]")
               -0.841470984807897, 0, -0.540302305868140,
                0, 0.540302305868140, 0;
     
-    assert_matrix(ansso.get_ados_representation(), truthso);
+    assert_matrix(ansso.get_matrix(), truthso);
 
     // GvG^-1 = v when G = exp(v)
     ansso = Lielab::functions::Ad(Gso, v);
     
-    assert_matrix(ansso.get_ados_representation(), v.get_ados_representation());
+    assert_matrix(ansso.get_matrix(), v.get_matrix());
 
     // GwG^-1
     ansso = Lielab::functions::Ad(Gso, w);
@@ -46,7 +46,7 @@ TEST_CASE("Ad", "[Ad]")
                0.540302305868140, 0, -0.841470984807897,
                0, 0.841470984807897, 0;
     
-    assert_matrix(ansso.get_ados_representation(), truthso);
+    assert_matrix(ansso.get_matrix(), truthso);
 }
 
 TEST_CASE("cayley1", "[cayley1]")
@@ -65,14 +65,14 @@ TEST_CASE("cayley1", "[cayley1]")
            0.0, 0.6,-0.8,
            0.0, 0.8, 0.6;
 
-    assert_matrix(ex1.get_ados_representation(), ans);
+    assert_matrix(ex1.get_matrix(), ans);
 
     const Lielab::domain::SO ex2 = Lielab::functions::cayley1(ry);
     ans << 0.6, 0.0, 0.8,
            0.0, 1.0, 0.0,
            -0.8, 0.0, 0.6;
 
-    assert_matrix(ex2.get_ados_representation(), ans);
+    assert_matrix(ex2.get_matrix(), ans);
 }
 
 TEST_CASE("cayley2", "[functions]")
@@ -91,14 +91,14 @@ TEST_CASE("cayley2", "[functions]")
            0.0, 0.6, -0.8,
            0.0, 0.8, 0.6;
     
-    assert_matrix(ex1.get_ados_representation(), ans);
+    assert_matrix(ex1.get_matrix(), ans);
 
     const Lielab::domain::SO ex2 = Lielab::functions::cayley2(rx + 2*ry);
     ans << 0.0, 0.0, 1.0,
            0.8, 0.6, 0.0,
            -0.6, 0.8, 0.0;
     
-    assert_matrix(ex2.get_ados_representation(), ans);
+    assert_matrix(ex2.get_matrix(), ans);
 }
 
 TEST_CASE("cayley 1 and 2", "[functions]")
@@ -192,14 +192,14 @@ TEST_CASE("dcayley1inv", "[dcayley1inv]")
               -0.5, 0.0, 0.0,
               -1.0, 0.0, 0.0;
 
-    assert_matrix(ansso.get_ados_representation(), truthso);
+    assert_matrix(ansso.get_matrix(), truthso);
 
     ansso = Lielab::functions::dcayley1inv(v, u);
     truthso << 0.0,-0.5, 0.0,
                0.5, 0.0,-1.0,
                0.0, 1.0, 0.0;
 
-    assert_matrix(ansso.get_ados_representation(), truthso);
+    assert_matrix(ansso.get_matrix(), truthso);
 }
 
 TEST_CASE("dexp", "[dexp]")
@@ -227,7 +227,7 @@ TEST_CASE("dexp", "[dexp]")
                0.0, 0.0, 0.0,
               -1.0, 0.0, 0.0;
 
-    assert_matrix(ansso.get_ados_representation(), truthso);
+    assert_matrix(ansso.get_matrix(), truthso);
 
     // order = 1
     ansso = Lielab::functions::dexp(u, v, 1);
@@ -235,7 +235,7 @@ TEST_CASE("dexp", "[dexp]")
                0.5, 0.0, 0.0,
               -1.0, 0.0, 0.0;
 
-    assert_matrix(ansso.get_ados_representation(), truthso);
+    assert_matrix(ansso.get_matrix(), truthso);
 
     // order = 2
     ansso = Lielab::functions::dexp(u, v, 2);
@@ -243,7 +243,7 @@ TEST_CASE("dexp", "[dexp]")
                0.5, 0.0, 0.0,
               -0.833333333333333, 0.0, 0.0;
 
-    assert_matrix(ansso.get_ados_representation(), truthso);
+    assert_matrix(ansso.get_matrix(), truthso);
 
     // order = 3
     ansso = Lielab::functions::dexp(u, v, 3);
@@ -251,7 +251,7 @@ TEST_CASE("dexp", "[dexp]")
                0.458333333333333, 0.0, 0.0,
               -0.833333333333333, 0.0, 0.0;
 
-    assert_matrix(ansso.get_ados_representation(), truthso);
+    assert_matrix(ansso.get_matrix(), truthso);
 
 
     // order = 4
@@ -260,7 +260,7 @@ TEST_CASE("dexp", "[dexp]")
                0.458333333333333, 0.0, 0.0,
               -0.841666666666667, 0.0, 0.0;
 
-    assert_matrix(ansso.get_ados_representation(), truthso);
+    assert_matrix(ansso.get_matrix(), truthso);
 
     // order = 8
     ansso = Lielab::functions::dexp(u, v, 8);
@@ -268,7 +268,7 @@ TEST_CASE("dexp", "[dexp]")
                0.459697420634921, 0.0, 0.0,
               -0.841471009700176, 0.0, 0.0;
 
-    assert_matrix(ansso.get_ados_representation(), truthso);
+    assert_matrix(ansso.get_matrix(), truthso);
 
     Lielab::domain::rn x(4);
     Lielab::domain::rn y(4);
@@ -284,7 +284,7 @@ TEST_CASE("dexp", "[dexp]")
                0, 0, 0, 0,
                0, 0, 0, 0;
 
-    assert_matrix(ansrn.get_ados_representation(), truthrn);
+    assert_matrix(ansrn.get_matrix(), truthrn);
 
     // ridiculous order (checks abelian speedhack)
     ansrn = Lielab::functions::dexp(x, y, 999999999);
@@ -293,7 +293,7 @@ TEST_CASE("dexp", "[dexp]")
                0, 0, 0, 0,
                0, 0, 0, 0;
 
-    assert_matrix(ansrn.get_ados_representation(), truthrn);
+    assert_matrix(ansrn.get_matrix(), truthrn);
 }
 
 TEST_CASE("dexpinv", "[dexpinv]")
@@ -321,7 +321,7 @@ TEST_CASE("dexpinv", "[dexpinv]")
                0.0, 0.0, 0.0,
                0.0, 0.0, 0.0;
 
-    assert_matrix(ansso.get_ados_representation(), truthso);
+    assert_matrix(ansso.get_matrix(), truthso);
 
     // order = 1
     ansso = Lielab::functions::dexpinv(u, v, 1);
@@ -329,7 +329,7 @@ TEST_CASE("dexpinv", "[dexpinv]")
                0.0, 0.0, 0.0,
               -1.0, 0.0, 0.0;
 
-    assert_matrix(ansso.get_ados_representation(), truthso);
+    assert_matrix(ansso.get_matrix(), truthso);
 
     // order = 2
     ansso = Lielab::functions::dexpinv(u, v, 2);
@@ -337,7 +337,7 @@ TEST_CASE("dexpinv", "[dexpinv]")
               -0.5, 0.0, 0.0,
               -1.0, 0.0, 0.0;
 
-    assert_matrix(ansso.get_ados_representation(), truthso);
+    assert_matrix(ansso.get_matrix(), truthso);
 
     // order = 4
     ansso = Lielab::functions::dexpinv(u, v, 4);
@@ -345,7 +345,7 @@ TEST_CASE("dexpinv", "[dexpinv]")
               -0.5, 0.0, 0.0,
               -0.916666666666667, 0.0, 0.0;
 
-    assert_matrix(ansso.get_ados_representation(), truthso);
+    assert_matrix(ansso.get_matrix(), truthso);
 
     // order = 12
     ansso = Lielab::functions::dexpinv(u, v, 12);
@@ -353,7 +353,7 @@ TEST_CASE("dexpinv", "[dexpinv]")
               -0.500000000000000, 0.0, 0.0,
               -0.915243861398375, 0.0, 0.0;
 
-    assert_matrix(ansso.get_ados_representation(), truthso);
+    assert_matrix(ansso.get_matrix(), truthso);
 
     Lielab::domain::rn x(4);
     Lielab::domain::rn y(4);
@@ -369,7 +369,7 @@ TEST_CASE("dexpinv", "[dexpinv]")
                0, 0, 0, 0,
                0, 0, 0, 0;
 
-    assert_matrix(ansrn.get_ados_representation(), truthrn);
+    assert_matrix(ansrn.get_matrix(), truthrn);
 
     // ridiculous order (checks abelian speedhack)
     ansrn = Lielab::functions::dexpinv(x, y, 999999999);
@@ -378,5 +378,5 @@ TEST_CASE("dexpinv", "[dexpinv]")
                0, 0, 0, 0,
                0, 0, 0, 0;
 
-    assert_matrix(ansrn.get_ados_representation(), truthrn);
+    assert_matrix(ansrn.get_matrix(), truthrn);
 }

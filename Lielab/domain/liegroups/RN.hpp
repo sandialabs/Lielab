@@ -173,11 +173,20 @@ namespace Lielab
                 return static_cast<size_t>(this->shape - 1);
             }
 
-            Eigen::MatrixXd get_ados_representation() const
+            Eigen::MatrixXd get_matrix() const
             {
                 /*! \f{equation*}{ () \rightarrow \mathbb{R}^{n \times n} \f}
                 * 
                 * Returns a matrix representation.
+                * 
+                * Formerly called "get_ados_representation()".
+                * 
+                * Ado, Igor D. "Note on the representation of finite continuous groups by
+                *               means of linear substitutions, Izv. Fiz." Mat. Obsch.(Kazan)
+                *               7.1 (1935): 935.
+                * 
+                * Ado, Igor D. "The representation of Lie algebras by matrices." Uspekhi
+                *               Matematicheskikh Nauk 2.6 (1947): 159-173.
                 */
 
                 Eigen::MatrixXd out = Eigen::MatrixXd::Identity(shape, shape);
@@ -249,7 +258,7 @@ namespace Lielab
                 * Gets a value in the square matrix representation.
                 */
 
-                Eigen::MatrixXd mat = get_ados_representation();
+                Eigen::MatrixXd mat = this->get_matrix();
                 return mat(index1, index2);
             }
 

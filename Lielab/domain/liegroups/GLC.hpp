@@ -124,11 +124,20 @@ namespace Lielab
                 return static_cast<size_t>(2*std::pow(this->shape, 2));
             }
 
-            Eigen::MatrixXcd get_ados_representation() const
+            Eigen::MatrixXcd get_matrix() const
             {
                 /*! \f{equation*}{ () \rightarrow \mathbb{C}^{n \times n} \f}
                 * 
                 * Returns a matrix representation.
+                * 
+                * Formerly called "get_ados_representation()".
+                * 
+                * Ado, Igor D. "Note on the representation of finite continuous groups by
+                *               means of linear substitutions, Izv. Fiz." Mat. Obsch.(Kazan)
+                *               7.1 (1935): 935.
+                * 
+                * Ado, Igor D. "The representation of Lie algebras by matrices." Uspekhi
+                *               Matematicheskikh Nauk 2.6 (1947): 159-173.
                 */
 
                 return _data;
@@ -154,7 +163,7 @@ namespace Lielab
                 */
                 
                 const ptrdiff_t dim = this->get_dimension();
-                const Eigen::MatrixXcd A = this->get_ados_representation();
+                const Eigen::MatrixXcd A = this->get_matrix();
 
                 Eigen::VectorXd out = Eigen::VectorXd::Zero(this->get_dimension());
                 ptrdiff_t kk = 0;

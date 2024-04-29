@@ -1,4 +1,4 @@
-#include <lielab>
+#include <Lielab.hpp>
 #include <iostream>
 
 #include "test_utils.hpp"
@@ -289,12 +289,12 @@ TEST_CASE("se algebra", "[domain]")
         is_liealgebra<Lielab::domain::se>(basis);
     }
    
-    Lielab::domain::se one(1), two(2), four(4), five(5), six(6), seven(7), eight(8);
+    Lielab::domain::se one(1), two(2), three(3), four(4), five(5), six(6), seven(7), eight(8);
 
     // Dimensions
     CHECK(one.get_dimension() == 0);
     CHECK(two.get_dimension() == 1);
-    CHECK(three.get_dimension() == 3)
+    CHECK(three.get_dimension() == 3);
     CHECK(four.get_dimension() == 6);
     CHECK(five.get_dimension() == 10);
     CHECK(six.get_dimension() == 15);

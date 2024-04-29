@@ -4,7 +4,7 @@
 #include <iostream>
 
 #include <Eigen/Core>
-#include <lielab>
+#include <Lielab.hpp>
 
 // Tolerances
 double TOL_FINE = 1e-6;
@@ -55,7 +55,7 @@ void assert_matrix(Eigen::MatrixXcd mat1, Eigen::MatrixXcd mat2)
 template<typename L>
 void assert_domain(L mat1, L mat2)
 {
-    assert_matrix(mat1.get_ados_representation(), mat2.get_ados_representation());
+    assert_matrix(mat1.get_matrix(), mat2.get_matrix());
 }
 
 #endif

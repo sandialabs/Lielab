@@ -214,11 +214,20 @@ namespace Lielab
                 return out;
             }
 
-            Eigen::MatrixXd get_ados_representation() const
+            Eigen::MatrixXd get_matrix() const
             {
                 /*! \f{equation*}{ () \rightarrow \mathbb{R}^{n \times n} \f}
                 * 
                 * Returns a matrix representation.
+                * 
+                * Formerly called "get_ados_representation()".
+                * 
+                * Ado, Igor D. "Note on the representation of finite continuous groups by
+                *               means of linear substitutions, Izv. Fiz." Mat. Obsch.(Kazan)
+                *               7.1 (1935): 935.
+                * 
+                * Ado, Igor D. "The representation of Lie algebras by matrices." Uspekhi
+                *               Matematicheskikh Nauk 2.6 (1947): 159-173.
                 */
 
                 return _data;
@@ -315,18 +324,6 @@ namespace Lielab
                 return _data(index1, index2);
             }
 
-            sp operator+(const sp & other) const
-            {
-                /*! \f{equation*}{ (\mathfrak{sp}, \mathfrak{sp}) \rightarrow \mathfrak{sp} \f}
-                *
-                * Addition of two vectors in the algebra.
-                */
-
-                assert(this->shape == other.shape);
-                Eigen::MatrixXd out = _data + other._data;
-                return out;
-            }
-
             sp & operator+=(const sp & other)
             {
                 /*! \f{equation*}{ (\mathfrak{sp}, \mathfrak{sp}) \rightarrow \mathfrak{sp} \f}
@@ -337,18 +334,6 @@ namespace Lielab
                 assert(this->shape == other.shape);
                 this->_data += other._data;
                 return *this;
-            }
-
-            sp operator-(const sp & other) const
-            {
-                /*! \f{equation*}{ (\mathfrak{sp}, \mathfrak{sp}) \rightarrow \mathfrak{sp} \f}
-                *
-                * Subtraction of two vectors in the algebra.
-                */
-
-                assert(this->shape == other.shape);
-                Eigen::MatrixXd out = _data - other._data;
-                return out;
             }
 
             sp & operator-=(const sp & other)
@@ -394,18 +379,6 @@ namespace Lielab
 
                 this->_data *= other;
                 return *this;
-            }
-
-            sp operator*(const sp & other) const
-            {
-                /*! \f{equation*}{ (\mathfrak{sp}, \mathfrak{sp}) \rightarrow \mathbb{R}^{n \times n} \notin \mathfrak{sp} \f}
-                *
-                * Vector product.
-                */
-
-                assert(this->shape == other.shape);
-                Eigen::MatrixXd out = _data * other._data;
-                return out;
             }
 
             sp & operator*=(const sp & other)

@@ -31,12 +31,12 @@ def test_Ad():
                         [-0.841470984807897, 0, -0.540302305868140],
                         [0, 0.540302305868140, 0]])
     
-    assert_matrix(ansso.get_ados_representation(), truthso)
+    assert_matrix(ansso.get_matrix(), truthso)
 
     # GvG^-1 = v when G = exp(v)
     ansso = Ad(Gso, v)
     
-    assert_matrix(ansso.get_ados_representation(), v.get_ados_representation())
+    assert_matrix(ansso.get_matrix(), v.get_matrix())
 
     # GwG^-1
     ansso = Ad(Gso, w)
@@ -44,7 +44,7 @@ def test_Ad():
                         [0.540302305868140, 0, -0.841470984807897],
                         [0, 0.841470984807897, 0]])
     
-    assert_matrix(ansso.get_ados_representation(), truthso)
+    assert_matrix(ansso.get_matrix(), truthso)
 
 
 def test_cayley1():
@@ -64,14 +64,14 @@ def test_cayley1():
                     [0.0, 0.6,-0.8],
                     [0.0, 0.8, 0.6]])
 
-    assert_matrix(ex1.get_ados_representation(), ans)
+    assert_matrix(ex1.get_matrix(), ans)
 
     ex2 = cayley1(ry)
     ans = np.array([[0.6, 0.0, 0.8],
                     [0.0, 1.0, 0.0],
                     [-0.8, 0.0, 0.6]])
 
-    assert_matrix(ex2.get_ados_representation(), ans)
+    assert_matrix(ex2.get_matrix(), ans)
 
 
 def test_cayley2():
@@ -91,14 +91,14 @@ def test_cayley2():
                     [0.0, 0.6,-0.8],
                     [0.0, 0.8, 0.6]])
 
-    assert_matrix(ex1.get_ados_representation(), ans)
+    assert_matrix(ex1.get_matrix(), ans)
 
     ex2 = cayley2(rx + 2*ry)
     ans = np.array([[0.0, 0.0, 1.0],
                     [0.8, 0.6, 0.0],
                     [-0.6, 0.8, 0.0]])
 
-    assert_matrix(ex2.get_ados_representation(), ans)
+    assert_matrix(ex2.get_matrix(), ans)
 
 def test_cayley1_and_2():
     """
@@ -159,7 +159,7 @@ def test_Killingform():
     Id = np.identity(so6.get_dimension())
 
     assert abs(K.trace() + 120) <= TOL_FINE
-    assert_matrix(K @ np.linalg.inv(K), Id);
+    assert_matrix(K @ np.linalg.inv(K), Id)
 
 
 def test_dcayley1inv():
@@ -182,14 +182,14 @@ def test_dcayley1inv():
                         [-0.5, 0.0, 0.0],
                         [-1.0, 0.0, 0.0]])
 
-    assert_matrix(ansso.get_ados_representation(), truthso)
+    assert_matrix(ansso.get_matrix(), truthso)
 
     ansso = dcayley1inv(v, u)
     truthso = np.array([[0.0,-0.5, 0.0],
                         [0.5, 0.0,-1.0],
                         [0.0, 1.0, 0.0]])
 
-    assert_matrix(ansso.get_ados_representation(), truthso)
+    assert_matrix(ansso.get_matrix(), truthso)
 
 
 def test_dexp():
@@ -217,7 +217,7 @@ def test_dexp():
                         [0.0, 0.0, 0.0],
                         [-1.0, 0.0, 0.0]])
     
-    assert_matrix(ansso.get_ados_representation(), truthso)
+    assert_matrix(ansso.get_matrix(), truthso)
 
     # order = 1
     ansso = dexp(u, v, 1)
@@ -225,7 +225,7 @@ def test_dexp():
                         [0.5, 0.0, 0.0],
                         [-1.0, 0.0, 0.0]])
 
-    assert_matrix(ansso.get_ados_representation(), truthso)
+    assert_matrix(ansso.get_matrix(), truthso)
 
     # order = 2
     ansso = dexp(u, v, 2)
@@ -233,7 +233,7 @@ def test_dexp():
                         [0.5, 0.0, 0.0],
                         [-0.833333333333333, 0.0, 0.0]])
 
-    assert_matrix(ansso.get_ados_representation(), truthso)
+    assert_matrix(ansso.get_matrix(), truthso)
 
     # order = 3
     ansso = dexp(u, v, 3)
@@ -247,7 +247,7 @@ def test_dexp():
                         [0.458333333333333, 0.0, 0.0],
                         [-0.841666666666667, 0.0, 0.0]])
 
-    assert_matrix(ansso.get_ados_representation(), truthso)
+    assert_matrix(ansso.get_matrix(), truthso)
 
     # order = 8
     ansso = dexp(u, v, 8)
@@ -255,7 +255,7 @@ def test_dexp():
                         [0.459697420634921, 0.0, 0.0],
                         [-0.841471009700176, 0.0, 0.0]])
 
-    assert_matrix(ansso.get_ados_representation(), truthso)
+    assert_matrix(ansso.get_matrix(), truthso)
 
     x = rn(4)
     y = rn(4)
@@ -271,7 +271,7 @@ def test_dexp():
                         [0, 0, 0, 0],
                         [0, 0, 0, 0]])
 
-    assert_matrix(ansrn.get_ados_representation(), truthrn)
+    assert_matrix(ansrn.get_matrix(), truthrn)
 
     # ridiculous order (checks abelian speedhack)
     ansrn = dexp(x, y, 999999999)
@@ -280,7 +280,7 @@ def test_dexp():
                         [0, 0, 0, 0],
                         [0, 0, 0, 0]])
 
-    assert_matrix(ansrn.get_ados_representation(), truthrn)
+    assert_matrix(ansrn.get_matrix(), truthrn)
 
 
 def test_dexpinv():
@@ -308,7 +308,7 @@ def test_dexpinv():
                         [0.0, 0.0, 0.0],
                         [0.0, 0.0, 0.0]])
     
-    assert_matrix(ansso.get_ados_representation(), truthso)
+    assert_matrix(ansso.get_matrix(), truthso)
 
     # order = 1
     ansso = dexpinv(u, v, 1)
@@ -316,7 +316,7 @@ def test_dexpinv():
                         [0.0, 0.0, 0.0],
                         [-1.0, 0.0, 0.0]])
 
-    assert_matrix(ansso.get_ados_representation(), truthso)
+    assert_matrix(ansso.get_matrix(), truthso)
 
     # order = 2
     ansso = dexpinv(u, v, 2)
@@ -324,7 +324,7 @@ def test_dexpinv():
                         [-0.5, 0.0, 0.0],
                         [-1.0, 0.0, 0.0]])
 
-    assert_matrix(ansso.get_ados_representation(), truthso)
+    assert_matrix(ansso.get_matrix(), truthso)
 
     # order = 4
     ansso = dexpinv(u, v, 4)
@@ -332,7 +332,7 @@ def test_dexpinv():
                         [-0.5, 0.0, 0.0],
                         [-0.916666666666667, 0.0, 0.0]])
 
-    assert_matrix(ansso.get_ados_representation(), truthso)
+    assert_matrix(ansso.get_matrix(), truthso)
 
     # order = 12
     ansso = dexpinv(u, v, 12)
@@ -340,7 +340,7 @@ def test_dexpinv():
                         [-0.500000000000000, 0.0, 0.0],
                         [-0.915243861398375, 0.0, 0.0]])
 
-    assert_matrix(ansso.get_ados_representation(), truthso)
+    assert_matrix(ansso.get_matrix(), truthso)
 
     x = rn(4)
     y = rn(4)
@@ -356,7 +356,7 @@ def test_dexpinv():
                         [0, 0, 0, 0],
                         [0, 0, 0, 0]])
 
-    assert_matrix(ansrn.get_ados_representation(), truthrn)
+    assert_matrix(ansrn.get_matrix(), truthrn)
 
     # ridiculous order (checks abelian speedhack)
     ansrn = dexpinv(x, y, 999999999)
@@ -365,4 +365,4 @@ def test_dexpinv():
                         [0, 0, 0, 0],
                         [0, 0, 0, 0]])
 
-    assert_matrix(ansrn.get_ados_representation(), truthrn)
+    assert_matrix(ansrn.get_matrix(), truthrn)

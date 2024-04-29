@@ -164,11 +164,20 @@ class gl
         return Eigen::Map<const Eigen::VectorXd>(_data.data(), _data.size());
     }
 
-    Eigen::MatrixXd get_ados_representation() const
+    Eigen::MatrixXd get_matrix() const
     {
         /*! \f{equation*}{ () \rightarrow \mathbb{R}^{n \times n} \f}
         * 
         * Returns a matrix representation.
+        * 
+        * Formerly called "get_ados_representation()".
+        * 
+        * Ado, Igor D. "Note on the representation of finite continuous groups by
+        *               means of linear substitutions, Izv. Fiz." Mat. Obsch.(Kazan)
+        *               7.1 (1935): 935.
+        * 
+        * Ado, Igor D. "The representation of Lie algebras by matrices." Uspekhi
+        *               Matematicheskikh Nauk 2.6 (1947): 159-173.
         */
 
         return _data;
@@ -226,17 +235,6 @@ class gl
         return _data(index1, index2);
     }
 
-    gl operator+(const gl & other) const
-    {
-        /*! \f{equation*}{ (\mathfrak{gl}, \mathfrak{gl}) \rightarrow \mathfrak{gl} \f}
-        *
-        * Addition of two vectors in the algebra.
-        */
-
-        assert(this->shape == other.shape);
-        return this->_data + other._data;
-    }
-
     gl & operator+=(const gl & other)
     {
         /*! \f{equation*}{ (\mathfrak{gl}, \mathfrak{gl}) \rightarrow \mathfrak{gl} \f}
@@ -247,17 +245,6 @@ class gl
         assert(this->shape == other.shape);
         this->_data += other._data;
         return *this;
-    }
-
-    gl operator-(const gl & other) const
-    {
-        /*! \f{equation*}{ (\mathfrak{gl}}, \mathfrak{gl}) \rightarrow \mathfrak{gl}} \f}
-        *
-        * Subtraction of two vectors in the algebra.
-        */
-        
-        assert(this->shape == other.shape);
-        return this->_data - other._data;
     }
 
     gl & operator-=(const gl & other)
@@ -301,17 +288,6 @@ class gl
 
         this->_data *= other;
         return *this;
-    }
-
-    gl operator*(const gl & other) const
-    {
-        /*! \f{equation*}{ (\mathfrak{gl}, \mathfrak{gl}) \rightarrow \mathbb{R}^{n \times n} \notin \mathfrak{gl} \f}
-        *
-        * Vector product.
-        */
-
-        assert(this->shape == other.shape);
-        return this->_data * other._data;
     }
 
     gl & operator*=(const gl & other)
