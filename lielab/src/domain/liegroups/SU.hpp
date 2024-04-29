@@ -188,7 +188,25 @@ namespace lielab
                 // return out;
             }
 
-            // TODO: Unserialize
+            static SU unserialize(Eigen::VectorXd vec)
+            {
+                /*! \f{equation*}{ (\mathbb{R}^{n \times 1}) \rightarrow SU \f}
+                * 
+                * Returns an SU from a serialized object.
+                */
+
+                if (vec.size() == 4)
+                {
+                    SU out(2);
+                    out._data(0,0) = std::complex<double>(vec(0), vec(1));
+                    out._data(0,1) = std::complex<double>(-vec(2), vec(3));
+                    out._data(1,0) = std::complex<double>(vec(2), vec(3));
+                    out._data(1,1) = std::complex<double>(vec(0), -vec(1));
+                    return out;
+                }
+
+                // TODO: General real unserialization strategy
+            }
 
             std::complex<double> operator()(const size_t index1, const size_t index2) const
             {

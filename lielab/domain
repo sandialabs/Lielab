@@ -17,3 +17,5 @@
 
 // Other imports
 #include "src/domain/domain.hpp"
+#include "src/domain/halie.hpp"
+#include "src/domain/hmlie.hpp"

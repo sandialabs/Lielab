@@ -1,5 +1,6 @@
-from lielab.cppLielab import ALGO_STATUS
-from lielab.cppLielab import __author__, __contact__, __location__, __version__
+from .cppLielab import ALGO_STATUS
+
+from .cppLielab import __author__, __contact__, __location__, __version__
 
 from . import testing
 

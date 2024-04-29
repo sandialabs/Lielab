@@ -54,7 +54,11 @@ PYBIND11_MODULE(cppLielab, m) {
     */
     py::module m_domain = m.def_submodule("domain", "The domain submodule.");
 
-       py::class_<lielab::domain::gl>(m_domain, "gl")
+    /*!
+    * Bindings for lielab::domain::gl
+    */
+
+    py::class_<lielab::domain::gl>(m_domain, "gl")
         .def_readwrite("_data", &lielab::domain::gl::_data)
         .def_readonly_static("abelian", &lielab::domain::gl::abelian)
         .def(py::init<>())
@@ -267,7 +271,7 @@ PYBIND11_MODULE(cppLielab, m) {
         .def(py::init<>())
         .def(py::init<const size_t>())
         .def(py::init<const Eigen::MatrixXcd &>())
-        // .def("basis", &lielab::domain::su::basis) // TODO: Implement basis
+        .def("basis", &lielab::domain::su::basis)
         // .def("project", &lielab::domain::su::project) // TODO: Implement project
         .def("get_dimension", &lielab::domain::su::get_dimension)
         .def("get_vector", &lielab::domain::su::get_vector)
@@ -316,6 +320,10 @@ PYBIND11_MODULE(cppLielab, m) {
         {
             return matstr(self._data);
         });
+    
+    /*!
+     * Lie Groups
+     */
     
     py::class_<lielab::domain::GL>(m_domain, "GL")
         .def_readwrite("_data", &lielab::domain::GL::_data)
@@ -448,7 +456,7 @@ PYBIND11_MODULE(cppLielab, m) {
         .def("get_ados_representation", &lielab::domain::SU::get_ados_representation)
         .def("inverse", &lielab::domain::SU::inverse)
         .def("serialize", &lielab::domain::SU::serialize)
-        // .def("unserialize", &lielab::domain::SU::unserialize) // TODO:
+        .def("unserialize", &lielab::domain::SU::unserialize)
         .def("__call__", [](const lielab::domain::SU & self, const size_t index1, const size_t index2)
         {
             return self(index1, index2);

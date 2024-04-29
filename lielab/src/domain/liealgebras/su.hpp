@@ -126,18 +126,57 @@ namespace lielab
                 * Returns the vector representation.
                 */
 
-                if (shape == 2)
+                if (this->shape <= 1)
                 {
-                    Eigen::VectorXd vector(3);
-
-                    vector(0) = (_data(0,1).imag() + _data(1,0).imag())/2.0;
-                    vector(1) = (_data(1,0).real() - _data(0,1).real())/2.0;
-                    vector(2) = (_data(0,0).imag() - _data(1,1).imag())/2.0;
-
-                    return vector;
+                    return Eigen::VectorXd::Zero(0);
                 }
 
-                return Eigen::VectorXd::Zero(0);
+                const size_t dim = this->get_dimension();
+                Eigen::VectorXd out = Eigen::VectorXd::Zero(dim);
+
+                // General case of su(2+). Use's the Generalized Gell-Mann matrices
+                size_t k = 0;
+
+                // Symmetric
+                for (size_t jj = 1; jj < this->shape; jj++)
+                {
+                    for (size_t ii = 0; ii < jj; ii++)
+                    {
+                        out(k) = std::imag(this->_data(ii, jj) + this->_data(jj, ii))/2.0;
+                        k++;
+                    }
+                }
+
+                // Anti-symmetric
+                for (size_t jj = 1; jj < this->shape; jj++)
+                {
+                    for (size_t ii = 0; ii < jj; ii++)
+                    {
+                        out(k) = std::real(this->_data(jj, ii) - this->_data(ii, jj))/2.0;
+                        k++;
+                    }
+                }
+
+                // Diagonal
+                size_t zz = this->shape;
+                size_t yy = this->shape - 1;
+                k = out.size() - 1;
+                Eigen::MatrixXcd temp = this->get_ados_representation();
+                for (size_t yy = this->shape - 1; yy >= 1; yy--)
+                {
+                    const double multiplier = std::sqrt(2.0/((zz-1)*(zz)));
+                    out(k) = -std::imag(temp(yy, yy))/(multiplier*(zz - 1));
+
+                    for (size_t ii = 0; ii < yy; ii++)
+                    {
+                        temp(ii, ii) -= std::imag(multiplier*out(k));
+                    }
+
+                    zz--;
+                    k--;
+                }
+
+                return out;
             }
 
             Eigen::MatrixXcd get_ados_representation() const
@@ -169,28 +208,7 @@ namespace lielab
                     return;
                 }
 
-                // Special case of su(2) where the basis is related to the Pauli matrices
-                if (this->shape == 2)
-                {
-                    Eigen::MatrixXcd ipauli1(2,2), ipauli2(2,2), ipauli3(2,2);
-                    
-                    constexpr std::array<std::complex<double>, 4> _pauli1 = lielab::constants::pauli1<double>;
-                    constexpr std::array<std::complex<double>, 4> _pauli2 = lielab::constants::pauli2<double>;
-                    constexpr std::array<std::complex<double>, 4> _pauli3 = lielab::constants::pauli3<double>;
-
-                    ipauli1 << _pauli1[0], _pauli1[1], _pauli1[2], _pauli1[3];
-                    ipauli2 << _pauli2[0], _pauli2[1], _pauli2[2], _pauli2[3];
-                    ipauli3 << _pauli3[0], _pauli3[1], _pauli3[2], _pauli3[3];
-
-                    ipauli1 =  std::complex<double>(0.0, 1.0) * ipauli1;
-                    ipauli2 = -std::complex<double>(0.0, 1.0) * ipauli2;
-                    ipauli3 =  std::complex<double>(0.0, 1.0) * ipauli3;
-
-                    this->_data = ipauli1*vector(0) + ipauli2*vector(1) + ipauli3*vector(2);
-                    return;
-                }
-
-                // General case of su(3+). Use's the Generalized Gell-Mann matrices
+                // General case of su(2+). Use's the Generalized Gell-Mann matrices
                 size_t k = 0;
 
                 // Symmetric
@@ -198,8 +216,8 @@ namespace lielab
                 {
                     for (size_t ii = 0; ii < jj; ii++)
                     {
-                        this->_data(ii, jj) = std::complex<double>(vector(k), 0.0);
-                        this->_data(jj, ii) = std::complex<double>(vector(k), 0.0);
+                        this->_data(ii, jj) = std::complex<double>(0.0, vector(k));
+                        this->_data(jj, ii) = std::complex<double>(0.0, vector(k));
                         k++;
                     }
                 }
@@ -209,8 +227,8 @@ namespace lielab
                 {
                     for (size_t ii = 0; ii < jj; ii++)
                     {
-                        this->_data(ii, jj) += std::complex<double>(0.0, -vector(k));
-                        this->_data(jj, ii) += std::complex<double>(0.0,  vector(k));
+                        this->_data(ii, jj) += std::complex<double>(-vector(k), 0.0);
+                        this->_data(jj, ii) += std::complex<double>(vector(k), 0.0);
                         k++;
                     }
                 }
@@ -225,11 +243,11 @@ namespace lielab
                     {
                         if (ii == (zz - 1))
                         {
-                            this->_data(ii, ii) -= multiplier*(zz - 1)*vector(k);
+                            this->_data(ii, ii) -= std::complex<double>(0.0, multiplier*(zz - 1)*vector(k));
                         }
                         else
                         {
-                            this->_data(ii, ii) += multiplier*vector(k);
+                            this->_data(ii, ii) += std::complex<double>(0.0, multiplier*vector(k));
                         }
                     }
 
