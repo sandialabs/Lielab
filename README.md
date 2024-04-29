@@ -8,7 +8,7 @@ Source code and prebuilt binaries are available on various artifact hosting webs
 
 ### Python
 
-Install lielab with pip
+Install Lielab with pip
 
 ```
 pip install lielab
@@ -19,7 +19,7 @@ pip install lielab
 Add Lielab to another project by adding it to the conanfile.txt and include with
 
 ```
-#include <lielab>
+#include <Lielab.hpp>
 ```
 
 Alternatively, the header files can be included directly into other projects. Eigen must be made available in this case.
@@ -36,7 +36,12 @@ cmake --preset conan-default -DLIELAB_BUILD_TESTS=False
 cmake --build . --preset conan-release --target cppLielab
 ```
 
-This will build the pyd file required for Python, and also skip building the pure C++ test cases.
+This will build the pyd file required for Python, and also skip building the pure C++ test cases. The Python wrapper can then be installed with
+
+```
+cd python
+pip install -e .
+```
 
 ### CMake
 
@@ -53,6 +58,13 @@ from the top level Lielab CMakeLists. Then, build the tools as usual with CMake
 ```
 cmake .. -DLIELAB_BUILD_TESTS=False
 cmake --build . --target cppLielab
+```
+
+This will build the pyd file required for Python, and also skip building the pure C++ test cases. The Python wrapper can then be installed with
+
+```
+cd python
+pip install -e .
 ```
 
 ## Dev Note
