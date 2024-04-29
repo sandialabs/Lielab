@@ -198,6 +198,42 @@ TEST_CASE("gl algebra", "[domain]")
     CHECK(eight.get_dimension() == 64);
 }
 
+
+TEST_CASE("glc algebra", "[domain]")
+{
+    /*!
+    * Tests the glc algebra.
+    */
+
+    for (size_t shape = 1; shape <= TEST_UP_TO_THIS_SHAPE; shape++)
+    {
+        const size_t D = Lielab::domain::glc::basis(0, shape).get_dimension();
+
+        // Construct the glc basis
+        std::vector<Lielab::domain::glc> basis;
+        for (size_t ii = 0; ii < D; ii++)
+        {
+            basis.push_back(Lielab::domain::glc::basis(ii, shape));
+        }
+
+        is_algebra<Lielab::domain::glc>(basis);
+        is_liealgebra<Lielab::domain::glc>(basis);
+    }
+   
+    Lielab::domain::glc one(1), two(2), three(3), four(4), five(5), six(6), seven(7), eight(8);
+
+    // Dimensions
+    CHECK(one.get_dimension() == 2);
+    CHECK(two.get_dimension() == 8);
+    CHECK(three.get_dimension() == 18);
+    CHECK(four.get_dimension() == 32);
+    CHECK(five.get_dimension() == 50);
+    CHECK(six.get_dimension() == 72);
+    CHECK(seven.get_dimension() == 98);
+    CHECK(eight.get_dimension() == 128);
+}
+
+
 TEST_CASE("rn algebra", "[domain]")
 {
     /*!
@@ -516,6 +552,29 @@ TEST_CASE("GL", "[domain]")
         const Lielab::domain::GL identity(shape);
 
         is_group<Lielab::domain::GL>(elements, identity);
+    }
+}
+
+TEST_CASE("GLC", "[domain]")
+{
+    /*!
+    * Tests GLC against well-known identities.
+    */
+
+    for (size_t shape = 1; shape <= TEST_UP_TO_THIS_SHAPE; shape++)
+    {
+        const size_t D = Lielab::domain::glc::basis(0, shape).get_dimension();
+
+        // Construct the GL elements
+        std::vector<Lielab::domain::GLC> elements;
+        for (size_t ii = 0; ii < D; ii++)
+        {
+            elements.push_back(Lielab::functions::exp(Lielab::domain::glc::basis(ii, shape)));
+        }
+
+        const Lielab::domain::GLC identity(shape);
+
+        is_group<Lielab::domain::GLC>(elements, identity);
     }
 }
 

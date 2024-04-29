@@ -2,6 +2,7 @@
 
 #include "liealgebras/cn.hpp"
 #include "liealgebras/gl.hpp"
+#include "liealgebras/glc.hpp"
 #include "liealgebras/rn.hpp"
 #include "liealgebras/se.hpp"
 #include "liealgebras/so.hpp"

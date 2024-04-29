@@ -169,6 +169,67 @@ PYBIND11_MODULE(cppLielab, m) {
         {
             return matstr(self._data);
         });
+    
+
+    /*!
+    * Bindings for Lielab::domain::glc
+    */
+
+    py::class_<Lielab::domain::glc>(m_domain, "glc")
+        .def_readwrite("_data", &Lielab::domain::glc::_data)
+        .def_readonly_static("abelian", &Lielab::domain::glc::abelian)
+        .def(py::init<>())
+        .def(py::init<const size_t>())
+        .def(py::init<const Eigen::MatrixXcd &>())
+        .def("basis", &Lielab::domain::glc::basis)
+        .def("project", &Lielab::domain::glc::project)
+        .def("get_dimension", &Lielab::domain::glc::get_dimension)
+        .def("get_vector", &Lielab::domain::glc::get_vector)
+        .def("get_ados_representation", &Lielab::domain::glc::get_ados_representation)
+        .def("set_vector", &Lielab::domain::glc::set_vector)
+        .def("__call__", [](Lielab::domain::glc & self, const size_t index)
+        {
+            return self(index);
+        })
+        .def("__call__", [](const Lielab::domain::glc & self, const size_t index1, const size_t index2)
+        {
+            return self(index1, index2);
+        })
+        .def(py::self + py::self)
+        .def(py::self += py::self)
+        .def(py::self - py::self)
+        .def(py::self -= py::self)
+        .def(-py::self)
+        .def(py::self * int())
+        .def(py::self * double())
+        // .def(py::self * std::complex<int>()) // TODO: Complex integers seem bugged in Eigen right now
+        .def(py::self * std::complex<double>())
+        .def(py::self * py::self)
+        .def(py::self *= int())
+        .def(py::self *= double())
+        // .def(py::self *= std::complex<int>()) // TODO: Complex integers seem bugged in Eigen right now
+        .def(py::self *= std::complex<double>())
+        .def(py::self *= py::self)
+        .def(py::self / int())
+        .def(py::self / double())
+        // .def(py::self / std::complex<int>())
+        .def(py::self / std::complex<double>())
+        .def(py::self /= int())
+        .def(py::self /= double())
+        // .def(py::self /= std::complex<int>())
+        .def(py::self /= std::complex<double>())
+        .def(int() * py::self)
+        .def(double() * py::self)
+        // .def(std::complex<int>() * py::self)
+        .def(std::complex<double>() * py::self)
+        .def("__repr__", [](const Lielab::domain::glc & self)
+        {
+            return "<lielab.domain.glc>";
+        })
+        .def("__str__", [](const Lielab::domain::glc & self)
+        {
+            return matstr(self._data);
+        });
 
     /*!
     * Bindings for Lielab::domain::rn
@@ -496,6 +557,33 @@ PYBIND11_MODULE(cppLielab, m) {
         {
             return matstr(self._data);
         });
+    
+    py::class_<Lielab::domain::GLC>(m_domain, "GLC")
+        .def_readwrite("_data", &Lielab::domain::GLC::_data)
+        .def_readonly_static("abelian", &Lielab::domain::GLC::abelian)
+        .def(py::init<>())
+        .def(py::init<int>())
+        .def(py::init<Eigen::MatrixXd>())
+        .def("project", &Lielab::domain::GLC::project)
+        .def("get_dimension", &Lielab::domain::GLC::get_dimension)
+        .def("get_ados_representation", &Lielab::domain::GLC::get_ados_representation)
+        .def("inverse", &Lielab::domain::GLC::inverse)
+        .def("serialize", &Lielab::domain::GLC::serialize)
+        .def("unserialize", &Lielab::domain::GLC::unserialize)
+        .def("__call__", [](const Lielab::domain::GLC & self, const size_t index1, const size_t index2)
+        {
+            return self(index1, index2);
+        })
+        .def(py::self * py::self)
+        .def(py::self *= py::self)
+        .def("__repr__", [](const Lielab::domain::GLC & self)
+        {
+            return "<lielab.domain.GLC>";
+        })
+        .def("__str__", [](const Lielab::domain::GLC & self)
+        {
+            return matstr(self._data);
+        });
 
     py::class_<Lielab::domain::RN>(m_domain, "RN")
         .def_readwrite("_data", &Lielab::domain::RN::_data)
@@ -710,6 +798,7 @@ PYBIND11_MODULE(cppLielab, m) {
     py::module m_functions = m.def_submodule("functions", "The functions submodule.");
     m_functions.def("pair", &Lielab::functions::pair<Lielab::domain::cn>, "The pair function.");
     m_functions.def("pair", &Lielab::functions::pair<Lielab::domain::gl>, "The pair function.");
+    m_functions.def("pair", &Lielab::functions::pair<Lielab::domain::glc>, "The pair function.");
     m_functions.def("pair", &Lielab::functions::pair<Lielab::domain::rn>, "The pair function.");
     m_functions.def("pair", &Lielab::functions::pair<Lielab::domain::se>, "The pair function.");
     m_functions.def("pair", &Lielab::functions::pair<Lielab::domain::so>, "The pair function.");
@@ -723,6 +812,7 @@ PYBIND11_MODULE(cppLielab, m) {
     m_functions.def("factorial", &Lielab::functions::factorial, "The factorial function");
     m_functions.def("Ad", &Lielab::functions::Ad<Lielab::domain::cn>, "The Ad function.");
     m_functions.def("Ad", &Lielab::functions::Ad<Lielab::domain::gl>, "The Ad function.");
+    m_functions.def("Ad", &Lielab::functions::Ad<Lielab::domain::glc>, "The Ad function.");
     m_functions.def("Ad", &Lielab::functions::Ad<Lielab::domain::rn>, "The Ad function.");
     m_functions.def("Ad", &Lielab::functions::Ad<Lielab::domain::se>, "The Ad function.");
     m_functions.def("Ad", &Lielab::functions::Ad<Lielab::domain::so>, "The Ad function.");
@@ -730,6 +820,7 @@ PYBIND11_MODULE(cppLielab, m) {
     m_functions.def("Ad", &Lielab::functions::Ad<Lielab::domain::su>, "The Ad function.");
     m_functions.def("commutator", &Lielab::functions::commutator<Lielab::domain::cn>, "The commutator function.");
     m_functions.def("commutator", &Lielab::functions::commutator<Lielab::domain::gl>, "The commutator function.");
+    m_functions.def("commutator", &Lielab::functions::commutator<Lielab::domain::glc>, "The commutator function.");
     m_functions.def("commutator", &Lielab::functions::commutator<Lielab::domain::rn>, "The commutator function.");
     m_functions.def("commutator", &Lielab::functions::commutator<Lielab::domain::se>, "The commutator function.");
     m_functions.def("commutator", &Lielab::functions::commutator<Lielab::domain::so>, "The commutator function.");
@@ -737,6 +828,7 @@ PYBIND11_MODULE(cppLielab, m) {
     m_functions.def("commutator", &Lielab::functions::commutator<Lielab::domain::su>, "The commutator function.");
     // m_functions.def("cayley1", &Lielab::functions::cayley1<Lielab::domain::cn>, "The cayley1 function.");
     // m_functions.def("cayley1", &Lielab::functions::cayley1<Lielab::domain::gl>, "The cayley1 function.");
+    // m_functions.def("cayley1", &Lielab::functions::cayley1<Lielab::domain::glc>, "The cayley1 function.");
     m_functions.def("cayley1", &Lielab::functions::cayley1<Lielab::domain::rn>, "The cayley1 function.");
     // m_functions.def("cayley1", &Lielab::functions::cayley1<Lielab::domain::se>, "The cayley1 function.");
     m_functions.def("cayley1", &Lielab::functions::cayley1<Lielab::domain::so>, "The cayley1 function.");
@@ -744,6 +836,7 @@ PYBIND11_MODULE(cppLielab, m) {
     m_functions.def("cayley1", &Lielab::functions::cayley1<Lielab::domain::su>, "The cayley1 function.");
     // m_functions.def("cayley2", &Lielab::functions::cayley2<Lielab::domain::cn>, "The cayley2 function.");
     // m_functions.def("cayley2", &Lielab::functions::cayley2<Lielab::domain::gl>, "The cayley2 function.");
+    // m_functions.def("cayley2", &Lielab::functions::cayley2<Lielab::domain::glc>, "The cayley2 function.");
     m_functions.def("cayley2", &Lielab::functions::cayley2<Lielab::domain::rn>, "The cayley2 function.");
     // m_functions.def("cayley2", &Lielab::functions::cayley1<Lielab::domain::se>, "The cayley2 function.");
     m_functions.def("cayley2", &Lielab::functions::cayley2<Lielab::domain::so>, "The cayley2 function.");
@@ -751,6 +844,7 @@ PYBIND11_MODULE(cppLielab, m) {
     // m_functions.def("cayley2", &Lielab::functions::cayley2<Lielab::domain::su>, "The cayley2 function.");
     // m_functions.def("Killing", &Lielab::functions::Killing<Lielab::domain::cn>, "The Killing function.");
     // m_functions.def("Killing", &Lielab::functions::Killing<Lielab::domain::gl>, "The Killing function.");
+    // m_functions.def("Killing", &Lielab::functions::Killing<Lielab::domain::glc>, "The Killing function.");
     m_functions.def("Killing", &Lielab::functions::Killing<Lielab::domain::rn>, "The Killing function.");
     // m_functions.def("Killing", &Lielab::functions::Killing<Lielab::domain::se>, "The Killing function.");
     m_functions.def("Killing", &Lielab::functions::Killing<Lielab::domain::so>, "The Killing function.");
@@ -758,6 +852,7 @@ PYBIND11_MODULE(cppLielab, m) {
     m_functions.def("Killing", &Lielab::functions::Killing<Lielab::domain::su>, "The Killing function."); // TODO: Might be wrong
     m_functions.def("Killingform", &Lielab::functions::Killingform<Lielab::domain::cn>, "The Killingform function.");
     m_functions.def("Killingform", &Lielab::functions::Killingform<Lielab::domain::gl>, "The Killingform function.");
+    m_functions.def("Killingform", &Lielab::functions::Killingform<Lielab::domain::glc>, "The Killingform function.");
     // m_functions.def("Killingform", &Lielab::functions::Killingform<Lielab::domain::se>, "The Killingform function.");
     m_functions.def("Killingform", &Lielab::functions::Killingform<Lielab::domain::rn>, "The Killingform function.");
     m_functions.def("Killingform", &Lielab::functions::Killingform<Lielab::domain::so>, "The Killingform function.");
@@ -765,6 +860,7 @@ PYBIND11_MODULE(cppLielab, m) {
     m_functions.def("Killingform", &Lielab::functions::Killingform<Lielab::domain::su>, "The Killingform function."); // TODO: Might be wrong
     // m_functions.def("ad", &Lielab::functions::ad<Lielab::domain::cn>, "The ad function.");
     // m_functions.def("ad", &Lielab::functions::ad<Lielab::domain::gl>, "The ad function.");
+    // m_functions.def("ad", &Lielab::functions::ad<Lielab::domain::glc>, "The ad function.");
     m_functions.def("ad", &Lielab::functions::ad<Lielab::domain::rn>, "The ad function.");
     // m_functions.def("ad", &Lielab::functions::ad<Lielab::domain::se>, "The ad function.");
     m_functions.def("ad", &Lielab::functions::ad<Lielab::domain::so>, "The ad function.");
@@ -782,6 +878,7 @@ PYBIND11_MODULE(cppLielab, m) {
     // m_functions.def("coad", &Lielab::functions::coad<Lielab::domain::su>, "The coad function."); // TODO: su needs basis()
     m_functions.def("exp", &Lielab::functions::exp<Lielab::domain::cn>, "The exponential function.");
     m_functions.def("exp", &Lielab::functions::exp<Lielab::domain::gl>, "The exponential function.");
+    m_functions.def("exp", &Lielab::functions::exp<Lielab::domain::glc>, "The exponential function.");
     m_functions.def("exp", &Lielab::functions::exp<Lielab::domain::rn>, "The exponential function.");
     m_functions.def("exp", &Lielab::functions::exp<Lielab::domain::se>, "The exponential function.");
     m_functions.def("exp", &Lielab::functions::exp<Lielab::domain::so>, "The exponential function.");
@@ -789,6 +886,7 @@ PYBIND11_MODULE(cppLielab, m) {
     m_functions.def("exp", &Lielab::functions::exp<Lielab::domain::su>, "The exponential function.");
     m_functions.def("log", &Lielab::functions::log<Lielab::domain::CN>, "The logarithm function.", py::arg("G"), py::arg("optimize") = false);
     m_functions.def("log", &Lielab::functions::log<Lielab::domain::GL>, "The logarithm function.", py::arg("G"), py::arg("optimize") = false);
+    m_functions.def("log", &Lielab::functions::log<Lielab::domain::GLC>, "The logarithm function.", py::arg("G"), py::arg("optimize") = false);
     m_functions.def("log", &Lielab::functions::log<Lielab::domain::RN>, "The logarithm function.", py::arg("G"), py::arg("optimize") = false);
     m_functions.def("log", &Lielab::functions::log<Lielab::domain::SE>, "The logarithm function.", py::arg("G"), py::arg("optimize") = false);
     m_functions.def("log", &Lielab::functions::log<Lielab::domain::SO>, "The logarithm function.", py::arg("G"), py::arg("optimize") = false);
@@ -797,6 +895,7 @@ PYBIND11_MODULE(cppLielab, m) {
     m_functions.def("bernoulli", &Lielab::functions::bernoulli, "The bernoulli function.");
     // m_functions.def("dcayley1inv", &Lielab::functions::dcayley1inv<Lielab::domain::cn>, "The dcayley1inv function.");
     m_functions.def("dcayley1inv", &Lielab::functions::dcayley1inv<Lielab::domain::gl>, "The dcayley1inv function.");
+    // m_functions.def("dcayley1inv", &Lielab::functions::dcayley1inv<Lielab::domain::glc>, "The dcayley1inv function.");
     m_functions.def("dcayley1inv", &Lielab::functions::dcayley1inv<Lielab::domain::rn>, "The dcayley1inv function.");
     // m_functions.def("dcayley1inv", &Lielab::functions::dcayley1inv<Lielab::domain::se>, "The dcayley1inv function.");
     m_functions.def("dcayley1inv", &Lielab::functions::dcayley1inv<Lielab::domain::so>, "The dcayley1inv function.");
@@ -804,6 +903,7 @@ PYBIND11_MODULE(cppLielab, m) {
     m_functions.def("dcayley1inv", &Lielab::functions::dcayley1inv<Lielab::domain::su>, "The dcayley1inv function.");
     m_functions.def("dexp", &Lielab::functions::dexp<Lielab::domain::cn>, "The dexp function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
     m_functions.def("dexp", &Lielab::functions::dexp<Lielab::domain::gl>, "The dexp function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
+    m_functions.def("dexp", &Lielab::functions::dexp<Lielab::domain::glc>, "The dexp function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
     m_functions.def("dexp", &Lielab::functions::dexp<Lielab::domain::rn>, "The dexp function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
     m_functions.def("dexp", &Lielab::functions::dexp<Lielab::domain::se>, "The dexp function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
     m_functions.def("dexp", &Lielab::functions::dexp<Lielab::domain::so>, "The dexp function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
@@ -811,6 +911,7 @@ PYBIND11_MODULE(cppLielab, m) {
     m_functions.def("dexp", &Lielab::functions::dexp<Lielab::domain::su>, "The dexp function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
     m_functions.def("dexpinv", &Lielab::functions::dexpinv<Lielab::domain::cn>, "The dexpinv function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
     m_functions.def("dexpinv", &Lielab::functions::dexpinv<Lielab::domain::gl>, "The dexpinv function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
+    m_functions.def("dexpinv", &Lielab::functions::dexpinv<Lielab::domain::glc>, "The dexpinv function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
     m_functions.def("dexpinv", &Lielab::functions::dexpinv<Lielab::domain::rn>, "The dexpinv function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
     m_functions.def("dexpinv", &Lielab::functions::dexpinv<Lielab::domain::se>, "The dexpinv function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
     m_functions.def("dexpinv", &Lielab::functions::dexpinv<Lielab::domain::so>, "The dexpinv function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);

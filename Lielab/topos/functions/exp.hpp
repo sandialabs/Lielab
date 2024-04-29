@@ -28,6 +28,10 @@ Lielab::domain::CompositeManifold exp(const Lielab::domain::CompositeAlgebra & l
         {
             out.space.push_back(Lielab::functions::exp(std::get<Lielab::domain::gl>(la.space[ii])));
         }
+        else if (ind == Lielab::domain::CompositeAlgebra::INDEX_glc)
+        {
+            out.space.push_back(Lielab::functions::exp(std::get<Lielab::domain::glc>(la.space[ii])));
+        }
         else if (ind == Lielab::domain::CompositeAlgebra::INDEX_rn)
         {
             out.space.push_back(Lielab::functions::exp(std::get<Lielab::domain::rn>(la.space[ii])));

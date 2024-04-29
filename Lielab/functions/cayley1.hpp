@@ -46,6 +46,21 @@ namespace Lielab
         }
 
         template <>
+        Lielab::domain::GLC cayley1(const Lielab::domain::glc & a)
+        {
+            /*
+            * Cayley1 overload for glc
+            *
+            * Needed since glc is complex
+            */
+
+            const Eigen::MatrixXcd m = a.get_ados_representation();
+            const Eigen::MatrixXcd Id = Eigen::MatrixXcd::Identity(a.shape, a.shape);
+
+            return (Id + m/2.0)*(Id - m/2.0).inverse();
+        }
+
+        template <>
         Lielab::domain::SU cayley1(const Lielab::domain::su & a)
         {
             /*

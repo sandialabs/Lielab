@@ -127,6 +127,66 @@ def test_gl():
     assert_domain(commutator(x,y), -commutator(y,x))
 
 
+def test_glc():
+    """
+    Checks the basic glc class
+    """
+
+    from lielab.domain import glc
+    from lielab.functions import commutator
+
+    one = glc(1)
+    two = glc(2)
+    three = glc(3)
+    four = glc(4)
+    five = glc(5)
+    six = glc(6)
+    seven = glc(7)
+    eight = glc(8)
+
+    # Dimensions
+    assert one.get_dimension() == 2
+    assert two.get_dimension() == 8
+    assert three.get_dimension() == 18
+    assert four.get_dimension() == 32
+    assert five.get_dimension() == 50
+    assert six.get_dimension() == 72
+    assert seven.get_dimension() == 98
+    assert eight.get_dimension() == 128
+
+    x = glc.basis(0,4)
+    y = glc.basis(1,4)
+    z = glc.basis(2,4)
+    zero = x*0
+
+    # Unary subtraction
+    -x
+
+    # Vector Addition
+    x + y
+    assert_domain(x + y, y + x)
+
+    # Vector Subtraction
+    x - y
+    assert_domain(x - y, -(y - x))
+
+    # Scalar Multiplication
+    an_int*x
+    a_double*x
+    x*an_int
+    x*a_double
+    assert_domain(an_int*x, x*an_int)
+    assert_domain(a_double*x, x*a_double)
+
+    # Scalar division
+    x/an_int
+    x/a_double
+
+    # Vector multiplication
+    x * y
+    assert_domain(commutator(x,y), -commutator(y,x))
+
+
 def test_rn():
     """
     Checks the basic rn class
@@ -796,6 +856,26 @@ def test_GL():
     x = exp(gl.basis(0,2))
     y = exp(gl.basis(1,2))
     z = exp(gl.basis(2,2))
+
+    # Group multiplication
+    x*y
+    assert_domain(x*y, (y.inverse()*x.inverse()).inverse())
+
+    # Group inverse
+    x.inverse()
+
+
+def test_GLC():
+    """
+    Tests GLC against well-known identities.
+    """
+
+    from lielab.domain import glc
+    from lielab.functions import exp
+
+    x = exp(glc.basis(0,2))
+    y = exp(glc.basis(1,2))
+    z = exp(glc.basis(2,2))
 
     # Group multiplication
     x*y

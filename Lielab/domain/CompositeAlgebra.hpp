@@ -30,16 +30,18 @@ namespace domain
 class CompositeAlgebra
 {
     public:
-    static constexpr size_t INDEX_cn = 0;
-    static constexpr size_t INDEX_gl = 1;
-    static constexpr size_t INDEX_rn = 2;
-    static constexpr size_t INDEX_se = 3;
-    static constexpr size_t INDEX_so = 4;
-    static constexpr size_t INDEX_sp = 5;
-    static constexpr size_t INDEX_su = 6;
+    static constexpr size_t INDEX_cn  = 0;
+    static constexpr size_t INDEX_gl  = 1;
+    static constexpr size_t INDEX_glc = 2;
+    static constexpr size_t INDEX_rn  = 3;
+    static constexpr size_t INDEX_se  = 4;
+    static constexpr size_t INDEX_so  = 5;
+    static constexpr size_t INDEX_sp  = 6;
+    static constexpr size_t INDEX_su  = 7;
 
     typedef std::variant<Lielab::domain::cn,
                          Lielab::domain::gl,
+                         Lielab::domain::glc,
                          Lielab::domain::rn,
                          Lielab::domain::se,
                          Lielab::domain::so,
@@ -96,6 +98,10 @@ class CompositeAlgebra
             {
                 dim += std::get<Lielab::domain::gl>(space[ii]).get_dimension();
             }
+            else if (ind == INDEX_glc)
+            {
+                dim += std::get<Lielab::domain::glc>(space[ii]).get_dimension();
+            }
             else if (ind == INDEX_rn)
             {
                 dim += std::get<Lielab::domain::rn>(space[ii]).get_dimension();
@@ -136,6 +142,10 @@ class CompositeAlgebra
             {
                 out(ii) = static_cast<int>(std::get<Lielab::domain::gl>(space[ii]).shape);
             }
+            else if (ind == INDEX_glc)
+            {
+                out(ii) = static_cast<int>(std::get<Lielab::domain::glc>(space[ii]).shape);
+            }
             else if (ind == INDEX_rn)
             {
                 out(ii) = static_cast<int>(std::get<Lielab::domain::rn>(space[ii]).shape);
@@ -175,6 +185,10 @@ class CompositeAlgebra
             else if (ind == INDEX_gl)
             {
                 vectors[ii] = std::get<Lielab::domain::gl>(this->space[ii]).get_vector();
+            }
+            else if (ind == INDEX_glc)
+            {
+                vectors[ii] = std::get<Lielab::domain::glc>(this->space[ii]).get_vector();
             }
             else if (ind == INDEX_rn)
             {
@@ -217,6 +231,12 @@ class CompositeAlgebra
             {
                 const size_t dim = std::get<Lielab::domain::gl>(this->space[ii]).get_dimension();
                 std::get<Lielab::domain::gl>(this->space[ii]).set_vector(vec(Eigen::seqN(jj, dim)));
+                jj += dim;
+            }
+            else if (ind == INDEX_glc)
+            {
+                const size_t dim = std::get<Lielab::domain::glc>(this->space[ii]).get_dimension();
+                std::get<Lielab::domain::glc>(this->space[ii]).set_vector(vec(Eigen::seqN(jj, dim)));
                 jj += dim;
             }
             else if (ind == INDEX_rn)
@@ -269,6 +289,10 @@ class CompositeAlgebra
             {
                 out.space.push_back(std::get<Lielab::domain::gl>(this->space[ii]) + std::get<Lielab::domain::gl>(other.space[ii]));
             }
+            else if (ind == INDEX_glc)
+            {
+                out.space.push_back(std::get<Lielab::domain::glc>(this->space[ii]) + std::get<Lielab::domain::glc>(other.space[ii]));
+            }
             else if (ind == INDEX_rn)
             {
                 out.space.push_back(std::get<Lielab::domain::rn>(this->space[ii]) + std::get<Lielab::domain::rn>(other.space[ii]));
@@ -308,6 +332,10 @@ class CompositeAlgebra
             else if (ind == INDEX_gl)
             {
                 std::get<Lielab::domain::gl>(this->space[ii]) += std::get<Lielab::domain::gl>(other.space[ii]);
+            }
+            else if (ind == INDEX_glc)
+            {
+                std::get<Lielab::domain::glc>(this->space[ii]) += std::get<Lielab::domain::glc>(other.space[ii]);
             }
             else if (ind == INDEX_rn)
             {
@@ -349,6 +377,10 @@ class CompositeAlgebra
             {
                 out.space.push_back(std::get<Lielab::domain::gl>(this->space[ii]) - std::get<Lielab::domain::gl>(other.space[ii]));
             }
+            else if (ind == INDEX_glc)
+            {
+                out.space.push_back(std::get<Lielab::domain::glc>(this->space[ii]) - std::get<Lielab::domain::glc>(other.space[ii]));
+            }
             else if (ind == INDEX_rn)
             {
                 out.space.push_back(std::get<Lielab::domain::rn>(this->space[ii]) - std::get<Lielab::domain::rn>(other.space[ii]));
@@ -388,6 +420,10 @@ class CompositeAlgebra
             else if (ind == INDEX_gl)
             {
                 std::get<Lielab::domain::gl>(this->space[ii]) -= std::get<Lielab::domain::gl>(other.space[ii]);
+            }
+            else if (ind == INDEX_glc)
+            {
+                std::get<Lielab::domain::glc>(this->space[ii]) -= std::get<Lielab::domain::glc>(other.space[ii]);
             }
             else if (ind == INDEX_rn)
             {
@@ -429,6 +465,10 @@ class CompositeAlgebra
             {
                 out.space.push_back(-std::get<Lielab::domain::gl>(this->space[ii]));
             }
+            else if (ind == INDEX_glc)
+            {
+                out.space.push_back(-std::get<Lielab::domain::glc>(this->space[ii]));
+            }
             else if (ind == INDEX_rn)
             {
                 out.space.push_back(-std::get<Lielab::domain::rn>(this->space[ii]));
@@ -469,6 +509,10 @@ class CompositeAlgebra
             {
                 out.space.push_back(std::get<Lielab::domain::gl>(this->space[ii]) * other);
             }
+            else if (ind == INDEX_glc)
+            {
+                out.space.push_back(std::get<Lielab::domain::glc>(this->space[ii]) * other);
+            }
             else if (ind == INDEX_rn)
             {
                 out.space.push_back(std::get<Lielab::domain::rn>(this->space[ii]) * other);
@@ -506,6 +550,10 @@ class CompositeAlgebra
             else if (ind == INDEX_gl)
             {
                 std::get<Lielab::domain::gl>(this->space[ii]) *= other;
+            }
+            else if (ind == INDEX_glc)
+            {
+                std::get<Lielab::domain::glc>(this->space[ii]) *= other;
             }
             else if (ind == INDEX_rn)
             {
@@ -547,6 +595,10 @@ class CompositeAlgebra
             {
                 out.space.push_back(std::get<Lielab::domain::gl>(this->space[ii]) * std::get<Lielab::domain::gl>(other.space[ii]));
             }
+            else if (ind == INDEX_glc)
+            {
+                out.space.push_back(std::get<Lielab::domain::glc>(this->space[ii]) * std::get<Lielab::domain::glc>(other.space[ii]));
+            }
             else if (ind == INDEX_rn)
             {
                 out.space.push_back(std::get<Lielab::domain::rn>(this->space[ii]) * std::get<Lielab::domain::rn>(other.space[ii]));
@@ -586,6 +638,10 @@ class CompositeAlgebra
             if (ind == INDEX_gl)
             {
                 std::get<Lielab::domain::gl>(this->space[ii]) *= std::get<Lielab::domain::gl>(other.space[ii]);
+            }
+            if (ind == INDEX_glc)
+            {
+                std::get<Lielab::domain::glc>(this->space[ii]) *= std::get<Lielab::domain::glc>(other.space[ii]);
             }
             else if (ind == INDEX_rn)
             {
@@ -627,6 +683,10 @@ class CompositeAlgebra
             {
                 out.space.push_back(std::get<Lielab::domain::gl>(this->space[ii]) / other);
             }
+            else if (ind == INDEX_glc)
+            {
+                out.space.push_back(std::get<Lielab::domain::glc>(this->space[ii]) / other);
+            }
             else if (ind == INDEX_rn)
             {
                 out.space.push_back(std::get<Lielab::domain::rn>(this->space[ii]) / other);
@@ -664,6 +724,10 @@ class CompositeAlgebra
             else if (ind == INDEX_gl)
             {
                 std::get<Lielab::domain::gl>(this->space[ii]) /= other;
+            }
+            else if (ind == INDEX_glc)
+            {
+                std::get<Lielab::domain::glc>(this->space[ii]) /= other;
             }
             else if (ind == INDEX_rn)
             {
@@ -706,6 +770,10 @@ class CompositeAlgebra
             else if (ind == INDEX_gl)
             {
                 out += "gl(" + std::to_string(shapes(ii)) + ")";
+            }
+            else if (ind == INDEX_glc)
+            {
+                out += "glc(" + std::to_string(shapes(ii)) + ")";
             }
             else if (ind == INDEX_rn)
             {

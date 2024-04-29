@@ -170,7 +170,7 @@ namespace Lielab
                  * Gets the size of the data representation.
                  */
 
-                return static_cast<size_t>(this->shape - 1);
+                return static_cast<size_t>(2*(this->shape - 1));
             }
 
             Eigen::MatrixXcd get_ados_representation() const
