@@ -157,7 +157,17 @@ namespace lielab
                 * Gets the dimension of the group.
                 */
 
-                return this->shape - 1;
+                return static_cast<size_t>(this->shape - 1);
+            }
+
+            size_t get_size() const
+            {
+                /*! \f{quation*}{ () \rightarrow \mathbb{Z} \f}
+                 *
+                 * Gets the size of the data representation.
+                 */
+
+                return static_cast<size_t>(this->shape - 1);
             }
 
             Eigen::MatrixXd get_ados_representation() const
@@ -199,14 +209,14 @@ namespace lielab
                 return _data;
             }
 
-            static RN unserialize(Eigen::VectorXd vec)
+            void unserialize(const Eigen::VectorXd &vec)
             {
-                /*! \f{equation*}{ (\mathbb{R}^{n \times 1}) \rightarrow RN \f}
+                /*! \f{equation*}{ (\mathbb{R}^{n \times 1}) \rightarrow () \f}
                 * 
-                * Returns an RN from a serialized object.
+                * Sets the RN object from a serialized vector.
                 */
 
-                return vec;
+                this->_data = vec(Eigen::seqN(0, this->shape-1));
             }
 
             double operator()(const size_t index) const

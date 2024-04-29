@@ -1751,11 +1751,18 @@ namespace lielab
                 throw std::domain_error("quaternion_to_dcm: Expected input shape 2. Got " + std::to_string(q.shape) + ".");
             }
 
-            const Eigen::VectorXd q_real = q.serialize();
-            const double e0 = q_real(0);
-            const double e1 = q_real(1);
-            const double e2 = q_real(2);
-            const double e3 = q_real(3);
+            // TODO: Fix for new SU serialization
+
+            // const Eigen::VectorXd q_real = q.serialize();
+            // const double e0 = q_real(0);
+            // const double e1 = q_real(1);
+            // const double e2 = q_real(2);
+            // const double e3 = q_real(3);
+
+            const double e0 = (std::real(q._data(0,0)) + std::real(q._data(1,1))) / 2.0;
+            const double e1 = (std::imag(q._data(0,0)) - std::imag(q._data(1,1))) / 2.0;
+            const double e2 = (std::real(q._data(1,0)) - std::real(q._data(0,1))) / 2.0;
+            const double e3 = (std::imag(q._data(1,0)) + std::imag(q._data(0,1))) / 2.0;
 
             lielab::domain::SO dcm(3);
             dcm(0,0) = 1.0 - 2.0*e2*e2 - 2.0*e3*e3;

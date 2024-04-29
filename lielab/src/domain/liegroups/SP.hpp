@@ -112,6 +112,16 @@ namespace lielab
                 return this->shape * (this->shape + 1) / 2;
             }
 
+            size_t get_size() const
+            {
+                /*! \f{quation*}{ () \rightarrow \mathbb{Z} \f}
+                 *
+                 * Gets the size of the data representation.
+                 */
+
+                return static_cast<size_t>(std::pow(this->shape, 2));
+            }
+
             Eigen::MatrixXd get_ados_representation() const
             {
                 /*! \f{equation*}{ () \rightarrow \mathbb{R}^{n \times n} \f}
@@ -150,6 +160,16 @@ namespace lielab
                 }
 
                 return out;
+            }
+
+            void unserialize(const Eigen::VectorXd &vec)
+            {
+                /*! \f{equation*}{ (\mathbb{R}^{n \times 1}) \rightarrow () \f}
+                * 
+                * Sets the SP object from a serialized vector.
+                */
+
+                this->_data = vec(Eigen::seqN(0, this->shape*this->shape)).reshaped(this->shape, this->shape);
             }
 
             SP adjoint() const

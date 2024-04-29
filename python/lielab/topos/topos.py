@@ -39,11 +39,12 @@ class CustomMuntheKaas(_TimeStepper):
 
         super(CustomMuntheKaas, self).__init__(*args, **kwargs)
 
-        from lielab.functions import left_exp_default
-        from lielab.topos import dexpinv
+        from lielab.functions import left_product
+        from lielab.topos import exp, dexpinv
         # self.RKT = RKTYPE::RKTYPE_EXPLICIT; # TODO:
 
-        self.left = left_exp_default
+        self.action = left_product
+        self.phi = exp
         self.dphiinv = dexpinv
 
         self._t0 = None
@@ -86,7 +87,7 @@ class CustomMuntheKaas(_TimeStepper):
         for jj in range(self.iterations + 1):
             self._U += self._dt*self.A[self.iterations+1, jj]*self._KK[jj]
         
-        self.next_y = self.left(self._U, self._y0)
+        self.next_y = self.action(self.phi(self._U), self._y0)
         self.next_t = self._t0 + self._dt*self.C[self.iterations + 1]
     
     def set_dy(self, dy):
@@ -116,13 +117,13 @@ class CustomMuntheKaas(_TimeStepper):
         for ii in range(self.n):
             Ulow += self._dt*self.B[ii]*self._KK[ii]
 
-        low = self.left(Ulow, self._y0)
+        low = self.action(self.phi(Ulow), self._y0)
 
         if self.variable_step:
             for ii in range(self.n):
                 Uhigh += self._dt*self.Bhat[ii]*self._KK[ii]
             
-            high = self.left(Uhigh, self._y0)
+            high = self.action(self.phi(Uhigh), self._y0)
             error = np.linalg.norm(Uhigh.get_vector() - Ulow.get_vector())
             return TSOutput(low, high, error)
         

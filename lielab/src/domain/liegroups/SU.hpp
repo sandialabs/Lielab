@@ -137,6 +137,16 @@ namespace lielab
                 return this->shape * this->shape - 1;
             }
 
+            size_t get_size() const
+            {
+                /*! \f{quation*}{ () \rightarrow \mathbb{Z} \f}
+                 *
+                 * Gets the size of the data representation.
+                 */
+
+                return static_cast<size_t>(2*std::pow(this->shape, 2));
+            }
+
             Eigen::MatrixXcd get_ados_representation() const
             {
                 /*! \f{equation*}{ () \rightarrow \mathbb{C}^{n \times n} \f}
@@ -164,15 +174,38 @@ namespace lielab
                 * Returns a serialized representation.
                 */
 
-               if (this->shape == 2)
-               {
-                   Eigen::VectorXd out(4);
-                   out(0) = (std::real(this->_data(0,0)) + std::real(this->_data(1,1))) / 2.0;
-                   out(1) = (std::imag(this->_data(0,0)) - std::imag(this->_data(1,1))) / 2.0;
-                   out(2) = (std::real(this->_data(1,0)) - std::real(this->_data(0,1))) / 2.0;
-                   out(3) = (std::imag(this->_data(1,0)) + std::imag(this->_data(0,1))) / 2.0;
-                   return out;
-               }
+                const size_t shape2 = this->shape*this->shape;
+                Eigen::VectorXd out(2*shape2);
+
+                for (size_t jj = 0; jj < this->shape; jj++)
+                {
+                    for (size_t ii = 0; ii < this->shape; ii++)
+                    {
+                        out(jj*this->shape + ii) = std::real(this->_data(ii, jj));
+                    }
+                }
+
+                for (size_t jj = 0; jj < this->shape; jj++)
+                {
+                    for (size_t ii = 0; ii < this->shape; ii++)
+                    {
+                        out(shape2 + jj*this->shape + ii) = std::imag(this->_data(ii, jj));
+                    }
+                }
+
+                return out;
+            }
+
+            //    if (this->shape == 2)
+            //    {
+                // TODO: This is the old serialization
+            //        Eigen::VectorXd out(4);
+            //        out(0) = (std::real(this->_data(0,0)) + std::real(this->_data(1,1))) / 2.0;
+            //        out(1) = (std::imag(this->_data(0,0)) - std::imag(this->_data(1,1))) / 2.0;
+            //        out(2) = (std::real(this->_data(1,0)) - std::real(this->_data(0,1))) / 2.0;
+            //        out(3) = (std::imag(this->_data(1,0)) + std::imag(this->_data(0,1))) / 2.0;
+            //        return out;
+            //    }
                 
                 // TODO: General real serialization strategy
                 // Eigen::VectorXcd out(this->shape * this->shape);
@@ -186,24 +219,30 @@ namespace lielab
                 // }
 
                 // return out;
-            }
+            // }
 
-            static SU unserialize(Eigen::VectorXd vec)
+            void unserialize(const Eigen::VectorXd &vec)
             {
                 /*! \f{equation*}{ (\mathbb{R}^{n \times 1}) \rightarrow SU \f}
                 * 
-                * Returns an SU from a serialized object.
+                * Sets the SP object from a serialized vector.
                 */
 
-                if (vec.size() == 4)
-                {
-                    SU out(2);
-                    out._data(0,0) = std::complex<double>(vec(0), vec(1));
-                    out._data(0,1) = std::complex<double>(-vec(2), vec(3));
-                    out._data(1,0) = std::complex<double>(vec(2), vec(3));
-                    out._data(1,1) = std::complex<double>(vec(0), -vec(1));
-                    return out;
-                }
+                const size_t _size = static_cast<size_t>(this->shape*this->shape);
+                Eigen::MatrixXd vreal = vec(Eigen::seqN(0, _size)).reshaped(this->shape, this->shape);
+                Eigen::MatrixXd vimag = vec(Eigen::seqN(_size, _size)).reshaped(this->shape, this->shape);
+                this->_data = vreal.cast<std::complex<double>>() + std::complex<double>(0.0, 1.0)*(vimag.cast<std::complex<double>>());
+
+                // This is the old unserialization
+                // if (vec.size() == 4)
+                // {
+                //     SU out(2);
+                //     out._data(0,0) = std::complex<double>(vec(0), vec(1));
+                //     out._data(0,1) = std::complex<double>(-vec(2), vec(3));
+                //     out._data(1,0) = std::complex<double>(vec(2), vec(3));
+                //     out._data(1,1) = std::complex<double>(vec(0), -vec(1));
+                //     return out;
+                // }
 
                 // TODO: General real unserialization strategy
             }

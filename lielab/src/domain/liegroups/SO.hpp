@@ -127,6 +127,16 @@ namespace lielab
                 return this->shape * (this->shape - 1) / 2;
             }
 
+            size_t get_size() const
+            {
+                /*! \f{quation*}{ () \rightarrow \mathbb{Z} \f}
+                 *
+                 * Gets the size of the data representation.
+                 */
+
+                return static_cast<size_t>(std::pow(this->shape, 2));
+            }
+
             Eigen::MatrixXd get_ados_representation() const
             {
                 /*! \f{equation*}{ () \rightarrow \mathbb{R}^{n \times n} \f}
@@ -167,16 +177,14 @@ namespace lielab
                 return out;
             }
 
-            static SO unserialize(Eigen::VectorXd vec)
+            void unserialize(const Eigen::VectorXd &vec)
             {
-                /*! \f{equation*}{ (\mathbb{R}^{n \times 1}) \rightarrow SO \f}
+                /*! \f{equation*}{ (\mathbb{R}^{n \times 1}) \rightarrow () \f}
                 * 
-                * Returns an SO from a serialized object.
+                * Sets the GL object from a serialized vector.
                 */
 
-                const size_t _shape = static_cast<size_t>(std::sqrt(vec.size()));
-                Eigen::Map<Eigen::MatrixXd> v1(vec.data(), _shape, _shape);
-                return v1;
+                this->_data = vec(Eigen::seqN(0, this->shape*this->shape)).reshaped(this->shape, this->shape);
             }
 
             double operator()(const size_t index1, const size_t index2) const

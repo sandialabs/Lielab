@@ -426,7 +426,7 @@ PYBIND11_MODULE(cppLielab, m) {
         .def("get_ados_representation", &lielab::domain::SP::get_ados_representation)
         .def("inverse", &lielab::domain::SP::inverse)
         .def("serialize", &lielab::domain::SP::serialize)
-        // .def("unserialize", &lielab::domain::SP::unserialize) // TODO:
+        .def("unserialize", &lielab::domain::SP::unserialize)
         .def("__call__", [](const lielab::domain::SP & self, const size_t index1, const size_t index2)
         {
             return self(index1, index2);
@@ -452,7 +452,7 @@ PYBIND11_MODULE(cppLielab, m) {
         .def_static("Quaternion", py::overload_cast<>(&lielab::domain::SU::Quaternion))
         .def_static("Quaternion", py::overload_cast<const double, const double, const double, const double>(&lielab::domain::SU::Quaternion))
         // .def("project", &lielab::domain::SU::project) // TODO:
-        // .def("get_dimension", &lielab::domain::SU::get_dimension) // TODO:
+        .def("get_dimension", &lielab::domain::SU::get_dimension)
         .def("get_ados_representation", &lielab::domain::SU::get_ados_representation)
         .def("inverse", &lielab::domain::SU::inverse)
         .def("serialize", &lielab::domain::SU::serialize)
@@ -515,6 +515,7 @@ PYBIND11_MODULE(cppLielab, m) {
         .def_readwrite("space", &lielab::domain::hmlie::space)
         .def("get_shape", &lielab::domain::hmlie::get_shape)
         .def("serialize", &lielab::domain::hmlie::serialize)
+        .def("unserialize", &lielab::domain::hmlie::unserialize)
         .def(py::self * py::self)
         .def(py::self *= py::self)
         .def("inverse", &lielab::domain::hmlie::inverse)
@@ -624,7 +625,7 @@ PYBIND11_MODULE(cppLielab, m) {
     m_functions.def("dexpinv", &lielab::functions::dexpinv<lielab::domain::so>, "The dexpinv function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
     m_functions.def("dexpinv", &lielab::functions::dexpinv<lielab::domain::sp>, "The dexpinv function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
     m_functions.def("dexpinv", &lielab::functions::dexpinv<lielab::domain::su>, "The dexpinv function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
-    m_functions.def("left_exp_default", &lielab::functions::left_exp_default, "Default left exponential action.");
+    m_functions.def("left_product", &lielab::functions::left_product, "Default action by left product.");
 
     /*!
     * Begin content for the "kinematics" submodule.

@@ -611,17 +611,17 @@ def test_Flow_B1_hom():
     f = Flow()
     f.stepper = CustomMuntheKaas()
 
-    def left(g, G):
-        _g0 = g.space[0]
-        _g1 = g.space[1]
-        _Y0 = G.space[0]
-        _Y1 = G.space[1]
+    def action(G, M):
+        _G0 = G.space[0]
+        _G1 = G.space[1]
+        _Y0 = M.space[0]
+        _Y1 = M.space[1]
 
-        Y0next = RN(np.dot(exp(_g0)._data, _Y0._data))
-        Y1next = exp(_g1)*_Y1
+        Y0next = RN(np.dot(_G0._data, _Y0._data))
+        Y1next = _G1*_Y1
         return hmlie([Y0next, Y1next])
     
-    f.stepper.left = left
+    f.stepper.action = action
 
     K = 5.0/3.0
     L = 1.0/4.0

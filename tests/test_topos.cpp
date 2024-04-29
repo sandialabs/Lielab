@@ -753,19 +753,19 @@ TEST_CASE("B1_hom", "[topos]")
 
     lielab::topos::Flow f;
 
-    std::function<lielab::domain::hmlie(lielab::domain::halie, lielab::domain::hmlie)> left = [](const lielab::domain::halie & g, const lielab::domain::hmlie & M)
+    std::function<lielab::domain::hmlie(lielab::domain::hmlie, lielab::domain::hmlie)> action = [](const lielab::domain::hmlie & G, const lielab::domain::hmlie & M)
     {
-        const lielab::domain::gl _g0 = std::get<lielab::domain::gl>(g.space[0]);
-        const lielab::domain::rn _g1 = std::get<lielab::domain::rn>(g.space[1]);
+        const lielab::domain::GL _G0 = std::get<lielab::domain::GL>(g.space[0]);
+        const lielab::domain::RN _G1 = std::get<lielab::domain::RN>(g.space[1]);
         const lielab::domain::RN _Y0 = std::get<lielab::domain::RN>(M.space[0]);
         const lielab::domain::RN _Y1 = std::get<lielab::domain::RN>(M.space[1]);
         
-        const lielab::domain::RN _Y0next = lielab::domain::RN(lielab::functions::exp(_g0)._data*_Y0._data);
-        const lielab::domain::RN _Y1next = lielab::functions::exp(_g1)*_Y1;
+        const lielab::domain::RN _Y0next = lielab::domain::RN(_G0._data*_Y0._data);
+        const lielab::domain::RN _Y1next = _G1*_Y1;
         return lielab::domain::hmlie{_Y0next, _Y1next};
     };
 
-    f.stepper.left = left;
+    f.stepper.action = action;
 
     const double K = 5.0/3.0;
     const double L = 1.0/4.0;

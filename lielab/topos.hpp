@@ -318,7 +318,7 @@ namespace lielab
         /*!
          * A Munthe-Kaas type timestepper.
          *
-         * Let \f$M\f$ be a homogeneous manifold with left action \f$L : (G, M) \rightarrow M\f$,
+         * Let \f$M\f$ be a homogeneous manifold with action \f$L : (G, M) \rightarrow M\f$,
          * let \f$t \in \mathbb{R}\f$ be time, and let \f$f : (t, M) \rightarrow \mathfrak{g}\f$ be a set of first-order ordinary
          * differential equations. A Munthe-Kaas method solves the
          * differential equations by solving the related set of equations:
@@ -347,7 +347,8 @@ namespace lielab
             public:
             RKTYPE RKT = RKTYPE::RKTYPE_EXPLICIT;
 
-            std::function<lielab::domain::hmlie(const lielab::domain::halie, const lielab::domain::hmlie)> left = &lielab::functions::left_exp_default;
+            std::function<lielab::domain::hmlie(const lielab::domain::hmlie, const lielab::domain::hmlie)> action = &lielab::functions::left_product;
+            std::function<lielab::domain::hmlie(const lielab::domain::halie)> phi = &lielab::topos::exp;
             std::function<lielab::domain::halie(const lielab::domain::halie, const lielab::domain::halie, int)> dphiinv = &lielab::topos::dexpinv;
 
             double _t0;
@@ -413,7 +414,7 @@ namespace lielab
                     _U += _dt*A(iterations+1, jj)*_KK[jj];
                 }
 
-                next_y = this->left(_U, _y0);
+                next_y = this->action(this->phi(_U), _y0);
                 next_t = _t0 + _dt*C(iterations+1);
             }
 
@@ -451,7 +452,7 @@ namespace lielab
                     Ulow += _dt*B(ii)*_KK[ii];
                 }
 
-                const lielab::domain::hmlie low = this->left(Ulow, _y0);
+                const lielab::domain::hmlie low = this->action(this->phi(Ulow), _y0);
 
                 if (variable_step == true)
                 {
@@ -460,7 +461,7 @@ namespace lielab
                         Uhigh += _dt*Bhat(ii)*_KK[ii];
                     }
                     
-                    const lielab::domain::hmlie high = this->left(Uhigh, _y0);
+                    const lielab::domain::hmlie high = this->action(this->phi(Uhigh), _y0);
 
                     const double error = (Uhigh.get_vector() - Ulow.get_vector()).norm();
                     return TSOutput(low, high, error);
