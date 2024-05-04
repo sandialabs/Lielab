@@ -1,6 +1,9 @@
 #ifndef _LIELAB_FUNCTIONS_CAYLEY1_HPP
 #define _LIELAB_FUNCTIONS_CAYLEY1_HPP
 
+#include "../abstract.hpp"
+#include "../domain.hpp"
+
 namespace Lielab
 {
     namespace functions

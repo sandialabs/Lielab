@@ -1,6 +1,8 @@
 #ifndef _LIELAB_DOMAIN_LIEALGEBRAS_se_HPP
 #define _LIELAB_DOMAIN_LIEALGEBRAS_se_HPP
 
+#include "../../abstract/abstract_all.hpp"
+
 #include <Eigen/Core>
 #include <unsupported/Eigen/MatrixFunctions>
 

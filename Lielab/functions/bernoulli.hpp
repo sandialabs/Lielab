@@ -1,6 +1,8 @@
 #ifndef _LIELAB_FUNCTIONS_BERNOULLI_HPP
 #define _LIELAB_FUNCTIONS_BERNOULLI_HPP
 
+#include <vector>
+
 namespace Lielab
 {
     namespace functions
