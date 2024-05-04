@@ -1,6 +1,9 @@
 #ifndef _LIELAB_FUNCTIONS_AD_HPP
 #define _LIELAB_FUNCTIONS_AD_HPP
 
+#include "../abstract.hpp"
+#include "../domain.hpp"
+
 #include <cassert>
 
 namespace Lielab

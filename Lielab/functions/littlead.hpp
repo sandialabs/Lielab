@@ -1,7 +1,7 @@
 #ifndef LIELAB_FUNCTIONS_LITTLEAD_HPP_
 #define LIELAB_FUNCTIONS_LITTLEAD_HPP_
 
-#include "../abstract/abstract_all.hpp"
+#include "../abstract.hpp"
 #include "commutator.hpp"
 
 namespace Lielab

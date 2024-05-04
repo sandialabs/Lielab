@@ -1,6 +1,8 @@
 #ifndef _LIELAB_FUNCTIONS_PAIR_HPP
 #define _LIELAB_FUNCTIONS_PAIR_HPP
 
+#include "../abstract.hpp"
+
 #include <cassert>
 
 namespace Lielab

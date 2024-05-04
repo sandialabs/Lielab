@@ -10,8 +10,8 @@
 #include <iostream>
 #include <variant>
 
-#include "abstract.hpp"
-#include "utils.hpp"
+#include "../abstract.hpp"
+#include "../utils.hpp"
 
 #include <Eigen/Core>
 #include <Eigen/Dense>

@@ -1,6 +1,9 @@
 #ifndef _LIELAB_DOMAIN_KILLINGFORM_HPP
 #define _LIELAB_DOMAIN_KILLINGFORM_HPP
 
+#include "../abstract.hpp"
+#include "../domain.hpp"
+
 namespace Lielab
 {
     namespace functions

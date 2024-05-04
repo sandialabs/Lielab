@@ -1,6 +1,7 @@
 #ifndef _LIELAB_FUNCTIONS_ACTIONS_HPP
 #define _LIELAB_FUNCTIONS_ACTIONS_HPP
 
+#include "../domain.hpp"
 #include "exp.hpp"
 
 namespace Lielab

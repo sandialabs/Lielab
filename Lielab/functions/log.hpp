@@ -1,6 +1,8 @@
 #ifndef _LIELAB_FUNCTIONS_LOG_HPP
 #define _LIELAB_FUNCTIONS_LOG_HPP
 
+#include "../domain.hpp"
+
 #include <Eigen/Dense>
 #include <unsupported/Eigen/MatrixFunctions>
 

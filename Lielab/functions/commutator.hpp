@@ -1,6 +1,9 @@
 #ifndef _LIELAB_FUNCTIONS_COMMUTATOR_HPP
 #define _LIELAB_FUNCTIONS_COMMUTATOR_HPP
 
+#include "../abstract.hpp"
+#include "../domain.hpp"
+
 namespace Lielab
 {
     namespace functions

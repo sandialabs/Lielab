@@ -1,5 +1,5 @@
 #include <cmath>
-#include <lielab.hpp>
+#include <Lielab.hpp>
 
 constexpr double PI = Lielab::constants::PI<double>;
 const Lielab::domain::SO DCMId(3);
