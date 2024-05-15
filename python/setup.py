@@ -22,7 +22,7 @@ modules = ['lielab.domain',
 
 if platform.system() == 'Windows':
   bin_ext = '*.pyd'
-elif platform.system() == 'Linux':
+elif platform.system() == 'Linux' or platform.system() == 'Darwin':
   bin_ext = '*.so'
 
 dir_setup = os.path.dirname(os.path.realpath(__file__))
