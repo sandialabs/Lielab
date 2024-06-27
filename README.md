@@ -1,5 +1,8 @@
 # Lielab
 
+[![Conan Center](https://img.shields.io/conan/v/lielab)](https://conan.io/center/recipes/lielab)
+[![PyPI - Version](https://img.shields.io/pypi/v/lielab)](https://pypi.org/project/lielab/)
+
 C++ code for numerical algorithms and processes defined on Lie-type domains, including Lie algebras and Lie groups. Also fully usable from Python with a set of wrappers.
 
 ## User Installation
