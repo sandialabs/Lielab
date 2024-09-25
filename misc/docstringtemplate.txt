@@ -1,0 +1,29 @@
+/*! \f{equation*}{ (var1) \rightarrow varout \f}
+
+Function description.
+
+Arguments
+---------
+@param[in] var1 Description.
+@param[out] varout Description.
+
+Throws
+------
+
+Notes
+-----
+
+References
+----------
+[1] - Source 1.
+
+[2] - Source 2.
+
+Examples
+--------
+
+TODO
+----
+    - Item 1
+    - Item 2
+*/

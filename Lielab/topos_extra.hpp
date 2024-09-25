@@ -8,8 +8,8 @@
 #include <Eigen/Core>
 
 #include "topos/rk_methods.hpp"
-#include "topos/functions/cayley1.hpp"
 #include "topos/functions/exp.hpp"
+#include "topos/functions/dexpinv.hpp"
 
 #include "domain.hpp"
 #include "functions.hpp"
@@ -27,100 +27,8 @@ namespace Lielab
 {
     namespace topos
     {
-        enum class COORDINATES {EXPONENTIAL, CAYLEY1};
+        // enum class COORDINATES {EXPONENTIAL, CAYLEY1};
         enum class RKTYPE {RKTYPE_NONE, RKTYPE_EXPLICIT, RKTYPE_IMPLICIT};
-
-        Lielab::domain::CompositeAlgebra dcayley1inv(const Lielab::domain::CompositeAlgebra & a, const Lielab::domain::CompositeAlgebra & b)
-        {
-            /*!
-            * CompositeAlgebra dcayley1inv overload
-            */
-
-            Lielab::domain::CompositeAlgebra out;
-
-            for (int ii = 0; ii < a.space.size(); ii++)
-            {
-                const size_t ind = a.space[ii].index();
-                if (ind == Lielab::domain::CompositeAlgebra::INDEX_gl)
-                {
-                    out.space.push_back(Lielab::functions::dcayley1inv(std::get<Lielab::domain::gl>(a.space[ii]),
-                                                                       std::get<Lielab::domain::gl>(b.space[ii])));
-                }
-                else if (ind == Lielab::domain::CompositeAlgebra::INDEX_rn)
-                {
-                    out.space.push_back(Lielab::functions::dcayley1inv(std::get<Lielab::domain::rn>(a.space[ii]),
-                                                                       std::get<Lielab::domain::rn>(b.space[ii])));
-                }
-                else if (ind == Lielab::domain::CompositeAlgebra::INDEX_se)
-                {
-                    out.space.push_back(Lielab::functions::dcayley1inv(std::get<Lielab::domain::se>(a.space[ii]),
-                                                                       std::get<Lielab::domain::se>(b.space[ii])));
-                }
-                else if (ind == Lielab::domain::CompositeAlgebra::INDEX_so)
-                {
-                    out.space.push_back(Lielab::functions::dcayley1inv(std::get<Lielab::domain::so>(a.space[ii]),
-                                                                       std::get<Lielab::domain::so>(b.space[ii])));
-                }
-                else if (ind == Lielab::domain::CompositeAlgebra::INDEX_sp)
-                {
-                    out.space.push_back(Lielab::functions::dcayley1inv(std::get<Lielab::domain::sp>(a.space[ii]),
-                                                                       std::get<Lielab::domain::sp>(b.space[ii])));
-                }
-                else if (ind == Lielab::domain::CompositeAlgebra::INDEX_su)
-                {
-                    out.space.push_back(Lielab::functions::dcayley1inv(std::get<Lielab::domain::su>(a.space[ii]),
-                                                                       std::get<Lielab::domain::su>(b.space[ii])));
-                }
-            }
-
-            return out;
-        }
-
-        Lielab::domain::CompositeAlgebra dexpinv(const Lielab::domain::CompositeAlgebra & a, const Lielab::domain::CompositeAlgebra & b, const size_t order = 5)
-        {
-            /*!
-            * CompositeAlgebra dexpinv overload
-            */
-
-            Lielab::domain::CompositeAlgebra out;
-
-            for (int ii = 0; ii < a.space.size(); ii++)
-            {
-                const size_t ind = a.space[ii].index();
-                if (ind == Lielab::domain::CompositeAlgebra::INDEX_gl)
-                {
-                    out.space.push_back(Lielab::functions::dexpinv(std::get<Lielab::domain::gl>(a.space[ii]),
-                                                                   std::get<Lielab::domain::gl>(b.space[ii]), order));
-                }
-                else if (ind == Lielab::domain::CompositeAlgebra::INDEX_rn)
-                {
-                    out.space.push_back(Lielab::functions::dexpinv(std::get<Lielab::domain::rn>(a.space[ii]),
-                                                                   std::get<Lielab::domain::rn>(b.space[ii]), order));
-                }
-                else if (ind == Lielab::domain::CompositeAlgebra::INDEX_se)
-                {
-                    out.space.push_back(Lielab::functions::dexpinv(std::get<Lielab::domain::se>(a.space[ii]),
-                                                                   std::get<Lielab::domain::se>(b.space[ii]), order));
-                }
-                else if (ind == Lielab::domain::CompositeAlgebra::INDEX_so)
-                {
-                    out.space.push_back(Lielab::functions::dexpinv(std::get<Lielab::domain::so>(a.space[ii]),
-                                                                   std::get<Lielab::domain::so>(b.space[ii]), order));
-                }
-                else if (ind == Lielab::domain::CompositeAlgebra::INDEX_sp)
-                {
-                    out.space.push_back(Lielab::functions::dexpinv(std::get<Lielab::domain::sp>(a.space[ii]),
-                                                                   std::get<Lielab::domain::sp>(b.space[ii]), order));
-                }
-                else if (ind == Lielab::domain::CompositeAlgebra::INDEX_su)
-                {
-                    out.space.push_back(Lielab::functions::dexpinv(std::get<Lielab::domain::su>(a.space[ii]),
-                                                                   std::get<Lielab::domain::su>(b.space[ii]), order));
-                }
-            }
-
-            return out;
-        }
 
         /*!
         * The IntegralCurve class. Data structure for data returned by the Flow class.
@@ -364,7 +272,7 @@ namespace Lielab
 
             std::function<Lielab::domain::CompositeManifold(const Lielab::domain::CompositeManifold, const Lielab::domain::CompositeManifold)> action = &Lielab::functions::left_product;
             std::function<Lielab::domain::CompositeManifold(const Lielab::domain::CompositeAlgebra)> phi = &Lielab::topos::exp;
-            std::function<Lielab::domain::CompositeAlgebra(const Lielab::domain::CompositeAlgebra, const Lielab::domain::CompositeAlgebra, int)> dphiinv = &Lielab::topos::dexpinv;
+            std::function<Lielab::domain::CompositeAlgebra(const Lielab::domain::CompositeAlgebra, const Lielab::domain::CompositeAlgebra)> dphiinv = &Lielab::topos::dexpinv;
 
             double _t0;
             Lielab::domain::CompositeManifold _y0;
@@ -447,7 +355,7 @@ namespace Lielab
                 /*!
                 * Evaluates the \f$ d\phi^{-1}_u(\xi(s,y)) \f$ map.
                 */
-                _KK[iterations+1] = this->dphiinv(_U, _dy, order=n-1);
+                _KK[iterations+1] = this->dphiinv(_U, _dy); // Proper MK methods wants order set to n - 1 here.
 
                 TimeStepper::step();
 

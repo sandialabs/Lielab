@@ -29,6 +29,11 @@ dir_setup = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(os.path.join(dir_setup, 'lielab'))
 from cppLielab import __author__, __contact__, __location__, __version__
 
+class BinaryDistribution(Distribution):
+    # Force ABI
+    def has_ext_modules(foo):
+        return True
+
 setup(name="lielab",
       version=__version__,
       description=long_description,
@@ -41,5 +46,6 @@ setup(name="lielab",
       packages=['lielab'] + modules,
       package_data={'lielab' : [bin_ext]},
       install_requires=requirements,
-      extras_require={'dev': requirements_dev}
+      extras_require={'dev': requirements_dev},
+      distclass=BinaryDistribution
       )

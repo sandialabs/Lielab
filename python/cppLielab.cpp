@@ -64,89 +64,89 @@ PYBIND11_MODULE(cppLielab, m) {
     * Bindings for Lielab::domain::cn
     */
 
-    py::class_<Lielab::domain::cn>(m_domain, "cn")
-        .def_readwrite("_data", &Lielab::domain::cn::_data)
-        .def_readonly_static("abelian", &Lielab::domain::cn::abelian)
-        .def(py::init<>())
-        .def(py::init<const size_t>())
-        .def(py::init<const Eigen::MatrixXcd &>())
-        .def("basis", &Lielab::domain::cn::basis)
-        .def("project", &Lielab::domain::cn::project)
-        .def("get_dimension", &Lielab::domain::cn::get_dimension)
-        .def("get_vector", &Lielab::domain::cn::get_vector)
-        .def("get_matrix", &Lielab::domain::cn::get_matrix)
-        .def("set_vector", &Lielab::domain::cn::set_vector)
-        .def("__call__", [](Lielab::domain::cn & self, const size_t index)
+    auto Lielab_domain_cn = py::class_<Lielab::domain::cn>(m_domain, "cn");
+    Lielab_domain_cn.def_readwrite("_data", &Lielab::domain::cn::_data);
+    Lielab_domain_cn.def_readonly_static("abelian", &Lielab::domain::cn::abelian);
+    Lielab_domain_cn.def(py::init<>());
+    Lielab_domain_cn.def(py::init<const size_t>());
+    Lielab_domain_cn.def(py::init<const Eigen::MatrixXcd &>());
+    Lielab_domain_cn.def("basis", &Lielab::domain::cn::basis);
+    Lielab_domain_cn.def("project", &Lielab::domain::cn::project);
+    Lielab_domain_cn.def("get_dimension", &Lielab::domain::cn::get_dimension);
+    Lielab_domain_cn.def("get_vector", &Lielab::domain::cn::get_vector);
+    Lielab_domain_cn.def("get_matrix", &Lielab::domain::cn::get_matrix);
+    Lielab_domain_cn.def("set_vector", &Lielab::domain::cn::set_vector);
+    Lielab_domain_cn.def("__call__", [](Lielab::domain::cn & self, const size_t index)
         {
             return self(index);
-        })
-        .def("__call__", [](const Lielab::domain::cn & self, const size_t index1, const size_t index2)
+        });
+    Lielab_domain_cn.def("__call__", [](const Lielab::domain::cn & self, const size_t index1, const size_t index2)
         {
             return self(index1, index2);
-        })
-        .def(py::self + py::self)
-        .def(py::self += py::self)
-        .def(py::self - py::self)
-        .def(py::self -= py::self)
-        .def(-py::self)
-        .def(py::self * int())
-        .def(py::self * double())
-        // .def(py::self * std::complex<int>()) // TODO: Complex integers seem bugged in Eigen right now
-        .def(py::self * std::complex<double>())
-        .def(py::self *= int())
-        .def(py::self *= double())
-        // .def(py::self *= std::complex<int>()) // TODO: Complex integers seem bugged in Eigen right now
-        .def(py::self *= std::complex<double>())
-        .def(py::self *= py::self)
-        .def(py::self / int())
-        .def(py::self / double())
-        // .def(py::self / std::complex<int>())
-        .def(py::self / std::complex<double>())
-        .def(py::self /= int())
-        .def(py::self /= double())
-        // .def(py::self /= std::complex<int>())
-        .def(py::self /= std::complex<double>())
-        .def(int() * py::self)
-        .def(double() * py::self)
-        // .def(std::complex<int>() * py::self)
-        .def(std::complex<double>() * py::self)
-        .def("__add__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::cn  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::gl  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::glc & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::rn  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::se  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::so  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::sp  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::su  & rhs) {return lhs+rhs;})
-        .def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::gl  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::CN  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::GL  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::GLC & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::RN  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::SE  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::SO  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::SP  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::SU  & rhs) {return lhs*rhs;})
-        .def("__sub__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::cn  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::gl  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::glc & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::rn  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::se  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::so  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::sp  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::su  & rhs) {return lhs-rhs;})
-        .def("__repr__", [](const Lielab::domain::cn & self)
+        });
+    Lielab_domain_cn.def(py::self + py::self);
+    Lielab_domain_cn.def(py::self += py::self);
+    Lielab_domain_cn.def(py::self - py::self);
+    Lielab_domain_cn.def(py::self -= py::self);
+    Lielab_domain_cn.def(-py::self);
+    Lielab_domain_cn.def(py::self * int());
+    Lielab_domain_cn.def(py::self * double());
+        // .def(py::self * std::complex<int>()); // TODO: Complex integers seem bugged in Eigen right now
+    Lielab_domain_cn.def(py::self * std::complex<double>());
+    Lielab_domain_cn.def(py::self *= int());
+    Lielab_domain_cn.def(py::self *= double());
+        // .def(py::self *= std::complex<int>()); // TODO: Complex integers seem bugged in Eigen right now
+    Lielab_domain_cn.def(py::self *= std::complex<double>());
+    Lielab_domain_cn.def(py::self *= py::self);
+    Lielab_domain_cn.def(py::self / int());
+    Lielab_domain_cn.def(py::self / double());
+        // .def(py::self / std::complex<int>());
+    Lielab_domain_cn.def(py::self / std::complex<double>());
+    Lielab_domain_cn.def(py::self /= int());
+    Lielab_domain_cn.def(py::self /= double());
+        // .def(py::self /= std::complex<int>());
+    Lielab_domain_cn.def(py::self /= std::complex<double>());
+    Lielab_domain_cn.def(int() * py::self);
+    Lielab_domain_cn.def(double() * py::self);
+        // .def(std::complex<int>() * py::self);
+    Lielab_domain_cn.def(std::complex<double>() * py::self);
+    Lielab_domain_cn.def("__add__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::cn  & rhs) {return lhs+rhs;});
+    Lielab_domain_cn.def("__add__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::gl  & rhs) {return lhs+rhs;});
+    Lielab_domain_cn.def("__add__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::glc & rhs) {return lhs+rhs;});
+    Lielab_domain_cn.def("__add__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::rn  & rhs) {return lhs+rhs;});
+    Lielab_domain_cn.def("__add__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::se  & rhs) {return lhs+rhs;});
+    Lielab_domain_cn.def("__add__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::so  & rhs) {return lhs+rhs;});
+    Lielab_domain_cn.def("__add__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::sp  & rhs) {return lhs+rhs;});
+    Lielab_domain_cn.def("__add__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::su  & rhs) {return lhs+rhs;});
+    Lielab_domain_cn.def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;});
+    Lielab_domain_cn.def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::gl  & rhs) {return lhs*rhs;});
+    Lielab_domain_cn.def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;});
+    Lielab_domain_cn.def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;});
+    Lielab_domain_cn.def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;});
+    Lielab_domain_cn.def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;});
+    Lielab_domain_cn.def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;});
+    Lielab_domain_cn.def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;});
+    Lielab_domain_cn.def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::CN  & rhs) {return lhs*rhs;});
+    Lielab_domain_cn.def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::GL  & rhs) {return lhs*rhs;});
+    Lielab_domain_cn.def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::GLC & rhs) {return lhs*rhs;});
+    Lielab_domain_cn.def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::RN  & rhs) {return lhs*rhs;});
+    Lielab_domain_cn.def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::SE  & rhs) {return lhs*rhs;});
+    Lielab_domain_cn.def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::SO  & rhs) {return lhs*rhs;});
+    Lielab_domain_cn.def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::SP  & rhs) {return lhs*rhs;});
+    Lielab_domain_cn.def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::SU  & rhs) {return lhs*rhs;});
+    Lielab_domain_cn.def("__sub__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::cn  & rhs) {return lhs-rhs;});
+    Lielab_domain_cn.def("__sub__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::gl  & rhs) {return lhs-rhs;});
+    Lielab_domain_cn.def("__sub__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::glc & rhs) {return lhs-rhs;});
+    Lielab_domain_cn.def("__sub__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::rn  & rhs) {return lhs-rhs;});
+    Lielab_domain_cn.def("__sub__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::se  & rhs) {return lhs-rhs;});
+    Lielab_domain_cn.def("__sub__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::so  & rhs) {return lhs-rhs;});
+    Lielab_domain_cn.def("__sub__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::sp  & rhs) {return lhs-rhs;});
+    Lielab_domain_cn.def("__sub__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::su  & rhs) {return lhs-rhs;});
+    Lielab_domain_cn.def("__repr__", [](const Lielab::domain::cn & self)
         {
             return "<lielab.domain.cn>";
-        })
-        .def("__str__", [](const Lielab::domain::cn & self)
+        });
+    Lielab_domain_cn.def("__str__", [](const Lielab::domain::cn & self)
         {
             return matstr(self._data);
         });
@@ -155,79 +155,79 @@ PYBIND11_MODULE(cppLielab, m) {
     * Bindings for Lielab::domain::gl
     */
 
-    py::class_<Lielab::domain::gl>(m_domain, "gl")
-        .def_readwrite("_data", &Lielab::domain::gl::_data)
-        .def_readonly_static("abelian", &Lielab::domain::gl::abelian)
-        .def(py::init<>())
-        .def(py::init<const size_t>())
-        .def(py::init<const Eigen::MatrixXd &>())
-        .def("basis", &Lielab::domain::gl::basis)
-        .def("project", &Lielab::domain::gl::project)
-        .def("get_dimension", &Lielab::domain::gl::get_dimension)
-        .def("get_vector", &Lielab::domain::gl::get_vector)
-        .def("get_matrix", &Lielab::domain::gl::get_matrix)
-        .def("set_vector", &Lielab::domain::gl::set_vector)
-        .def("__call__", [](Lielab::domain::gl & self, const size_t index)
+    auto Lielab_domain_gl = py::class_<Lielab::domain::gl>(m_domain, "gl");
+    Lielab_domain_gl.def_readwrite("_data", &Lielab::domain::gl::_data);
+    Lielab_domain_gl.def_readonly_static("abelian", &Lielab::domain::gl::abelian);
+    Lielab_domain_gl.def(py::init<>());
+    Lielab_domain_gl.def(py::init<const size_t>());
+    Lielab_domain_gl.def(py::init<const Eigen::MatrixXd &>());
+    Lielab_domain_gl.def("basis", &Lielab::domain::gl::basis);
+    Lielab_domain_gl.def("project", &Lielab::domain::gl::project);
+    Lielab_domain_gl.def("get_dimension", &Lielab::domain::gl::get_dimension);
+    Lielab_domain_gl.def("get_vector", &Lielab::domain::gl::get_vector);
+    Lielab_domain_gl.def("get_matrix", &Lielab::domain::gl::get_matrix);
+    Lielab_domain_gl.def("set_vector", &Lielab::domain::gl::set_vector);
+    Lielab_domain_gl.def("__call__", [](Lielab::domain::gl & self, const size_t index)
         {
             return self(index);
-        })
-        .def("__call__", [](const Lielab::domain::gl & self, const size_t index1, const size_t index2)
+        });
+    Lielab_domain_gl.def("__call__", [](const Lielab::domain::gl & self, const size_t index1, const size_t index2)
         {
             return self(index1, index2);
-        })
-        .def(py::self + py::self)
-        .def(py::self += py::self)
-        .def(py::self - py::self)
-        .def(py::self -= py::self)
-        .def(-py::self)
-        .def(py::self * int())
-        .def(py::self * double())
-        .def(py::self *= int())
-        .def(py::self *= double())
-        .def(py::self *= py::self)
-        .def(py::self / int())
-        .def(py::self / double())
-        .def(py::self /= int())
-        .def(py::self /= double())
-        .def(int() * py::self)
-        .def(double() * py::self)
-        .def("__add__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::cn  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::gl  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::glc & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::rn  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::se  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::so  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::sp  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::su  & rhs) {return lhs+rhs;})
-        .def("__mul__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::gl  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::CN  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::GL  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::GLC & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::RN  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::SE  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::SO  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::SP  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::SU  & rhs) {return lhs*rhs;})
-        .def("__sub__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::cn  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::gl  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::glc & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::rn  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::se  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::so  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::sp  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::su  & rhs) {return lhs-rhs;})
-        .def("__repr__", [](const Lielab::domain::gl & self)
+        });
+    Lielab_domain_gl.def(py::self + py::self);
+    Lielab_domain_gl.def(py::self += py::self);
+    Lielab_domain_gl.def(py::self - py::self);
+    Lielab_domain_gl.def(py::self -= py::self);
+    Lielab_domain_gl.def(-py::self);
+    Lielab_domain_gl.def(py::self * int());
+    Lielab_domain_gl.def(py::self * double());
+    Lielab_domain_gl.def(py::self *= int());
+    Lielab_domain_gl.def(py::self *= double());
+    Lielab_domain_gl.def(py::self *= py::self);
+    Lielab_domain_gl.def(py::self / int());
+    Lielab_domain_gl.def(py::self / double());
+    Lielab_domain_gl.def(py::self /= int());
+    Lielab_domain_gl.def(py::self /= double());
+    Lielab_domain_gl.def(int() * py::self);
+    Lielab_domain_gl.def(double() * py::self);
+    Lielab_domain_gl.def("__add__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::cn  & rhs) {return lhs+rhs;});
+    Lielab_domain_gl.def("__add__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::gl  & rhs) {return lhs+rhs;});
+    Lielab_domain_gl.def("__add__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::glc & rhs) {return lhs+rhs;});
+    Lielab_domain_gl.def("__add__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::rn  & rhs) {return lhs+rhs;});
+    Lielab_domain_gl.def("__add__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::se  & rhs) {return lhs+rhs;});
+    Lielab_domain_gl.def("__add__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::so  & rhs) {return lhs+rhs;});
+    Lielab_domain_gl.def("__add__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::sp  & rhs) {return lhs+rhs;});
+    Lielab_domain_gl.def("__add__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::su  & rhs) {return lhs+rhs;});
+    Lielab_domain_gl.def("__mul__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;});
+    Lielab_domain_gl.def("__mul__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::gl  & rhs) {return lhs*rhs;});
+    Lielab_domain_gl.def("__mul__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;});
+    Lielab_domain_gl.def("__mul__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;});
+    Lielab_domain_gl.def("__mul__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;});
+    Lielab_domain_gl.def("__mul__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;});
+    Lielab_domain_gl.def("__mul__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;});
+    Lielab_domain_gl.def("__mul__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;});
+    Lielab_domain_gl.def("__mul__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::CN  & rhs) {return lhs*rhs;});
+    Lielab_domain_gl.def("__mul__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::GL  & rhs) {return lhs*rhs;});
+    Lielab_domain_gl.def("__mul__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::GLC & rhs) {return lhs*rhs;});
+    Lielab_domain_gl.def("__mul__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::RN  & rhs) {return lhs*rhs;});
+    Lielab_domain_gl.def("__mul__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::SE  & rhs) {return lhs*rhs;});
+    Lielab_domain_gl.def("__mul__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::SO  & rhs) {return lhs*rhs;});
+    Lielab_domain_gl.def("__mul__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::SP  & rhs) {return lhs*rhs;});
+    Lielab_domain_gl.def("__mul__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::SU  & rhs) {return lhs*rhs;});
+    Lielab_domain_gl.def("__sub__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::cn  & rhs) {return lhs-rhs;});
+    Lielab_domain_gl.def("__sub__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::gl  & rhs) {return lhs-rhs;});
+    Lielab_domain_gl.def("__sub__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::glc & rhs) {return lhs-rhs;});
+    Lielab_domain_gl.def("__sub__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::rn  & rhs) {return lhs-rhs;});
+    Lielab_domain_gl.def("__sub__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::se  & rhs) {return lhs-rhs;});
+    Lielab_domain_gl.def("__sub__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::so  & rhs) {return lhs-rhs;});
+    Lielab_domain_gl.def("__sub__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::sp  & rhs) {return lhs-rhs;});
+    Lielab_domain_gl.def("__sub__", [](const Lielab::domain::gl  & lhs, const Lielab::domain::su  & rhs) {return lhs-rhs;});
+    Lielab_domain_gl.def("__repr__", [](const Lielab::domain::gl & self)
         {
             return "<lielab.domain.gl>";
-        })
-        .def("__str__", [](const Lielab::domain::gl & self)
+        });
+    Lielab_domain_gl.def("__str__", [](const Lielab::domain::gl & self)
         {
             return matstr(self._data);
         });
@@ -237,89 +237,89 @@ PYBIND11_MODULE(cppLielab, m) {
     * Bindings for Lielab::domain::glc
     */
 
-    py::class_<Lielab::domain::glc>(m_domain, "glc")
-        .def_readwrite("_data", &Lielab::domain::glc::_data)
-        .def_readonly_static("abelian", &Lielab::domain::glc::abelian)
-        .def(py::init<>())
-        .def(py::init<const size_t>())
-        .def(py::init<const Eigen::MatrixXcd &>())
-        .def("basis", &Lielab::domain::glc::basis)
-        .def("project", &Lielab::domain::glc::project)
-        .def("get_dimension", &Lielab::domain::glc::get_dimension)
-        .def("get_vector", &Lielab::domain::glc::get_vector)
-        .def("get_matrix", &Lielab::domain::glc::get_matrix)
-        .def("set_vector", &Lielab::domain::glc::set_vector)
-        .def("__call__", [](Lielab::domain::glc & self, const size_t index)
+    auto Lielab_domain_glc = py::class_<Lielab::domain::glc>(m_domain, "glc");
+    Lielab_domain_glc.def_readwrite("_data", &Lielab::domain::glc::_data);
+    Lielab_domain_glc.def_readonly_static("abelian", &Lielab::domain::glc::abelian);
+    Lielab_domain_glc.def(py::init<>());
+    Lielab_domain_glc.def(py::init<const size_t>());
+    Lielab_domain_glc.def(py::init<const Eigen::MatrixXcd &>());
+    Lielab_domain_glc.def("basis", &Lielab::domain::glc::basis);
+    Lielab_domain_glc.def("project", &Lielab::domain::glc::project);
+    Lielab_domain_glc.def("get_dimension", &Lielab::domain::glc::get_dimension);
+    Lielab_domain_glc.def("get_vector", &Lielab::domain::glc::get_vector);
+    Lielab_domain_glc.def("get_matrix", &Lielab::domain::glc::get_matrix);
+    Lielab_domain_glc.def("set_vector", &Lielab::domain::glc::set_vector);
+    Lielab_domain_glc.def("__call__", [](Lielab::domain::glc & self, const size_t index)
         {
             return self(index);
-        })
-        .def("__call__", [](const Lielab::domain::glc & self, const size_t index1, const size_t index2)
+        });
+    Lielab_domain_glc.def("__call__", [](const Lielab::domain::glc & self, const size_t index1, const size_t index2)
         {
             return self(index1, index2);
-        })
-        .def(py::self + py::self)
-        .def(py::self += py::self)
-        .def(py::self - py::self)
-        .def(py::self -= py::self)
-        .def(-py::self)
-        .def(py::self * int())
-        .def(py::self * double())
-        // .def(py::self * std::complex<int>()) // TODO: Complex integers seem bugged in Eigen right now
-        .def(py::self * std::complex<double>())
-        .def(py::self *= int())
-        .def(py::self *= double())
-        // .def(py::self *= std::complex<int>()) // TODO: Complex integers seem bugged in Eigen right now
-        .def(py::self *= std::complex<double>())
-        .def(py::self *= py::self)
-        .def(py::self / int())
-        .def(py::self / double())
-        // .def(py::self / std::complex<int>())
-        .def(py::self / std::complex<double>())
-        .def(py::self /= int())
-        .def(py::self /= double())
-        // .def(py::self /= std::complex<int>())
-        .def(py::self /= std::complex<double>())
-        .def(int() * py::self)
-        .def(double() * py::self)
-        // .def(std::complex<int>() * py::self)
-        .def(std::complex<double>() * py::self)
-        .def("__add__", [](const Lielab::domain::glc & lhs, const Lielab::domain::cn  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::glc & lhs, const Lielab::domain::gl  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::glc & lhs, const Lielab::domain::glc & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::glc & lhs, const Lielab::domain::rn  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::glc & lhs, const Lielab::domain::se  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::glc & lhs, const Lielab::domain::so  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::glc & lhs, const Lielab::domain::sp  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::glc & lhs, const Lielab::domain::su  & rhs) {return lhs+rhs;})
-        .def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::gl  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::CN  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::GL  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::GLC & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::RN  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::SE  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::SO  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::SP  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::SU  & rhs) {return lhs*rhs;})
-        .def("__sub__", [](const Lielab::domain::glc & lhs, const Lielab::domain::cn  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::glc & lhs, const Lielab::domain::gl  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::glc & lhs, const Lielab::domain::glc & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::glc & lhs, const Lielab::domain::rn  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::glc & lhs, const Lielab::domain::se  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::glc & lhs, const Lielab::domain::so  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::glc & lhs, const Lielab::domain::sp  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::glc & lhs, const Lielab::domain::su  & rhs) {return lhs-rhs;})
-        .def("__repr__", [](const Lielab::domain::glc & self)
+        });
+    Lielab_domain_glc.def(py::self + py::self);
+    Lielab_domain_glc.def(py::self += py::self);
+    Lielab_domain_glc.def(py::self - py::self);
+    Lielab_domain_glc.def(py::self -= py::self);
+    Lielab_domain_glc.def(-py::self);
+    Lielab_domain_glc.def(py::self * int());
+    Lielab_domain_glc.def(py::self * double());
+        // .def(py::self * std::complex<int>()); // TODO: Complex integers seem bugged in Eigen right now
+    Lielab_domain_glc.def(py::self * std::complex<double>());
+    Lielab_domain_glc.def(py::self *= int());
+    Lielab_domain_glc.def(py::self *= double());
+        // .def(py::self *= std::complex<int>()); // TODO: Complex integers seem bugged in Eigen right now
+    Lielab_domain_glc.def(py::self *= std::complex<double>());
+    Lielab_domain_glc.def(py::self *= py::self);
+    Lielab_domain_glc.def(py::self / int());
+    Lielab_domain_glc.def(py::self / double());
+        // .def(py::self / std::complex<int>());
+    Lielab_domain_glc.def(py::self / std::complex<double>());
+    Lielab_domain_glc.def(py::self /= int());
+    Lielab_domain_glc.def(py::self /= double());
+        // .def(py::self /= std::complex<int>());
+    Lielab_domain_glc.def(py::self /= std::complex<double>());
+    Lielab_domain_glc.def(int() * py::self);
+    Lielab_domain_glc.def(double() * py::self);
+        // .def(std::complex<int>() * py::self);
+    Lielab_domain_glc.def(std::complex<double>() * py::self);
+    Lielab_domain_glc.def("__add__", [](const Lielab::domain::glc & lhs, const Lielab::domain::cn  & rhs) {return lhs+rhs;});
+    Lielab_domain_glc.def("__add__", [](const Lielab::domain::glc & lhs, const Lielab::domain::gl  & rhs) {return lhs+rhs;});
+    Lielab_domain_glc.def("__add__", [](const Lielab::domain::glc & lhs, const Lielab::domain::glc & rhs) {return lhs+rhs;});
+    Lielab_domain_glc.def("__add__", [](const Lielab::domain::glc & lhs, const Lielab::domain::rn  & rhs) {return lhs+rhs;});
+    Lielab_domain_glc.def("__add__", [](const Lielab::domain::glc & lhs, const Lielab::domain::se  & rhs) {return lhs+rhs;});
+    Lielab_domain_glc.def("__add__", [](const Lielab::domain::glc & lhs, const Lielab::domain::so  & rhs) {return lhs+rhs;});
+    Lielab_domain_glc.def("__add__", [](const Lielab::domain::glc & lhs, const Lielab::domain::sp  & rhs) {return lhs+rhs;});
+    Lielab_domain_glc.def("__add__", [](const Lielab::domain::glc & lhs, const Lielab::domain::su  & rhs) {return lhs+rhs;});
+    Lielab_domain_glc.def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;});
+    Lielab_domain_glc.def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::gl  & rhs) {return lhs*rhs;});
+    Lielab_domain_glc.def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;});
+    Lielab_domain_glc.def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;});
+    Lielab_domain_glc.def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;});
+    Lielab_domain_glc.def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;});
+    Lielab_domain_glc.def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;});
+    Lielab_domain_glc.def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;});
+    Lielab_domain_glc.def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::CN  & rhs) {return lhs*rhs;});
+    Lielab_domain_glc.def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::GL  & rhs) {return lhs*rhs;});
+    Lielab_domain_glc.def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::GLC & rhs) {return lhs*rhs;});
+    Lielab_domain_glc.def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::RN  & rhs) {return lhs*rhs;});
+    Lielab_domain_glc.def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::SE  & rhs) {return lhs*rhs;});
+    Lielab_domain_glc.def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::SO  & rhs) {return lhs*rhs;});
+    Lielab_domain_glc.def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::SP  & rhs) {return lhs*rhs;});
+    Lielab_domain_glc.def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::SU  & rhs) {return lhs*rhs;});
+    Lielab_domain_glc.def("__sub__", [](const Lielab::domain::glc & lhs, const Lielab::domain::cn  & rhs) {return lhs-rhs;});
+    Lielab_domain_glc.def("__sub__", [](const Lielab::domain::glc & lhs, const Lielab::domain::gl  & rhs) {return lhs-rhs;});
+    Lielab_domain_glc.def("__sub__", [](const Lielab::domain::glc & lhs, const Lielab::domain::glc & rhs) {return lhs-rhs;});
+    Lielab_domain_glc.def("__sub__", [](const Lielab::domain::glc & lhs, const Lielab::domain::rn  & rhs) {return lhs-rhs;});
+    Lielab_domain_glc.def("__sub__", [](const Lielab::domain::glc & lhs, const Lielab::domain::se  & rhs) {return lhs-rhs;});
+    Lielab_domain_glc.def("__sub__", [](const Lielab::domain::glc & lhs, const Lielab::domain::so  & rhs) {return lhs-rhs;});
+    Lielab_domain_glc.def("__sub__", [](const Lielab::domain::glc & lhs, const Lielab::domain::sp  & rhs) {return lhs-rhs;});
+    Lielab_domain_glc.def("__sub__", [](const Lielab::domain::glc & lhs, const Lielab::domain::su  & rhs) {return lhs-rhs;});
+    Lielab_domain_glc.def("__repr__", [](const Lielab::domain::glc & self)
         {
             return "<lielab.domain.glc>";
-        })
-        .def("__str__", [](const Lielab::domain::glc & self)
+        });
+    Lielab_domain_glc.def("__str__", [](const Lielab::domain::glc & self)
         {
             return matstr(self._data);
         });
@@ -329,80 +329,80 @@ PYBIND11_MODULE(cppLielab, m) {
     * Bindings for Lielab::domain::rn
     */
 
-    py::class_<Lielab::domain::rn>(m_domain, "rn")
-        .def_readwrite("_data", &Lielab::domain::rn::_data)
-        .def_readwrite("shape", &Lielab::domain::rn::shape)
-        .def_readonly_static("abelian", &Lielab::domain::rn::abelian)
-        .def(py::init<>())
-        .def(py::init<const size_t>())
-        .def(py::init<const Eigen::MatrixXd &>())
-        .def("basis", &Lielab::domain::rn::basis)
-        .def("project", &Lielab::domain::rn::project)
-        .def("get_dimension", &Lielab::domain::rn::get_dimension)
-        .def("get_vector", &Lielab::domain::rn::get_vector)
-        .def("get_matrix", &Lielab::domain::rn::get_matrix)
-        .def("set_vector", &Lielab::domain::rn::set_vector)
-        .def("__call__", [](const Lielab::domain::rn & self, const size_t index)
+    auto Lielab_domain_rn = py::class_<Lielab::domain::rn>(m_domain, "rn");
+    Lielab_domain_rn.def_readwrite("_data", &Lielab::domain::rn::_data);
+    Lielab_domain_rn.def_readwrite("shape", &Lielab::domain::rn::shape);
+    Lielab_domain_rn.def_readonly_static("abelian", &Lielab::domain::rn::abelian);
+    Lielab_domain_rn.def(py::init<>());
+    Lielab_domain_rn.def(py::init<const size_t>());
+    Lielab_domain_rn.def(py::init<const Eigen::MatrixXd &>());
+    Lielab_domain_rn.def("basis", &Lielab::domain::rn::basis);
+    Lielab_domain_rn.def("project", &Lielab::domain::rn::project);
+    Lielab_domain_rn.def("get_dimension", &Lielab::domain::rn::get_dimension);
+    Lielab_domain_rn.def("get_vector", &Lielab::domain::rn::get_vector);
+    Lielab_domain_rn.def("get_matrix", &Lielab::domain::rn::get_matrix);
+    Lielab_domain_rn.def("set_vector", &Lielab::domain::rn::set_vector);
+    Lielab_domain_rn.def("__call__", [](const Lielab::domain::rn & self, const size_t index)
         {
             return self(index);
-        })
-        .def("__call__", [](const Lielab::domain::rn & self, const size_t index1, const size_t index2)
+        });
+    Lielab_domain_rn.def("__call__", [](const Lielab::domain::rn & self, const size_t index1, const size_t index2)
         {
             return self(index1, index2);
-        })
-        .def(py::self + py::self)
-        .def(py::self += py::self)
-        .def(py::self - py::self)
-        .def(py::self -= py::self)
-        .def(-py::self)
-        .def(py::self * int())
-        .def(py::self * double())
-        .def(py::self *= int())
-        .def(py::self *= double())
-        .def(py::self *= py::self)
-        .def(py::self / int())
-        .def(py::self / double())
-        .def(py::self /= int())
-        .def(py::self /= double())
-        .def(int() * py::self)
-        .def(double() * py::self)
-        .def("__add__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::cn  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::gl  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::glc & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::rn  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::se  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::so  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::sp  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::su  & rhs) {return lhs+rhs;})
-        .def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::gl  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::CN  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::GL  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::GLC & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::RN  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::SE  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::SO  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::SP  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::SU  & rhs) {return lhs*rhs;})
-        .def("__sub__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::cn  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::gl  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::glc & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::rn  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::se  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::so  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::sp  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::su  & rhs) {return lhs-rhs;})
-        .def("__repr__", [](const Lielab::domain::rn & self)
+        });
+    Lielab_domain_rn.def(py::self + py::self);
+    Lielab_domain_rn.def(py::self += py::self);
+    Lielab_domain_rn.def(py::self - py::self);
+    Lielab_domain_rn.def(py::self -= py::self);
+    Lielab_domain_rn.def(-py::self);
+    Lielab_domain_rn.def(py::self * int());
+    Lielab_domain_rn.def(py::self * double());
+    Lielab_domain_rn.def(py::self *= int());
+    Lielab_domain_rn.def(py::self *= double());
+    Lielab_domain_rn.def(py::self *= py::self);
+    Lielab_domain_rn.def(py::self / int());
+    Lielab_domain_rn.def(py::self / double());
+    Lielab_domain_rn.def(py::self /= int());
+    Lielab_domain_rn.def(py::self /= double());
+    Lielab_domain_rn.def(int() * py::self);
+    Lielab_domain_rn.def(double() * py::self);
+    Lielab_domain_rn.def("__add__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::cn  & rhs) {return lhs+rhs;});
+    Lielab_domain_rn.def("__add__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::gl  & rhs) {return lhs+rhs;});
+    Lielab_domain_rn.def("__add__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::glc & rhs) {return lhs+rhs;});
+    Lielab_domain_rn.def("__add__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::rn  & rhs) {return lhs+rhs;});
+    Lielab_domain_rn.def("__add__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::se  & rhs) {return lhs+rhs;});
+    Lielab_domain_rn.def("__add__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::so  & rhs) {return lhs+rhs;});
+    Lielab_domain_rn.def("__add__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::sp  & rhs) {return lhs+rhs;});
+    Lielab_domain_rn.def("__add__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::su  & rhs) {return lhs+rhs;});
+    Lielab_domain_rn.def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;});
+    Lielab_domain_rn.def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::gl  & rhs) {return lhs*rhs;});
+    Lielab_domain_rn.def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;});
+    Lielab_domain_rn.def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;});
+    Lielab_domain_rn.def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;});
+    Lielab_domain_rn.def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;});
+    Lielab_domain_rn.def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;});
+    Lielab_domain_rn.def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;});
+    Lielab_domain_rn.def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::CN  & rhs) {return lhs*rhs;});
+    Lielab_domain_rn.def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::GL  & rhs) {return lhs*rhs;});
+    Lielab_domain_rn.def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::GLC & rhs) {return lhs*rhs;});
+    Lielab_domain_rn.def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::RN  & rhs) {return lhs*rhs;});
+    Lielab_domain_rn.def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::SE  & rhs) {return lhs*rhs;});
+    Lielab_domain_rn.def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::SO  & rhs) {return lhs*rhs;});
+    Lielab_domain_rn.def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::SP  & rhs) {return lhs*rhs;});
+    Lielab_domain_rn.def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::SU  & rhs) {return lhs*rhs;});
+    Lielab_domain_rn.def("__sub__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::cn  & rhs) {return lhs-rhs;});
+    Lielab_domain_rn.def("__sub__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::gl  & rhs) {return lhs-rhs;});
+    Lielab_domain_rn.def("__sub__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::glc & rhs) {return lhs-rhs;});
+    Lielab_domain_rn.def("__sub__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::rn  & rhs) {return lhs-rhs;});
+    Lielab_domain_rn.def("__sub__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::se  & rhs) {return lhs-rhs;});
+    Lielab_domain_rn.def("__sub__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::so  & rhs) {return lhs-rhs;});
+    Lielab_domain_rn.def("__sub__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::sp  & rhs) {return lhs-rhs;});
+    Lielab_domain_rn.def("__sub__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::su  & rhs) {return lhs-rhs;});
+    Lielab_domain_rn.def("__repr__", [](const Lielab::domain::rn & self)
         {
             return "<lielab.domain.rn>";
-        })
-        .def("__str__", [](const Lielab::domain::rn & self)
+        });
+    Lielab_domain_rn.def("__str__", [](const Lielab::domain::rn & self)
         {
             return matstr(self._data);
         });
@@ -411,72 +411,80 @@ PYBIND11_MODULE(cppLielab, m) {
     * Bindings for Lielab::domain::se
     */
 
-    py::class_<Lielab::domain::se>(m_domain, "se")
-        .def_readwrite("_data", &Lielab::domain::se::_data)
-        .def_readwrite("shape", &Lielab::domain::se::shape)
-        .def_readonly_static("abelian", &Lielab::domain::se::abelian)
-        .def(py::init<>())
-        .def(py::init<const size_t>())
-        .def(py::init<const Eigen::MatrixXd &>())
-        .def("basis", &Lielab::domain::se::basis)
-        // .def("project", &Lielab::domain::se::project)
-        .def("get_dimension", &Lielab::domain::se::get_dimension)
-        .def("get_vector", &Lielab::domain::se::get_vector)
-        .def("get_matrix", &Lielab::domain::se::get_matrix)
-        .def("set_vector", &Lielab::domain::se::set_vector)
-        .def("__call__", [](const Lielab::domain::se & self, const size_t index)
+    auto Lielab_domain_se = py::class_<Lielab::domain::se>(m_domain, "se");
+    Lielab_domain_se.def_readwrite("_data", &Lielab::domain::se::_data);
+    Lielab_domain_se.def_readwrite("shape", &Lielab::domain::se::shape);
+    Lielab_domain_se.def_readonly_static("abelian", &Lielab::domain::se::abelian);
+    Lielab_domain_se.def(py::init<>());
+    Lielab_domain_se.def(py::init<const size_t>());
+    Lielab_domain_se.def(py::init<const Eigen::MatrixXd &>());
+    Lielab_domain_se.def("basis", &Lielab::domain::se::basis);
+        // .def("project", &Lielab::domain::se::project);
+    Lielab_domain_se.def("get_dimension", &Lielab::domain::se::get_dimension);
+    Lielab_domain_se.def("get_vector", &Lielab::domain::se::get_vector);
+    Lielab_domain_se.def("get_matrix", &Lielab::domain::se::get_matrix);
+    Lielab_domain_se.def("set_vector", &Lielab::domain::se::set_vector);
+    Lielab_domain_se.def("__call__", [](const Lielab::domain::se & self, const size_t index)
         {
             return self(index);
-        })
-        .def("__call__", [](const Lielab::domain::se & self, const size_t index1, const size_t index2)
+        });
+    Lielab_domain_se.def("__call__", [](const Lielab::domain::se & self, const size_t index1, const size_t index2)
         {
             return self(index1, index2);
-        })
-        .def(py::self + py::self)
-        .def(py::self += py::self)
-        .def(py::self - py::self)
-        .def(py::self -= py::self)
-        .def(-py::self)
-        .def(py::self * int())
-        .def(py::self * double())
-        .def(py::self *= int())
-        .def(py::self *= double())
-        .def(py::self *= py::self)
-        .def(py::self / int())
-        .def(py::self / double())
-        .def(py::self /= int())
-        .def(py::self /= double())
-        .def(int() * py::self)
-        .def(double() * py::self)
-        .def("__add__", [](const Lielab::domain::se  & lhs, const Lielab::domain::cn  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::se  & lhs, const Lielab::domain::gl  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::se  & lhs, const Lielab::domain::glc & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::se  & lhs, const Lielab::domain::rn  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::se  & lhs, const Lielab::domain::se  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::se  & lhs, const Lielab::domain::so  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::se  & lhs, const Lielab::domain::sp  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::se  & lhs, const Lielab::domain::su  & rhs) {return lhs+rhs;})
-        .def("__mul__", [](const Lielab::domain::se  & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::se  & lhs, const Lielab::domain::gl  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::se  & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::se  & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::se  & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::se  & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::se  & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::se  & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;})
-        .def("__sub__", [](const Lielab::domain::se  & lhs, const Lielab::domain::cn  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::se  & lhs, const Lielab::domain::gl  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::se  & lhs, const Lielab::domain::glc & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::se  & lhs, const Lielab::domain::rn  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::se  & lhs, const Lielab::domain::se  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::se  & lhs, const Lielab::domain::so  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::se  & lhs, const Lielab::domain::sp  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::se  & lhs, const Lielab::domain::su  & rhs) {return lhs-rhs;})
-        .def("__repr__", [](const Lielab::domain::se & self)
+        });
+    Lielab_domain_se.def(py::self + py::self);
+    Lielab_domain_se.def(py::self += py::self);
+    Lielab_domain_se.def(py::self - py::self);
+    Lielab_domain_se.def(py::self -= py::self);
+    Lielab_domain_se.def(-py::self);
+    Lielab_domain_se.def(py::self * int());
+    Lielab_domain_se.def(py::self * double());
+    Lielab_domain_se.def(py::self *= int());
+    Lielab_domain_se.def(py::self *= double());
+    Lielab_domain_se.def(py::self *= py::self);
+    Lielab_domain_se.def(py::self / int());
+    Lielab_domain_se.def(py::self / double());
+    Lielab_domain_se.def(py::self /= int());
+    Lielab_domain_se.def(py::self /= double());
+    Lielab_domain_se.def(int() * py::self);
+    Lielab_domain_se.def(double() * py::self);
+    Lielab_domain_se.def("__add__", [](const Lielab::domain::se  & lhs, const Lielab::domain::cn  & rhs) {return lhs+rhs;});
+    Lielab_domain_se.def("__add__", [](const Lielab::domain::se  & lhs, const Lielab::domain::gl  & rhs) {return lhs+rhs;});
+    Lielab_domain_se.def("__add__", [](const Lielab::domain::se  & lhs, const Lielab::domain::glc & rhs) {return lhs+rhs;});
+    Lielab_domain_se.def("__add__", [](const Lielab::domain::se  & lhs, const Lielab::domain::rn  & rhs) {return lhs+rhs;});
+    Lielab_domain_se.def("__add__", [](const Lielab::domain::se  & lhs, const Lielab::domain::se  & rhs) {return lhs+rhs;});
+    Lielab_domain_se.def("__add__", [](const Lielab::domain::se  & lhs, const Lielab::domain::so  & rhs) {return lhs+rhs;});
+    Lielab_domain_se.def("__add__", [](const Lielab::domain::se  & lhs, const Lielab::domain::sp  & rhs) {return lhs+rhs;});
+    Lielab_domain_se.def("__add__", [](const Lielab::domain::se  & lhs, const Lielab::domain::su  & rhs) {return lhs+rhs;});
+    Lielab_domain_se.def("__mul__", [](const Lielab::domain::se  & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;});
+    Lielab_domain_se.def("__mul__", [](const Lielab::domain::se  & lhs, const Lielab::domain::gl  & rhs) {return lhs*rhs;});
+    Lielab_domain_se.def("__mul__", [](const Lielab::domain::se  & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;});
+    Lielab_domain_se.def("__mul__", [](const Lielab::domain::se  & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;});
+    Lielab_domain_se.def("__mul__", [](const Lielab::domain::se  & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;});
+    Lielab_domain_se.def("__mul__", [](const Lielab::domain::se  & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;});
+    Lielab_domain_se.def("__mul__", [](const Lielab::domain::se  & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;});
+    Lielab_domain_se.def("__mul__", [](const Lielab::domain::se  & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;});
+    Lielab_domain_se.def("__mul__", [](const Lielab::domain::se  & lhs, const Lielab::domain::CN  & rhs) {return lhs*rhs;});
+    Lielab_domain_se.def("__mul__", [](const Lielab::domain::se  & lhs, const Lielab::domain::GL  & rhs) {return lhs*rhs;});
+    Lielab_domain_se.def("__mul__", [](const Lielab::domain::se  & lhs, const Lielab::domain::GLC & rhs) {return lhs*rhs;});
+    Lielab_domain_se.def("__mul__", [](const Lielab::domain::se  & lhs, const Lielab::domain::RN  & rhs) {return lhs*rhs;});
+    Lielab_domain_se.def("__mul__", [](const Lielab::domain::se  & lhs, const Lielab::domain::SE  & rhs) {return lhs*rhs;});
+    Lielab_domain_se.def("__mul__", [](const Lielab::domain::se  & lhs, const Lielab::domain::SO  & rhs) {return lhs*rhs;});
+    Lielab_domain_se.def("__mul__", [](const Lielab::domain::se  & lhs, const Lielab::domain::SP  & rhs) {return lhs*rhs;});
+    Lielab_domain_se.def("__mul__", [](const Lielab::domain::se  & lhs, const Lielab::domain::SU  & rhs) {return lhs*rhs;});
+    Lielab_domain_se.def("__sub__", [](const Lielab::domain::se  & lhs, const Lielab::domain::cn  & rhs) {return lhs-rhs;});
+    Lielab_domain_se.def("__sub__", [](const Lielab::domain::se  & lhs, const Lielab::domain::gl  & rhs) {return lhs-rhs;});
+    Lielab_domain_se.def("__sub__", [](const Lielab::domain::se  & lhs, const Lielab::domain::glc & rhs) {return lhs-rhs;});
+    Lielab_domain_se.def("__sub__", [](const Lielab::domain::se  & lhs, const Lielab::domain::rn  & rhs) {return lhs-rhs;});
+    Lielab_domain_se.def("__sub__", [](const Lielab::domain::se  & lhs, const Lielab::domain::se  & rhs) {return lhs-rhs;});
+    Lielab_domain_se.def("__sub__", [](const Lielab::domain::se  & lhs, const Lielab::domain::so  & rhs) {return lhs-rhs;});
+    Lielab_domain_se.def("__sub__", [](const Lielab::domain::se  & lhs, const Lielab::domain::sp  & rhs) {return lhs-rhs;});
+    Lielab_domain_se.def("__sub__", [](const Lielab::domain::se  & lhs, const Lielab::domain::su  & rhs) {return lhs-rhs;});
+    Lielab_domain_se.def("__repr__", [](const Lielab::domain::se & self)
         {
             return "<lielab.domain.se>";
-        })
-        .def("__str__", [](const Lielab::domain::se & self)
+        });
+    Lielab_domain_se.def("__str__", [](const Lielab::domain::se & self)
         {
             return matstr(self._data);
         });
@@ -486,80 +494,80 @@ PYBIND11_MODULE(cppLielab, m) {
     * Bindings for Lielab::domain::so
     */
 
-    py::class_<Lielab::domain::so>(m_domain, "so")
-        .def_readwrite("_data", &Lielab::domain::so::_data)
-        .def_readwrite("shape", &Lielab::domain::so::shape)
-        .def_readonly_static("abelian", &Lielab::domain::so::abelian)
-        .def(py::init<>())
-        .def(py::init<const size_t>())
-        .def(py::init<const Eigen::MatrixXd &>())
-        .def("basis", &Lielab::domain::so::basis)
-        .def("project", &Lielab::domain::so::project)
-        .def("get_dimension", &Lielab::domain::so::get_dimension)
-        .def("get_vector", &Lielab::domain::so::get_vector)
-        .def("get_matrix", &Lielab::domain::so::get_matrix)
-        .def("set_vector", &Lielab::domain::so::set_vector)
-        .def("__call__", [](const Lielab::domain::so & self, const size_t index)
+    auto Lielab_domain_so = py::class_<Lielab::domain::so>(m_domain, "so");
+    Lielab_domain_so.def_readwrite("_data", &Lielab::domain::so::_data);
+    Lielab_domain_so.def_readwrite("shape", &Lielab::domain::so::shape);
+    Lielab_domain_so.def_readonly_static("abelian", &Lielab::domain::so::abelian);
+    Lielab_domain_so.def(py::init<>());
+    Lielab_domain_so.def(py::init<const size_t>());
+    Lielab_domain_so.def(py::init<const Eigen::MatrixXd &>());
+    Lielab_domain_so.def("basis", &Lielab::domain::so::basis);
+    Lielab_domain_so.def("project", &Lielab::domain::so::project);
+    Lielab_domain_so.def("get_dimension", &Lielab::domain::so::get_dimension);
+    Lielab_domain_so.def("get_vector", &Lielab::domain::so::get_vector);
+    Lielab_domain_so.def("get_matrix", &Lielab::domain::so::get_matrix);
+    Lielab_domain_so.def("set_vector", &Lielab::domain::so::set_vector);
+    Lielab_domain_so.def("__call__", [](const Lielab::domain::so & self, const size_t index)
         {
             return self(index);
-        })
-        .def("__call__", [](const Lielab::domain::so & self, const size_t index1, const size_t index2)
+        });
+    Lielab_domain_so.def("__call__", [](const Lielab::domain::so & self, const size_t index1, const size_t index2)
         {
             return self(index1, index2);
-        })
-        .def(py::self + py::self)
-        .def(py::self += py::self)
-        .def(py::self - py::self)
-        .def(py::self -= py::self)
-        .def(-py::self)
-        .def(py::self * int())
-        .def(py::self * double())
-        .def(py::self *= int())
-        .def(py::self *= double())
-        .def(py::self *= py::self)
-        .def(py::self / int())
-        .def(py::self / double())
-        .def(py::self /= int())
-        .def(py::self /= double())
-        .def(int() * py::self)
-        .def(double() * py::self)
-        .def("__add__", [](const Lielab::domain::so  & lhs, const Lielab::domain::cn  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::so  & lhs, const Lielab::domain::gl  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::so  & lhs, const Lielab::domain::glc & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::so  & lhs, const Lielab::domain::rn  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::so  & lhs, const Lielab::domain::se  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::so  & lhs, const Lielab::domain::so  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::so  & lhs, const Lielab::domain::sp  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::so  & lhs, const Lielab::domain::su  & rhs) {return lhs+rhs;})
-        .def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::gl  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::CN  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::GL  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::GLC & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::RN  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::SE  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::SO  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::SP  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::SU  & rhs) {return lhs*rhs;})
-        .def("__sub__", [](const Lielab::domain::so  & lhs, const Lielab::domain::cn  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::so  & lhs, const Lielab::domain::gl  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::so  & lhs, const Lielab::domain::glc & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::so  & lhs, const Lielab::domain::rn  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::so  & lhs, const Lielab::domain::se  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::so  & lhs, const Lielab::domain::so  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::so  & lhs, const Lielab::domain::sp  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::so  & lhs, const Lielab::domain::su  & rhs) {return lhs-rhs;})
-        .def("__repr__", [](const Lielab::domain::so & self)
+        });
+    Lielab_domain_so.def(py::self + py::self);
+    Lielab_domain_so.def(py::self += py::self);
+    Lielab_domain_so.def(py::self - py::self);
+    Lielab_domain_so.def(py::self -= py::self);
+    Lielab_domain_so.def(-py::self);
+    Lielab_domain_so.def(py::self * int());
+    Lielab_domain_so.def(py::self * double());
+    Lielab_domain_so.def(py::self *= int());
+    Lielab_domain_so.def(py::self *= double());
+    Lielab_domain_so.def(py::self *= py::self);
+    Lielab_domain_so.def(py::self / int());
+    Lielab_domain_so.def(py::self / double());
+    Lielab_domain_so.def(py::self /= int());
+    Lielab_domain_so.def(py::self /= double());
+    Lielab_domain_so.def(int() * py::self);
+    Lielab_domain_so.def(double() * py::self);
+    Lielab_domain_so.def("__add__", [](const Lielab::domain::so  & lhs, const Lielab::domain::cn  & rhs) {return lhs+rhs;});
+    Lielab_domain_so.def("__add__", [](const Lielab::domain::so  & lhs, const Lielab::domain::gl  & rhs) {return lhs+rhs;});
+    Lielab_domain_so.def("__add__", [](const Lielab::domain::so  & lhs, const Lielab::domain::glc & rhs) {return lhs+rhs;});
+    Lielab_domain_so.def("__add__", [](const Lielab::domain::so  & lhs, const Lielab::domain::rn  & rhs) {return lhs+rhs;});
+    Lielab_domain_so.def("__add__", [](const Lielab::domain::so  & lhs, const Lielab::domain::se  & rhs) {return lhs+rhs;});
+    Lielab_domain_so.def("__add__", [](const Lielab::domain::so  & lhs, const Lielab::domain::so  & rhs) {return lhs+rhs;});
+    Lielab_domain_so.def("__add__", [](const Lielab::domain::so  & lhs, const Lielab::domain::sp  & rhs) {return lhs+rhs;});
+    Lielab_domain_so.def("__add__", [](const Lielab::domain::so  & lhs, const Lielab::domain::su  & rhs) {return lhs+rhs;});
+    Lielab_domain_so.def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;});
+    Lielab_domain_so.def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::gl  & rhs) {return lhs*rhs;});
+    Lielab_domain_so.def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;});
+    Lielab_domain_so.def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;});
+    Lielab_domain_so.def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;});
+    Lielab_domain_so.def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;});
+    Lielab_domain_so.def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;});
+    Lielab_domain_so.def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;});
+    Lielab_domain_so.def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::CN  & rhs) {return lhs*rhs;});
+    Lielab_domain_so.def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::GL  & rhs) {return lhs*rhs;});
+    Lielab_domain_so.def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::GLC & rhs) {return lhs*rhs;});
+    Lielab_domain_so.def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::RN  & rhs) {return lhs*rhs;});
+    Lielab_domain_so.def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::SE  & rhs) {return lhs*rhs;});
+    Lielab_domain_so.def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::SO  & rhs) {return lhs*rhs;});
+    Lielab_domain_so.def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::SP  & rhs) {return lhs*rhs;});
+    Lielab_domain_so.def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::SU  & rhs) {return lhs*rhs;});
+    Lielab_domain_so.def("__sub__", [](const Lielab::domain::so  & lhs, const Lielab::domain::cn  & rhs) {return lhs-rhs;});
+    Lielab_domain_so.def("__sub__", [](const Lielab::domain::so  & lhs, const Lielab::domain::gl  & rhs) {return lhs-rhs;});
+    Lielab_domain_so.def("__sub__", [](const Lielab::domain::so  & lhs, const Lielab::domain::glc & rhs) {return lhs-rhs;});
+    Lielab_domain_so.def("__sub__", [](const Lielab::domain::so  & lhs, const Lielab::domain::rn  & rhs) {return lhs-rhs;});
+    Lielab_domain_so.def("__sub__", [](const Lielab::domain::so  & lhs, const Lielab::domain::se  & rhs) {return lhs-rhs;});
+    Lielab_domain_so.def("__sub__", [](const Lielab::domain::so  & lhs, const Lielab::domain::so  & rhs) {return lhs-rhs;});
+    Lielab_domain_so.def("__sub__", [](const Lielab::domain::so  & lhs, const Lielab::domain::sp  & rhs) {return lhs-rhs;});
+    Lielab_domain_so.def("__sub__", [](const Lielab::domain::so  & lhs, const Lielab::domain::su  & rhs) {return lhs-rhs;});
+    Lielab_domain_so.def("__repr__", [](const Lielab::domain::so & self)
         {
             return "<lielab.domain.so>";
-        })
-        .def("__str__", [](const Lielab::domain::so & self)
+        });
+    Lielab_domain_so.def("__str__", [](const Lielab::domain::so & self)
         {
             return matstr(self._data);
         });
@@ -569,80 +577,80 @@ PYBIND11_MODULE(cppLielab, m) {
     * Bindings for Lielab::domain::sp
     */
     
-    py::class_<Lielab::domain::sp>(m_domain, "sp")
-        .def_readwrite("_data", &Lielab::domain::sp::_data)
-        .def_readwrite("shape", &Lielab::domain::sp::shape)
-        .def_readonly_static("abelian", &Lielab::domain::sp::abelian)
-        .def(py::init<>())
-        .def(py::init<const size_t>())
-        .def(py::init<const Eigen::MatrixXd &>())
-        .def("basis", &Lielab::domain::sp::basis)
-        .def("project", &Lielab::domain::sp::project)
-        .def("get_dimension", &Lielab::domain::sp::get_dimension)
-        .def("get_vector", &Lielab::domain::sp::get_vector)
-        .def("get_matrix", &Lielab::domain::sp::get_matrix)
-        .def("set_vector", &Lielab::domain::sp::set_vector)
-        .def("__call__", [](const Lielab::domain::sp & self, const size_t index)
+    auto Lielab_domain_sp = py::class_<Lielab::domain::sp>(m_domain, "sp");
+    Lielab_domain_sp.def_readwrite("_data", &Lielab::domain::sp::_data);
+    Lielab_domain_sp.def_readwrite("shape", &Lielab::domain::sp::shape);
+    Lielab_domain_sp.def_readonly_static("abelian", &Lielab::domain::sp::abelian);
+    Lielab_domain_sp.def(py::init<>());
+    Lielab_domain_sp.def(py::init<const size_t>());
+    Lielab_domain_sp.def(py::init<const Eigen::MatrixXd &>());
+    Lielab_domain_sp.def("basis", &Lielab::domain::sp::basis);
+    Lielab_domain_sp.def("project", &Lielab::domain::sp::project);
+    Lielab_domain_sp.def("get_dimension", &Lielab::domain::sp::get_dimension);
+    Lielab_domain_sp.def("get_vector", &Lielab::domain::sp::get_vector);
+    Lielab_domain_sp.def("get_matrix", &Lielab::domain::sp::get_matrix);
+    Lielab_domain_sp.def("set_vector", &Lielab::domain::sp::set_vector);
+    Lielab_domain_sp.def("__call__", [](const Lielab::domain::sp & self, const size_t index)
         {
             return self(index);
-        })
-        .def("__call__", [](const Lielab::domain::sp & self, const size_t index1, const size_t index2)
+        });
+    Lielab_domain_sp.def("__call__", [](const Lielab::domain::sp & self, const size_t index1, const size_t index2)
         {
             return self(index1, index2);
-        })
-        .def(py::self + py::self)
-        .def(py::self += py::self)
-        .def(py::self - py::self)
-        .def(py::self -= py::self)
-        .def(-py::self)
-        .def(py::self * int())
-        .def(py::self * double())
-        .def(py::self *= int())
-        .def(py::self *= double())
-        .def(py::self *= py::self)
-        .def(py::self / int())
-        .def(py::self / double())
-        .def(py::self /= int())
-        .def(py::self /= double())
-        .def(int() * py::self)
-        .def(double() * py::self)
-        .def("__add__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::cn  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::gl  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::glc & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::rn  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::se  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::so  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::sp  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::su  & rhs) {return lhs+rhs;})
-        .def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::gl  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::CN  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::GL  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::GLC & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::RN  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::SE  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::SO  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::SP  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::SU  & rhs) {return lhs*rhs;})
-        .def("__sub__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::cn  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::gl  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::glc & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::rn  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::se  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::so  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::sp  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::su  & rhs) {return lhs-rhs;})
-        .def("__repr__", [](const Lielab::domain::sp & self)
+        });
+    Lielab_domain_sp.def(py::self + py::self);
+    Lielab_domain_sp.def(py::self += py::self);
+    Lielab_domain_sp.def(py::self - py::self);
+    Lielab_domain_sp.def(py::self -= py::self);
+    Lielab_domain_sp.def(-py::self);
+    Lielab_domain_sp.def(py::self * int());
+    Lielab_domain_sp.def(py::self * double());
+    Lielab_domain_sp.def(py::self *= int());
+    Lielab_domain_sp.def(py::self *= double());
+    Lielab_domain_sp.def(py::self *= py::self);
+    Lielab_domain_sp.def(py::self / int());
+    Lielab_domain_sp.def(py::self / double());
+    Lielab_domain_sp.def(py::self /= int());
+    Lielab_domain_sp.def(py::self /= double());
+    Lielab_domain_sp.def(int() * py::self);
+    Lielab_domain_sp.def(double() * py::self);
+    Lielab_domain_sp.def("__add__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::cn  & rhs) {return lhs+rhs;});
+    Lielab_domain_sp.def("__add__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::gl  & rhs) {return lhs+rhs;});
+    Lielab_domain_sp.def("__add__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::glc & rhs) {return lhs+rhs;});
+    Lielab_domain_sp.def("__add__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::rn  & rhs) {return lhs+rhs;});
+    Lielab_domain_sp.def("__add__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::se  & rhs) {return lhs+rhs;});
+    Lielab_domain_sp.def("__add__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::so  & rhs) {return lhs+rhs;});
+    Lielab_domain_sp.def("__add__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::sp  & rhs) {return lhs+rhs;});
+    Lielab_domain_sp.def("__add__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::su  & rhs) {return lhs+rhs;});
+    Lielab_domain_sp.def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;});
+    Lielab_domain_sp.def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::gl  & rhs) {return lhs*rhs;});
+    Lielab_domain_sp.def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;});
+    Lielab_domain_sp.def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;});
+    Lielab_domain_sp.def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;});
+    Lielab_domain_sp.def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;});
+    Lielab_domain_sp.def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;});
+    Lielab_domain_sp.def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;});
+    Lielab_domain_sp.def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::CN  & rhs) {return lhs*rhs;});
+    Lielab_domain_sp.def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::GL  & rhs) {return lhs*rhs;});
+    Lielab_domain_sp.def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::GLC & rhs) {return lhs*rhs;});
+    Lielab_domain_sp.def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::RN  & rhs) {return lhs*rhs;});
+    Lielab_domain_sp.def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::SE  & rhs) {return lhs*rhs;});
+    Lielab_domain_sp.def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::SO  & rhs) {return lhs*rhs;});
+    Lielab_domain_sp.def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::SP  & rhs) {return lhs*rhs;});
+    Lielab_domain_sp.def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::SU  & rhs) {return lhs*rhs;});
+    Lielab_domain_sp.def("__sub__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::cn  & rhs) {return lhs-rhs;});
+    Lielab_domain_sp.def("__sub__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::gl  & rhs) {return lhs-rhs;});
+    Lielab_domain_sp.def("__sub__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::glc & rhs) {return lhs-rhs;});
+    Lielab_domain_sp.def("__sub__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::rn  & rhs) {return lhs-rhs;});
+    Lielab_domain_sp.def("__sub__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::se  & rhs) {return lhs-rhs;});
+    Lielab_domain_sp.def("__sub__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::so  & rhs) {return lhs-rhs;});
+    Lielab_domain_sp.def("__sub__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::sp  & rhs) {return lhs-rhs;});
+    Lielab_domain_sp.def("__sub__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::su  & rhs) {return lhs-rhs;});
+    Lielab_domain_sp.def("__repr__", [](const Lielab::domain::sp & self)
         {
             return "<lielab.domain.sp>";
-        })
-        .def("__str__", [](const Lielab::domain::sp & self)
+        });
+    Lielab_domain_sp.def("__str__", [](const Lielab::domain::sp & self)
         {
             return matstr(self._data);
         });
@@ -652,90 +660,90 @@ PYBIND11_MODULE(cppLielab, m) {
     * Bindings for Lielab::domain::su
     */
     
-    py::class_<Lielab::domain::su>(m_domain, "su")
-        .def_readwrite("_data", &Lielab::domain::su::_data)
-        .def_readwrite("shape", &Lielab::domain::su::shape)
-        .def_readonly_static("abelian", &Lielab::domain::su::abelian)
-        .def(py::init<>())
-        .def(py::init<const size_t>())
-        .def(py::init<const Eigen::MatrixXcd &>())
-        .def("basis", &Lielab::domain::su::basis)
-        // .def("project", &Lielab::domain::su::project) // TODO: Implement project
-        .def("get_dimension", &Lielab::domain::su::get_dimension)
-        .def("get_vector", &Lielab::domain::su::get_vector)
-        .def("get_matrix", &Lielab::domain::su::get_matrix)
-        .def("set_vector", &Lielab::domain::su::set_vector)
-        .def("__call__", [](const Lielab::domain::su & self, const size_t index)
+    auto Lielab_domain_su = py::class_<Lielab::domain::su>(m_domain, "su");
+    Lielab_domain_su.def_readwrite("_data", &Lielab::domain::su::_data);
+    Lielab_domain_su.def_readwrite("shape", &Lielab::domain::su::shape);
+    Lielab_domain_su.def_readonly_static("abelian", &Lielab::domain::su::abelian);
+    Lielab_domain_su.def(py::init<>());
+    Lielab_domain_su.def(py::init<const size_t>());
+    Lielab_domain_su.def(py::init<const Eigen::MatrixXcd &>());
+    Lielab_domain_su.def("basis", &Lielab::domain::su::basis);
+        // .def("project", &Lielab::domain::su::project); // TODO: Implement project
+    Lielab_domain_su.def("get_dimension", &Lielab::domain::su::get_dimension);
+    Lielab_domain_su.def("get_vector", &Lielab::domain::su::get_vector);
+    Lielab_domain_su.def("get_matrix", &Lielab::domain::su::get_matrix);
+    Lielab_domain_su.def("set_vector", &Lielab::domain::su::set_vector);
+    Lielab_domain_su.def("__call__", [](const Lielab::domain::su & self, const size_t index)
         {
             return self(index);
-        })
-        .def("__call__", [](const Lielab::domain::su & self, const size_t index1, const size_t index2)
+        });
+    Lielab_domain_su.def("__call__", [](const Lielab::domain::su & self, const size_t index1, const size_t index2)
         {
             return self(index1, index2);
-        })
-        .def(py::self + py::self)
-        .def(py::self += py::self)
-        .def(py::self - py::self)
-        .def(py::self -= py::self)
-        .def(-py::self)
-        .def(py::self * int())
-        .def(py::self * double())
-        // .def(py::self * std::complex<int>()) // TODO: Complex integers seem bugged in Eigen right now
-        .def(py::self * std::complex<double>())
-        .def(py::self *= int())
-        .def(py::self *= double())
-        // .def(py::self *= std::complex<int>()) // TODO: Complex integers seem bugged in Eigen right now
-        .def(py::self *= std::complex<double>())
-        .def(py::self *= py::self)
-        .def(py::self / int())
-        .def(py::self / double())
-        // .def(py::self / std::complex<int>())
-        .def(py::self / std::complex<double>())
-        .def(py::self /= int())
-        .def(py::self /= double())
-        // .def(py::self /= std::complex<int>())
-        .def(py::self /= std::complex<double>())
-        .def(int() * py::self)
-        .def(double() * py::self)
-        // .def(std::complex<int>() * py::self)
-        .def(std::complex<double>() * py::self)
-        .def("__add__", [](const Lielab::domain::su  & lhs, const Lielab::domain::cn  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::su  & lhs, const Lielab::domain::gl  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::su  & lhs, const Lielab::domain::glc & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::su  & lhs, const Lielab::domain::rn  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::su  & lhs, const Lielab::domain::se  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::su  & lhs, const Lielab::domain::so  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::su  & lhs, const Lielab::domain::sp  & rhs) {return lhs+rhs;})
-        .def("__add__", [](const Lielab::domain::su  & lhs, const Lielab::domain::su  & rhs) {return lhs+rhs;})
-        .def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::gl  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::CN  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::GL  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::GLC & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::RN  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::SE  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::SO  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::SP  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::SU  & rhs) {return lhs*rhs;})
-        .def("__sub__", [](const Lielab::domain::su  & lhs, const Lielab::domain::cn  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::su  & lhs, const Lielab::domain::gl  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::su  & lhs, const Lielab::domain::glc & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::su  & lhs, const Lielab::domain::rn  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::su  & lhs, const Lielab::domain::se  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::su  & lhs, const Lielab::domain::so  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::su  & lhs, const Lielab::domain::sp  & rhs) {return lhs-rhs;})
-        .def("__sub__", [](const Lielab::domain::su  & lhs, const Lielab::domain::su  & rhs) {return lhs-rhs;})
-        .def("__repr__", [](const Lielab::domain::su & self)
+        });
+    Lielab_domain_su.def(py::self + py::self);
+    Lielab_domain_su.def(py::self += py::self);
+    Lielab_domain_su.def(py::self - py::self);
+    Lielab_domain_su.def(py::self -= py::self);
+    Lielab_domain_su.def(-py::self);
+    Lielab_domain_su.def(py::self * int());
+    Lielab_domain_su.def(py::self * double());
+        // .def(py::self * std::complex<int>()); // TODO: Complex integers seem bugged in Eigen right now
+    Lielab_domain_su.def(py::self * std::complex<double>());
+    Lielab_domain_su.def(py::self *= int());
+    Lielab_domain_su.def(py::self *= double());
+        // .def(py::self *= std::complex<int>()); // TODO: Complex integers seem bugged in Eigen right now
+    Lielab_domain_su.def(py::self *= std::complex<double>());
+    Lielab_domain_su.def(py::self *= py::self);
+    Lielab_domain_su.def(py::self / int());
+    Lielab_domain_su.def(py::self / double());
+        // .def(py::self / std::complex<int>());
+    Lielab_domain_su.def(py::self / std::complex<double>());
+    Lielab_domain_su.def(py::self /= int());
+    Lielab_domain_su.def(py::self /= double());
+        // .def(py::self /= std::complex<int>());
+    Lielab_domain_su.def(py::self /= std::complex<double>());
+    Lielab_domain_su.def(int() * py::self);
+    Lielab_domain_su.def(double() * py::self);
+        // .def(std::complex<int>() * py::self);
+    Lielab_domain_su.def(std::complex<double>() * py::self);
+    Lielab_domain_su.def("__add__", [](const Lielab::domain::su  & lhs, const Lielab::domain::cn  & rhs) {return lhs+rhs;});
+    Lielab_domain_su.def("__add__", [](const Lielab::domain::su  & lhs, const Lielab::domain::gl  & rhs) {return lhs+rhs;});
+    Lielab_domain_su.def("__add__", [](const Lielab::domain::su  & lhs, const Lielab::domain::glc & rhs) {return lhs+rhs;});
+    Lielab_domain_su.def("__add__", [](const Lielab::domain::su  & lhs, const Lielab::domain::rn  & rhs) {return lhs+rhs;});
+    Lielab_domain_su.def("__add__", [](const Lielab::domain::su  & lhs, const Lielab::domain::se  & rhs) {return lhs+rhs;});
+    Lielab_domain_su.def("__add__", [](const Lielab::domain::su  & lhs, const Lielab::domain::so  & rhs) {return lhs+rhs;});
+    Lielab_domain_su.def("__add__", [](const Lielab::domain::su  & lhs, const Lielab::domain::sp  & rhs) {return lhs+rhs;});
+    Lielab_domain_su.def("__add__", [](const Lielab::domain::su  & lhs, const Lielab::domain::su  & rhs) {return lhs+rhs;});
+    Lielab_domain_su.def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;});
+    Lielab_domain_su.def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::gl  & rhs) {return lhs*rhs;});
+    Lielab_domain_su.def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;});
+    Lielab_domain_su.def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;});
+    Lielab_domain_su.def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;});
+    Lielab_domain_su.def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;});
+    Lielab_domain_su.def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;});
+    Lielab_domain_su.def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;});
+    Lielab_domain_su.def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::CN  & rhs) {return lhs*rhs;});
+    Lielab_domain_su.def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::GL  & rhs) {return lhs*rhs;});
+    Lielab_domain_su.def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::GLC & rhs) {return lhs*rhs;});
+    Lielab_domain_su.def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::RN  & rhs) {return lhs*rhs;});
+    Lielab_domain_su.def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::SE  & rhs) {return lhs*rhs;});
+    Lielab_domain_su.def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::SO  & rhs) {return lhs*rhs;});
+    Lielab_domain_su.def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::SP  & rhs) {return lhs*rhs;});
+    Lielab_domain_su.def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::SU  & rhs) {return lhs*rhs;});
+    Lielab_domain_su.def("__sub__", [](const Lielab::domain::su  & lhs, const Lielab::domain::cn  & rhs) {return lhs-rhs;});
+    Lielab_domain_su.def("__sub__", [](const Lielab::domain::su  & lhs, const Lielab::domain::gl  & rhs) {return lhs-rhs;});
+    Lielab_domain_su.def("__sub__", [](const Lielab::domain::su  & lhs, const Lielab::domain::glc & rhs) {return lhs-rhs;});
+    Lielab_domain_su.def("__sub__", [](const Lielab::domain::su  & lhs, const Lielab::domain::rn  & rhs) {return lhs-rhs;});
+    Lielab_domain_su.def("__sub__", [](const Lielab::domain::su  & lhs, const Lielab::domain::se  & rhs) {return lhs-rhs;});
+    Lielab_domain_su.def("__sub__", [](const Lielab::domain::su  & lhs, const Lielab::domain::so  & rhs) {return lhs-rhs;});
+    Lielab_domain_su.def("__sub__", [](const Lielab::domain::su  & lhs, const Lielab::domain::sp  & rhs) {return lhs-rhs;});
+    Lielab_domain_su.def("__sub__", [](const Lielab::domain::su  & lhs, const Lielab::domain::su  & rhs) {return lhs-rhs;});
+    Lielab_domain_su.def("__repr__", [](const Lielab::domain::su & self)
         {
             return "<lielab.domain.su>";
-        })
-        .def("__str__", [](const Lielab::domain::su & self)
+        });
+    Lielab_domain_su.def("__str__", [](const Lielab::domain::su & self)
         {
             return matstr(self._data);
         });
@@ -744,352 +752,377 @@ PYBIND11_MODULE(cppLielab, m) {
      * Lie Groups
      */
 
-    py::class_<Lielab::domain::CN>(m_domain, "CN")
-        .def_readwrite("_data", &Lielab::domain::CN::_data)
-        .def_readwrite("shape", &Lielab::domain::CN::shape)
-        .def_readonly_static("abelian", &Lielab::domain::CN::abelian)
-        .def(py::init<>())
-        .def(py::init<int>())
-        .def(py::init<Eigen::MatrixXcd>())
-        // .def("project", &Lielab::domain::CN::project) // TODO:
-        .def("get_dimension", &Lielab::domain::CN::get_dimension)
-        .def("get_matrix", &Lielab::domain::CN::get_matrix)
-        .def("inverse", &Lielab::domain::CN::inverse)
-        .def("serialize", &Lielab::domain::CN::serialize)
-        .def("unserialize", &Lielab::domain::CN::unserialize)
-        .def("__call__", [](const Lielab::domain::CN & self, const size_t index1, const size_t index2)
+    auto Lielab_domain_CN = py::class_<Lielab::domain::CN>(m_domain, "CN");
+    Lielab_domain_CN.def_readwrite("_data", &Lielab::domain::CN::_data);
+    Lielab_domain_CN.def_readwrite("shape", &Lielab::domain::CN::shape);
+    Lielab_domain_CN.def_readonly_static("abelian", &Lielab::domain::CN::abelian);
+    Lielab_domain_CN.def(py::init<>());
+    Lielab_domain_CN.def(py::init<int>());
+    Lielab_domain_CN.def(py::init<Eigen::MatrixXcd>());
+        // .def("project", &Lielab::domain::CN::project); // TODO:
+    Lielab_domain_CN.def("get_dimension", &Lielab::domain::CN::get_dimension);
+    Lielab_domain_CN.def("get_matrix", &Lielab::domain::CN::get_matrix);
+    Lielab_domain_CN.def("inverse", &Lielab::domain::CN::inverse);
+    Lielab_domain_CN.def("serialize", &Lielab::domain::CN::serialize);
+    Lielab_domain_CN.def("unserialize", &Lielab::domain::CN::unserialize);
+    Lielab_domain_CN.def("__call__", [](const Lielab::domain::CN & self, const size_t index1, const size_t index2)
         {
             return self(index1, index2);
-        })
-        .def(py::self * py::self)
-        .def(py::self *= py::self)
-        .def("__mul__", [](const Lielab::domain::CN  & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::CN  & lhs, const Lielab::domain::gl  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::CN  & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::CN  & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::CN  & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::CN  & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::CN  & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::CN  & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;})
-        .def("__repr__", [](const Lielab::domain::CN & self)
+        });
+    Lielab_domain_CN.def(py::self * py::self);
+    Lielab_domain_CN.def(py::self *= py::self);
+    Lielab_domain_CN.def("__mul__", [](const Lielab::domain::CN  & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;});
+    Lielab_domain_CN.def("__mul__", [](const Lielab::domain::CN  & lhs, const Lielab::domain::gl  & rhs) {return lhs*rhs;});
+    Lielab_domain_CN.def("__mul__", [](const Lielab::domain::CN  & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;});
+    Lielab_domain_CN.def("__mul__", [](const Lielab::domain::CN  & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;});
+    Lielab_domain_CN.def("__mul__", [](const Lielab::domain::CN  & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;});
+    Lielab_domain_CN.def("__mul__", [](const Lielab::domain::CN  & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;});
+    Lielab_domain_CN.def("__mul__", [](const Lielab::domain::CN  & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;});
+    Lielab_domain_CN.def("__mul__", [](const Lielab::domain::CN  & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;});
+    Lielab_domain_CN.def("__repr__", [](const Lielab::domain::CN & self)
         {
             return "<lielab.domain.CN>";
-        })
-        .def("__str__", [](const Lielab::domain::CN & self)
+        });
+    Lielab_domain_CN.def("__str__", [](const Lielab::domain::CN & self)
         {
             return matstr(self._data);
         });
     
-    py::class_<Lielab::domain::GL>(m_domain, "GL")
-        .def_readwrite("_data", &Lielab::domain::GL::_data)
-        .def_readonly_static("abelian", &Lielab::domain::GL::abelian)
-        .def(py::init<>())
-        .def(py::init<int>())
-        .def(py::init<Eigen::MatrixXd>())
-        .def("project", &Lielab::domain::GL::project)
-        .def("get_dimension", &Lielab::domain::GL::get_dimension)
-        .def("get_matrix", &Lielab::domain::GL::get_matrix)
-        .def("inverse", &Lielab::domain::GL::inverse)
-        .def("serialize", &Lielab::domain::GL::serialize)
-        .def("unserialize", &Lielab::domain::GL::unserialize)
-        .def("__call__", [](const Lielab::domain::GL & self, const size_t index1, const size_t index2)
+    auto Lielab_domain_GL = py::class_<Lielab::domain::GL>(m_domain, "GL");
+    Lielab_domain_GL.def_readwrite("_data", &Lielab::domain::GL::_data);
+    Lielab_domain_GL.def_readonly_static("abelian", &Lielab::domain::GL::abelian);
+    Lielab_domain_GL.def(py::init<>());
+    Lielab_domain_GL.def(py::init<int>());
+    Lielab_domain_GL.def(py::init<Eigen::MatrixXd>());
+    Lielab_domain_GL.def("project", &Lielab::domain::GL::project);
+    Lielab_domain_GL.def("get_dimension", &Lielab::domain::GL::get_dimension);
+    Lielab_domain_GL.def("get_matrix", &Lielab::domain::GL::get_matrix);
+    Lielab_domain_GL.def("inverse", &Lielab::domain::GL::inverse);
+    Lielab_domain_GL.def("serialize", &Lielab::domain::GL::serialize);
+    Lielab_domain_GL.def("unserialize", &Lielab::domain::GL::unserialize);
+    Lielab_domain_GL.def("__call__", [](const Lielab::domain::GL & self, const size_t index1, const size_t index2)
         {
             return self(index1, index2);
-        })
-        .def(py::self * py::self)
-        .def(py::self *= py::self)
-        .def("__mul__", [](const Lielab::domain::GL  & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::GL  & lhs, const Lielab::domain::gl  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::GL  & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::GL  & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::GL  & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::GL  & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::GL  & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::GL  & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;})
-        .def("__repr__", [](const Lielab::domain::GL & self)
+        });
+    Lielab_domain_GL.def(py::self * py::self);
+    Lielab_domain_GL.def(py::self *= py::self);
+    Lielab_domain_GL.def("__mul__", [](const Lielab::domain::GL  & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;});
+    Lielab_domain_GL.def("__mul__", [](const Lielab::domain::GL  & lhs, const Lielab::domain::gl  & rhs) {return lhs*rhs;});
+    Lielab_domain_GL.def("__mul__", [](const Lielab::domain::GL  & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;});
+    Lielab_domain_GL.def("__mul__", [](const Lielab::domain::GL  & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;});
+    Lielab_domain_GL.def("__mul__", [](const Lielab::domain::GL  & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;});
+    Lielab_domain_GL.def("__mul__", [](const Lielab::domain::GL  & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;});
+    Lielab_domain_GL.def("__mul__", [](const Lielab::domain::GL  & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;});
+    Lielab_domain_GL.def("__mul__", [](const Lielab::domain::GL  & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;});
+    Lielab_domain_GL.def("__repr__", [](const Lielab::domain::GL & self)
         {
             return "<lielab.domain.GL>";
-        })
-        .def("__str__", [](const Lielab::domain::GL & self)
+        });
+    Lielab_domain_GL.def("__str__", [](const Lielab::domain::GL & self)
         {
             return matstr(self._data);
         });
     
-    py::class_<Lielab::domain::GLC>(m_domain, "GLC")
-        .def_readwrite("_data", &Lielab::domain::GLC::_data)
-        .def_readonly_static("abelian", &Lielab::domain::GLC::abelian)
-        .def(py::init<>())
-        .def(py::init<int>())
-        .def(py::init<Eigen::MatrixXd>())
-        .def("project", &Lielab::domain::GLC::project)
-        .def("get_dimension", &Lielab::domain::GLC::get_dimension)
-        .def("get_matrix", &Lielab::domain::GLC::get_matrix)
-        .def("inverse", &Lielab::domain::GLC::inverse)
-        .def("serialize", &Lielab::domain::GLC::serialize)
-        .def("unserialize", &Lielab::domain::GLC::unserialize)
-        .def("__call__", [](const Lielab::domain::GLC & self, const size_t index1, const size_t index2)
+    auto Lielab_domain_GLC = py::class_<Lielab::domain::GLC>(m_domain, "GLC");
+    Lielab_domain_GLC.def_readwrite("_data", &Lielab::domain::GLC::_data);
+    Lielab_domain_GLC.def_readonly_static("abelian", &Lielab::domain::GLC::abelian);
+    Lielab_domain_GLC.def(py::init<>());
+    Lielab_domain_GLC.def(py::init<int>());
+    Lielab_domain_GLC.def(py::init<Eigen::MatrixXd>());
+    Lielab_domain_GLC.def("project", &Lielab::domain::GLC::project);
+    Lielab_domain_GLC.def("get_dimension", &Lielab::domain::GLC::get_dimension);
+    Lielab_domain_GLC.def("get_matrix", &Lielab::domain::GLC::get_matrix);
+    Lielab_domain_GLC.def("inverse", &Lielab::domain::GLC::inverse);
+    Lielab_domain_GLC.def("serialize", &Lielab::domain::GLC::serialize);
+    Lielab_domain_GLC.def("unserialize", &Lielab::domain::GLC::unserialize);
+    Lielab_domain_GLC.def("__call__", [](const Lielab::domain::GLC & self, const size_t index1, const size_t index2)
         {
             return self(index1, index2);
-        })
-        .def(py::self * py::self)
-        .def(py::self *= py::self)
-        .def("__mul__", [](const Lielab::domain::GLC & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::GLC & lhs, const Lielab::domain::gl  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::GLC & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::GLC & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::GLC & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::GLC & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::GLC & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::GLC & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;})
-        .def("__repr__", [](const Lielab::domain::GLC & self)
+        });
+    Lielab_domain_GLC.def(py::self * py::self);
+    Lielab_domain_GLC.def(py::self *= py::self);
+    Lielab_domain_GLC.def("__mul__", [](const Lielab::domain::GLC & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;});
+    Lielab_domain_GLC.def("__mul__", [](const Lielab::domain::GLC & lhs, const Lielab::domain::gl  & rhs) {return lhs*rhs;});
+    Lielab_domain_GLC.def("__mul__", [](const Lielab::domain::GLC & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;});
+    Lielab_domain_GLC.def("__mul__", [](const Lielab::domain::GLC & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;});
+    Lielab_domain_GLC.def("__mul__", [](const Lielab::domain::GLC & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;});
+    Lielab_domain_GLC.def("__mul__", [](const Lielab::domain::GLC & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;});
+    Lielab_domain_GLC.def("__mul__", [](const Lielab::domain::GLC & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;});
+    Lielab_domain_GLC.def("__mul__", [](const Lielab::domain::GLC & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;});
+    Lielab_domain_GLC.def("__repr__", [](const Lielab::domain::GLC & self)
         {
             return "<lielab.domain.GLC>";
-        })
-        .def("__str__", [](const Lielab::domain::GLC & self)
+        });
+    Lielab_domain_GLC.def("__str__", [](const Lielab::domain::GLC & self)
         {
             return matstr(self._data);
         });
 
-    py::class_<Lielab::domain::RN>(m_domain, "RN")
-        .def_readwrite("_data", &Lielab::domain::RN::_data)
-        .def_readwrite("shape", &Lielab::domain::RN::shape)
-        .def_readonly_static("abelian", &Lielab::domain::RN::abelian)
-        .def(py::init<>())
-        .def(py::init<int>())
-        .def(py::init<Eigen::MatrixXd>())
-        .def("project", &Lielab::domain::RN::project)
-        .def("get_dimension", &Lielab::domain::RN::get_dimension)
-        .def("get_matrix", &Lielab::domain::RN::get_matrix)
-        .def("inverse", &Lielab::domain::RN::inverse)
-        .def("serialize", &Lielab::domain::RN::serialize)
-        .def("unserialize", &Lielab::domain::RN::unserialize)
-        .def("__call__", [](const Lielab::domain::RN & self, const size_t index)
+    auto Lielab_domain_RN = py::class_<Lielab::domain::RN>(m_domain, "RN");
+    Lielab_domain_RN.def_readwrite("_data", &Lielab::domain::RN::_data);
+    Lielab_domain_RN.def_readwrite("shape", &Lielab::domain::RN::shape);
+    Lielab_domain_RN.def_readonly_static("abelian", &Lielab::domain::RN::abelian);
+    Lielab_domain_RN.def(py::init<>());
+    Lielab_domain_RN.def(py::init<int>());
+    Lielab_domain_RN.def(py::init<Eigen::MatrixXd>());
+    Lielab_domain_RN.def("project", &Lielab::domain::RN::project);
+    Lielab_domain_RN.def("get_dimension", &Lielab::domain::RN::get_dimension);
+    Lielab_domain_RN.def("get_matrix", &Lielab::domain::RN::get_matrix);
+    Lielab_domain_RN.def("inverse", &Lielab::domain::RN::inverse);
+    Lielab_domain_RN.def("serialize", &Lielab::domain::RN::serialize);
+    Lielab_domain_RN.def("unserialize", &Lielab::domain::RN::unserialize);
+    Lielab_domain_RN.def("__call__", [](const Lielab::domain::RN & self, const size_t index)
         {
             return self(index);
-        })
-        .def("__call__", [](const Lielab::domain::RN & self, const size_t index1, const size_t index2)
+        });
+    Lielab_domain_RN.def("__call__", [](const Lielab::domain::RN & self, const size_t index1, const size_t index2)
         {
             return self(index1, index2);
-        })
-        .def(py::self * py::self)
-        .def(py::self *= py::self)
-        .def("__mul__", [](const Lielab::domain::RN  & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::RN  & lhs, const Lielab::domain::gl  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::RN  & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::RN  & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::RN  & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::RN  & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::RN  & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::RN  & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;})
-        .def("__repr__", [](const Lielab::domain::RN & self)
+        });
+    Lielab_domain_RN.def(py::self * py::self);
+    Lielab_domain_RN.def(py::self *= py::self);
+    Lielab_domain_RN.def("__mul__", [](const Lielab::domain::RN  & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;});
+    Lielab_domain_RN.def("__mul__", [](const Lielab::domain::RN  & lhs, const Lielab::domain::gl  & rhs) {return lhs*rhs;});
+    Lielab_domain_RN.def("__mul__", [](const Lielab::domain::RN  & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;});
+    Lielab_domain_RN.def("__mul__", [](const Lielab::domain::RN  & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;});
+    Lielab_domain_RN.def("__mul__", [](const Lielab::domain::RN  & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;});
+    Lielab_domain_RN.def("__mul__", [](const Lielab::domain::RN  & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;});
+    Lielab_domain_RN.def("__mul__", [](const Lielab::domain::RN  & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;});
+    Lielab_domain_RN.def("__mul__", [](const Lielab::domain::RN  & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;});
+    Lielab_domain_RN.def("__repr__", [](const Lielab::domain::RN & self)
         {
             return "<lielab.domain.RN>";
-        })
-        .def("__str__", [](const Lielab::domain::RN & self)
+        });
+    Lielab_domain_RN.def("__str__", [](const Lielab::domain::RN & self)
         {
             return matstr(self._data);
         });
 
-    py::class_<Lielab::domain::SE>(m_domain, "SE")
-        .def_readwrite("_data", &Lielab::domain::SE::_data)
-        .def_readwrite("shape", &Lielab::domain::SE::shape)
-        .def_readonly_static("abelian", &Lielab::domain::SE::abelian)
-        .def(py::init<>())
-        .def(py::init<int>())
-        .def(py::init<Eigen::MatrixXd>())
-        // .def("project", &Lielab::domain::SE::project)
-        .def("get_dimension", &Lielab::domain::SE::get_dimension)
-        .def("get_matrix", &Lielab::domain::SE::get_matrix)
-        .def("inverse", &Lielab::domain::SE::inverse)
-        .def("serialize", &Lielab::domain::SE::serialize)
-        .def("unserialize", &Lielab::domain::SE::unserialize)
-        .def("__call__", [](const Lielab::domain::SE & self, const size_t index1, const size_t index2)
+    auto Lielab_domain_SE = py::class_<Lielab::domain::SE>(m_domain, "SE");
+    Lielab_domain_SE.def_readwrite("_data", &Lielab::domain::SE::_data);
+    Lielab_domain_SE.def_readwrite("shape", &Lielab::domain::SE::shape);
+    Lielab_domain_SE.def_readonly_static("abelian", &Lielab::domain::SE::abelian);
+    Lielab_domain_SE.def(py::init<>());
+    Lielab_domain_SE.def(py::init<int>());
+    Lielab_domain_SE.def(py::init<Eigen::MatrixXd>());
+        // .def("project", &Lielab::domain::SE::project);
+    Lielab_domain_SE.def("get_dimension", &Lielab::domain::SE::get_dimension);
+    Lielab_domain_SE.def("get_matrix", &Lielab::domain::SE::get_matrix);
+    Lielab_domain_SE.def("inverse", &Lielab::domain::SE::inverse);
+    Lielab_domain_SE.def("serialize", &Lielab::domain::SE::serialize);
+    Lielab_domain_SE.def("unserialize", &Lielab::domain::SE::unserialize);
+    Lielab_domain_SE.def("__call__", [](const Lielab::domain::SE & self, const size_t index1, const size_t index2)
         {
             return self(index1, index2);
-        })
-        .def(py::self * py::self)
-        .def(py::self *= py::self)
-        .def("__mul__", [](const Lielab::domain::SE  & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::SE  & lhs, const Lielab::domain::gl  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::SE  & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::SE  & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::SE  & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::SE  & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::SE  & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::SE  & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;})
-        .def("__repr__", [](const Lielab::domain::SE & self)
+        });
+    Lielab_domain_SE.def(py::self * py::self);
+    Lielab_domain_SE.def(py::self *= py::self);
+    Lielab_domain_SE.def("__mul__", [](const Lielab::domain::SE  & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;});
+    Lielab_domain_SE.def("__mul__", [](const Lielab::domain::SE  & lhs, const Lielab::domain::gl  & rhs) {return lhs*rhs;});
+    Lielab_domain_SE.def("__mul__", [](const Lielab::domain::SE  & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;});
+    Lielab_domain_SE.def("__mul__", [](const Lielab::domain::SE  & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;});
+    Lielab_domain_SE.def("__mul__", [](const Lielab::domain::SE  & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;});
+    Lielab_domain_SE.def("__mul__", [](const Lielab::domain::SE  & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;});
+    Lielab_domain_SE.def("__mul__", [](const Lielab::domain::SE  & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;});
+    Lielab_domain_SE.def("__mul__", [](const Lielab::domain::SE  & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;});
+    Lielab_domain_SE.def("__repr__", [](const Lielab::domain::SE & self)
         {
             return "<lielab.domain.SE>";
-        })
-        .def("__str__", [](const Lielab::domain::SE & self)
+        });
+    Lielab_domain_SE.def("__str__", [](const Lielab::domain::SE & self)
         {
             return matstr(self._data);
         });
 
-    py::class_<Lielab::domain::SO>(m_domain, "SO")
-        .def_readwrite("_data", &Lielab::domain::SO::_data)
-        .def_readwrite("shape", &Lielab::domain::SO::shape)
-        .def_readonly_static("abelian", &Lielab::domain::SO::abelian)
-        .def(py::init<>())
-        .def(py::init<int>())
-        .def(py::init<Eigen::MatrixXd>())
-        .def("project", &Lielab::domain::SO::project)
-        .def("get_dimension", &Lielab::domain::SO::get_dimension)
-        .def("get_matrix", &Lielab::domain::SO::get_matrix)
-        .def("inverse", &Lielab::domain::SO::inverse)
-        .def("serialize", &Lielab::domain::SO::serialize)
-        .def("unserialize", &Lielab::domain::SO::unserialize)
-        .def("__call__", [](const Lielab::domain::SO & self, const size_t index1, const size_t index2)
+    auto Lielab_domain_SO = py::class_<Lielab::domain::SO>(m_domain, "SO");
+    Lielab_domain_SO.def_readwrite("_data", &Lielab::domain::SO::_data);
+    Lielab_domain_SO.def_readwrite("shape", &Lielab::domain::SO::shape);
+    Lielab_domain_SO.def_readonly_static("abelian", &Lielab::domain::SO::abelian);
+    Lielab_domain_SO.def(py::init<>());
+    Lielab_domain_SO.def(py::init<int>());
+    Lielab_domain_SO.def(py::init<Eigen::MatrixXd>());
+    Lielab_domain_SO.def("project", &Lielab::domain::SO::project);
+    Lielab_domain_SO.def("get_dimension", &Lielab::domain::SO::get_dimension);
+    Lielab_domain_SO.def("get_matrix", &Lielab::domain::SO::get_matrix);
+    Lielab_domain_SO.def("inverse", &Lielab::domain::SO::inverse);
+    Lielab_domain_SO.def("serialize", &Lielab::domain::SO::serialize);
+    Lielab_domain_SO.def("unserialize", &Lielab::domain::SO::unserialize);
+    Lielab_domain_SO.def("__call__", [](const Lielab::domain::SO & self, const size_t index1, const size_t index2)
         {
             return self(index1, index2);
-        })
-        .def(py::self * py::self)
-        .def(py::self *= py::self)
-        .def("__mul__", [](const Lielab::domain::SO  & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::SO  & lhs, const Lielab::domain::gl  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::SO  & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::SO  & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::SO  & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::SO  & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::SO  & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::SO  & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;})
-        .def("__repr__", [](const Lielab::domain::SO & self)
+        });
+    Lielab_domain_SO.def(py::self * py::self);
+    Lielab_domain_SO.def(py::self *= py::self);
+    Lielab_domain_SO.def("__mul__", [](const Lielab::domain::SO  & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;});
+    Lielab_domain_SO.def("__mul__", [](const Lielab::domain::SO  & lhs, const Lielab::domain::gl  & rhs) {return lhs*rhs;});
+    Lielab_domain_SO.def("__mul__", [](const Lielab::domain::SO  & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;});
+    Lielab_domain_SO.def("__mul__", [](const Lielab::domain::SO  & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;});
+    Lielab_domain_SO.def("__mul__", [](const Lielab::domain::SO  & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;});
+    Lielab_domain_SO.def("__mul__", [](const Lielab::domain::SO  & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;});
+    Lielab_domain_SO.def("__mul__", [](const Lielab::domain::SO  & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;});
+    Lielab_domain_SO.def("__mul__", [](const Lielab::domain::SO  & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;});
+    Lielab_domain_SO.def("__repr__", [](const Lielab::domain::SO & self)
         {
             return "<lielab.domain.SO>";
-        })
-        .def("__str__", [](const Lielab::domain::SO & self)
+        });
+    Lielab_domain_SO.def("__str__", [](const Lielab::domain::SO & self)
         {
             return matstr(self._data);
         });
+    Lielab_domain_SO.def_static("from_eulerangles_body123", &Lielab::domain::SO::from_eulerangles_body123<double>, "The from_eulerangles_body123 function.");
+    Lielab_domain_SO.def_static("from_eulerangles_body231", &Lielab::domain::SO::from_eulerangles_body231<double>, "The from_eulerangles_body231 function.");
+    Lielab_domain_SO.def_static("from_eulerangles_body312", &Lielab::domain::SO::from_eulerangles_body312<double>, "The from_eulerangles_body312 function.");
+    Lielab_domain_SO.def_static("from_eulerangles_body132", &Lielab::domain::SO::from_eulerangles_body132<double>, "The from_eulerangles_body132 function.");
+    Lielab_domain_SO.def_static("from_eulerangles_body213", &Lielab::domain::SO::from_eulerangles_body213<double>, "The from_eulerangles_body213 function.");
+    Lielab_domain_SO.def_static("from_eulerangles_body321", &Lielab::domain::SO::from_eulerangles_body321<double>, "The from_eulerangles_body321 function.");
+    Lielab_domain_SO.def_static("from_eulerangles_body121", &Lielab::domain::SO::from_eulerangles_body121<double>, "The from_eulerangles_body121 function.");
+    Lielab_domain_SO.def_static("from_eulerangles_body131", &Lielab::domain::SO::from_eulerangles_body131<double>, "The from_eulerangles_body131 function.");
+    Lielab_domain_SO.def_static("from_eulerangles_body212", &Lielab::domain::SO::from_eulerangles_body212<double>, "The from_eulerangles_body212 function.");
+    Lielab_domain_SO.def_static("from_eulerangles_body232", &Lielab::domain::SO::from_eulerangles_body232<double>, "The from_eulerangles_body232 function.");
+    Lielab_domain_SO.def_static("from_eulerangles_body313", &Lielab::domain::SO::from_eulerangles_body313<double>, "The from_eulerangles_body313 function.");
+    Lielab_domain_SO.def_static("from_eulerangles_body323", &Lielab::domain::SO::from_eulerangles_body323<double>, "The from_eulerangles_body323 function.");
+    Lielab_domain_SO.def_static("from_eulerangles_space123", &Lielab::domain::SO::from_eulerangles_space123<double>, "The from_eulerangles_space123 function.");
+    Lielab_domain_SO.def_static("from_eulerangles_space231", &Lielab::domain::SO::from_eulerangles_space231<double>, "The from_eulerangles_space231 function.");
+    Lielab_domain_SO.def_static("from_eulerangles_space312", &Lielab::domain::SO::from_eulerangles_space312<double>, "The from_eulerangles_space312 function.");
+    Lielab_domain_SO.def_static("from_eulerangles_space132", &Lielab::domain::SO::from_eulerangles_space132<double>, "The from_eulerangles_space132 function.");
+    Lielab_domain_SO.def_static("from_eulerangles_space213", &Lielab::domain::SO::from_eulerangles_space213<double>, "The from_eulerangles_space213 function.");
+    Lielab_domain_SO.def_static("from_eulerangles_space321", &Lielab::domain::SO::from_eulerangles_space321<double>, "The from_eulerangles_space321 function.");
+    Lielab_domain_SO.def_static("from_eulerangles_space121", &Lielab::domain::SO::from_eulerangles_space121<double>, "The from_eulerangles_space121 function.");
+    Lielab_domain_SO.def_static("from_eulerangles_space131", &Lielab::domain::SO::from_eulerangles_space131<double>, "The from_eulerangles_space131 function.");
+    Lielab_domain_SO.def_static("from_eulerangles_space212", &Lielab::domain::SO::from_eulerangles_space212<double>, "The from_eulerangles_space212 function.");
+    Lielab_domain_SO.def_static("from_eulerangles_space232", &Lielab::domain::SO::from_eulerangles_space232<double>, "The from_eulerangles_space232 function.");
+    Lielab_domain_SO.def_static("from_eulerangles_space313", &Lielab::domain::SO::from_eulerangles_space313<double>, "The from_eulerangles_space313 function.");
+    Lielab_domain_SO.def_static("from_eulerangles_space323", &Lielab::domain::SO::from_eulerangles_space323<double>, "The from_eulerangles_space323 function.");
+    Lielab_domain_SO.def_static("from_quaternion", &Lielab::domain::SO::from_quaternion<double>, "The from_quaternion function.");
+    Lielab_domain_SO.def_static("from_rodriguesvector", &Lielab::domain::SO::from_rodriguesvector<double>, "The from_rodriguesvector function.");
     
 
-    py::class_<Lielab::domain::SP>(m_domain, "SP")
-        .def_readwrite("_data", &Lielab::domain::SP::_data)
-        .def_readwrite("shape", &Lielab::domain::SP::shape)
-        .def_readonly_static("abelian", &Lielab::domain::SP::abelian)
-        .def(py::init<>())
-        .def(py::init<int>())
-        .def(py::init<Eigen::MatrixXd>())
-        // .def("project", &Lielab::domain::SP::project) // TODO:
-        .def("get_dimension", &Lielab::domain::SP::get_dimension)
-        .def("get_matrix", &Lielab::domain::SP::get_matrix)
-        .def("inverse", &Lielab::domain::SP::inverse)
-        .def("serialize", &Lielab::domain::SP::serialize)
-        .def("unserialize", &Lielab::domain::SP::unserialize)
-        .def("__call__", [](const Lielab::domain::SP & self, const size_t index1, const size_t index2)
+    auto Lielab_domain_SP = py::class_<Lielab::domain::SP>(m_domain, "SP");
+    Lielab_domain_SP.def_readwrite("_data", &Lielab::domain::SP::_data);
+    Lielab_domain_SP.def_readwrite("shape", &Lielab::domain::SP::shape);
+    Lielab_domain_SP.def_readonly_static("abelian", &Lielab::domain::SP::abelian);
+    Lielab_domain_SP.def(py::init<>());
+    Lielab_domain_SP.def(py::init<int>());
+    Lielab_domain_SP.def(py::init<Eigen::MatrixXd>());
+        // .def("project", &Lielab::domain::SP::project); // TODO:
+    Lielab_domain_SP.def("get_dimension", &Lielab::domain::SP::get_dimension);
+    Lielab_domain_SP.def("get_matrix", &Lielab::domain::SP::get_matrix);
+    Lielab_domain_SP.def("inverse", &Lielab::domain::SP::inverse);
+    Lielab_domain_SP.def("serialize", &Lielab::domain::SP::serialize);
+    Lielab_domain_SP.def("unserialize", &Lielab::domain::SP::unserialize);
+    Lielab_domain_SP.def("__call__", [](const Lielab::domain::SP & self, const size_t index1, const size_t index2)
         {
             return self(index1, index2);
-        })
-        .def(py::self * py::self)
-        .def(py::self *= py::self)
-        .def("__mul__", [](const Lielab::domain::SP  & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::SP  & lhs, const Lielab::domain::gl  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::SP  & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::SP  & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::SP  & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::SP  & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::SP  & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::SP  & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;})
-        .def("__repr__", [](const Lielab::domain::SP & self)
+        });
+    Lielab_domain_SP.def(py::self * py::self);
+    Lielab_domain_SP.def(py::self *= py::self);
+    Lielab_domain_SP.def("__mul__", [](const Lielab::domain::SP  & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;});
+    Lielab_domain_SP.def("__mul__", [](const Lielab::domain::SP  & lhs, const Lielab::domain::gl  & rhs) {return lhs*rhs;});
+    Lielab_domain_SP.def("__mul__", [](const Lielab::domain::SP  & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;});
+    Lielab_domain_SP.def("__mul__", [](const Lielab::domain::SP  & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;});
+    Lielab_domain_SP.def("__mul__", [](const Lielab::domain::SP  & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;});
+    Lielab_domain_SP.def("__mul__", [](const Lielab::domain::SP  & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;});
+    Lielab_domain_SP.def("__mul__", [](const Lielab::domain::SP  & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;});
+    Lielab_domain_SP.def("__mul__", [](const Lielab::domain::SP  & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;});
+    Lielab_domain_SP.def("__repr__", [](const Lielab::domain::SP & self)
         {
             return "<lielab.domain.SP>";
-        })
-        .def("__str__", [](const Lielab::domain::SP & self)
+        });
+    Lielab_domain_SP.def("__str__", [](const Lielab::domain::SP & self)
         {
             return matstr(self._data);
         });
 
-    py::class_<Lielab::domain::SU>(m_domain, "SU")
-        .def_readwrite("_data", &Lielab::domain::SU::_data)
-        .def_readwrite("shape", &Lielab::domain::SU::shape)
-        .def_readonly_static("abelian", &Lielab::domain::SU::abelian)
-        .def(py::init<>())
-        .def(py::init<int>())
-        .def(py::init<Eigen::MatrixXcd>())
-        .def_static("Quaternion", py::overload_cast<>(&Lielab::domain::SU::Quaternion))
-        .def_static("Quaternion", py::overload_cast<const double, const double, const double, const double>(&Lielab::domain::SU::Quaternion))
-        // .def("project", &Lielab::domain::SU::project) // TODO:
-        .def("get_dimension", &Lielab::domain::SU::get_dimension)
-        .def("get_matrix", &Lielab::domain::SU::get_matrix)
-        .def("inverse", &Lielab::domain::SU::inverse)
-        .def("serialize", &Lielab::domain::SU::serialize)
-        .def("unserialize", &Lielab::domain::SU::unserialize)
-        .def("__call__", [](const Lielab::domain::SU & self, const size_t index1, const size_t index2)
+    auto Lielab_domain_SU = py::class_<Lielab::domain::SU>(m_domain, "SU");
+    Lielab_domain_SU.def_readwrite("_data", &Lielab::domain::SU::_data);
+    Lielab_domain_SU.def_readwrite("shape", &Lielab::domain::SU::shape);
+    Lielab_domain_SU.def_readonly_static("abelian", &Lielab::domain::SU::abelian);
+    Lielab_domain_SU.def(py::init<>());
+    Lielab_domain_SU.def(py::init<int>());
+    Lielab_domain_SU.def(py::init<Eigen::MatrixXcd>());
+        // .def("project", &Lielab::domain::SU::project); // TODO:
+    Lielab_domain_SU.def("get_dimension", &Lielab::domain::SU::get_dimension);
+    Lielab_domain_SU.def("get_matrix", &Lielab::domain::SU::get_matrix);
+    Lielab_domain_SU.def("inverse", &Lielab::domain::SU::inverse);
+    Lielab_domain_SU.def("serialize", &Lielab::domain::SU::serialize);
+    Lielab_domain_SU.def("unserialize", &Lielab::domain::SU::unserialize);
+    Lielab_domain_SU.def("__call__", [](const Lielab::domain::SU & self, const size_t index1, const size_t index2)
         {
             return self(index1, index2);
-        })
-        .def(py::self * py::self)
-        .def(py::self *= py::self)
-        .def("__mul__", [](const Lielab::domain::SU  & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::SU  & lhs, const Lielab::domain::gl  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::SU  & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::SU  & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::SU  & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::SU  & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::SU  & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;})
-        .def("__mul__", [](const Lielab::domain::SU  & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;})
-        .def("__repr__", [](const Lielab::domain::SU & self)
+        });
+    Lielab_domain_SU.def(py::self * py::self);
+    Lielab_domain_SU.def(py::self *= py::self);
+    Lielab_domain_SU.def("__mul__", [](const Lielab::domain::SU  & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;});
+    Lielab_domain_SU.def("__mul__", [](const Lielab::domain::SU  & lhs, const Lielab::domain::gl  & rhs) {return lhs*rhs;});
+    Lielab_domain_SU.def("__mul__", [](const Lielab::domain::SU  & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;});
+    Lielab_domain_SU.def("__mul__", [](const Lielab::domain::SU  & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;});
+    Lielab_domain_SU.def("__mul__", [](const Lielab::domain::SU  & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;});
+    Lielab_domain_SU.def("__mul__", [](const Lielab::domain::SU  & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;});
+    Lielab_domain_SU.def("__mul__", [](const Lielab::domain::SU  & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;});
+    Lielab_domain_SU.def("__mul__", [](const Lielab::domain::SU  & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;});
+    Lielab_domain_SU.def("__repr__", [](const Lielab::domain::SU & self)
         {
             return "<lielab.domain.SU>";
-        })
-        .def("__str__", [](const Lielab::domain::SU & self)
+        });
+    Lielab_domain_SU.def("__str__", [](const Lielab::domain::SU & self)
         {
             return matstr(self._data);
         });
+    Lielab_domain_SU.def_static("from_quaternion", &Lielab::domain::SU::from_quaternion<double>);
 
-    py::class_<Lielab::domain::CompositeAlgebra>(m_domain, "CompositeAlgebra")
-        .def(py::init())
-        .def(py::init<std::vector<Lielab::domain::CompositeAlgebra::TYPES>>())
-        .def_readwrite("space", &Lielab::domain::CompositeAlgebra::space)
-        .def("get_dimension", &Lielab::domain::CompositeAlgebra::get_dimension)
-        .def("get_shape", &Lielab::domain::CompositeAlgebra::get_shape)
-        .def("get_vector", &Lielab::domain::CompositeAlgebra::get_vector)
-        .def("set_vector", &Lielab::domain::CompositeAlgebra::set_vector)
-        .def(py::self + py::self)
-        .def(py::self += py::self)
-        .def(py::self - py::self)
-        .def(py::self -= py::self)
-        .def(-py::self)
-        .def(py::self * int())
-        .def(py::self * double())
-        .def(py::self * py::self)
-        .def(py::self *= int())
-        .def(py::self *= double())
-        .def(py::self *= py::self)
-        .def(py::self / int())
-        .def(py::self / double())
-        .def(py::self /= int())
-        .def(py::self /= double())
-        .def(int() * py::self)
-        .def(double() * py::self)
-        .def("__repr__",
+    auto Lielab_domain_CompositeAlgebra = py::class_<Lielab::domain::CompositeAlgebra>(m_domain, "CompositeAlgebra");
+    Lielab_domain_CompositeAlgebra.def(py::init());
+    Lielab_domain_CompositeAlgebra.def(py::init<std::vector<Lielab::domain::CompositeAlgebra::TYPES>>());
+    Lielab_domain_CompositeAlgebra.def_readwrite("space", &Lielab::domain::CompositeAlgebra::space);
+    Lielab_domain_CompositeAlgebra.def("get_dimension", &Lielab::domain::CompositeAlgebra::get_dimension);
+    Lielab_domain_CompositeAlgebra.def("get_shape", &Lielab::domain::CompositeAlgebra::get_shape);
+    Lielab_domain_CompositeAlgebra.def("get_vector", &Lielab::domain::CompositeAlgebra::get_vector);
+    Lielab_domain_CompositeAlgebra.def("set_vector", &Lielab::domain::CompositeAlgebra::set_vector);
+    Lielab_domain_CompositeAlgebra.def(py::self + py::self);
+    Lielab_domain_CompositeAlgebra.def(py::self += py::self);
+    Lielab_domain_CompositeAlgebra.def(py::self - py::self);
+    Lielab_domain_CompositeAlgebra.def(py::self -= py::self);
+    Lielab_domain_CompositeAlgebra.def(-py::self);
+    Lielab_domain_CompositeAlgebra.def(py::self * int());
+    Lielab_domain_CompositeAlgebra.def(py::self * double());
+    Lielab_domain_CompositeAlgebra.def(py::self * py::self);
+    Lielab_domain_CompositeAlgebra.def(py::self *= int());
+    Lielab_domain_CompositeAlgebra.def(py::self *= double());
+    Lielab_domain_CompositeAlgebra.def(py::self *= py::self);
+    Lielab_domain_CompositeAlgebra.def(py::self / int());
+    Lielab_domain_CompositeAlgebra.def(py::self / double());
+    Lielab_domain_CompositeAlgebra.def(py::self /= int());
+    Lielab_domain_CompositeAlgebra.def(py::self /= double());
+    Lielab_domain_CompositeAlgebra.def(int() * py::self);
+    Lielab_domain_CompositeAlgebra.def(double() * py::self);
+    Lielab_domain_CompositeAlgebra.def("__repr__",
         [](const Lielab::domain::CompositeAlgebra & self)
         {
             return "<lielab.domain.CompositeAlgebra>";
-        })
-        .def("__str__",
+        });
+    Lielab_domain_CompositeAlgebra.def("__str__",
         [](const Lielab::domain::CompositeAlgebra & self)
         {
             return self.to_string();
         });
     
 
-    py::class_<Lielab::domain::CompositeManifold>(m_domain, "CompositeManifold")
-        .def(py::init())
-        .def(py::init<std::vector<Lielab::domain::CompositeManifold::TYPES>>())
-        .def_readwrite("space", &Lielab::domain::CompositeManifold::space)
-        .def("get_shape", &Lielab::domain::CompositeManifold::get_shape)
-        .def("serialize", &Lielab::domain::CompositeManifold::serialize)
-        .def("unserialize", &Lielab::domain::CompositeManifold::unserialize)
-        .def(py::self * py::self)
-        .def(py::self *= py::self)
-        .def("inverse", &Lielab::domain::CompositeManifold::inverse)
-        .def("__repr__",
+    auto Lielab_domain_CompositeManifold = py::class_<Lielab::domain::CompositeManifold>(m_domain, "CompositeManifold");
+    Lielab_domain_CompositeManifold.def(py::init());
+    Lielab_domain_CompositeManifold.def(py::init<std::vector<Lielab::domain::CompositeManifold::TYPES>>());
+    Lielab_domain_CompositeManifold.def_readwrite("space", &Lielab::domain::CompositeManifold::space);
+    Lielab_domain_CompositeManifold.def("get_shape", &Lielab::domain::CompositeManifold::get_shape);
+    Lielab_domain_CompositeManifold.def("serialize", &Lielab::domain::CompositeManifold::serialize);
+    Lielab_domain_CompositeManifold.def("unserialize", &Lielab::domain::CompositeManifold::unserialize);
+    Lielab_domain_CompositeManifold.def(py::self * py::self);
+    Lielab_domain_CompositeManifold.def(py::self *= py::self);
+    Lielab_domain_CompositeManifold.def("inverse", &Lielab::domain::CompositeManifold::inverse);
+    Lielab_domain_CompositeManifold.def("__repr__",
         [](const Lielab::domain::CompositeManifold & self)
         {
             return "<lielab.domain.CompositeManifold>";
-        })
-        .def("__str__",
+        });
+    Lielab_domain_CompositeManifold.def("__str__",
         [](const Lielab::domain::CompositeManifold & self)
         {
             return self.to_string();
@@ -1101,14 +1134,6 @@ PYBIND11_MODULE(cppLielab, m) {
     */
 
     py::module m_functions = m.def_submodule("functions", "The functions submodule.");
-    m_functions.def("pair", &Lielab::functions::pair<Lielab::domain::cn>, "The pair function.");
-    m_functions.def("pair", &Lielab::functions::pair<Lielab::domain::gl>, "The pair function.");
-    m_functions.def("pair", &Lielab::functions::pair<Lielab::domain::glc>, "The pair function.");
-    m_functions.def("pair", &Lielab::functions::pair<Lielab::domain::rn>, "The pair function.");
-    m_functions.def("pair", &Lielab::functions::pair<Lielab::domain::se>, "The pair function.");
-    m_functions.def("pair", &Lielab::functions::pair<Lielab::domain::so>, "The pair function.");
-    m_functions.def("pair", &Lielab::functions::pair<Lielab::domain::sp>, "The pair function.");
-    m_functions.def("pair", &Lielab::functions::pair<Lielab::domain::su>, "The pair function.");
     // m_functions.def("copair", &Lielab::functions::copair<Lielab::domain::gl>, "The copair function.");
     // m_functions.def("copair", &Lielab::functions::copair<Lielab::domain::rn>, "The copair function.");
     // m_functions.def("copair", &Lielab::functions::copair<Lielab::domain::so>, "The copair function.");
@@ -1123,14 +1148,6 @@ PYBIND11_MODULE(cppLielab, m) {
     m_functions.def("Ad", &Lielab::functions::Ad<Lielab::domain::so>, "The Ad function.");
     m_functions.def("Ad", &Lielab::functions::Ad<Lielab::domain::sp>, "The Ad function.");
     m_functions.def("Ad", &Lielab::functions::Ad<Lielab::domain::su>, "The Ad function.");
-    m_functions.def("commutator", &Lielab::functions::commutator<Lielab::domain::cn>, "The commutator function.");
-    m_functions.def("commutator", &Lielab::functions::commutator<Lielab::domain::gl>, "The commutator function.");
-    m_functions.def("commutator", &Lielab::functions::commutator<Lielab::domain::glc>, "The commutator function.");
-    m_functions.def("commutator", &Lielab::functions::commutator<Lielab::domain::rn>, "The commutator function.");
-    m_functions.def("commutator", &Lielab::functions::commutator<Lielab::domain::se>, "The commutator function.");
-    m_functions.def("commutator", &Lielab::functions::commutator<Lielab::domain::so>, "The commutator function.");
-    m_functions.def("commutator", &Lielab::functions::commutator<Lielab::domain::sp>, "The commutator function.");
-    m_functions.def("commutator", &Lielab::functions::commutator<Lielab::domain::su>, "The commutator function.");
     // m_functions.def("cayley1", &Lielab::functions::cayley1<Lielab::domain::cn>, "The cayley1 function.");
     // m_functions.def("cayley1", &Lielab::functions::cayley1<Lielab::domain::gl>, "The cayley1 function.");
     // m_functions.def("cayley1", &Lielab::functions::cayley1<Lielab::domain::glc>, "The cayley1 function.");
@@ -1147,6 +1164,14 @@ PYBIND11_MODULE(cppLielab, m) {
     m_functions.def("cayley2", &Lielab::functions::cayley2<Lielab::domain::so>, "The cayley2 function.");
     m_functions.def("cayley2", &Lielab::functions::cayley2<Lielab::domain::sp>, "The cayley2 function.");
     // m_functions.def("cayley2", &Lielab::functions::cayley2<Lielab::domain::su>, "The cayley2 function.");
+    m_functions.def("commutator", &Lielab::functions::commutator<Lielab::domain::cn>, "The commutator function.");
+    m_functions.def("commutator", &Lielab::functions::commutator<Lielab::domain::gl>, "The commutator function.");
+    m_functions.def("commutator", &Lielab::functions::commutator<Lielab::domain::glc>, "The commutator function.");
+    m_functions.def("commutator", &Lielab::functions::commutator<Lielab::domain::rn>, "The commutator function.");
+    m_functions.def("commutator", &Lielab::functions::commutator<Lielab::domain::se>, "The commutator function.");
+    m_functions.def("commutator", &Lielab::functions::commutator<Lielab::domain::so>, "The commutator function.");
+    m_functions.def("commutator", &Lielab::functions::commutator<Lielab::domain::sp>, "The commutator function.");
+    m_functions.def("commutator", &Lielab::functions::commutator<Lielab::domain::su>, "The commutator function.");
     // m_functions.def("Killing", &Lielab::functions::Killing<Lielab::domain::cn>, "The Killing function.");
     // m_functions.def("Killing", &Lielab::functions::Killing<Lielab::domain::gl>, "The Killing function.");
     // m_functions.def("Killing", &Lielab::functions::Killing<Lielab::domain::glc>, "The Killing function.");
@@ -1163,14 +1188,38 @@ PYBIND11_MODULE(cppLielab, m) {
     m_functions.def("Killingform", &Lielab::functions::Killingform<Lielab::domain::so>, "The Killingform function.");
     m_functions.def("Killingform", &Lielab::functions::Killingform<Lielab::domain::sp>, "The Killingform function.");
     m_functions.def("Killingform", &Lielab::functions::Killingform<Lielab::domain::su>, "The Killingform function."); // TODO: Might be wrong
-    // m_functions.def("ad", &Lielab::functions::ad<Lielab::domain::cn>, "The ad function.");
-    // m_functions.def("ad", &Lielab::functions::ad<Lielab::domain::gl>, "The ad function.");
-    // m_functions.def("ad", &Lielab::functions::ad<Lielab::domain::glc>, "The ad function.");
-    m_functions.def("ad", &Lielab::functions::ad<Lielab::domain::rn>, "The ad function.");
-    // m_functions.def("ad", &Lielab::functions::ad<Lielab::domain::se>, "The ad function.");
-    m_functions.def("ad", &Lielab::functions::ad<Lielab::domain::so>, "The ad function.");
-    m_functions.def("ad", &Lielab::functions::ad<Lielab::domain::sp>, "The ad function.");
-    m_functions.def("ad", &Lielab::functions::ad<Lielab::domain::su>, "The ad function.");
+    m_functions.def("ad_numerical", [](const Lielab::domain::cn & a, const int p){return Lielab::functions::ad_numerical(a, p);}, py::arg("a"), py::arg("p") = 1, "The numerical ad function.");
+    m_functions.def("ad_numerical", [](const Lielab::domain::cn & a, const Lielab::domain::cn & b, const int p){return Lielab::functions::ad_numerical(a, b, p);}, py::arg("a"), py::arg("b"), py::arg("p") = 1, "The numerical ad function.");
+    m_functions.def("ad_numerical", [](const Lielab::domain::gl & a, const int p){return Lielab::functions::ad_numerical(a, p);}, py::arg("a"), py::arg("p") = 1, "The numerical ad function.");
+    m_functions.def("ad_numerical", [](const Lielab::domain::gl & a, const Lielab::domain::gl & b, const int p){return Lielab::functions::ad_numerical(a, b, p);}, py::arg("a"), py::arg("b"), py::arg("p") = 1, "The numerical ad function.");
+    m_functions.def("ad_numerical", [](const Lielab::domain::glc & a, const int p){return Lielab::functions::ad_numerical(a, p);}, py::arg("a"), py::arg("p") = 1, "The numerical ad function.");
+    m_functions.def("ad_numerical", [](const Lielab::domain::glc & a, const Lielab::domain::glc & b, const int p){return Lielab::functions::ad_numerical(a, b, p);}, py::arg("a"), py::arg("b"), py::arg("p") = 1, "The numerical ad function.");
+    m_functions.def("ad_numerical", [](const Lielab::domain::rn & a, const int p){return Lielab::functions::ad_numerical(a, p);}, py::arg("a"), py::arg("p") = 1, "The numerical ad function.");
+    m_functions.def("ad_numerical", [](const Lielab::domain::rn & a, const Lielab::domain::rn & b, const int p){return Lielab::functions::ad_numerical(a, b, p);}, py::arg("a"), py::arg("b"), py::arg("p") = 1, "The numerical ad function.");
+    m_functions.def("ad_numerical", [](const Lielab::domain::se & a, const int p){return Lielab::functions::ad_numerical(a, p);}, py::arg("a"), py::arg("p") = 1, "The numerical ad function.");
+    m_functions.def("ad_numerical", [](const Lielab::domain::se & a, const Lielab::domain::se & b, const int p){return Lielab::functions::ad_numerical(a, b, p);}, py::arg("a"), py::arg("b"), py::arg("p") = 1, "The numerical ad function.");
+    m_functions.def("ad_numerical", [](const Lielab::domain::so & a, const int p){return Lielab::functions::ad_numerical(a, p);}, py::arg("a"), py::arg("p") = 1, "The numerical ad function.");
+    m_functions.def("ad_numerical", [](const Lielab::domain::so & a, const Lielab::domain::so & b, const int p){return Lielab::functions::ad_numerical(a, b, p);}, py::arg("a"), py::arg("b"), py::arg("p") = 1, "The numerical ad function.");
+    m_functions.def("ad_numerical", [](const Lielab::domain::sp & a, const int p){return Lielab::functions::ad_numerical(a, p);}, py::arg("a"), py::arg("p") = 1, "The numerical ad function.");
+    m_functions.def("ad_numerical", [](const Lielab::domain::sp & a, const Lielab::domain::sp & b, const int p){return Lielab::functions::ad_numerical(a, b, p);}, py::arg("a"), py::arg("b"), py::arg("p") = 1, "The numerical ad function.");
+    m_functions.def("ad_numerical", [](const Lielab::domain::su & a, const int p){return Lielab::functions::ad_numerical(a, p);}, py::arg("a"), py::arg("p") = 1, "The numerical ad function.");
+    m_functions.def("ad_numerical", [](const Lielab::domain::su & a, const Lielab::domain::su & b, const int p){return Lielab::functions::ad_numerical(a, b, p);}, py::arg("a"), py::arg("b"), py::arg("p") = 1, "The numerical ad function.");
+    m_functions.def("ad", [](const Lielab::domain::cn & a, const int p){return Lielab::functions::ad(a, p);}, py::arg("a"), py::arg("p") = 1, "The ad function.");
+    m_functions.def("ad", [](const Lielab::domain::cn & a, const Lielab::domain::cn & b, const int p){return Lielab::functions::ad(a, b, p);}, py::arg("a"), py::arg("b"), py::arg("p") = 1, "The ad function.");
+    m_functions.def("ad", [](const Lielab::domain::gl & a, const int p){return Lielab::functions::ad(a, p);}, py::arg("a"), py::arg("p") = 1, "The ad function.");
+    m_functions.def("ad", [](const Lielab::domain::gl & a, const Lielab::domain::gl & b, const int p){return Lielab::functions::ad(a, b, p);}, py::arg("a"), py::arg("b"), py::arg("p") = 1, "The ad function.");
+    m_functions.def("ad", [](const Lielab::domain::glc & a, const int p){return Lielab::functions::ad(a, p);}, py::arg("a"), py::arg("p") = 1, "The ad function.");
+    m_functions.def("ad", [](const Lielab::domain::glc & a, const Lielab::domain::glc & b, const int p){return Lielab::functions::ad(a, b, p);}, py::arg("a"), py::arg("b"), py::arg("p") = 1, "The ad function.");
+    m_functions.def("ad", [](const Lielab::domain::rn & a, const int p){return Lielab::functions::ad(a, p);}, py::arg("a"), py::arg("p") = 1, "The ad function.");
+    m_functions.def("ad", [](const Lielab::domain::rn & a, const Lielab::domain::rn & b, const int p){return Lielab::functions::ad(a, b, p);}, py::arg("a"), py::arg("b"), py::arg("p") = 1, "The ad function.");
+    m_functions.def("ad", [](const Lielab::domain::se & a, const int p){return Lielab::functions::ad(a, p);}, py::arg("a"), py::arg("p") = 1, "The ad function.");
+    m_functions.def("ad", [](const Lielab::domain::se & a, const Lielab::domain::se & b, const int p){return Lielab::functions::ad(a, b, p);}, py::arg("a"), py::arg("b"), py::arg("p") = 1, "The ad function.");
+    m_functions.def("ad", [](const Lielab::domain::so & a, const int p){return Lielab::functions::ad(a, p);}, py::arg("a"), py::arg("p") = 1, "The ad function.");
+    m_functions.def("ad", [](const Lielab::domain::so & a, const Lielab::domain::so & b, const int p){return Lielab::functions::ad(a, b, p);}, py::arg("a"), py::arg("b"), py::arg("p") = 1, "The ad function.");
+    m_functions.def("ad", [](const Lielab::domain::sp & a, const int p){return Lielab::functions::ad(a, p);}, py::arg("a"), py::arg("p") = 1, "The ad function.");
+    m_functions.def("ad", [](const Lielab::domain::sp & a, const Lielab::domain::sp & b, const int p){return Lielab::functions::ad(a, b, p);}, py::arg("a"), py::arg("b"), py::arg("p") = 1, "The ad function.");
+    m_functions.def("ad", [](const Lielab::domain::su & a, const int p){return Lielab::functions::ad(a, p);}, py::arg("a"), py::arg("p") = 1, "The ad function.");
+    m_functions.def("ad", [](const Lielab::domain::su & a, const Lielab::domain::su & b, const int p){return Lielab::functions::ad(a, b, p);}, py::arg("a"), py::arg("b"), py::arg("p") = 1, "The ad function.");
     // m_functions.def("coAd", &Lielab::functions::coAd<Lielab::domain::GL>, "The coAd function.");
     // m_functions.def("coAd", &Lielab::functions::coAd<Lielab::domain::RN>, "The coAd function.");
     // m_functions.def("coAd", &Lielab::functions::coAd<Lielab::domain::SO>, "The coAd function.");
@@ -1181,6 +1230,14 @@ PYBIND11_MODULE(cppLielab, m) {
     // m_functions.def("coad", &Lielab::functions::coad<Lielab::domain::so>, "The coad function.");
     // m_functions.def("coad", &Lielab::functions::coad<Lielab::domain::sp>, "The coad function.");
     // m_functions.def("coad", &Lielab::functions::coad<Lielab::domain::su>, "The coad function."); // TODO: su needs basis()
+    m_functions.def("exp_numerical", &Lielab::functions::exp_numerical<Lielab::domain::cn>, "The numerical exponential function.");
+    m_functions.def("exp_numerical", &Lielab::functions::exp_numerical<Lielab::domain::gl>, "The numerical exponential function.");
+    m_functions.def("exp_numerical", &Lielab::functions::exp_numerical<Lielab::domain::glc>, "The numerical exponential function.");
+    m_functions.def("exp_numerical", &Lielab::functions::exp_numerical<Lielab::domain::rn>, "The numerical exponential function.");
+    m_functions.def("exp_numerical", &Lielab::functions::exp_numerical<Lielab::domain::se>, "The numerical exponential function.");
+    m_functions.def("exp_numerical", &Lielab::functions::exp_numerical<Lielab::domain::so>, "The numerical exponential function.");
+    m_functions.def("exp_numerical", &Lielab::functions::exp_numerical<Lielab::domain::sp>, "The numerical exponential function.");
+    m_functions.def("exp_numerical", &Lielab::functions::exp_numerical<Lielab::domain::su>, "The numerical exponential function.");
     m_functions.def("exp", &Lielab::functions::exp<Lielab::domain::cn>, "The exponential function.");
     m_functions.def("exp", &Lielab::functions::exp<Lielab::domain::gl>, "The exponential function.");
     m_functions.def("exp", &Lielab::functions::exp<Lielab::domain::glc>, "The exponential function.");
@@ -1189,6 +1246,14 @@ PYBIND11_MODULE(cppLielab, m) {
     m_functions.def("exp", &Lielab::functions::exp<Lielab::domain::so>, "The exponential function.");
     m_functions.def("exp", &Lielab::functions::exp<Lielab::domain::sp>, "The exponential function.");
     m_functions.def("exp", &Lielab::functions::exp<Lielab::domain::su>, "The exponential function.");
+    m_functions.def("log_numerical", &Lielab::functions::log_numerical<Lielab::domain::CN>, "The numerical logarithm function.");
+    m_functions.def("log_numerical", &Lielab::functions::log_numerical<Lielab::domain::GL>, "The numerical logarithm function.");
+    m_functions.def("log_numerical", &Lielab::functions::log_numerical<Lielab::domain::GLC>, "The numerical logarithm function.");
+    m_functions.def("log_numerical", &Lielab::functions::log_numerical<Lielab::domain::RN>, "The numerical logarithm function.");
+    m_functions.def("log_numerical", &Lielab::functions::log_numerical<Lielab::domain::SE>, "The numerical logarithm function.");
+    m_functions.def("log_numerical", &Lielab::functions::log_numerical<Lielab::domain::SO>, "The numerical logarithm function.");
+    m_functions.def("log_numerical", &Lielab::functions::log_numerical<Lielab::domain::SP>, "The numerical logarithm function.");
+    m_functions.def("log_numerical", &Lielab::functions::log_numerical<Lielab::domain::SU>, "The numerical logarithm function.");
     m_functions.def("log", &Lielab::functions::log<Lielab::domain::CN>, "The logarithm function.", py::arg("G"), py::arg("optimize") = false);
     m_functions.def("log", &Lielab::functions::log<Lielab::domain::GL>, "The logarithm function.", py::arg("G"), py::arg("optimize") = false);
     m_functions.def("log", &Lielab::functions::log<Lielab::domain::GLC>, "The logarithm function.", py::arg("G"), py::arg("optimize") = false);
@@ -1206,23 +1271,79 @@ PYBIND11_MODULE(cppLielab, m) {
     m_functions.def("dcayley1inv", &Lielab::functions::dcayley1inv<Lielab::domain::so>, "The dcayley1inv function.");
     m_functions.def("dcayley1inv", &Lielab::functions::dcayley1inv<Lielab::domain::sp>, "The dcayley1inv function.");
     m_functions.def("dcayley1inv", &Lielab::functions::dcayley1inv<Lielab::domain::su>, "The dcayley1inv function.");
-    m_functions.def("dexp", &Lielab::functions::dexp<Lielab::domain::cn>, "The dexp function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
-    m_functions.def("dexp", &Lielab::functions::dexp<Lielab::domain::gl>, "The dexp function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
-    m_functions.def("dexp", &Lielab::functions::dexp<Lielab::domain::glc>, "The dexp function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
-    m_functions.def("dexp", &Lielab::functions::dexp<Lielab::domain::rn>, "The dexp function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
-    m_functions.def("dexp", &Lielab::functions::dexp<Lielab::domain::se>, "The dexp function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
-    m_functions.def("dexp", &Lielab::functions::dexp<Lielab::domain::so>, "The dexp function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
-    m_functions.def("dexp", &Lielab::functions::dexp<Lielab::domain::sp>, "The dexp function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
-    m_functions.def("dexp", &Lielab::functions::dexp<Lielab::domain::su>, "The dexp function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
-    m_functions.def("dexpinv", &Lielab::functions::dexpinv<Lielab::domain::cn>, "The dexpinv function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
-    m_functions.def("dexpinv", &Lielab::functions::dexpinv<Lielab::domain::gl>, "The dexpinv function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
-    m_functions.def("dexpinv", &Lielab::functions::dexpinv<Lielab::domain::glc>, "The dexpinv function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
-    m_functions.def("dexpinv", &Lielab::functions::dexpinv<Lielab::domain::rn>, "The dexpinv function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
-    m_functions.def("dexpinv", &Lielab::functions::dexpinv<Lielab::domain::se>, "The dexpinv function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
-    m_functions.def("dexpinv", &Lielab::functions::dexpinv<Lielab::domain::so>, "The dexpinv function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
-    m_functions.def("dexpinv", &Lielab::functions::dexpinv<Lielab::domain::sp>, "The dexpinv function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
-    m_functions.def("dexpinv", &Lielab::functions::dexpinv<Lielab::domain::su>, "The dexpinv function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
+    m_functions.def("dexp_numerical", [](const Lielab::domain::cn & a, const size_t order){return Lielab::functions::dexp_numerical(a, order);}, "The numerical dexp function.", py::arg("a"), py::arg("order") = 5);
+    m_functions.def("dexp_numerical", [](const Lielab::domain::cn & a, const Lielab::domain::cn & b, const size_t order){return Lielab::functions::dexp_numerical(a, b, order);}, "The numerical dexp function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
+    m_functions.def("dexp_numerical", [](const Lielab::domain::gl & a, const size_t order){return Lielab::functions::dexp_numerical(a, order);}, "The numerical dexp function.", py::arg("a"), py::arg("order") = 5);
+    m_functions.def("dexp_numerical", [](const Lielab::domain::gl & a, const Lielab::domain::gl & b, const size_t order){return Lielab::functions::dexp_numerical(a, b, order);}, "The numerical dexp function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
+    m_functions.def("dexp_numerical", [](const Lielab::domain::glc & a, const size_t order){return Lielab::functions::dexp_numerical(a, order);}, "The numerical dexp function.", py::arg("a"), py::arg("order") = 5);
+    m_functions.def("dexp_numerical", [](const Lielab::domain::glc & a, const Lielab::domain::glc & b, const size_t order){return Lielab::functions::dexp_numerical(a, b, order);}, "The numerical dexp function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
+    m_functions.def("dexp_numerical", [](const Lielab::domain::rn & a, const size_t order){return Lielab::functions::dexp_numerical(a, order);}, "The numerical dexp function.", py::arg("a"), py::arg("order") = 5);
+    m_functions.def("dexp_numerical", [](const Lielab::domain::rn & a, const Lielab::domain::rn & b, const size_t order){return Lielab::functions::dexp_numerical(a, b, order);}, "The numerical dexp function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
+    m_functions.def("dexp_numerical", [](const Lielab::domain::se & a, const size_t order){return Lielab::functions::dexp_numerical(a, order);}, "The numerical dexp function.", py::arg("a"), py::arg("order") = 5);
+    m_functions.def("dexp_numerical", [](const Lielab::domain::se & a, const Lielab::domain::se & b, const size_t order){return Lielab::functions::dexp_numerical(a, b, order);}, "The numerical dexp function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
+    m_functions.def("dexp_numerical", [](const Lielab::domain::so & a, const size_t order){return Lielab::functions::dexp_numerical(a, order);}, "The numerical dexp function.", py::arg("a"), py::arg("order") = 5);
+    m_functions.def("dexp_numerical", [](const Lielab::domain::so & a, const Lielab::domain::so & b, const size_t order){return Lielab::functions::dexp_numerical(a, b, order);}, "The numerical dexp function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
+    m_functions.def("dexp_numerical", [](const Lielab::domain::sp & a, const size_t order){return Lielab::functions::dexp_numerical(a, order);}, "The numerical dexp function.", py::arg("a"), py::arg("order") = 5);
+    m_functions.def("dexp_numerical", [](const Lielab::domain::sp & a, const Lielab::domain::sp & b, const size_t order){return Lielab::functions::dexp_numerical(a, b, order);}, "The numerical dexp function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
+    m_functions.def("dexp_numerical", [](const Lielab::domain::su & a, const size_t order){return Lielab::functions::dexp_numerical(a, order);}, "The numerical dexp function.", py::arg("a"), py::arg("order") = 5);
+    m_functions.def("dexp_numerical", [](const Lielab::domain::su & a, const Lielab::domain::su & b, const size_t order){return Lielab::functions::dexp_numerical(a, b, order);}, "The numerical dexp function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
+    m_functions.def("dexp", [](const Lielab::domain::cn & a, const size_t order){return Lielab::functions::dexp(a, order);}, "The dexp function.", py::arg("a"), py::arg("order") = 5);
+    m_functions.def("dexp", [](const Lielab::domain::cn & a, const Lielab::domain::cn & b, const size_t order){return Lielab::functions::dexp(a, b, order);}, "The dexp function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
+    m_functions.def("dexp", [](const Lielab::domain::gl & a, const size_t order){return Lielab::functions::dexp(a, order);}, "The dexp function.", py::arg("a"), py::arg("order") = 5);
+    m_functions.def("dexp", [](const Lielab::domain::gl & a, const Lielab::domain::gl & b, const size_t order){return Lielab::functions::dexp(a, b, order);}, "The dexp function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
+    m_functions.def("dexp", [](const Lielab::domain::glc & a, const size_t order){return Lielab::functions::dexp(a, order);}, "The dexp function.", py::arg("a"), py::arg("order") = 5);
+    m_functions.def("dexp", [](const Lielab::domain::glc & a, const Lielab::domain::glc & b, const size_t order){return Lielab::functions::dexp(a, b, order);}, "The dexp function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
+    m_functions.def("dexp", [](const Lielab::domain::rn & a, const size_t order){return Lielab::functions::dexp(a, order);}, "The dexp function.", py::arg("a"), py::arg("order") = 5);
+    m_functions.def("dexp", [](const Lielab::domain::rn & a, const Lielab::domain::rn & b, const size_t order){return Lielab::functions::dexp(a, b, order);}, "The dexp function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
+    m_functions.def("dexp", [](const Lielab::domain::se & a, const size_t order){return Lielab::functions::dexp(a, order);}, "The dexp function.", py::arg("a"), py::arg("order") = 5);
+    m_functions.def("dexp", [](const Lielab::domain::se & a, const Lielab::domain::se & b, const size_t order){return Lielab::functions::dexp(a, b, order);}, "The dexp function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
+    m_functions.def("dexp", [](const Lielab::domain::so & a, const size_t order){return Lielab::functions::dexp(a, order);}, "The dexp function.", py::arg("a"), py::arg("order") = 5);
+    m_functions.def("dexp", [](const Lielab::domain::so & a, const Lielab::domain::so & b, const size_t order){return Lielab::functions::dexp(a, b, order);}, "The dexp function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
+    m_functions.def("dexp", [](const Lielab::domain::sp & a, const size_t order){return Lielab::functions::dexp(a, order);}, "The dexp function.", py::arg("a"), py::arg("order") = 5);
+    m_functions.def("dexp", [](const Lielab::domain::sp & a, const Lielab::domain::sp & b, const size_t order){return Lielab::functions::dexp(a, b, order);}, "The dexp function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
+    m_functions.def("dexp", [](const Lielab::domain::su & a, const size_t order){return Lielab::functions::dexp(a, order);}, "The dexp function.", py::arg("a"), py::arg("order") = 5);
+    m_functions.def("dexp", [](const Lielab::domain::su & a, const Lielab::domain::su & b, const size_t order){return Lielab::functions::dexp(a, b, order);}, "The dexp function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
+    m_functions.def("dexpinv_numerical", [](const Lielab::domain::cn & a, const size_t order){return Lielab::functions::dexpinv_numerical(a, order);}, "The numerical dexpinv function.", py::arg("a"), py::arg("order") = 5);
+    m_functions.def("dexpinv_numerical", [](const Lielab::domain::cn & a, const Lielab::domain::cn & b, const size_t order){return Lielab::functions::dexpinv_numerical(a, b, order);}, "The numerical dexpinv function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
+    m_functions.def("dexpinv_numerical", [](const Lielab::domain::gl & a, const size_t order){return Lielab::functions::dexpinv_numerical(a, order);}, "The numerical dexpinv function.", py::arg("a"), py::arg("order") = 5);
+    m_functions.def("dexpinv_numerical", [](const Lielab::domain::gl & a, const Lielab::domain::gl & b, const size_t order){return Lielab::functions::dexpinv_numerical(a, b, order);}, "The numerical dexpinv function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
+    m_functions.def("dexpinv_numerical", [](const Lielab::domain::glc & a, const size_t order){return Lielab::functions::dexpinv_numerical(a, order);}, "The numerical dexpinv function.", py::arg("a"), py::arg("order") = 5);
+    m_functions.def("dexpinv_numerical", [](const Lielab::domain::glc & a, const Lielab::domain::glc & b, const size_t order){return Lielab::functions::dexpinv_numerical(a, b, order);}, "The numerical dexpinv function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
+    m_functions.def("dexpinv_numerical", [](const Lielab::domain::rn & a, const size_t order){return Lielab::functions::dexpinv_numerical(a, order);}, "The numerical dexpinv function.", py::arg("a"), py::arg("order") = 5);
+    m_functions.def("dexpinv_numerical", [](const Lielab::domain::rn & a, const Lielab::domain::rn & b, const size_t order){return Lielab::functions::dexpinv_numerical(a, b, order);}, "The numerical dexpinv function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
+    m_functions.def("dexpinv_numerical", [](const Lielab::domain::se & a, const size_t order){return Lielab::functions::dexpinv_numerical(a, order);}, "The numerical dexpinv function.", py::arg("a"), py::arg("order") = 5);
+    m_functions.def("dexpinv_numerical", [](const Lielab::domain::se & a, const Lielab::domain::se & b, const size_t order){return Lielab::functions::dexpinv_numerical(a, b, order);}, "The numerical dexpinv function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
+    m_functions.def("dexpinv_numerical", [](const Lielab::domain::so & a, const size_t order){return Lielab::functions::dexpinv_numerical(a, order);}, "The numerical dexpinv function.", py::arg("a"), py::arg("order") = 5);
+    m_functions.def("dexpinv_numerical", [](const Lielab::domain::so & a, const Lielab::domain::so & b, const size_t order){return Lielab::functions::dexpinv_numerical(a, b, order);}, "The numerical dexpinv function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
+    m_functions.def("dexpinv_numerical", [](const Lielab::domain::sp & a, const size_t order){return Lielab::functions::dexpinv_numerical(a, order);}, "The numerical dexpinv function.", py::arg("a"), py::arg("order") = 5);
+    m_functions.def("dexpinv_numerical", [](const Lielab::domain::sp & a, const Lielab::domain::sp & b, const size_t order){return Lielab::functions::dexpinv_numerical(a, b, order);}, "The numerical dexpinv function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
+    m_functions.def("dexpinv_numerical", [](const Lielab::domain::su & a, const size_t order){return Lielab::functions::dexpinv_numerical(a, order);}, "The numerical dexpinv function.", py::arg("a"), py::arg("order") = 5);
+    m_functions.def("dexpinv_numerical", [](const Lielab::domain::su & a, const Lielab::domain::su & b, const size_t order){return Lielab::functions::dexpinv_numerical(a, b, order);}, "The numerical dexpinv function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
+    m_functions.def("dexpinv", [](const Lielab::domain::cn & a, const size_t order){return Lielab::functions::dexpinv(a, order);}, "The dexpinv function.", py::arg("a"), py::arg("order") = 5);
+    m_functions.def("dexpinv", [](const Lielab::domain::cn & a, const Lielab::domain::cn & b, const size_t order){return Lielab::functions::dexpinv(a, b, order);}, "The dexpinv function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
+    m_functions.def("dexpinv", [](const Lielab::domain::gl & a, const size_t order){return Lielab::functions::dexpinv(a, order);}, "The dexpinv function.", py::arg("a"), py::arg("order") = 5);
+    m_functions.def("dexpinv", [](const Lielab::domain::gl & a, const Lielab::domain::gl & b, const size_t order){return Lielab::functions::dexpinv(a, b, order);}, "The dexpinv function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
+    m_functions.def("dexpinv", [](const Lielab::domain::glc & a, const size_t order){return Lielab::functions::dexpinv(a, order);}, "The dexpinv function.", py::arg("a"), py::arg("order") = 5);
+    m_functions.def("dexpinv", [](const Lielab::domain::glc & a, const Lielab::domain::glc & b, const size_t order){return Lielab::functions::dexpinv(a, b, order);}, "The dexpinv function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
+    m_functions.def("dexpinv", [](const Lielab::domain::rn & a, const size_t order){return Lielab::functions::dexpinv(a, order);}, "The dexpinv function.", py::arg("a"), py::arg("order") = 5);
+    m_functions.def("dexpinv", [](const Lielab::domain::rn & a, const Lielab::domain::rn & b, const size_t order){return Lielab::functions::dexpinv(a, b, order);}, "The dexpinv function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
+    m_functions.def("dexpinv", [](const Lielab::domain::se & a, const size_t order){return Lielab::functions::dexpinv(a, order);}, "The dexpinv function.", py::arg("a"), py::arg("order") = 5);
+    m_functions.def("dexpinv", [](const Lielab::domain::se & a, const Lielab::domain::se & b, const size_t order){return Lielab::functions::dexpinv(a, b, order);}, "The dexpinv function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
+    m_functions.def("dexpinv", [](const Lielab::domain::so & a, const size_t order){return Lielab::functions::dexpinv(a, order);}, "The dexpinv function.", py::arg("a"), py::arg("order") = 5);
+    m_functions.def("dexpinv", [](const Lielab::domain::so & a, const Lielab::domain::so & b, const size_t order){return Lielab::functions::dexpinv(a, b, order);}, "The dexpinv function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
+    m_functions.def("dexpinv", [](const Lielab::domain::sp & a, const size_t order){return Lielab::functions::dexpinv(a, order);}, "The dexpinv function.", py::arg("a"), py::arg("order") = 5);
+    m_functions.def("dexpinv", [](const Lielab::domain::sp & a, const Lielab::domain::sp & b, const size_t order){return Lielab::functions::dexpinv(a, b, order);}, "The dexpinv function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
+    m_functions.def("dexpinv", [](const Lielab::domain::su & a, const size_t order){return Lielab::functions::dexpinv(a, order);}, "The dexpinv function.", py::arg("a"), py::arg("order") = 5);
+    m_functions.def("dexpinv", [](const Lielab::domain::su & a, const Lielab::domain::su & b, const size_t order){return Lielab::functions::dexpinv(a, b, order);}, "The dexpinv function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
     m_functions.def("left_product", &Lielab::functions::left_product, "Default action by left product.");
+    m_functions.def("pair", &Lielab::functions::pair<Lielab::domain::cn>, "The pair function.");
+    m_functions.def("pair", &Lielab::functions::pair<Lielab::domain::gl>, "The pair function.");
+    m_functions.def("pair", &Lielab::functions::pair<Lielab::domain::glc>, "The pair function.");
+    m_functions.def("pair", &Lielab::functions::pair<Lielab::domain::rn>, "The pair function.");
+    m_functions.def("pair", &Lielab::functions::pair<Lielab::domain::se>, "The pair function.");
+    m_functions.def("pair", &Lielab::functions::pair<Lielab::domain::so>, "The pair function.");
+    m_functions.def("pair", &Lielab::functions::pair<Lielab::domain::sp>, "The pair function.");
+    m_functions.def("pair", &Lielab::functions::pair<Lielab::domain::su>, "The pair function.");
 
     /*!
     * Begin content for the "kinematics" submodule.
@@ -1358,36 +1479,15 @@ PYBIND11_MODULE(cppLielab, m) {
     m_transform.def("dcm_to_eanglespace232", &Lielab::transform::dcm_to_eanglespace232<double>, "The dcm_to_eanglespace232 function.");
     m_transform.def("dcm_to_eanglespace313", &Lielab::transform::dcm_to_eanglespace313<double>, "The dcm_to_eanglespace313 function.");
     m_transform.def("dcm_to_eanglespace323", &Lielab::transform::dcm_to_eanglespace323<double>, "The dcm_to_eanglespace323 function.");
-    m_transform.def("eanglebody123_to_dcm", &Lielab::transform::eanglebody123_to_dcm<double>, "The eanglebody123_to_dcm function.");
-    m_transform.def("eanglebody231_to_dcm", &Lielab::transform::eanglebody231_to_dcm<double>, "The eanglebody231_to_dcm function.");
-    m_transform.def("eanglebody312_to_dcm", &Lielab::transform::eanglebody312_to_dcm<double>, "The eanglebody312_to_dcm function.");
-    m_transform.def("eanglebody132_to_dcm", &Lielab::transform::eanglebody132_to_dcm<double>, "The eanglebody132_to_dcm function.");
-    m_transform.def("eanglebody213_to_dcm", &Lielab::transform::eanglebody213_to_dcm<double>, "The eanglebody213_to_dcm function.");
-    m_transform.def("eanglebody321_to_dcm", &Lielab::transform::eanglebody321_to_dcm<double>, "The eanglebody321_to_dcm function.");
-    m_transform.def("eanglebody121_to_dcm", &Lielab::transform::eanglebody121_to_dcm<double>, "The eanglebody121_to_dcm function.");
-    m_transform.def("eanglebody131_to_dcm", &Lielab::transform::eanglebody131_to_dcm<double>, "The eanglebody131_to_dcm function.");
-    m_transform.def("eanglebody212_to_dcm", &Lielab::transform::eanglebody212_to_dcm<double>, "The eanglebody212_to_dcm function.");
-    m_transform.def("eanglebody232_to_dcm", &Lielab::transform::eanglebody232_to_dcm<double>, "The eanglebody232_to_dcm function.");
-    m_transform.def("eanglebody313_to_dcm", &Lielab::transform::eanglebody313_to_dcm<double>, "The eanglebody313_to_dcm function.");
-    m_transform.def("eanglebody323_to_dcm", &Lielab::transform::eanglebody323_to_dcm<double>, "The eanglebody323_to_dcm function.");
-    m_transform.def("eanglespace123_to_dcm", &Lielab::transform::eanglespace123_to_dcm<double>, "The eanglespace123_to_dcm function.");
-    m_transform.def("eanglespace231_to_dcm", &Lielab::transform::eanglespace231_to_dcm<double>, "The eanglespace231_to_dcm function.");
-    m_transform.def("eanglespace312_to_dcm", &Lielab::transform::eanglespace312_to_dcm<double>, "The eanglespace312_to_dcm function.");
-    m_transform.def("eanglespace132_to_dcm", &Lielab::transform::eanglespace132_to_dcm<double>, "The eanglespace132_to_dcm function.");
-    m_transform.def("eanglespace213_to_dcm", &Lielab::transform::eanglespace213_to_dcm<double>, "The eanglespace213_to_dcm function.");
-    m_transform.def("eanglespace321_to_dcm", &Lielab::transform::eanglespace321_to_dcm<double>, "The eanglespace321_to_dcm function.");
-    m_transform.def("eanglespace121_to_dcm", &Lielab::transform::eanglespace121_to_dcm<double>, "The eanglespace121_to_dcm function.");
-    m_transform.def("eanglespace131_to_dcm", &Lielab::transform::eanglespace131_to_dcm<double>, "The eanglespace131_to_dcm function.");
-    m_transform.def("eanglespace212_to_dcm", &Lielab::transform::eanglespace212_to_dcm<double>, "The eanglespace212_to_dcm function.");
-    m_transform.def("eanglespace232_to_dcm", &Lielab::transform::eanglespace232_to_dcm<double>, "The eanglespace232_to_dcm function.");
-    m_transform.def("eanglespace313_to_dcm", &Lielab::transform::eanglespace313_to_dcm<double>, "The eanglespace313_to_dcm function.");
-    m_transform.def("eanglespace323_to_dcm", &Lielab::transform::eanglespace323_to_dcm<double>, "The eanglespace323_to_dcm function.");
+    m_transform.def("dcm_to_gibbs", &Lielab::transform::dcm_to_gibbs, "DCM to Gibbs.");
     m_transform.def("quaternion_to_dcm", &Lielab::transform::quaternion_to_dcm, "The quaternion_to_dcm function.");
 
     py::module m_topos = m.def_submodule("topos", "The topos submodule.");
 
     m_topos.def("Ad", &Lielab::topos::Ad);
-    m_topos.def("dexp", &Lielab::topos::dexp, "The dexp function.", py::arg("a"), py::arg("b"), py::arg("order") = 5);
+    m_topos.def("cayley1", &Lielab::topos::cayley1);
+    m_topos.def("dcayley1inv", &Lielab::topos::dcayley1inv);
+    m_topos.def("dexp", &Lielab::topos::dexp, "The dexp function.");
     m_topos.def("dexpinv", &Lielab::topos::dexpinv);
     m_topos.def("exp", &Lielab::topos::exp);
     m_topos.def("log", &Lielab::topos::log);
@@ -1508,38 +1608,4 @@ PYBIND11_MODULE(cppLielab, m) {
         {
             return "<lielab.topos.Flow>";
         });
-
-
-    // /*!
-    // * Begin content for the "transform" submodule.
-    // */
-    // py::module m_transform = m.def_submodule("transform", "The transform submodule.");
-    // m_transform.def("dcm_to_quaternion", &Lielab::transform::dcm_to_quaternion, "The dcm to quaternion transform function.");
-    // m_transform.def("eanglebody123_to_dcm", &Lielab::transform::eanglebody123_to_dcm, "Euler angle body-123 rotation.");
-    // m_transform.def("eanglebody231_to_dcm", &Lielab::transform::eanglebody231_to_dcm, "Euler angle body-231 rotation.");
-    // m_transform.def("eanglebody312_to_dcm", &Lielab::transform::eanglebody312_to_dcm, "Euler angle body-312 rotation.");
-    // m_transform.def("eanglebody132_to_dcm", &Lielab::transform::eanglebody132_to_dcm, "Euler angle body-132 rotation.");
-    // m_transform.def("eanglebody213_to_dcm", &Lielab::transform::eanglebody213_to_dcm, "Euler angle body-213 rotation.");
-    // m_transform.def("eanglebody321_to_dcm", &Lielab::transform::eanglebody321_to_dcm, "Euler angle body-321 rotation.");
-    // m_transform.def("eanglebody121_to_dcm", &Lielab::transform::eanglebody121_to_dcm, "Euler angle body-121 rotation.");
-    // m_transform.def("eanglebody131_to_dcm", &Lielab::transform::eanglebody131_to_dcm, "Euler angle body-131 rotation.");
-    // m_transform.def("eanglebody212_to_dcm", &Lielab::transform::eanglebody212_to_dcm, "Euler angle body-212 rotation.");
-    // m_transform.def("eanglebody232_to_dcm", &Lielab::transform::eanglebody232_to_dcm, "Euler angle body-232 rotation.");
-    // m_transform.def("eanglebody313_to_dcm", &Lielab::transform::eanglebody313_to_dcm, "Euler angle body-313 rotation.");
-    // m_transform.def("eanglebody323_to_dcm", &Lielab::transform::eanglebody323_to_dcm, "Euler angle body-323 rotation.");
-    // m_transform.def("eanglespace123_to_dcm", &Lielab::transform::eanglespace123_to_dcm, "Euler angle space-123 rotation.");
-    // m_transform.def("eanglespace231_to_dcm", &Lielab::transform::eanglespace231_to_dcm, "Euler angle space-231 rotation.");
-    // m_transform.def("eanglespace312_to_dcm", &Lielab::transform::eanglespace312_to_dcm, "Euler angle space-312 rotation.");
-    // m_transform.def("eanglespace132_to_dcm", &Lielab::transform::eanglespace132_to_dcm, "Euler angle space-132 rotation.");
-    // m_transform.def("eanglespace213_to_dcm", &Lielab::transform::eanglespace213_to_dcm, "Euler angle space-213 rotation.");
-    // m_transform.def("eanglespace321_to_dcm", &Lielab::transform::eanglespace321_to_dcm, "Euler angle space-321 rotation.");
-    // m_transform.def("eanglespace121_to_dcm", &Lielab::transform::eanglespace121_to_dcm, "Euler angle space-121 rotation.");
-    // m_transform.def("eanglespace131_to_dcm", &Lielab::transform::eanglespace131_to_dcm, "Euler angle space-131 rotation.");
-    // m_transform.def("eanglespace212_to_dcm", &Lielab::transform::eanglespace212_to_dcm, "Euler angle space-212 rotation.");
-    // m_transform.def("eanglespace232_to_dcm", &Lielab::transform::eanglespace232_to_dcm, "Euler angle space-232 rotation.");
-    // m_transform.def("eanglespace313_to_dcm", &Lielab::transform::eanglespace313_to_dcm, "Euler angle space-313 rotation.");
-    // m_transform.def("eanglespace323_to_dcm", &Lielab::transform::eanglespace323_to_dcm, "Euler angle space-323 rotation.");
-    // m_transform.def("gibbs_to_dcm", &Lielab::transform::gibbs_to_dcm, "Gibbs to DCM.");
-    // m_transform.def("dcm_to_gibbs", &Lielab::transform::dcm_to_gibbs, "DCM to Gibbs.");
-    // m_transform.def("quaternion_to_dcm", &Lielab::transform::quaternion_to_dcm, "The quaternion to dcm transform function.");
 }

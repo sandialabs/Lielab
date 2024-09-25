@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.23)
 
 project("Lielab"
-        VERSION 0.4.0
+        VERSION 0.4.1
         LANGUAGES CXX)
 
 if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
@@ -16,6 +16,7 @@ endif()
 option(LIELAB_INSTALL_LIBRARY "Install Lielab into default locations." ${IS_TOPLEVEL_PROJECT})
 option(LIELAB_BUILD_TESTS "Build Lielab tests" ${IS_TOPLEVEL_PROJECT})
 option(LIELAB_BUILD_PYTHON "Build Lielab python module" ${IS_TOPLEVEL_PROJECT})
+# set(PYTHON_EXECUTABLE "path to python executable") # Define this to explicitly tell pybind11 which Python to use
 
 ################################
 # Make the main project
@@ -155,6 +156,7 @@ if (LIELAB_BUILD_PYTHON)
     if (NOT DEFINED Eigen3_FOUND)
         find_package(Eigen3 REQUIRED)
     endif()
+    
     if (NOT DEFINED pybind11_FOUND)
         find_package(pybind11 REQUIRED)
     endif()

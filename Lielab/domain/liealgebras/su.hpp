@@ -6,10 +6,17 @@
 #include <Eigen/Core>
 #include <unsupported/Eigen/MatrixFunctions>
 
+#include <iostream>
+
 namespace Lielab
 {
     namespace domain
     {
+        /*!
+         * The su class.
+         *
+         * Defined by skew-Hermitian matrices.
+         */
         class su
         {
             public:
@@ -127,6 +134,12 @@ namespace Lielab
                 /*! \f{equation*}{ () \rightarrow \mathbb{R}^{n \times 1} \f}
                 * 
                 * Returns the vector representation.
+                *
+                * Sources:
+                *     - Georgi, Howard. Lie algebras in particle physics: from isospin to unified theories.
+                *         Taylor & Francis, 2000.
+                *     - Stover, Christopher. "Generalized Gell-Mann Matrix." From MathWorld--A Wolfram Web Resource,
+                *         created by Eric W. Weisstein. https://mathworld.wolfram.com/GeneralizedGell-MannMatrix.html 
                 */
 
                 if (this->shape <= 1)
@@ -172,7 +185,7 @@ namespace Lielab
 
                     for (size_t ii = 0; ii < yy; ii++)
                     {
-                        temp(ii, ii) -= std::imag(multiplier*out(k));
+                        temp(ii, ii) -= std::complex<double>(0.0, multiplier*out(k)); // Do not use std::imag(). This doesn't work w/ inplace operations with Eigen.
                     }
 
                     zz--;
@@ -206,7 +219,14 @@ namespace Lielab
                 /*! \f{equation*}{ \mathfrak{su} := \mathbb{R}^{n \times 1} \f}
                 * 
                 * @param[in] vector An Eigen::VectorXd to assign.
+                *
                 * TODO: Set shape.
+                * 
+                * Sources:
+                *     - Georgi, Howard. Lie algebras in particle physics: from isospin to unified theories.
+                *         Taylor & Francis, 2000.
+                *     - Stover, Christopher. "Generalized Gell-Mann Matrix." From MathWorld--A Wolfram Web Resource,
+                *         created by Eric W. Weisstein. https://mathworld.wolfram.com/GeneralizedGell-MannMatrix.html 
                 */
                 
                 // Error check for vector size

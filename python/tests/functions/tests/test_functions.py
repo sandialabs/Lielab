@@ -192,13 +192,13 @@ def test_dcayley1inv():
     assert_matrix(ansso.get_matrix(), truthso)
 
 
-def test_dexp():
+def test_dexp_numerical():
     """
-    Tests the dexp function.
+    Tests the dexp_numerical function.
     """
 
     from lielab.domain import so, rn
-    from lielab.functions import dexp
+    from lielab.functions import dexp_numerical
 
     u = so(3)
     v = so(3)
@@ -212,7 +212,7 @@ def test_dexp():
 
 
     # order = 0
-    ansso = dexp(u, v, 0)
+    ansso = dexp_numerical(u, v, 0)
     truthso = np.array([[0.0, 0.0, 1.0],
                         [0.0, 0.0, 0.0],
                         [-1.0, 0.0, 0.0]])
@@ -220,7 +220,7 @@ def test_dexp():
     assert_matrix(ansso.get_matrix(), truthso)
 
     # order = 1
-    ansso = dexp(u, v, 1)
+    ansso = dexp_numerical(u, v, 1)
     truthso = np.array([[0.0, -0.5, 1.0],
                         [0.5, 0.0, 0.0],
                         [-1.0, 0.0, 0.0]])
@@ -228,7 +228,7 @@ def test_dexp():
     assert_matrix(ansso.get_matrix(), truthso)
 
     # order = 2
-    ansso = dexp(u, v, 2)
+    ansso = dexp_numerical(u, v, 2)
     truthso = np.array([[0.0, -0.5, 0.833333333333333],
                         [0.5, 0.0, 0.0],
                         [-0.833333333333333, 0.0, 0.0]])
@@ -236,13 +236,13 @@ def test_dexp():
     assert_matrix(ansso.get_matrix(), truthso)
 
     # order = 3
-    ansso = dexp(u, v, 3)
+    ansso = dexp_numerical(u, v, 3)
     truthso = np.array([[0.0, -0.458333333333333, 0.833333333333333],
                         [0.458333333333333, 0.0, 0.0],
                         [-0.833333333333333, 0.0, 0.0]])
 
     # order = 4
-    ansso = dexp(u, v, 4)
+    ansso = dexp_numerical(u, v, 4)
     truthso = np.array([[0.0, -0.458333333333333, 0.841666666666667],
                         [0.458333333333333, 0.0, 0.0],
                         [-0.841666666666667, 0.0, 0.0]])
@@ -250,7 +250,7 @@ def test_dexp():
     assert_matrix(ansso.get_matrix(), truthso)
 
     # order = 8
-    ansso = dexp(u, v, 8)
+    ansso = dexp_numerical(u, v, 8)
     truthso = np.array([[0.0, -0.459697420634921, 0.841471009700176],
                         [0.459697420634921, 0.0, 0.0],
                         [-0.841471009700176, 0.0, 0.0]])
@@ -265,7 +265,7 @@ def test_dexp():
     y.set_vector(yy)
 
     # default order
-    ansrn = dexp(x, y)
+    ansrn = dexp_numerical(x, y)
     truthrn = np.array([[0, 0, 0, 0],
                         [0, 0, 0, 1],
                         [0, 0, 0, 0],
@@ -274,7 +274,7 @@ def test_dexp():
     assert_matrix(ansrn.get_matrix(), truthrn)
 
     # ridiculous order (checks abelian speedhack)
-    ansrn = dexp(x, y, 999999999)
+    ansrn = dexp_numerical(x, y, 999999999)
     truthrn = np.array([[0, 0, 0, 0],
                         [0, 0, 0, 1],
                         [0, 0, 0, 0],
@@ -283,13 +283,13 @@ def test_dexp():
     assert_matrix(ansrn.get_matrix(), truthrn)
 
 
-def test_dexpinv():
+def test_dexpinv_numerical():
     """
-    Tests the dexpinv function.
+    Tests the dexpinv_numerical function.
     """
 
     from lielab.domain import so, rn
-    from lielab.functions import dexpinv
+    from lielab.functions import dexpinv_numerical
 
     u = so(3)
     v = so(3)
@@ -303,39 +303,31 @@ def test_dexpinv():
 
 
     # order = 0
-    ansso = dexpinv(u, v, 0)
-    truthso = np.array([[0.0, 0.0, 0.0],
+    ansso = dexpinv_numerical(u, v, 0)
+    truthso = np.array([[0.0, 0.0, 1.0],
                         [0.0, 0.0, 0.0],
-                        [0.0, 0.0, 0.0]])
+                        [-1.0, 0.0, 0.0]])
     
     assert_matrix(ansso.get_matrix(), truthso)
 
     # order = 1
-    ansso = dexpinv(u, v, 1)
-    truthso = np.array([[0.0, 0.0, 1.0],
-                        [0.0, 0.0, 0.0],
-                        [-1.0, 0.0, 0.0]])
-
-    assert_matrix(ansso.get_matrix(), truthso)
-
-    # order = 2
-    ansso = dexpinv(u, v, 2)
+    ansso = dexpinv_numerical(u, v, 1)
     truthso = np.array([[0.0, 0.5, 1.0],
                         [-0.5, 0.0, 0.0],
                         [-1.0, 0.0, 0.0]])
 
     assert_matrix(ansso.get_matrix(), truthso)
 
-    # order = 4
-    ansso = dexpinv(u, v, 4)
+    # order = 3
+    ansso = dexpinv_numerical(u, v, 3)
     truthso = np.array([[0.0, 0.5, 0.916666666666667],
                         [-0.5, 0.0, 0.0],
                         [-0.916666666666667, 0.0, 0.0]])
 
     assert_matrix(ansso.get_matrix(), truthso)
 
-    # order = 12
-    ansso = dexpinv(u, v, 12)
+    # order = 11
+    ansso = dexpinv_numerical(u, v, 11)
     truthso = np.array([[0.0, 0.500000000000000, 0.915243861398375],
                         [-0.500000000000000, 0.0, 0.0],
                         [-0.915243861398375, 0.0, 0.0]])
@@ -350,7 +342,7 @@ def test_dexpinv():
     y.set_vector(yy)
 
     # default order
-    ansrn = dexpinv(x, y)
+    ansrn = dexpinv_numerical(x, y)
     truthrn = np.array([[0, 0, 0, 0],
                         [0, 0, 0, 1],
                         [0, 0, 0, 0],
@@ -359,7 +351,7 @@ def test_dexpinv():
     assert_matrix(ansrn.get_matrix(), truthrn)
 
     # ridiculous order (checks abelian speedhack)
-    ansrn = dexpinv(x, y, 999999999)
+    ansrn = dexpinv_numerical(x, y, 999999999)
     truthrn = np.array([[0, 0, 0, 0],
                         [0, 0, 0, 1],
                         [0, 0, 0, 0],

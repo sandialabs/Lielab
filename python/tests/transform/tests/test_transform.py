@@ -58,7 +58,8 @@ def test_dcm_to_eanglebody123():
     Tests the dcm_to_eanglebody123 function.
     """
 
-    from lielab.transform import dcm_to_eanglebody123, eanglebody123_to_dcm
+    from lielab.domain import SO
+    from lielab.transform import dcm_to_eanglebody123
 
     # Identity
     theta1, theta2, theta3 = dcm_to_eanglebody123(DCMId)
@@ -85,13 +86,13 @@ def test_dcm_to_eanglebody123():
     assert abs(theta3 - np.pi/2.0) <= TOL_FINE
 
     # Check gimbal lockc condition
-    theta1, theta2, theta3 = dcm_to_eanglebody123(eanglebody123_to_dcm(0.5, np.pi/2.0, 0.5));
+    theta1, theta2, theta3 = dcm_to_eanglebody123(SO.from_eulerangles_body123(0.5, np.pi/2.0, 0.5));
     assert abs(theta1 - 1.0) <= TOL_FINE
     assert abs(theta2 - np.pi/2.0) <= TOL_FINE
     assert theta3 == 0.0
 
     # Rotate by a random angle (also asserts the inverse function)
-    theta1, theta2, theta3 = dcm_to_eanglebody123(eanglebody123_to_dcm(some_angle, some_angle, some_angle))
+    theta1, theta2, theta3 = dcm_to_eanglebody123(SO.from_eulerangles_body123(some_angle, some_angle, some_angle))
     assert theta1 == some_angle
     assert theta2 == some_angle
     assert theta3 == some_angle
@@ -102,7 +103,8 @@ def test_dcm_to_eanglebody231():
     Tests the dcm_to_eanglebody231 function.
     """
 
-    from lielab.transform import dcm_to_eanglebody231, eanglebody231_to_dcm
+    from lielab.domain import SO
+    from lielab.transform import dcm_to_eanglebody231
 
     # Identity
     theta1, theta2, theta3 = dcm_to_eanglebody231(DCMId)
@@ -129,13 +131,13 @@ def test_dcm_to_eanglebody231():
     assert abs(theta3 - 0.0) <= TOL_FINE
 
     # Check gimbal lockc condition
-    theta1, theta2, theta3 = dcm_to_eanglebody231(eanglebody231_to_dcm(0.5, np.pi/2.0, 0.5))
+    theta1, theta2, theta3 = dcm_to_eanglebody231(SO.from_eulerangles_body231(0.5, np.pi/2.0, 0.5))
     assert abs(theta1 - 1.0) <= TOL_FINE
     assert abs(theta2 - np.pi/2.0) <= TOL_FINE
     assert theta3 == 0.0
 
     # Rotate by a random angle (also asserts the inverse function)
-    theta1, theta2, theta3 = dcm_to_eanglebody231(eanglebody231_to_dcm(some_angle, some_angle, some_angle))
+    theta1, theta2, theta3 = dcm_to_eanglebody231(SO.from_eulerangles_body231(some_angle, some_angle, some_angle))
     assert theta1 == some_angle
     assert theta2 == some_angle
     assert theta3 == some_angle
@@ -146,7 +148,8 @@ def test_dcm_to_eanglebody312():
     Tests the dcm_to_eanglebody312 function.
     """
 
-    from lielab.transform import dcm_to_eanglebody312, eanglebody312_to_dcm
+    from lielab.domain import SO
+    from lielab.transform import dcm_to_eanglebody312
 
     # Identity
     theta1, theta2, theta3 = dcm_to_eanglebody312(DCMId)
@@ -173,13 +176,13 @@ def test_dcm_to_eanglebody312():
     assert abs(theta3 - 0.0) <= TOL_FINE
 
     # Check gimbal lockc condition
-    theta1, theta2, theta3 = dcm_to_eanglebody312(eanglebody312_to_dcm(0.5, np.pi/2.0, 0.5))
+    theta1, theta2, theta3 = dcm_to_eanglebody312(SO.from_eulerangles_body312(0.5, np.pi/2.0, 0.5))
     assert abs(theta1 - 1.0) <= TOL_FINE
     assert abs(theta2 - np.pi/2.0) <= TOL_FINE
     assert theta3 == 0.0
 
     # Rotate by a random angle (also asserts the inverse function)
-    theta1, theta2, theta3 = dcm_to_eanglebody312(eanglebody312_to_dcm(some_angle, some_angle, some_angle))
+    theta1, theta2, theta3 = dcm_to_eanglebody312(SO.from_eulerangles_body312(some_angle, some_angle, some_angle))
     assert theta1 == some_angle
     assert theta2 == some_angle
     assert theta3 == some_angle
@@ -190,7 +193,8 @@ def test_dcm_to_eanglebody132():
     Tests the dcm_to_eanglebody132 function.
     """
 
-    from lielab.transform import dcm_to_eanglebody132, eanglebody132_to_dcm
+    from lielab.domain import SO
+    from lielab.transform import dcm_to_eanglebody132
 
     # Identity
     theta1, theta2, theta3 = dcm_to_eanglebody132(DCMId)
@@ -217,13 +221,13 @@ def test_dcm_to_eanglebody132():
     assert abs(theta3- 0.0) <= TOL_FINE
 
     # Check gimbal lockc condition
-    theta1, theta2, theta3 = dcm_to_eanglebody132(eanglebody132_to_dcm(0.5, np.pi/2.0, 0.5))
+    theta1, theta2, theta3 = dcm_to_eanglebody132(SO.from_eulerangles_body132(0.5, np.pi/2.0, 0.5))
     assert abs(theta1 - 0.0) <= TOL_FINE
     assert abs(theta2 - np.pi/2.0) <= TOL_FINE
     assert theta3 == 0.0
 
     # Rotate by a random angle (also asserts the inverse function)
-    theta1, theta2, theta3 = dcm_to_eanglebody132(eanglebody132_to_dcm(some_angle, some_angle, some_angle))
+    theta1, theta2, theta3 = dcm_to_eanglebody132(SO.from_eulerangles_body132(some_angle, some_angle, some_angle))
     assert theta1 == some_angle
     assert theta2 == some_angle
     assert theta3 == some_angle
@@ -234,7 +238,8 @@ def test_dcm_to_eanglebody213():
     Tests the dcm_to_eanglebody213 function.
     """
 
-    from lielab.transform import dcm_to_eanglebody213, eanglebody213_to_dcm
+    from lielab.domain import SO
+    from lielab.transform import dcm_to_eanglebody213
 
     # Identity
     theta1, theta2, theta3 = dcm_to_eanglebody213(DCMId)
@@ -261,13 +266,13 @@ def test_dcm_to_eanglebody213():
     assert abs(theta3 - np.pi/2.0) <= TOL_FINE
 
     # Check gimbal lockc condition
-    theta1, theta2, theta3 = dcm_to_eanglebody213(eanglebody213_to_dcm(0.5, np.pi/2.0, 0.5))
+    theta1, theta2, theta3 = dcm_to_eanglebody213(SO.from_eulerangles_body213(0.5, np.pi/2.0, 0.5))
     assert abs(theta1 - 0.0) <= TOL_FINE
     assert abs(theta2 - np.pi/2.0) <= TOL_FINE
     assert theta3 == 0.0
 
     # Rotate by a random angle (also asserts the inverse function)
-    theta1, theta2, theta3 = dcm_to_eanglebody213(eanglebody213_to_dcm(some_angle, some_angle, some_angle))
+    theta1, theta2, theta3 = dcm_to_eanglebody213(SO.from_eulerangles_body213(some_angle, some_angle, some_angle))
     assert theta1 == some_angle
     assert theta2 == some_angle
     assert theta3 == some_angle
@@ -278,7 +283,8 @@ def test_dcm_to_eanglebody321():
     Tests the dcm_to_eanglebody321 function.
     """
 
-    from lielab.transform import dcm_to_eanglebody321, eanglebody321_to_dcm
+    from lielab.domain import SO
+    from lielab.transform import dcm_to_eanglebody321
 
     # Identity
     theta1, theta2, theta3 = dcm_to_eanglebody321(DCMId)
@@ -305,13 +311,13 @@ def test_dcm_to_eanglebody321():
     assert abs(theta3 - 0.0) <= TOL_FINE
 
     # Check gimbal lockc condition
-    theta1, theta2, theta3 = dcm_to_eanglebody321(eanglebody321_to_dcm(0.5, np.pi/2.0, 0.5))
+    theta1, theta2, theta3 = dcm_to_eanglebody321(SO.from_eulerangles_body321(0.5, np.pi/2.0, 0.5))
     assert abs(theta1 - 0.0) <= TOL_FINE
     assert abs(theta2 - np.pi/2.0) <= TOL_FINE
     assert theta3 == 0.0
 
     # Rotate by a random angle (also asserts the inverse function)
-    theta1, theta2, theta3 = dcm_to_eanglebody321(eanglebody321_to_dcm(some_angle, some_angle, some_angle))
+    theta1, theta2, theta3 = dcm_to_eanglebody321(SO.from_eulerangles_body321(some_angle, some_angle, some_angle))
     assert theta1 == some_angle
     assert theta2 == some_angle
     assert theta3 == some_angle
@@ -322,7 +328,8 @@ def test_dcm_to_eanglebody121():
     Tests the dcm_to_eanglebody121 function.
     """
 
-    from lielab.transform import dcm_to_eanglebody121, eanglebody121_to_dcm
+    from lielab.domain import SO
+    from lielab.transform import dcm_to_eanglebody121
 
     # Identity
     theta1, theta2, theta3 = dcm_to_eanglebody121(DCMId)
@@ -349,13 +356,13 @@ def test_dcm_to_eanglebody121():
     assert abs(theta3 + np.pi/2.0) <= TOL_FINE
 
     # Check gimbal lockc condition
-    theta1, theta2, theta3 = dcm_to_eanglebody121(eanglebody121_to_dcm(0.5, 0.0, 0.5))
+    theta1, theta2, theta3 = dcm_to_eanglebody121(SO.from_eulerangles_body121(0.5, 0.0, 0.5))
     assert abs(theta1 - 1.0) <= TOL_FINE
     assert abs(theta2 - 0.0) <= TOL_FINE
     assert theta3 == 0.0
 
     # Rotate by a random angle (also asserts the inverse function)
-    theta1, theta2, theta3 = dcm_to_eanglebody121(eanglebody121_to_dcm(some_angle, some_angle, some_angle))
+    theta1, theta2, theta3 = dcm_to_eanglebody121(SO.from_eulerangles_body121(some_angle, some_angle, some_angle))
     assert theta1 == some_angle
     assert theta2 == some_angle
     assert theta3 == some_angle
@@ -366,7 +373,8 @@ def test_dcm_to_eanglebody131():
     Tests the dcm_to_eanglebody131 function.
     """
 
-    from lielab.transform import dcm_to_eanglebody131, eanglebody131_to_dcm
+    from lielab.domain import SO
+    from lielab.transform import dcm_to_eanglebody131
 
     # Identity
     theta1, theta2, theta3 = dcm_to_eanglebody131(DCMId)
@@ -393,13 +401,13 @@ def test_dcm_to_eanglebody131():
     assert abs(theta3 - 0.0) <= TOL_FINE
 
     # Check gimbal lockc condition
-    theta1, theta2, theta3 = dcm_to_eanglebody131(eanglebody131_to_dcm(0.5, 0.0, 0.5))
+    theta1, theta2, theta3 = dcm_to_eanglebody131(SO.from_eulerangles_body131(0.5, 0.0, 0.5))
     assert abs(theta1 - 1.0) <= TOL_FINE
     assert abs(theta2 - 0.0) <= TOL_FINE
     assert theta3 == 0.0
 
     # Rotate by a random angle (also asserts the inverse function)
-    theta1, theta2, theta3 = dcm_to_eanglebody131(eanglebody131_to_dcm(some_angle, some_angle, some_angle))
+    theta1, theta2, theta3 = dcm_to_eanglebody131(SO.from_eulerangles_body131(some_angle, some_angle, some_angle))
     assert theta1 == some_angle
     assert theta2 == some_angle
     assert theta3 == some_angle
@@ -410,7 +418,8 @@ def test_dcm_to_eanglebody212():
     Tests the dcm_to_eanglebody212 function.
     """
 
-    from lielab.transform import dcm_to_eanglebody212, eanglebody212_to_dcm
+    from lielab.domain import SO
+    from lielab.transform import dcm_to_eanglebody212
 
     # Identity
     theta1, theta2, theta3 = dcm_to_eanglebody212(DCMId)
@@ -437,13 +446,13 @@ def test_dcm_to_eanglebody212():
     assert abs(theta3 - np.pi/2.0) <= TOL_FINE
 
     # Check gimbal lockc condition
-    theta1, theta2, theta3 = dcm_to_eanglebody212(eanglebody212_to_dcm(0.5, 0.0, 0.5))
+    theta1, theta2, theta3 = dcm_to_eanglebody212(SO.from_eulerangles_body212(0.5, 0.0, 0.5))
     assert abs(theta1 - 1.0) <= TOL_FINE
     assert abs(theta2 - 0.0) <= TOL_FINE
     assert theta3 == 0.0
 
     # Rotate by a random angle (also asserts the inverse function)
-    theta1, theta2, theta3 = dcm_to_eanglebody212(eanglebody212_to_dcm(some_angle, some_angle, some_angle))
+    theta1, theta2, theta3 = dcm_to_eanglebody212(SO.from_eulerangles_body212(some_angle, some_angle, some_angle))
     assert theta1 == some_angle
     assert theta2 == some_angle
     assert theta3 == some_angle
@@ -454,7 +463,8 @@ def test_dcm_to_eanglebody232():
     Tests the dcm_to_eanglebody232 function.
     """
 
-    from lielab.transform import dcm_to_eanglebody232, eanglebody232_to_dcm
+    from lielab.domain import SO
+    from lielab.transform import dcm_to_eanglebody232
 
     # Identity
     theta1, theta2, theta3 = dcm_to_eanglebody232(DCMId)
@@ -481,13 +491,13 @@ def test_dcm_to_eanglebody232():
     assert abs(theta3 - 0.0) <= TOL_FINE
 
     # Check gimbal lockc condition
-    theta1, theta2, theta3 = dcm_to_eanglebody232(eanglebody232_to_dcm(0.5, 0.0, 0.5))
+    theta1, theta2, theta3 = dcm_to_eanglebody232(SO.from_eulerangles_body232(0.5, 0.0, 0.5))
     assert abs(theta1 - 1.0) <= TOL_FINE
     assert abs(theta2 - 0.0) <= TOL_FINE
     assert theta3 == 0.0
 
     # Rotate by a random angle (also asserts the inverse function)
-    theta1, theta2, theta3 = dcm_to_eanglebody232(eanglebody232_to_dcm(some_angle, some_angle, some_angle))
+    theta1, theta2, theta3 = dcm_to_eanglebody232(SO.from_eulerangles_body232(some_angle, some_angle, some_angle))
     assert theta1 == some_angle
     assert theta2 == some_angle
     assert theta3 == some_angle
@@ -498,7 +508,8 @@ def test_dcm_to_eanglebody313():
     Tests the dcm_to_eanglebody313 function.
     """
 
-    from lielab.transform import dcm_to_eanglebody313, eanglebody313_to_dcm
+    from lielab.domain import SO
+    from lielab.transform import dcm_to_eanglebody313
 
     # Identity
     theta1, theta2, theta3 = dcm_to_eanglebody313(DCMId)
@@ -525,13 +536,13 @@ def test_dcm_to_eanglebody313():
     assert abs(theta3 - 0.0) <= TOL_FINE
 
     # Check gimbal lockc condition
-    theta1, theta2, theta3 = dcm_to_eanglebody313(eanglebody313_to_dcm(0.5, 0.0, 0.5))
+    theta1, theta2, theta3 = dcm_to_eanglebody313(SO.from_eulerangles_body313(0.5, 0.0, 0.5))
     assert abs(theta1 - 1.0) <= TOL_FINE
     assert abs(theta2 - 0.0) <= TOL_FINE
     assert theta3 == 0.0
 
     # Rotate by a random angle (also asserts the inverse function)
-    theta1, theta2, theta3 = dcm_to_eanglebody313(eanglebody313_to_dcm(some_angle, some_angle, some_angle))
+    theta1, theta2, theta3 = dcm_to_eanglebody313(SO.from_eulerangles_body313(some_angle, some_angle, some_angle))
     assert theta1 == some_angle
     assert theta2 == some_angle
     assert theta3 == some_angle
@@ -542,7 +553,8 @@ def test_dcm_to_eanglebody323():
     Tests the dcm_to_eanglebody323 function.
     """
 
-    from lielab.transform import dcm_to_eanglebody323, eanglebody323_to_dcm
+    from lielab.domain import SO
+    from lielab.transform import dcm_to_eanglebody323
 
     # Identity
     theta1, theta2, theta3 = dcm_to_eanglebody323(DCMId)
@@ -569,13 +581,13 @@ def test_dcm_to_eanglebody323():
     assert abs(theta3 - 0.0) <= TOL_FINE
 
     # Check gimbal lockc condition
-    theta1, theta2, theta3 = dcm_to_eanglebody323(eanglebody323_to_dcm(0.5, 0.0, 0.5))
+    theta1, theta2, theta3 = dcm_to_eanglebody323(SO.from_eulerangles_body323(0.5, 0.0, 0.5))
     assert abs(theta1 - 1.0) <= TOL_FINE
     assert abs(theta2 - 0.0) <= TOL_FINE
     assert theta3 == 0.0
 
     # Rotate by a random angle (also asserts the inverse function)
-    theta1, theta2, theta3 = dcm_to_eanglebody323(eanglebody323_to_dcm(some_angle, some_angle, some_angle))
+    theta1, theta2, theta3 = dcm_to_eanglebody323(SO.from_eulerangles_body323(some_angle, some_angle, some_angle))
     assert theta1 == some_angle
     assert theta2 == some_angle
     assert theta3 == some_angle
@@ -586,7 +598,8 @@ def test_dcm_to_eanglespace123():
     Tests the dcm_to_eanglespace123 function.
     """
 
-    from lielab.transform import dcm_to_eanglespace123, eanglespace123_to_dcm
+    from lielab.domain import SO
+    from lielab.transform import dcm_to_eanglespace123
 
     # Identity
     theta1, theta2, theta3 = dcm_to_eanglespace123(DCMId)
@@ -613,13 +626,13 @@ def test_dcm_to_eanglespace123():
     assert abs(theta3 - np.pi/2.0) <= TOL_FINE
 
     # Check gimbal lockc condition
-    theta1, theta2, theta3 = dcm_to_eanglespace123(eanglespace123_to_dcm(0.5, np.pi/2.0, 0.5))
+    theta1, theta2, theta3 = dcm_to_eanglespace123(SO.from_eulerangles_space123(0.5, np.pi/2.0, 0.5))
     assert abs(theta1 - 0.0) <= TOL_FINE
     assert abs(theta2 - np.pi/2.0) <= TOL_FINE
     assert theta3 == 0.0
 
     # Rotate by a random angle (also asserts the inverse function)
-    theta1, theta2, theta3 = dcm_to_eanglespace123(eanglespace123_to_dcm(some_angle, some_angle, some_angle))
+    theta1, theta2, theta3 = dcm_to_eanglespace123(SO.from_eulerangles_space123(some_angle, some_angle, some_angle))
     assert theta1 == some_angle
     assert theta2 == some_angle
     assert theta3 == some_angle
@@ -630,7 +643,8 @@ def test_dcm_to_eanglespace231():
     Tests the dcm_to_eanglespace231 function.
     """
 
-    from lielab.transform import dcm_to_eanglespace231, eanglespace231_to_dcm
+    from lielab.domain import SO
+    from lielab.transform import dcm_to_eanglespace231
 
     # Identity
     theta1, theta2, theta3 = dcm_to_eanglespace231(DCMId)
@@ -657,13 +671,13 @@ def test_dcm_to_eanglespace231():
     assert abs(theta3 - 0.0) <= TOL_FINE
 
     # Check gimbal lockc condition
-    theta1, theta2, theta3 = dcm_to_eanglespace231(eanglespace231_to_dcm(0.5, np.pi/2.0, 0.5))
+    theta1, theta2, theta3 = dcm_to_eanglespace231(SO.from_eulerangles_space231(0.5, np.pi/2.0, 0.5))
     assert abs(theta1 - 0.0) <= TOL_FINE
     assert abs(theta2 - np.pi/2.0) <= TOL_FINE
     assert theta3 == 0.0
 
     # Rotate by a random angle (also asserts the inverse function)
-    theta1, theta2, theta3 = dcm_to_eanglespace231(eanglespace231_to_dcm(some_angle, some_angle, some_angle))
+    theta1, theta2, theta3 = dcm_to_eanglespace231(SO.from_eulerangles_space231(some_angle, some_angle, some_angle))
     assert theta1 == some_angle
     assert theta2 == some_angle
     assert theta3 == some_angle
@@ -674,7 +688,8 @@ def test_dcm_to_eanglespace312():
     Tests the dcm_to_eanglespace312 function.
     """
 
-    from lielab.transform import dcm_to_eanglespace312, eanglespace312_to_dcm
+    from lielab.domain import SO
+    from lielab.transform import dcm_to_eanglespace312
 
     # Identity
     theta1, theta2, theta3 = dcm_to_eanglespace312(DCMId)
@@ -701,13 +716,13 @@ def test_dcm_to_eanglespace312():
     assert abs(theta3 - 0.0) <= TOL_FINE
 
     # Check gimbal lockc condition
-    theta1, theta2, theta3 = dcm_to_eanglespace312(eanglespace312_to_dcm(0.5, np.pi/2.0, 0.5))
+    theta1, theta2, theta3 = dcm_to_eanglespace312(SO.from_eulerangles_space312(0.5, np.pi/2.0, 0.5))
     assert abs(theta1 - 0.0) <= TOL_FINE
     assert abs(theta2 - np.pi/2.0) <= TOL_FINE
     assert theta3 == 0.0
 
     # Rotate by a random angle (also asserts the inverse function)
-    theta1, theta2, theta3 = dcm_to_eanglespace312(eanglespace312_to_dcm(some_angle, some_angle, some_angle))
+    theta1, theta2, theta3 = dcm_to_eanglespace312(SO.from_eulerangles_space312(some_angle, some_angle, some_angle))
     assert theta1 == some_angle
     assert theta2 == some_angle
     assert theta3 == some_angle
@@ -718,7 +733,8 @@ def test_dcm_to_eanglespace132():
     Tests the dcm_to_eanglespace132 function.
     """
 
-    from lielab.transform import dcm_to_eanglespace132, eanglespace132_to_dcm
+    from lielab.domain import SO
+    from lielab.transform import dcm_to_eanglespace132
 
     # Identity
     theta1, theta2, theta3 = dcm_to_eanglespace132(DCMId)
@@ -745,13 +761,13 @@ def test_dcm_to_eanglespace132():
     assert abs(theta3- 0.0) <= TOL_FINE
 
     # Check gimbal lockc condition
-    theta1, theta2, theta3 = dcm_to_eanglespace132(eanglespace132_to_dcm(0.5, np.pi/2.0, 0.5))
+    theta1, theta2, theta3 = dcm_to_eanglespace132(SO.from_eulerangles_space132(0.5, np.pi/2.0, 0.5))
     assert abs(theta1 - 1.0) <= TOL_FINE
     assert abs(theta2 - np.pi/2.0) <= TOL_FINE
     assert theta3 == 0.0
 
     # Rotate by a random angle (also asserts the inverse function)
-    theta1, theta2, theta3 = dcm_to_eanglespace132(eanglespace132_to_dcm(some_angle, some_angle, some_angle))
+    theta1, theta2, theta3 = dcm_to_eanglespace132(SO.from_eulerangles_space132(some_angle, some_angle, some_angle))
     assert theta1 == some_angle
     assert theta2 == some_angle
     assert theta3 == some_angle
@@ -762,7 +778,8 @@ def test_dcm_to_eanglespace213():
     Tests the dcm_to_eanglespace213 function.
     """
 
-    from lielab.transform import dcm_to_eanglespace213, eanglespace213_to_dcm
+    from lielab.domain import SO
+    from lielab.transform import dcm_to_eanglespace213
 
     # Identity
     theta1, theta2, theta3 = dcm_to_eanglespace213(DCMId)
@@ -789,13 +806,13 @@ def test_dcm_to_eanglespace213():
     assert abs(theta3 - np.pi/2.0) <= TOL_FINE
 
     # Check gimbal lockc condition
-    theta1, theta2, theta3 = dcm_to_eanglespace213(eanglespace213_to_dcm(0.5, np.pi/2.0, 0.5))
+    theta1, theta2, theta3 = dcm_to_eanglespace213(SO.from_eulerangles_space213(0.5, np.pi/2.0, 0.5))
     assert abs(theta1 - 1.0) <= TOL_FINE
     assert abs(theta2 - np.pi/2.0) <= TOL_FINE
     assert theta3 == 0.0
 
     # Rotate by a random angle (also asserts the inverse function)
-    theta1, theta2, theta3 = dcm_to_eanglespace213(eanglespace213_to_dcm(some_angle, some_angle, some_angle))
+    theta1, theta2, theta3 = dcm_to_eanglespace213(SO.from_eulerangles_space213(some_angle, some_angle, some_angle))
     assert theta1 == some_angle
     assert theta2 == some_angle
     assert theta3 == some_angle
@@ -806,7 +823,8 @@ def test_dcm_to_eanglespace321():
     Tests the dcm_to_eanglespace321 function.
     """
 
-    from lielab.transform import dcm_to_eanglespace321, eanglespace321_to_dcm
+    from lielab.domain import SO
+    from lielab.transform import dcm_to_eanglespace321
 
     # Identity
     theta1, theta2, theta3 = dcm_to_eanglespace321(DCMId)
@@ -833,13 +851,13 @@ def test_dcm_to_eanglespace321():
     assert abs(theta3 - 0.0) <= TOL_FINE
 
     # Check gimbal lockc condition
-    theta1, theta2, theta3 = dcm_to_eanglespace321(eanglespace321_to_dcm(0.5, np.pi/2.0, 0.5))
+    theta1, theta2, theta3 = dcm_to_eanglespace321(SO.from_eulerangles_space321(0.5, np.pi/2.0, 0.5))
     assert abs(theta1 - 1.0) <= TOL_FINE
     assert abs(theta2 - np.pi/2.0) <= TOL_FINE
     assert theta3 == 0.0
 
     # Rotate by a random angle (also asserts the inverse function)
-    theta1, theta2, theta3 = dcm_to_eanglespace321(eanglespace321_to_dcm(some_angle, some_angle, some_angle))
+    theta1, theta2, theta3 = dcm_to_eanglespace321(SO.from_eulerangles_space321(some_angle, some_angle, some_angle))
     assert theta1 == some_angle
     assert theta2 == some_angle
     assert theta3 == some_angle
@@ -850,7 +868,8 @@ def test_dcm_to_eanglespace121():
     Tests the dcm_to_eanglespace121 function.
     """
 
-    from lielab.transform import dcm_to_eanglespace121, eanglespace121_to_dcm
+    from lielab.domain import SO
+    from lielab.transform import dcm_to_eanglespace121
 
     # Identity
     theta1, theta2, theta3 = dcm_to_eanglespace121(DCMId)
@@ -877,13 +896,13 @@ def test_dcm_to_eanglespace121():
     assert abs(theta3 - np.pi/2.0) <= TOL_FINE
 
     # Check gimbal lockc condition
-    theta1, theta2, theta3 = dcm_to_eanglespace121(eanglespace121_to_dcm(0.5, 0.0, 0.5))
+    theta1, theta2, theta3 = dcm_to_eanglespace121(SO.from_eulerangles_space121(0.5, 0.0, 0.5))
     assert abs(theta1 - 1.0) <= TOL_FINE
     assert abs(theta2 - 0.0) <= TOL_FINE
     assert theta3 == 0.0
 
     # Rotate by a random angle (also asserts the inverse function)
-    theta1, theta2, theta3 = dcm_to_eanglespace121(eanglespace121_to_dcm(some_angle, some_angle, some_angle))
+    theta1, theta2, theta3 = dcm_to_eanglespace121(SO.from_eulerangles_space121(some_angle, some_angle, some_angle))
     assert theta1 == some_angle
     assert theta2 == some_angle
     assert theta3 == some_angle
@@ -894,7 +913,8 @@ def test_dcm_to_eanglespace131():
     Tests the dcm_to_eanglespace131 function.
     """
 
-    from lielab.transform import dcm_to_eanglespace131, eanglespace131_to_dcm
+    from lielab.domain import SO
+    from lielab.transform import dcm_to_eanglespace131
 
     # Identity
     theta1, theta2, theta3 = dcm_to_eanglespace131(DCMId)
@@ -921,13 +941,13 @@ def test_dcm_to_eanglespace131():
     assert abs(theta3 - 0.0) <= TOL_FINE
 
     # Check gimbal lockc condition
-    theta1, theta2, theta3 = dcm_to_eanglespace131(eanglespace131_to_dcm(0.5, 0.0, 0.5))
+    theta1, theta2, theta3 = dcm_to_eanglespace131(SO.from_eulerangles_space131(0.5, 0.0, 0.5))
     assert abs(theta1 - 1.0) <= TOL_FINE
     assert abs(theta2 - 0.0) <= TOL_FINE
     assert theta3 == 0.0
 
     # Rotate by a random angle (also asserts the inverse function)
-    theta1, theta2, theta3 = dcm_to_eanglespace131(eanglespace131_to_dcm(some_angle, some_angle, some_angle))
+    theta1, theta2, theta3 = dcm_to_eanglespace131(SO.from_eulerangles_space131(some_angle, some_angle, some_angle))
     assert theta1 == some_angle
     assert theta2 == some_angle
     assert theta3 == some_angle
@@ -938,7 +958,8 @@ def test_dcm_to_eanglespace212():
     Tests the dcm_to_eanglespace212 function.
     """
 
-    from lielab.transform import dcm_to_eanglespace212, eanglespace212_to_dcm
+    from lielab.domain import SO
+    from lielab.transform import dcm_to_eanglespace212
 
     # Identity
     theta1, theta2, theta3 = dcm_to_eanglespace212(DCMId)
@@ -965,13 +986,13 @@ def test_dcm_to_eanglespace212():
     assert abs(theta3 + np.pi/2.0) <= TOL_FINE
 
     # Check gimbal lockc condition
-    theta1, theta2, theta3 = dcm_to_eanglespace212(eanglespace212_to_dcm(0.5, 0.0, 0.5))
+    theta1, theta2, theta3 = dcm_to_eanglespace212(SO.from_eulerangles_space212(0.5, 0.0, 0.5))
     assert abs(theta1 - 1.0) <= TOL_FINE
     assert abs(theta2 - 0.0) <= TOL_FINE
     assert theta3 == 0.0
 
     # Rotate by a random angle (also asserts the inverse function)
-    theta1, theta2, theta3 = dcm_to_eanglespace212(eanglespace212_to_dcm(some_angle, some_angle, some_angle))
+    theta1, theta2, theta3 = dcm_to_eanglespace212(SO.from_eulerangles_space212(some_angle, some_angle, some_angle))
     assert theta1 == some_angle
     assert theta2 == some_angle
     assert theta3 == some_angle
@@ -982,7 +1003,8 @@ def test_dcm_to_eanglespace232():
     Tests the dcm_to_eanglespace232 function.
     """
 
-    from lielab.transform import dcm_to_eanglespace232, eanglespace232_to_dcm
+    from lielab.domain import SO
+    from lielab.transform import dcm_to_eanglespace232
 
     # Identity
     theta1, theta2, theta3 = dcm_to_eanglespace232(DCMId)
@@ -1009,13 +1031,13 @@ def test_dcm_to_eanglespace232():
     assert abs(theta3 - 0.0) <= TOL_FINE
 
     # Check gimbal lockc condition
-    theta1, theta2, theta3 = dcm_to_eanglespace232(eanglespace232_to_dcm(0.5, 0.0, 0.5))
+    theta1, theta2, theta3 = dcm_to_eanglespace232(SO.from_eulerangles_space232(0.5, 0.0, 0.5))
     assert abs(theta1 - 1.0) <= TOL_FINE
     assert abs(theta2 - 0.0) <= TOL_FINE
     assert theta3 == 0.0
 
     # Rotate by a random angle (also asserts the inverse function)
-    theta1, theta2, theta3 = dcm_to_eanglespace232(eanglespace232_to_dcm(some_angle, some_angle, some_angle))
+    theta1, theta2, theta3 = dcm_to_eanglespace232(SO.from_eulerangles_space232(some_angle, some_angle, some_angle))
     assert theta1 == some_angle
     assert theta2 == some_angle
     assert theta3 == some_angle
@@ -1026,7 +1048,8 @@ def test_dcm_to_eanglespace313():
     Tests the dcm_to_eanglespace313 function.
     """
 
-    from lielab.transform import dcm_to_eanglespace313, eanglespace313_to_dcm
+    from lielab.domain import SO
+    from lielab.transform import dcm_to_eanglespace313
 
     # Identity
     theta1, theta2, theta3 = dcm_to_eanglespace313(DCMId)
@@ -1053,13 +1076,13 @@ def test_dcm_to_eanglespace313():
     assert abs(theta3 - 0.0) <= TOL_FINE
 
     # Check gimbal lockc condition
-    theta1, theta2, theta3 = dcm_to_eanglespace313(eanglespace313_to_dcm(0.5, 0.0, 0.5))
+    theta1, theta2, theta3 = dcm_to_eanglespace313(SO.from_eulerangles_space313(0.5, 0.0, 0.5))
     assert abs(theta1 - 1.0) <= TOL_FINE
     assert abs(theta2 - 0.0) <= TOL_FINE
     assert theta3 == 0.0
 
     # Rotate by a random angle (also asserts the inverse function)
-    theta1, theta2, theta3 = dcm_to_eanglespace313(eanglespace313_to_dcm(some_angle, some_angle, some_angle))
+    theta1, theta2, theta3 = dcm_to_eanglespace313(SO.from_eulerangles_space313(some_angle, some_angle, some_angle))
     assert theta1 == some_angle
     assert theta2 == some_angle
     assert theta3 == some_angle
@@ -1070,7 +1093,8 @@ def test_dcm_to_eanglespace323():
     Tests the dcm_to_eanglespace323 function.
     """
 
-    from lielab.transform import dcm_to_eanglespace323, eanglespace323_to_dcm
+    from lielab.domain import SO
+    from lielab.transform import dcm_to_eanglespace323
 
     # Identity
     theta1, theta2, theta3 = dcm_to_eanglespace323(DCMId)
@@ -1097,760 +1121,16 @@ def test_dcm_to_eanglespace323():
     assert abs(theta3 - 0.0) <= TOL_FINE
 
     # Check gimbal lockc condition
-    theta1, theta2, theta3 = dcm_to_eanglespace323(eanglespace323_to_dcm(0.5, 0.0, 0.5))
+    theta1, theta2, theta3 = dcm_to_eanglespace323(SO.from_eulerangles_space323(0.5, 0.0, 0.5))
     assert abs(theta1 - 1.0) <= TOL_FINE
     assert abs(theta2 - 0.0) <= TOL_FINE
     assert theta3 == 0.0
 
     # Rotate by a random angle (also asserts the inverse function)
-    theta1, theta2, theta3 = dcm_to_eanglespace323(eanglespace323_to_dcm(some_angle, some_angle, some_angle))
+    theta1, theta2, theta3 = dcm_to_eanglespace323(SO.from_eulerangles_space323(some_angle, some_angle, some_angle))
     assert theta1 == some_angle
     assert theta2 == some_angle
     assert theta3 == some_angle
-
-
-def test_eanglebody123_to_dcm():
-    """
-    Tests the eanglebody123_to_dcm function.
-    """
-
-    from lielab.transform import eanglebody123_to_dcm
-
-    # Identity
-    dcm = eanglebody123_to_dcm(0.0, 0.0, 0.0)
-    assert_domain(DCMId, dcm)
-
-    # Rotate 90 degrees by x-axis
-    dcm = eanglebody123_to_dcm(np.pi/2.0, 0.0, 0.0)
-    assert_domain(DCMrotx, dcm)
-
-    # Rotate 90 degrees by y-axis
-    dcm = eanglebody123_to_dcm(0.0, np.pi/2.0, 0.0)
-    assert_domain(DCMroty, dcm)
-
-    # Rotate 90 degrees by z-axis
-    dcm = eanglebody123_to_dcm(0.0, 0.0, np.pi/2.0)
-    assert_domain(DCMrotz, dcm)
-
-    # Rotate by a random angle
-    dcm = eanglebody123_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
-    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
-
-
-def test_eanglebody231_to_dcm():
-    """
-    Tests the eanglebody231_to_dcm function.
-    """
-
-    from lielab.transform import eanglebody231_to_dcm
-
-    # Identity
-    dcm = eanglebody231_to_dcm(0.0, 0.0, 0.0)
-    assert_domain(DCMId, dcm)
-
-    # Rotate 90 degrees by x-axis
-    dcm = eanglebody231_to_dcm(0.0, 0.0, np.pi/2.0)
-    assert_domain(DCMrotx, dcm)
-
-    # Rotate 90 degrees by y-axis
-    dcm = eanglebody231_to_dcm(np.pi/2.0, 0.0, 0.0)
-    assert_domain(DCMroty, dcm)
-
-    # Rotate 90 degrees by z-axis
-    dcm = eanglebody231_to_dcm(0.0, np.pi/2.0, 0.0)
-    assert_domain(DCMrotz, dcm)
-
-    # Rotate by a random angle
-    dcm = eanglebody231_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
-    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
-
-
-def test_eanglebody312_to_dcm():
-    """
-    Tests the eanglebody312_to_dcm function.
-    """
-
-    from lielab.transform import eanglebody312_to_dcm
-
-    # Identity
-    dcm = eanglebody312_to_dcm(0.0, 0.0, 0.0)
-    assert_domain(DCMId, dcm)
-
-    # Rotate 90 degrees by x-axis
-    dcm = eanglebody312_to_dcm(0.0, pi/2.0, 0.0)
-    assert_domain(DCMrotx, dcm)
-
-    # Rotate 90 degrees by y-axis
-    dcm = eanglebody312_to_dcm(0.0, 0.0, pi/2.0)
-    assert_domain(DCMroty, dcm)
-
-    # Rotate 90 degrees by z-axis
-    dcm = eanglebody312_to_dcm(pi/2.0, 0.0, 0.0)
-    assert_domain(DCMrotz, dcm)
-
-    # Rotate by a random angle
-    dcm = eanglebody312_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
-    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
-
-
-def test_eanglebody132_to_dcm():
-    """
-    Tests the eanglebody132_to_dcm function.
-    """
-
-    from lielab.transform import eanglebody132_to_dcm
-
-    # Identity
-    dcm = eanglebody132_to_dcm(0.0, 0.0, 0.0)
-    assert_domain(DCMId, dcm)
-
-    # Rotate 90 degrees by x-axis
-    dcm = eanglebody132_to_dcm(pi/2.0, 0.0, 0.0)
-    assert_domain(DCMrotx, dcm)
-
-    # Rotate 90 degrees by y-axis
-    dcm = eanglebody132_to_dcm(0.0, 0.0, pi/2.0)
-    assert_domain(DCMroty, dcm)
-
-    # Rotate 90 degrees by z-axis
-    dcm = eanglebody132_to_dcm(0.0, pi/2.0, 0.0)
-    assert_domain(DCMrotz, dcm)
-
-    # Rotate by a random angle
-    dcm = eanglebody132_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
-    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
-
-
-def test_eanglebody213_to_dcm():
-    """
-    Tests the eanglebody213_to_dcm function.
-    """
-
-    from lielab.transform import eanglebody213_to_dcm
-
-    # Identity
-    dcm = eanglebody213_to_dcm(0.0, 0.0, 0.0)
-    assert_domain(DCMId, dcm)
-
-    # Rotate 90 degrees by x-axis
-    dcm = eanglebody213_to_dcm(0.0, pi/2.0, 0.0)
-    assert_domain(DCMrotx, dcm)
-
-    # Rotate 90 degrees by y-axis
-    dcm = eanglebody213_to_dcm(pi/2.0, 0.0, 0.0)
-    assert_domain(DCMroty, dcm)
-
-    # Rotate 90 degrees by z-axis
-    dcm = eanglebody213_to_dcm(0.0, 0.0, pi/2.0)
-    assert_domain(DCMrotz, dcm)
-
-    # Rotate by a random angle
-    dcm = eanglebody213_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
-    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
-
-
-def test_eanglebody321_to_dcm():
-    """
-    Tests the eanglebody321_to_dcm function.
-    """
-
-    from lielab.transform import eanglebody321_to_dcm
-
-    # Identity
-    dcm = eanglebody321_to_dcm(0.0, 0.0, 0.0)
-    assert_domain(DCMId, dcm)
-
-    # Rotate 90 degrees by x-axis
-    dcm = eanglebody321_to_dcm(0.0, 0.0, pi/2.0)
-    assert_domain(DCMrotx, dcm)
-
-    # Rotate 90 degrees by y-axis
-    dcm = eanglebody321_to_dcm(0.0, pi/2.0, 0.0)
-    assert_domain(DCMroty, dcm)
-
-    # Rotate 90 degrees by z-axis
-    dcm = eanglebody321_to_dcm(pi/2.0, 0.0, 0.0)
-    assert_domain(DCMrotz, dcm)
-
-    # Rotate by a random angle
-    dcm = eanglebody321_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
-    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
-
-
-def test_eanglebody121_to_dcm():
-    """
-    Tests the eanglebody121_to_dcm function.
-    """
-
-    from lielab.transform import eanglebody121_to_dcm
-
-    # Identity
-    dcm = eanglebody121_to_dcm(0.0, 0.0, 0.0)
-    assert_domain(DCMId, dcm)
-
-    # Rotate 90 degrees by x-axis
-    dcm = eanglebody121_to_dcm(pi/2.0, 0.0, 0.0)
-    assert_domain(DCMrotx, dcm)
-
-    # Rotate 90 degrees by x-axis
-    dcm = eanglebody121_to_dcm(0.0, 0.0, pi/2.0)
-    assert_domain(DCMrotx, dcm)
-
-    # Rotate 90 degrees by y-axis
-    dcm = eanglebody121_to_dcm(0.0, pi/2.0, 0.0)
-    assert_domain(DCMroty, dcm)
-
-    # Rotate 90 degrees by z-axis
-    dcm = eanglebody121_to_dcm(pi/2.0, pi/2.0, -pi/2.0)
-    assert_domain(DCMrotz, dcm)
-
-    # Rotate by a random angle
-    dcm = eanglebody121_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
-    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
-
-
-def test_eanglebody131_to_dcm():
-    """
-    Tests the eanglebody131_to_dcm function.
-    """
-
-    from lielab.transform import eanglebody131_to_dcm
-
-    # Identity
-    dcm = eanglebody131_to_dcm(0.0, 0.0, 0.0)
-    assert_domain(DCMId, dcm)
-
-    # Rotate 90 degrees by x-axis
-    dcm = eanglebody131_to_dcm(pi/2.0, 0.0, 0.0)
-    assert_domain(DCMrotx, dcm)
-
-    # Rotate 90 degrees by x-axis
-    dcm = eanglebody131_to_dcm(0.0, 0.0, pi/2.0)
-    assert_domain(DCMrotx, dcm)
-
-    # Rotate 90 degrees by y-axis
-    dcm = eanglebody131_to_dcm(pi/2.0, -pi/2.0, -pi/2.0)
-    assert_domain(DCMroty, dcm)
-
-    # Rotate 90 degrees by z-axis
-    dcm = eanglebody131_to_dcm(0.0, pi/2.0, 0.0)
-    assert_domain(DCMrotz, dcm)
-
-    # Rotate by a random angle
-    dcm = eanglebody131_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
-    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
-
-
-def test_eanglebody212_to_dcm():
-    """
-    Tests the eanglebody212_to_dcm function.
-    """
-
-    from lielab.transform import eanglebody212_to_dcm
-
-    # Identity
-    dcm = eanglebody212_to_dcm(0.0, 0.0, 0.0)
-    assert_domain(DCMId, dcm)
-
-    # Rotate 90 degrees by x-axis
-    dcm = eanglebody212_to_dcm(0.0, pi/2.0, 0.0)
-    assert_domain(DCMrotx, dcm)
-
-    # Rotate 90 degrees by y-axis
-    dcm = eanglebody212_to_dcm(pi/2.0, 0.0, 0.0)
-    assert_domain(DCMroty, dcm)
-
-    # Rotate 90 degrees by y-axis
-    dcm = eanglebody212_to_dcm(0.0, 0.0, pi/2.0)
-    assert_domain(DCMroty, dcm)
-
-    # Rotate 90 degrees by z-axis
-    dcm = eanglebody212_to_dcm(pi/2.0, -pi/2.0, -pi/2.0)
-    assert_domain(DCMrotz, dcm)
-
-    # Rotate by a random angle
-    dcm = eanglebody212_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
-    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
-
-
-def test_eanglebody232_to_dcm():
-    """
-    Tests the eanglebody232_to_dcm function.
-    """
-
-    from lielab.transform import eanglebody232_to_dcm
-
-    # Identity
-    dcm = eanglebody232_to_dcm(0.0, 0.0, 0.0)
-    assert_domain(DCMId, dcm)
-
-    # Rotate 90 degrees by x-axis
-    dcm = eanglebody232_to_dcm(pi/2.0, pi/2.0, -pi/2.0)
-    assert_domain(DCMrotx, dcm)
-
-    # Rotate 90 degrees by y-axis
-    dcm = eanglebody232_to_dcm(pi/2.0, 0.0, 0.0)
-    assert_domain(DCMroty, dcm)
-
-    # Rotate 90 degrees by y-axis
-    dcm = eanglebody232_to_dcm(0.0, 0.0, pi/2.0)
-    assert_domain(DCMroty, dcm)
-
-    # Rotate 90 degrees by z-axis
-    dcm = eanglebody232_to_dcm(0.0, pi/2.0, 0.0)
-    assert_domain(DCMrotz, dcm)
-
-    # Rotate by a random angle
-    dcm = eanglebody232_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
-    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
-
-
-def test_eanglebody313_to_dcm():
-    """
-    Tests the eanglebody313_to_dcm function.
-    """
-
-    from lielab.transform import eanglebody313_to_dcm
-
-    # Identity
-    dcm = eanglebody313_to_dcm(0.0, 0.0, 0.0)
-    assert_domain(DCMId, dcm)
-
-    # Rotate 90 degrees by x-axis
-    dcm = eanglebody313_to_dcm(0.0, pi/2.0, 0.0)
-    assert_domain(DCMrotx, dcm)
-
-    # Rotate 90 degrees by y-axis
-    dcm = eanglebody313_to_dcm(-pi/2.0, -pi/2.0, pi/2.0)
-    assert_domain(DCMroty, dcm)
-
-    # Rotate 90 degrees by z-axis
-    dcm = eanglebody313_to_dcm(pi/2.0, 0.0, 0.0)
-    assert_domain(DCMrotz, dcm)
-
-    # Rotate 90 degrees by z-axis
-    dcm = eanglebody313_to_dcm(0.0, 0.0, pi/2.0)
-    assert_domain(DCMrotz, dcm)
-
-    # Rotate by a random angle
-    dcm = eanglebody313_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
-    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
-
-
-def test_eanglebody323_to_dcm():
-    """
-    Tests the eanglebody323_to_dcm function.
-    """
-
-    from lielab.transform import eanglebody323_to_dcm
-
-    # Identity
-    dcm = eanglebody323_to_dcm(0.0, 0.0, 0.0)
-    assert_domain(DCMId, dcm)
-
-    # Rotate 90 degrees by x-axis
-    dcm = eanglebody323_to_dcm(pi/2.0, -pi/2.0, -pi/2.0)
-    assert_domain(DCMrotx, dcm)
-
-    # Rotate 90 degrees by y-axis
-    dcm = eanglebody323_to_dcm(0.0, pi/2.0, 0.0)
-    assert_domain(DCMroty, dcm)
-
-    # Rotate 90 degrees by z-axis
-    dcm = eanglebody323_to_dcm(pi/2.0, 0.0, 0.0)
-    assert_domain(DCMrotz, dcm)
-
-    # Rotate 90 degrees by z-axis
-    dcm = eanglebody323_to_dcm(0.0, 0.0, pi/2.0)
-    assert_domain(DCMrotz, dcm)
-
-    # Rotate by a random angle
-    dcm = eanglebody323_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
-    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
-
-
-def test_eanglespace123_to_dcm():
-    """
-    Tests the eanglespace123_to_dcm function.
-    """
-
-    from lielab.transform import eanglespace123_to_dcm
-
-    # Identity
-    dcm = eanglespace123_to_dcm(0.0, 0.0, 0.0)
-    assert_domain(DCMId, dcm)
-
-    # Rotate 90 degrees by x-axis
-    dcm = eanglespace123_to_dcm(pi/2.0, 0.0, 0.0)
-    assert_domain(DCMrotx, dcm)
-
-    # Rotate 90 degrees by y-axis
-    dcm = eanglespace123_to_dcm(0.0, pi/2.0, 0.0)
-    assert_domain(DCMroty, dcm)
-
-    # Rotate 90 degrees by z-axis
-    dcm = eanglespace123_to_dcm(0.0, 0.0, pi/2.0)
-    assert_domain(DCMrotz, dcm)
-
-    # Rotate by a random angle
-    dcm = eanglespace123_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
-    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
-
-
-def test_eanglespace231_to_dcm():
-    """
-    Tests the eanglespace231_to_dcm function.
-    """
-
-    from lielab.transform import eanglespace231_to_dcm
-
-    # Identity
-    dcm = eanglespace231_to_dcm(0.0, 0.0, 0.0)
-    assert_domain(DCMId, dcm)
-
-    # Rotate 90 degrees by x-axis
-    dcm = eanglespace231_to_dcm(0.0, 0.0, pi/2.0)
-    assert_domain(DCMrotx, dcm)
-
-    # Rotate 90 degrees by y-axis
-    dcm = eanglespace231_to_dcm(pi/2.0, 0.0, 0.0)
-    assert_domain(DCMroty, dcm)
-
-    # Rotate 90 degrees by z-axis
-    dcm = eanglespace231_to_dcm(0.0, pi/2.0, 0.0)
-    assert_domain(DCMrotz, dcm)
-
-    # Rotate by a random angle
-    dcm = eanglespace231_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
-    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
-
-
-def test_eanglespace312_to_dcm():
-    """
-    Tests the eanglespace312_to_dcm function.
-    """
-
-    from lielab.transform import eanglespace312_to_dcm
-
-    # Identity
-    dcm = eanglespace312_to_dcm(0.0, 0.0, 0.0)
-    assert_domain(DCMId, dcm)
-
-    # Rotate 90 degrees by x-axis
-    dcm = eanglespace312_to_dcm(0.0, pi/2.0, 0.0)
-    assert_domain(DCMrotx, dcm)
-
-    # Rotate 90 degrees by y-axis
-    dcm = eanglespace312_to_dcm(0.0, 0.0, pi/2.0)
-    assert_domain(DCMroty, dcm)
-
-    # Rotate 90 degrees by z-axis
-    dcm = eanglespace312_to_dcm(pi/2.0, 0.0, 0.0)
-    assert_domain(DCMrotz, dcm)
-
-    # Rotate by a random angle
-    dcm = eanglespace312_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
-    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
-
-
-def test_eanglespace132_to_dcm():
-    """
-    Tests the eanglespace132_to_dcm function.
-    """
-
-    from lielab.transform import eanglespace132_to_dcm
-
-    # Identity
-    dcm = eanglespace132_to_dcm(0.0, 0.0, 0.0)
-    assert_domain(DCMId, dcm)
-
-    # Rotate 90 degrees by x-axis
-    dcm = eanglespace132_to_dcm(pi/2.0, 0.0, 0.0)
-    assert_domain(DCMrotx, dcm)
-
-    # Rotate 90 degrees by y-axis
-    dcm = eanglespace132_to_dcm(0.0, 0.0, pi/2.0)
-    assert_domain(DCMroty, dcm)
-
-    # Rotate 90 degrees by z-axis
-    dcm = eanglespace132_to_dcm(0.0, pi/2.0, 0.0)
-    assert_domain(DCMrotz, dcm)
-
-    # Rotate by a random angle
-    dcm = eanglespace132_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
-    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
-
-
-def test_eanglespace213_to_dcm():
-    """
-    Tests the eanglespace213_to_dcm function.
-    """
-
-    from lielab.transform import eanglespace213_to_dcm
-
-    # Identity
-    dcm = eanglespace213_to_dcm(0.0, 0.0, 0.0)
-    assert_domain(DCMId, dcm)
-
-    # Rotate 90 degrees by x-axis
-    dcm = eanglespace213_to_dcm(0.0, pi/2.0, 0.0)
-    assert_domain(DCMrotx, dcm)
-
-    # Rotate 90 degrees by y-axis
-    dcm = eanglespace213_to_dcm(pi/2.0, 0.0, 0.0)
-    assert_domain(DCMroty, dcm)
-
-    # Rotate 90 degrees by z-axis
-    dcm = eanglespace213_to_dcm(0.0, 0.0, pi/2.0)
-    assert_domain(DCMrotz, dcm)
-
-    # Rotate by a random angle
-    dcm = eanglespace213_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
-    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
-
-
-def test_eanglespace321_to_dcm():
-    """
-    Tests the eanglespace321_to_dcm function.
-    """
-
-    from lielab.transform import eanglespace321_to_dcm
-
-    # Identity
-    dcm = eanglespace321_to_dcm(0.0, 0.0, 0.0)
-    assert_domain(DCMId, dcm)
-
-    # Rotate 90 degrees by x-axis
-    dcm = eanglespace321_to_dcm(0.0, 0.0, pi/2.0)
-    assert_domain(DCMrotx, dcm)
-
-    # Rotate 90 degrees by y-axis
-    dcm = eanglespace321_to_dcm(0.0, pi/2.0, 0.0)
-    assert_domain(DCMroty, dcm)
-
-    # Rotate 90 degrees by z-axis
-    dcm = eanglespace321_to_dcm(pi/2.0, 0.0, 0.0)
-    assert_domain(DCMrotz, dcm)
-
-    # Rotate by a random angle
-    dcm = eanglespace321_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
-    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
-
-
-def test_eanglespace121_to_dcm():
-    """
-    Tests the eanglespace121_to_dcm function.
-    """
-
-    from lielab.transform import eanglespace121_to_dcm
-
-    # Identity
-    dcm = eanglespace121_to_dcm(0.0, 0.0, 0.0)
-    assert_domain(DCMId, dcm)
-
-    # Rotate 90 degrees by x-axis
-    dcm = eanglespace121_to_dcm(pi/2.0, 0.0, 0.0)
-    assert_domain(DCMrotx, dcm)
-
-    # Rotate 90 degrees by x-axis
-    dcm = eanglespace121_to_dcm(0.0, 0.0, pi/2.0)
-    assert_domain(DCMrotx, dcm)
-
-    # Rotate 90 degrees by y-axis
-    dcm = eanglespace121_to_dcm(0.0, pi/2.0, 0.0)
-    assert_domain(DCMroty, dcm)
-
-    # Rotate 90 degrees by z-axis
-    dcm = eanglespace121_to_dcm(pi/2.0, -pi/2.0, -pi/2.0)
-    assert_domain(DCMrotz, dcm)
-
-    # Rotate by a random angle
-    dcm = eanglespace121_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
-    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
-
-
-def test_eanglespace131_to_dcm():
-    """
-    Tests the eanglespace131_to_dcm function.
-    """
-
-    from lielab.transform import eanglespace131_to_dcm
-
-    # Identity
-    dcm = eanglespace131_to_dcm(0.0, 0.0, 0.0)
-    assert_domain(DCMId, dcm)
-
-    # Rotate 90 degrees by x-axis
-    dcm = eanglespace131_to_dcm(pi/2.0, 0.0, 0.0)
-    assert_domain(DCMrotx, dcm)
-
-    # Rotate 90 degrees by x-axis
-    dcm = eanglespace131_to_dcm(0.0, 0.0, pi/2.0)
-    assert_domain(DCMrotx, dcm)
-
-    # Rotate 90 degrees by y-axis
-    dcm = eanglespace131_to_dcm(pi/2.0, pi/2.0, -pi/2.0)
-    assert_domain(DCMroty, dcm)
-
-    # Rotate 90 degrees by z-axis
-    dcm = eanglespace131_to_dcm(0.0, pi/2.0, 0.0)
-    assert_domain(DCMrotz, dcm)
-
-    # Rotate by a random angle
-    dcm = eanglespace131_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
-    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
-
-
-def test_eanglespace212_to_dcm():
-    """
-    Tests the eanglespace212_to_dcm function.
-    """
-
-    from lielab.transform import eanglespace212_to_dcm
-
-    # Identity
-    dcm = eanglespace212_to_dcm(0.0, 0.0, 0.0)
-    assert_domain(DCMId, dcm)
-
-    # Rotate 90 degrees by x-axis
-    dcm = eanglespace212_to_dcm(0.0, pi/2.0, 0.0)
-    assert_domain(DCMrotx, dcm)
-
-    # Rotate 90 degrees by y-axis
-    dcm = eanglespace212_to_dcm(pi/2.0, 0.0, 0.0)
-    assert_domain(DCMroty, dcm)
-
-    # Rotate 90 degrees by y-axis
-    dcm = eanglespace212_to_dcm(0.0, 0.0, pi/2.0)
-    assert_domain(DCMroty, dcm)
-
-    # Rotate 90 degrees by z-axis
-    dcm = eanglespace212_to_dcm(pi/2.0, pi/2.0, -pi/2.0)
-    assert_domain(DCMrotz, dcm)
-
-    # Rotate by a random angle
-    dcm = eanglespace212_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
-    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
-
-
-def test_eanglespace232_to_dcm():
-    """
-    Tests the eanglespace232_to_dcm function.
-    """
-
-    from lielab.transform import eanglespace232_to_dcm
-
-    # Identity
-    dcm = eanglespace232_to_dcm(0.0, 0.0, 0.0)
-    assert_domain(DCMId, dcm)
-
-    # Rotate 90 degrees by x-axis
-    dcm = eanglespace232_to_dcm(pi/2.0, -pi/2.0, -pi/2.0)
-    assert_domain(DCMrotx, dcm)
-
-    # Rotate 90 degrees by y-axis
-    dcm = eanglespace232_to_dcm(pi/2.0, 0.0, 0.0)
-    assert_domain(DCMroty, dcm)
-
-    # Rotate 90 degrees by y-axis
-    dcm = eanglespace232_to_dcm(0.0, 0.0, pi/2.0)
-    assert_domain(DCMroty, dcm)
-
-    # Rotate 90 degrees by z-axis
-    dcm = eanglespace232_to_dcm(0.0, pi/2.0, 0.0)
-    assert_domain(DCMrotz, dcm)
-
-    # Rotate by a random angle
-    dcm = eanglespace232_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
-    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
-
-
-def test_eanglespace313_to_dcm():
-    """
-    Tests the eanglespace313_to_dcm function.
-    """
-
-    from lielab.transform import eanglespace313_to_dcm
-
-    # Identity
-    dcm = eanglespace313_to_dcm(0.0, 0.0, 0.0)
-    assert_domain(DCMId, dcm)
-
-    # Rotate 90 degrees by x-axis
-    dcm = eanglespace313_to_dcm(0.0, pi/2.0, 0.0)
-    assert_domain(DCMrotx, dcm)
-
-    # Rotate 90 degrees by y-axis
-    dcm = eanglespace313_to_dcm(-pi/2.0, pi/2.0, pi/2.0)
-    assert_domain(DCMroty, dcm)
-
-    # Rotate 90 degrees by z-axis
-    dcm = eanglespace313_to_dcm(pi/2.0, 0.0, 0.0)
-    assert_domain(DCMrotz, dcm)
-
-    # Rotate 90 degrees by z-axis
-    dcm = eanglespace313_to_dcm(0.0, 0.0, pi/2.0)
-    assert_domain(DCMrotz, dcm)
-
-    # Rotate by a random angle
-    dcm = eanglespace313_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
-    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
-
-
-def test_eanglespace323_to_dcm():
-    """
-    Tests the eanglespace323_to_dcm function.
-    """
-
-    from lielab.transform import eanglespace323_to_dcm
-
-    # Identity
-    dcm = eanglespace323_to_dcm(0.0, 0.0, 0.0)
-    assert_domain(DCMId, dcm)
-
-    # Rotate 90 degrees by x-axis
-    dcm = eanglespace323_to_dcm(pi/2.0, pi/2.0, -pi/2.0)
-    assert_domain(DCMrotx, dcm)
-
-    # Rotate 90 degrees by y-axis
-    dcm = eanglespace323_to_dcm(0.0, pi/2.0, 0.0)
-    assert_domain(DCMroty, dcm)
-
-    # Rotate 90 degrees by z-axis
-    dcm = eanglespace323_to_dcm(pi/2.0, 0.0, 0.0)
-    assert_domain(DCMrotz, dcm)
-
-    # Rotate 90 degrees by z-axis
-    dcm = eanglespace323_to_dcm(0.0, 0.0, pi/2.0)
-    assert_domain(DCMrotz, dcm)
-
-    # Rotate by a random angle
-    dcm = eanglespace323_to_dcm(some_angle, some_angle, some_angle)
-    assert abs(np.linalg.det(dcm.get_matrix()) - 1) < TOL_FINE
-    assert abs((dcm.get_matrix() @ dcm.get_matrix().transpose()).trace() - 3) < TOL_FINE
 
 
 def test_quaternion_to_dcm():

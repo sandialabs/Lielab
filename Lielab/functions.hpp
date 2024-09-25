@@ -1,14 +1,17 @@
+// Core functions.
+#include "functions/commutator.hpp"
+#include "functions/littlead.hpp"
+
+// Extra functions
 #include "functions/pair.hpp"
 #include "functions/copair.hpp"
 #include "functions/factorial.hpp"
 #include "functions/Ad.hpp"
-#include "functions/commutator.hpp"
 #include "functions/cayley1.hpp"
 #include "functions/cayley2.hpp"
 #include "functions/Killing.hpp"
 #include "functions/Killingform.hpp"
-// include inverse
-#include "functions/littlead.hpp"
+// include inverse?
 #include "functions/coAd.hpp"
 #include "functions/exp.hpp"
 #include "functions/log.hpp"

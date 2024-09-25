@@ -103,7 +103,7 @@ class CustomMuntheKaas(_TimeStepper):
         Evaluates the $ d phi^{-1} u ( xi(s,y)) $ map.
         """
 
-        self._KK[self.iterations + 1] = self.dphiinv(self._U, self._dy, self.n - 1)
+        self._KK[self.iterations + 1] = self.dphiinv(self._U, self._dy) # TODO: Order should be n - 1
 
         super(CustomMuntheKaas, self).step()
 
