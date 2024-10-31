@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+title: Lielab
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - orcid: 'https://orcid.org/0000-0003-3202-0615'
+    affiliation: Sandia National Laboratories
+    given-names: Michael J.
+    family-names: Sparapany
+    email: mjspara@sandia.gov
+repository-code: 'https://github.com/sandialabs/Lielab'
+license: MIT
+version: 0.4.1
+date-released: '2024-09-29'

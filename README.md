@@ -70,6 +70,21 @@ cd python
 pip install -e .
 ```
 
+## Citation
+
+Find this repo useful?
+
+```
+@misc{Lielab,
+  author = {Sparapany, Michael J.},
+  title = {Lielab: Numerical Lie-theory in C++ and Python},
+  year = {2024},
+  publisher = {GitHub},
+  journal = {GitHub repository},
+  howpublished = {\url{https://github.com/sandialabs/lielab}}
+}
+```
+
 ## Dev Note
 
 Using the Lielab Pybind11 wrapper to communicate to a heavier weight C++ code also using Lielab can be a very effective way at developing relatively performant C++ code while still retaining the usability of Python. When doing this, error messages thrown can be very unhelpful. The most common one may look like:
