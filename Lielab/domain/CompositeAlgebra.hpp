@@ -272,6 +272,55 @@ class CompositeAlgebra
         }
     }
 
+    Eigen::MatrixXcd get_matrix() const
+    {
+        const Eigen::VectorXi shapes = this->get_shape();
+        const ptrdiff_t n_rows = shapes.sum();
+
+        Eigen::MatrixXcd out = Eigen::MatrixXcd::Zero(n_rows, n_rows);
+        ptrdiff_t kk = 0;
+
+        for (int ii = 0; ii < this->space.size(); ii++)
+        {
+            const size_t ind = this->space[ii].index();
+            if (ind == INDEX_cn)
+            {
+                out(Eigen::seqN(kk, shapes(ii)), Eigen::seqN(kk, shapes(ii))) = std::get<Lielab::domain::cn>(this->space[ii]).get_matrix();
+            }
+            else if (ind == INDEX_gl)
+            {
+                out(Eigen::seqN(kk, shapes(ii)), Eigen::seqN(kk, shapes(ii))) = std::get<Lielab::domain::gl>(this->space[ii]).get_matrix();
+            }
+            else if (ind == INDEX_glc)
+            {
+                out(Eigen::seqN(kk, shapes(ii)), Eigen::seqN(kk, shapes(ii))) = std::get<Lielab::domain::glc>(this->space[ii]).get_matrix();
+            }
+            else if (ind == INDEX_rn)
+            {
+                out(Eigen::seqN(kk, shapes(ii)), Eigen::seqN(kk, shapes(ii))) = std::get<Lielab::domain::rn>(this->space[ii]).get_matrix();
+            }
+            else if (ind == INDEX_se)
+            {
+                out(Eigen::seqN(kk, shapes(ii)), Eigen::seqN(kk, shapes(ii))) = std::get<Lielab::domain::se>(this->space[ii]).get_matrix();
+            }
+            else if (ind == INDEX_so)
+            {
+                out(Eigen::seqN(kk, shapes(ii)), Eigen::seqN(kk, shapes(ii))) = std::get<Lielab::domain::so>(this->space[ii]).get_matrix();
+            }
+            else if (ind == INDEX_sp)
+            {
+                out(Eigen::seqN(kk, shapes(ii)), Eigen::seqN(kk, shapes(ii))) = std::get<Lielab::domain::sp>(this->space[ii]).get_matrix();
+            }
+            else if (ind == INDEX_su)
+            {
+                out(Eigen::seqN(kk, shapes(ii)), Eigen::seqN(kk, shapes(ii))) = std::get<Lielab::domain::su>(this->space[ii]).get_matrix();
+            }
+            kk += shapes(ii);
+        }
+
+        return out;
+    }
+
     CompositeAlgebra operator+(const CompositeAlgebra & other) const
     {
         assert(this->space.size() == other.space.size());

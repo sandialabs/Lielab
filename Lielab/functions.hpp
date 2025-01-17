@@ -19,6 +19,8 @@
 #include "functions/dcayley1inv.hpp"
 #include "functions/dexp.hpp"
 #include "functions/dexpinv.hpp"
+#include "functions/dlog.hpp"
+#include "functions/littlecoad.hpp"
 
 #include "functions/actions.hpp"
 

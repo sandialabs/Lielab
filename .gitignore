@@ -1,12 +1,20 @@
 build/
 conan/
 doc/
+docs/
 include/
 __pycache__
-*.dll
-*.pyc
-*.pyd
 *egg-info/
 
 # Ignore CMake
 CMakeUserPresets.json
+CMakeFiles/
+.cmake
+
+# Ignore pytest
+*.pytest_cache
+
+# Ignore binaries
+*.dll
+*.pyc
+*.pyd

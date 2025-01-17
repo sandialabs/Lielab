@@ -236,8 +236,16 @@ Lielab::domain::se log(const Lielab::domain::SE & Y, const bool optimize)
         const double x = Yhat(0, 2);
         const double y = Yhat(1, 2);
         const double theta = wbar(0);
-        const double cA = std::sin(theta)/theta;
-        const double cB = (1.0 - std::cos(theta))/theta;
+
+        double cA = std::sin(theta)/theta;
+        double cB = (1.0 - std::cos(theta))/theta;
+        
+        if (std::abs(theta) <= 1e-14)
+        {
+            cA = 1.0;
+            cB = 0.0;
+        }
+        
         const double den = std::pow(cA, 2.0) + std::pow(cB, 2.0);
         const double cAden = cA/den;
         const double cBden = cB/den;
@@ -268,8 +276,18 @@ Lielab::domain::se log(const Lielab::domain::SE & Y, const bool optimize)
         const double theta3 = std::pow(theta, 3.0);
         const double stheta = std::sin(theta);
         const double ctheta = std::cos(theta);
+
+        double cA = (1.0 - ctheta)/theta2;
+        double cB = (theta - stheta)/theta3;
+
+        if (theta <= 1e-14)
+        {
+            cA = 0.5;
+            cB = 1.0/6.0;
+        }
+
         const Eigen::MatrixXd Id = Eigen::MatrixXd::Identity(3, 3);
-        const Eigen::MatrixXd V = Id + (1.0 - ctheta)/theta2*what + (theta - stheta)/theta3*what*what;
+        const Eigen::MatrixXd V = Id + cA*what + cB*what*what;
         const Eigen::VectorXd xbar = V.inverse()*Xbar;
         out._data(0, 3) = xbar(0);
         out._data(1, 3) = xbar(1);

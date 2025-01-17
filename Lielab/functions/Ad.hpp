@@ -4,32 +4,85 @@
 #include "../abstract.hpp"
 #include "../domain.hpp"
 
+#include "littlead.hpp"
+#include "exp.hpp"
+
 #include <cassert>
 
 namespace Lielab
 {
 namespace functions
 {
+
 template <Lielab::abstract::LieAlgebra LA>
-LA Ad(const Lielab::domain::lieiii<LA> & G, const LA & g)
+Lielab::domain::GL Ad_numerical(const LA & a)
+{
+    const Lielab::domain::gl ada = Lielab::functions::ad_numerical<LA>(a);
+    return Lielab::functions::exp_numerical<Lielab::domain::gl>(ada);
+}
+
+template <Lielab::abstract::LieAlgebra LA>
+Lielab::domain::GL Ad(const LA & a)
+{
+    const Lielab::domain::gl ada = Lielab::functions::ad<LA>(a);
+    return Lielab::functions::exp<Lielab::domain::gl>(ada);
+}
+
+// template <Lielab::abstract::LieGroup LG>
+// Lielab::domain::GL Ad_numerical(const LG & A)
+// {
+//     // TODO:
+// }
+
+// template <Lielab::abstract::LieGroup LG>
+// Lielab::domain::GL Ad(const LG & A)
+// {
+//     // TODO:
+// }
+
+template <Lielab::abstract::LieAlgebra LA>
+LA Ad(const LA & a, const LA & b)
+{
+    /*! \f{equation*}{ (\mathfrak{g}, \mathfrak{g}) \rightarrow \mathfrak{g} \f}
+    * 
+    * Group Adjoint action.
+    * 
+    * \f{equation*}{ \text{Ad}(a, b) = exp(a) b exp(a)^{-1} \f}
+    * 
+    * @param[in] a A Lie algebra.
+    * @param[in] b A Lie algebra.
+    * @param[out] out A Lie algebra.
+    */
+    
+    if (a.shape != b.shape)
+    {
+        throw Lielab::utils::InputError("Ad: Shapes of a and b must be equal.");
+    }
+
+    const Lielab::domain::lieiii<LA> A = Lielab::functions::exp<LA>(a);
+    return A.get_matrix()*b.get_matrix()*((A.inverse()).get_matrix());
+}
+
+template <Lielab::abstract::LieAlgebra LA>
+LA Ad(const Lielab::domain::lieiii<LA> & A, const LA & b)
 {
     /*! \f{equation*}{ (G, \mathfrak{g}) \rightarrow \mathfrak{g} \f}
     * 
     * Group Adjoint action.
     * 
-    * \f{equation*}{ \text{Ad}(G, X) = GXG^{-1} \f}
+    * \f{equation*}{ \text{Ad}(A, b) = AbA^{-1} \f}
     * 
-    * @param[in] G A Lie group.
-    * @param[in] g A lie algebra.
-    * @param[out] out A lie algebra.
+    * @param[in] A A Lie group.
+    * @param[in] b A Lie algebra.
+    * @param[out] out A Lie algebra.
     */
     
-    if (G.shape != g.shape)
+    if (A.shape != b.shape)
     {
-        throw Lielab::utils::InputError("Ad: Shapes of G and g must be equal.");
+        throw Lielab::utils::InputError("Ad: Shapes of A and b must be equal.");
     }
     
-    return G.get_matrix()*g.get_matrix()*(G.get_matrix().inverse());
+    return A.get_matrix()*b.get_matrix()*((A.inverse()).get_matrix());
 }
 }
 }

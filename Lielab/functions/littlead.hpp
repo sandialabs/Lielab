@@ -343,7 +343,9 @@ Lielab::domain::gl ad(const Lielab::domain::so & a, const int p)
 
     For \f$a \in \mathfrak{so}(2)\f$, this uses:
 
-    \f{equation*}{\text{ad}^j_a = \mathbf{I} \f}
+    \f{equation*}{\text{ad}^0_a = \mathbf{I} \f}
+
+    \f{equation*}{\text{ad}^j_a = \mathbf{0}, j \neq 0 \f}
 
     For \f$a \in \mathfrak{so}(3)\f$, this uses [1]:
 
@@ -395,23 +397,23 @@ Lielab::domain::gl ad(const Lielab::domain::so & a, const int p)
             return out;
         }
 
-        const Eigen::MatrixXd ahat = a.get_matrix();
-        if (p == 1)
-        {
-            out._data = ahat;
-            return out;
-        }
-
-        const Eigen::MatrixXd ahat2 = ahat*ahat;
-        if (p == 2)
-        {
-            out._data = ahat2;
-            return out;
-        }
-
         const Eigen::VectorXd abar = a.get_vector();
         const double wmag2 = std::pow(abar(0), 2.0) + std::pow(abar(1), 2.0) + std::pow(abar(2), 2.0);
-        return -wmag2*ad(a, p - 2);
+        const double n = static_cast<double>((p-1)/2);
+        const double coeff = std::pow(-wmag2, n);
+
+        const Eigen::MatrixXd ad1 = a.get_matrix();
+
+        if ((p%2) == 1)
+        {
+            out._data = coeff*ad1;
+        }
+        else
+        {
+            out._data = coeff*ad1*ad1;
+        }
+
+        return out;
     }
 
     return ad_numerical<Lielab::domain::so>(a, p);
@@ -461,13 +463,129 @@ Lielab::domain::so ad(const Lielab::domain::so & a, const Lielab::domain::so & b
 }
 
 template <>
+Lielab::domain::gl ad(const Lielab::domain::su & a, const int p)
+{
+    /*! \f{equation*}{ (\mathfrak{su}, \mathbb{R}) \rightarrow \mathfrak{gl} \f}
+    
+    Overload for the little adjoint function of su.
+
+    For \f$a \in \mathfrak{su}(2)\f$, this uses:
+
+    \f{equation*}{\text{ad}^0_a = \mathbf{I} \f}
+
+    \f{equation*}{\text{ad}^1_a = \begin{bmatrix}
+    0 & -2 a_3 & a_2 \\
+    2 a_3 & 0 & -2 a_1 \\
+    -2 a_2 & 2 x_1 & 0
+    \end{bmatrix} \f}
+
+    \f{equation*}{\text{ad}^2_a = (\text{ad}_a)^2 \f}
+
+    \f{equation*}{\text{ad}^3_a = -4 \Vert a \Vert^2 \text{ad}^1_a \f}
+
+    Arguments
+    ---------
+    @param[in] a Element of su.
+    @param[in] p Power of the adjoint.
+    @param[out] out An instance of gl.
+
+    References
+    ----------
+    Derived this myself - Mike Sparapany
+    
+    */
+
+    if (a.shape == 2)
+    {
+        Lielab::domain::gl out(3);
+
+        if (p == 0)
+        {
+            out(0,0) = 1.0;
+            out(1,1) = 1.0;
+            out(2,2) = 1.0;
+            return out;
+        }
+
+        const Eigen::VectorXd abar = a.get_vector();
+        const double wmag2 = std::pow(abar(0), 2.0) + std::pow(abar(1), 2.0) + std::pow(abar(2), 2.0);
+        const double n = static_cast<double>((p-1)/2);
+        const double coeff = std::pow(-4.0*wmag2, n);
+
+        Eigen::MatrixXd ad1 = Eigen::MatrixXd::Zero(3, 3);
+        ad1(0,1) = -2.0*abar(2);
+        ad1(0,2) =  2.0*abar(1);
+        ad1(1,2) = -2.0*abar(0);
+        ad1(1,0) =  2.0*abar(2);
+        ad1(2,0) = -2.0*abar(1);
+        ad1(2,1) =  2.0*abar(0);
+
+        if ((p%2) == 1)
+        {
+            out._data = coeff*ad1;
+        }
+        else
+        {
+            out._data = coeff*ad1*ad1;
+        }
+
+        return out;
+    }
+
+    return ad_numerical<Lielab::domain::su>(a, p);
+}
+
+template <>
+Lielab::domain::su ad(const Lielab::domain::su & a, const Lielab::domain::su & b, const int p)
+{
+    /*! \f{equation*}{ (\mathfrak{su}, \mathfrak{su}, \mathbb{R}) \rightarrow \mathfrak{gl} \f}
+    
+    Overload for the little adjoint function of su.
+
+    For \f$a \in \mathfrak{su}(2) \f$, this uses a known formula.
+
+    Otherwise, this uses a numerical formula.
+
+    Arguments
+    ---------
+    @param[in] a First element of su.
+    @param[in] b Second element of su.
+    @param[in] p Power of the adjoint.
+    @param[out] out An instance of su.
+    
+    */
+
+    if (a.shape != b.shape)
+    {
+        throw Lielab::utils::InputError("ad: Shapes of a and b must be equal.");
+    }
+
+    if (p == 0)
+    {
+        return b;
+    }
+
+    const ptrdiff_t shape = a.shape;
+    if (shape == 2)
+    {
+        const Eigen::MatrixXd adjaphat = ad<Lielab::domain::su>(a, p).get_matrix();
+        const Eigen::VectorXd bbar = b.get_vector();
+        Lielab::domain::su out(shape);
+        out.set_vector(adjaphat*bbar);
+        return out;
+    }
+    
+    return ad_numerical<Lielab::domain::su>(a, b, p);
+}
+
+template <>
 Lielab::domain::gl ad(const Lielab::domain::se & a, const int p)
 {
     /*! \f{equation*}{ (\mathfrak{se}, \mathbb{R}) \rightarrow \mathfrak{gl} \f}
     
     Overload for the little adjoint function of se.
 
-    For \f$a \in \mathfrak{se}(2)\f$ (shape 3), this uses [1]:
+    For \f$a \in \mathfrak{se}(2)\f$ (shape 3), this uses (Eq. 80 from Eade is incorrect (use theta^2 instead of theta^3)) [1]:
 
     \f{equation*}{\text{ad}^0_a = \mathbf{I} \f}
 
@@ -478,12 +596,12 @@ Lielab::domain::gl ad(const Lielab::domain::se & a, const int p)
     \end{bmatrix} \f}
 
     \f{equation*}{\text{ad}^2_a = \begin{bmatrix}
-    0 & -\theta & y \\
-    \theta & 0 & -x \\
+    -\theta^2 & 0 & x \theta \\
+    0 & -\theta^2 & y \theta \\
     0 & 0 & 0
     \end{bmatrix} \f}
 
-    \f{equation*}{\text{ad}^3_a = -\Vert \theta \Vert^3 \text{ad}^1_a \f}
+    \f{equation*}{\text{ad}^3_a = - \theta^2 \text{ad}^1_a \f}
 
     For \f$a \in \mathfrak{se}(3)\f$ (shape 4), this uses [1]:
 
@@ -514,13 +632,13 @@ Lielab::domain::gl ad(const Lielab::domain::se & a, const int p)
     ----------
     [1] Ethan Eade. Derivative of the exponential map. Technical report,
         November 2018. [Online]. Available: https://ethaneade.com/exp_diff.pdf.
+    
+    Also derived myself - Mike Sparapany
 
     TODO
     ----
         - Change recursive call for p > 3 to use mod+remainder division.
           This will prevent freezing up when the stack grows large.
-        - se(3) (shape 4) is especially bad with higher powers since
-          it uses 2 recursive calls each.
 
     */
 
@@ -540,27 +658,27 @@ Lielab::domain::gl ad(const Lielab::domain::se & a, const int p)
         const double x = abar(0);
         const double y = abar(1);
         const double theta = abar(2);
-        if (p == 1)
+        const double theta2 = std::pow(theta, 2.0);
+        const double n = static_cast<double>((p-1)/2);
+        const double coeff = std::pow(-theta2, n);
+
+        if ((p%2) == 1)
         {
             out(0, 1) = -theta;
             out(1, 0) = theta;
             out(0, 2) = y;
             out(1, 2) = -x;
-            return out;
         }
-
-        if (p == 2)
+        else
         {
-            const double theta2 = std::pow(theta, 2.0);
             out(0, 0) = -theta2;
             out(1, 1) = -theta2;
             out(0, 2) = theta*x;
             out(1, 2) = theta*y;
-            return out;
         }
         
-        const double theta3 = std::pow(theta, 3.0);
-        return -theta3*ad(a, p - 2);
+        out._data = coeff*out._data;
+        return out;
     }
 
     if (a.shape == 4)
@@ -584,31 +702,52 @@ Lielab::domain::gl ad(const Lielab::domain::se & a, const int p)
         Lielab::domain::so x(3);
         x.set_vector(ahat.block(0, 3, 3, 1));
         const Eigen::MatrixXd xhat = x.get_matrix();
+        Eigen::MatrixXd ad1 = Eigen::MatrixXd::Zero(6,6);
+        ad1.block(0, 0, 3, 3) = what;
+        ad1.block(0, 3, 3, 3) = xhat;
+        ad1.block(3, 3, 3, 3) = what;
+
         if (p == 1)
         {
-            out._data.block(0, 0, 3, 3) = what;
-            out._data.block(0, 3, 3, 3) = xhat;
-            out._data.block(3, 3, 3, 3) = what;
+            out._data = ad1;
             return out;
         }
+
+        const Eigen::MatrixXd what2 = what*what;
+        Eigen::MatrixXd ad2 = Eigen::MatrixXd::Zero(6,6);
+        ad2.block(0, 0, 3, 3) = what2;
+        ad2.block(0, 3, 3, 3) = what*xhat + xhat*what;
+        ad2.block(3, 3, 3, 3) = what2;
 
         if (p == 2)
         {
-            const Eigen::MatrixXd what2 = what*what;
-            out._data.block(0, 0, 3, 3) = what2;
-            out._data.block(0, 3, 3, 3) = what*xhat + xhat*what;
-            out._data.block(3, 3, 3, 3) = what2;
+            out._data = ad2;
             return out;
         }
 
+        // p >= 3
         const double theta2 = std::pow(abar(3), 2.0) + std::pow(abar(4), 2.0) + std::pow(abar(5), 2.0);
         const double innerprod = abar(0)*abar(3) + abar(1)*abar(4) + abar(2)*abar(5);
-        const Eigen::MatrixXd adlower2 = ad(a, p - 2).get_matrix();
-        const Eigen::MatrixXd adlower3 = ad(a, p - 3).get_matrix();
         Eigen::MatrixXd upperright = Eigen::MatrixXd::Zero(6, 6);
         upperright.block(0, 3, 3, 3) = what;
 
-        return -theta2*adlower2 - 2.0*innerprod*upperright*adlower3;
+        Eigen::MatrixXd adm3 = Eigen::MatrixXd::Identity(6, 6);
+        Eigen::MatrixXd adm2 = ad1;
+        Eigen::MatrixXd adm1 = ad2;
+        Eigen::MatrixXd adcurrent = -theta2*adm2 - 2.0*innerprod*upperright*adm3;
+
+        ptrdiff_t ii = 3;
+        while (ii < p)
+        {
+            adm3 = adm2;
+            adm2 = adm1;
+            adm1 = adcurrent;
+            adcurrent = -theta2*adm2 - 2.0*innerprod*upperright*adm3;
+            ii += 1;
+        }
+
+        out._data = adcurrent;
+        return out;
     }
 
     return ad_numerical<Lielab::domain::se>(a, p);

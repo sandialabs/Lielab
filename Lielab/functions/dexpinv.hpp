@@ -4,6 +4,7 @@
 #include "../abstract.hpp"
 #include "../domain.hpp"
 
+#include "littlead.hpp"
 #include "dexp.hpp"
 
 namespace Lielab
@@ -212,7 +213,7 @@ Lielab::domain::gl dexpinv(const Lielab::domain::so & x, const size_t order)
         const double theta2 = std::pow(theta, 2.0);
         const Eigen::MatrixXd xhat2 = xhat*xhat;
 
-        double c2 = (theta*cv/sv - 2.0)/(2*theta2);
+        double c2 = (theta*cv/sv - 2.0)/(2.0*theta2);
         if (std::abs(theta) <= 1e-14)
         {
             c2 = -1.0/12.0;
@@ -411,6 +412,109 @@ Lielab::domain::se dexpinv(const Lielab::domain::se & a, const Lielab::domain::s
     }
 
     return dexp_numerical<Lielab::domain::se>(a, b, order);
+}
+
+template <>
+Lielab::domain::gl dexpinv(const Lielab::domain::su & x, const size_t order)
+{
+    /*! \f{equation*}{ (\mathfrak{su}, \mathbb{R}) \rightarrow \mathfrak{gl} \f}
+    
+    Overloaded inverse derivative of the exponential function for so.
+
+    For \f$x \in \mathfrak{su}(2)\f$, this uses:
+
+    // \f{equation*}{\theta = \Vert x \Vert, \; v = \frac{\theta}{2} \f}
+
+    // \f{equation*}{\text{dexp}^{-1}(x) = \mathbf{I} - \frac{1}{2}\hat{x} - \frac{\theta \cot(v) - 2}{2 \theta^2}\hat{x}^2 \f}
+
+    Arguments
+    ---------
+    @param[in] x First instance of su
+    @param[in] order Order of the series expansion.
+    @param[out] out An instance of gl
+
+    References
+    ----------
+    Derived it myself - Mike Sparapany
+
+    */
+
+    // if (x.shape == 1)
+    // {
+    //     return Lielab::domain::gl(Eigen::MatrixXd::Identity(1,1));
+    // }
+
+    if (x.shape == 2)
+    {
+        const Eigen::Vector3d xbar = x.get_vector();
+        const Eigen::MatrixXd ad1 = Lielab::functions::ad(x, 1).get_matrix();
+        const Eigen::MatrixXd ad2 = Lielab::functions::ad(x, 2).get_matrix();
+        const Eigen::MatrixXd I = Eigen::MatrixXd::Identity(3, 3);
+
+        const double theta = std::sqrt(std::pow(xbar(0), 2.0) + std::pow(xbar(1), 2.0) + std::pow(xbar(2), 2.0));
+        const double st = std::sin(theta);
+        const double ct = std::cos(theta);
+        const double theta2 = std::pow(theta, 2.0);
+
+        double c2 = (2.0*theta*ct/st - 2.0)/(8.0*theta2);
+        if (std::abs(theta) <= 1e-14)
+        {
+            c2 = -1.0/12.0;
+        }
+
+        const Eigen::MatrixXd left = I - 1.0/2.0*ad1 - c2*ad2;
+        return Lielab::domain::gl(left);
+    }
+
+    return dexpinv_numerical<Lielab::domain::su>(x, order);
+}
+
+template <>
+Lielab::domain::su dexpinv(const Lielab::domain::su & a, const Lielab::domain::su & b, const size_t order)
+{
+    /*! \f{equation*}{ (\mathfrak{su}, \mathfrak{su}, \mathbb{R}) \rightarrow \mathfrak{su} \f}
+    
+    Overloaded inverse derivative of the exponential function for su.
+
+    For \f$x \in \mathfrak{su}(2)\f$, this uses:
+
+    // \f{equation*}{\text{dexp}^{-1}_{x}(y) = \text{dexp}^{-1}(x)\bar{y} \f}
+
+    For \f$a \in \mathfrak{su}(3+)\f$ this uses the numerical procedure.
+
+    Arguments
+    ---------
+    @param[in] a First instance of su
+    @param[in] b Second instance of su
+    @param[in] order Order of the series expansion.
+    @param[out] out An instance of su
+
+    References
+    ----------
+    Derived it myself - Mike Sparapany
+
+    */
+
+    if (a.shape != b.shape)
+    {
+        throw Lielab::utils::InputError("dexpinv: Shapes of a and b must be equal.");
+    }
+
+    // if (a.shape == 1)
+    // {
+    //     return b;
+    // }
+
+    if (a.shape == 2)
+    {
+        const Lielab::domain::gl left = dexpinv(a);
+        const Eigen::MatrixXd y = b.get_vector();
+        Lielab::domain::su out(2);
+        out.set_vector(left.get_matrix()*y);
+        return out;
+    }
+
+    return dexpinv_numerical<Lielab::domain::su>(a, b, order);
 }
 
 }

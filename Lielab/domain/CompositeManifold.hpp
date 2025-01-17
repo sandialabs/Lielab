@@ -354,6 +354,87 @@ class CompositeManifold
         }
     }
 
+    Eigen::MatrixXcd get_matrix() const
+    {
+        const Eigen::VectorXi shapes = this->get_shape();
+        const ptrdiff_t n_rows = shapes.sum();
+
+        Eigen::MatrixXcd out = Eigen::MatrixXcd::Zero(n_rows, n_rows);
+        ptrdiff_t kk = 0;
+
+        for (int ii = 0; ii < this->space.size(); ii++)
+        {
+            const size_t ind = this->space[ii].index();
+            if (ind == INDEX_CN)
+            {
+                out(Eigen::seqN(kk, shapes(ii)), Eigen::seqN(kk, shapes(ii))) = std::get<Lielab::domain::CN>(this->space[ii]).get_matrix();
+            }
+            else if (ind == INDEX_GL)
+            {
+                out(Eigen::seqN(kk, shapes(ii)), Eigen::seqN(kk, shapes(ii))) = std::get<Lielab::domain::GL>(this->space[ii]).get_matrix();
+            }
+            else if (ind == INDEX_GLC)
+            {
+                out(Eigen::seqN(kk, shapes(ii)), Eigen::seqN(kk, shapes(ii))) = std::get<Lielab::domain::GLC>(this->space[ii]).get_matrix();
+            }
+            else if (ind == INDEX_RN)
+            {
+                out(Eigen::seqN(kk, shapes(ii)), Eigen::seqN(kk, shapes(ii))) = std::get<Lielab::domain::RN>(this->space[ii]).get_matrix();
+            }
+            else if (ind == INDEX_SE)
+            {
+                out(Eigen::seqN(kk, shapes(ii)), Eigen::seqN(kk, shapes(ii))) = std::get<Lielab::domain::SE>(this->space[ii]).get_matrix();
+            }
+            else if (ind == INDEX_SO)
+            {
+                out(Eigen::seqN(kk, shapes(ii)), Eigen::seqN(kk, shapes(ii))) = std::get<Lielab::domain::SO>(this->space[ii]).get_matrix();
+            }
+            else if (ind == INDEX_SP)
+            {
+                out(Eigen::seqN(kk, shapes(ii)), Eigen::seqN(kk, shapes(ii))) = std::get<Lielab::domain::SP>(this->space[ii]).get_matrix();
+            }
+            else if (ind == INDEX_SU)
+            {
+                out(Eigen::seqN(kk, shapes(ii)), Eigen::seqN(kk, shapes(ii))) = std::get<Lielab::domain::SU>(this->space[ii]).get_matrix();
+            }
+            else if (ind == INDEX_cn)
+            {
+                out(Eigen::seqN(kk, shapes(ii)), Eigen::seqN(kk, shapes(ii))) = std::get<Lielab::domain::cn>(this->space[ii]).get_matrix();
+            }
+            else if (ind == INDEX_gl)
+            {
+                out(Eigen::seqN(kk, shapes(ii)), Eigen::seqN(kk, shapes(ii))) = std::get<Lielab::domain::gl>(this->space[ii]).get_matrix();
+            }
+            else if (ind == INDEX_glc)
+            {
+                out(Eigen::seqN(kk, shapes(ii)), Eigen::seqN(kk, shapes(ii))) = std::get<Lielab::domain::glc>(this->space[ii]).get_matrix();
+            }
+            else if (ind == INDEX_rn)
+            {
+                out(Eigen::seqN(kk, shapes(ii)), Eigen::seqN(kk, shapes(ii))) = std::get<Lielab::domain::rn>(this->space[ii]).get_matrix();
+            }
+            else if (ind == INDEX_se)
+            {
+                out(Eigen::seqN(kk, shapes(ii)), Eigen::seqN(kk, shapes(ii))) = std::get<Lielab::domain::se>(this->space[ii]).get_matrix();
+            }
+            else if (ind == INDEX_so)
+            {
+                out(Eigen::seqN(kk, shapes(ii)), Eigen::seqN(kk, shapes(ii))) = std::get<Lielab::domain::so>(this->space[ii]).get_matrix();
+            }
+            else if (ind == INDEX_sp)
+            {
+                out(Eigen::seqN(kk, shapes(ii)), Eigen::seqN(kk, shapes(ii))) = std::get<Lielab::domain::sp>(this->space[ii]).get_matrix();
+            }
+            else if (ind == INDEX_su)
+            {
+                out(Eigen::seqN(kk, shapes(ii)), Eigen::seqN(kk, shapes(ii))) = std::get<Lielab::domain::su>(this->space[ii]).get_matrix();
+            }
+            kk += shapes(ii);
+        }
+
+        return out;
+    }
+
     CompositeManifold operator*(const CompositeManifold & other) const
     {
         CompositeManifold out;

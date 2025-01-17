@@ -210,24 +210,24 @@ Lielab::domain::gl dexp(const Lielab::domain::so & x, const size_t order)
     {
         // Source: Iserles
         const Eigen::Vector3d xbar = x.get_vector();
-        const Eigen::MatrixXd xhat = x.get_matrix();
+        const Eigen::MatrixXd ad1 = Lielab::functions::ad(x, 1).get_matrix();
+        const Eigen::MatrixXd ad2 = Lielab::functions::ad(x, 2).get_matrix();
         const Eigen::MatrixXd I = Eigen::MatrixXd::Identity(3, 3);
 
         const double theta = std::sqrt(std::pow(xbar(0), 2.0) + std::pow(xbar(1), 2.0) + std::pow(xbar(2), 2.0));
         const double v = theta/2.0;
         const double v2 = std::pow(v, 2.0);
         const double theta3 = std::pow(theta, 3.0);
-        const Eigen::MatrixXd xhat2 = xhat*xhat;
 
         double c1 = std::pow(std::sin(v), 2.0)/(2.0*v2);
         double c2 = (theta - std::sin(theta))/(theta3);
         if (std::abs(theta) <= 1e-14)
         {
             c1 = 0.5;
-            c2 = 0.0;
+            c2 = 1.0/6.0;
         }
 
-        const Eigen::MatrixXd left = I + c1*xhat + c2*xhat2;
+        const Eigen::MatrixXd left = I + c1*ad1 + c2*ad2;
         return Lielab::domain::gl(left);
     }
 
@@ -241,11 +241,15 @@ Lielab::domain::so dexp(const Lielab::domain::so & a, const Lielab::domain::so &
     
     Overloaded derivative of the exponential function for so.
 
+    For \f$x \in \mathfrak{so}(2)\f$, this uses [1]:
+
+    \f{equation*}{\text{dexp}_{a}(b) = b \f}
+
     For \f$x \in \mathfrak{so}(3)\f$, this uses [1]:
 
     \f{equation*}{\text{dexp}_{a}(b) = \text{dexp}(a)\bar{b} \f}
 
-    For \f$a \in \mathfrak{so}(4+)\f$ and \f$\mathfrak{so}(2)\f$, this uses the numerical procedure.
+    For \f$a \in \mathfrak{so}(4+)\f$, this uses the numerical procedure.
 
     Arguments
     ---------
@@ -490,6 +494,110 @@ Lielab::domain::se dexp(const Lielab::domain::se & a, const Lielab::domain::se &
     }
 
     return dexp_numerical<Lielab::domain::se>(a, b, order);
+}
+
+template <>
+Lielab::domain::gl dexp(const Lielab::domain::su & x, const size_t order)
+{
+    /*! \f{equation*}{ (\mathfrak{su}, \mathbb{R}) \rightarrow \mathfrak{gl} \f}
+    
+    Overloaded derivative of the exponential function for su.
+
+    For \f$x \in \mathfrak{su}(2)\f$, this uses:
+
+    // \f{equation*}{\theta = \Vert x \Vert, \; v = \frac{\theta}{2} \f}
+
+    // \f{equation*}{\text{dexp}(x) = \mathbf{I} + \frac{\sin^2(v)}{2v^2}\hat{x} + \frac{\theta - \sin(\theta)}{\theta^3}\hat{x}^2 \f}
+
+    Arguments
+    ---------
+    @param[in] x Instance of su
+    @param[in] order Order of the series expansion.
+    @param[out] out An instance of gl
+
+    References
+    ----------
+    Derived it myself - Mike Sparapany
+
+    */
+
+    // if (x.shape == 1)
+    // {
+    //     return Lielab::domain::gl(Eigen::MatrixXd::Identity(1,1));
+    // }
+
+    if (x.shape == 2)
+    {
+        const Eigen::Vector3d xbar = x.get_vector();
+        const Eigen::MatrixXd ad1 = Lielab::functions::ad(x, 1).get_matrix();
+        const Eigen::MatrixXd ad2 = Lielab::functions::ad(x, 2).get_matrix();
+        const Eigen::MatrixXd I = Eigen::MatrixXd::Identity(3, 3);
+
+        const double theta = (std::sqrt(std::pow(xbar(0), 2.0) + std::pow(xbar(1), 2.0) + std::pow(xbar(2), 2.0)));
+        const double theta2 = std::pow(theta, 2.0);
+        const double theta3 = std::pow(theta, 3.0);
+
+        double c1 = std::pow(std::sin(theta), 2.0)/(2.0*theta2);
+        double c2 = (2.0*theta - std::sin(2.0*theta))/(8.0*theta3);
+        if (std::abs(theta) <= 1e-14)
+        {
+            c1 = 0.5;
+            c2 = 1.0/6.0;
+        }
+
+        const Eigen::MatrixXd left = I + c1*ad1 + c2*ad2;
+        return Lielab::domain::gl(left);
+    }
+
+    return dexp_numerical<Lielab::domain::su>(x, order);
+}
+
+template <>
+Lielab::domain::su dexp(const Lielab::domain::su & a, const Lielab::domain::su & b, const size_t order)
+{
+    /*! \f{equation*}{ (\mathfrak{su}, \mathfrak{su}, \mathbb{R}) \rightarrow \mathfrak{su} \f}
+    
+    Overloaded derivative of the exponential function for su.
+
+    For \f$x \in \mathfrak{su}(2)\f$, this uses:
+
+    \f{equation*}{\text{dexp}_{a}(b) = \text{dexp}(a)\bar{b} \f}
+
+    For \f$a \in \mathfrak{su}(3+)\f$ and \f$\mathfrak{su}(2)\f$, this uses the numerical procedure.
+
+    Arguments
+    ---------
+    @param[in] a First instance of so
+    @param[in] b Second instance of so
+    @param[in] order Order of the series expansion.
+    @param[out] out An instance of so
+
+    References
+    ----------
+    Derived it myself - Mike Sparapany
+
+    */
+
+    if (a.shape != b.shape)
+    {
+        throw Lielab::utils::InputError("dexp: Shapes of a and b must be equal.");
+    }
+
+    // if (a.shape == 1)
+    // {
+    //     return b;
+    // }
+
+    if (a.shape == 2)
+    {
+        const Lielab::domain::gl left = dexp(a);
+        const Eigen::MatrixXd y = b.get_vector();
+        Lielab::domain::su out(2);
+        out.set_vector(left.get_matrix()*y);
+        return out;
+    }
+
+    return dexp_numerical<Lielab::domain::su>(a, b, order);
 }
 
 }

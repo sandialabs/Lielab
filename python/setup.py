@@ -9,7 +9,7 @@ with open('requirements.txt') as f:
 with open('requirements.txt') as f:
     requirements_dev = f.read().splitlines()
 
-long_description = '''A lightweight C++ library for numerical computations.'''
+long_description = '''Lielab is a Python-wrapped C++ library implementing various objects and routines for numerical finite-dimensional Lie-theory.'''
 
 modules = ['lielab.domain',
            'lielab.dynamics',
