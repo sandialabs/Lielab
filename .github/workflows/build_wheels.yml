@@ -29,9 +29,9 @@ jobs:
       - name: Get Conan for dependencies and setuptools
         run: ${{matrix.python.executable}} -m pip install conan setuptools
       - name: Detect Conan profile
-        run: conan profile detect --force
+        run: ${{matrix.python.executable}} -m conan profile detect --force
       - name: Install Lielab dependencies
-        run: conan install . -s compiler.cppstd=gnu20 -o with_python=True
+        run: ${{matrix.python.executable}} -m conan install . -s compiler.cppstd=gnu20 -o with_python=True
       - name: CMake Configure
         run: cmake --preset conan-release -DPYTHON_EXECUTABLE=${{matrix.python.executable}}
       - name: CMake Build
