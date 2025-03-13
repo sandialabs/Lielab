@@ -34,9 +34,7 @@ Alternatively, the header files can be included directly into other projects. Ei
 Assuming Python is installed to your system already, the following block will generate the binary file for the Lielab Python bindings
 
 ```
-conan install .
-cmake --preset conan-default -DLIELAB_BUILD_TESTS=False
-cmake --build . --preset conan-release --target cppLielab
+conan build . -o with_python=True
 ```
 
 This will build the pyd file required for Python, and also skip building the pure C++ test cases. The Python wrapper can then be installed with
