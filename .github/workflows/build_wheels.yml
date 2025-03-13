@@ -1,0 +1,50 @@
+name: build-wheels
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-wheels-linux:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: [{executable: python3.6, tag: cp36},
+                 {executable: python3.7, tag: cp37},
+                 {executable: python3.8, tag: cp38},
+                 {executable: python3.9, tag: cp39},
+                 {executable: python3.10, tag: cp310},
+                 {executable: python3.11, tag: cp311},
+                 {executable: python3.12, tag: cp312},
+                 {executable: python3.13, tag: cp313}]
+    container:
+      image: quay.io/pypa/manylinux_2_28_x86_64
+      options: --cpus 1
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Ensure pip is installed
+        run: python3 -m ensurepip --upgrade
+      - name: Get setuptools for packaging
+        run: ${{matrix.python.executable}} -m pip install setuptools
+      - name: Get Conan for dependencies
+        run: pip3 install conan
+      - name: Detect Conan profile
+        run: conan profile detect --force
+      - name: Install Lielab dependencies
+        run: conan install . -s compiler.cppstd=gnu20 -o with_python=True
+      - name: CMake Configure
+        run: cmake --preset conan-release -DPYTHON_EXECUTABLE=${{matrix.python.executable}}
+      - name: CMake Build
+        run: cmake --build . --preset conan-release
+      - name: Make Python wheel
+        working-directory: ./python
+        run: ${{matrix.python.executable}} -m setup bdist_wheel --python-tag=${{matrix.python.tag}} --plat-name=manylinux_2_28_x86_64
+      - name: Archive wheel
+        uses: actions/upload-artifact@v4
+        with:
+          name: manylinux_2_28_x86_x64_${{matrix.python.tag}}
+          path: ./python/dist/*.whl
