@@ -10,14 +10,18 @@ jobs:
   build-wheels-macos-arm:
     runs-on: macos-14
     env:
-      python-executable: python3.13
+      python-executable: python3
       python-tag: cp313
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Ensure pip is installed
-        run: ${{env.python-executable}} -m ensurepip --upgrade
+      - name: Create virtual env and activate
+        run: |
+          ${{env.python-executable}} -m venv ./venv/pyenv
+          source ./venv/pyenv/bin/activate
+      # - name: Ensure pip is installed
+      #   run: ${{env.python-executable}} -m ensurepip --upgrade
       - name: Get setuptools for packaging
         run: ${{env.python-executable}} -m pip install setuptools
       - name: Get Conan for dependencies
