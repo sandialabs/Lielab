@@ -20,27 +20,41 @@ jobs:
       #   run: brew install pipx
       - name: Create virtual env
         run: ${{env.python-executable}} -m venv ~/.venv
-      - name: Launch virtual env
-        run: source ~/.venv/bin/activate
+      # - name: Launch virtual env
+      #   run: source ~/.venv/bin/activate
           # ${{env.python-executable}} -m venv ./venv/pyenv
           # source ./venv/pyenv/bin/activate
       # - name: Ensure pip is installed
       #   run: ${{env.python-executable}} -m ensurepip --upgrade
       - name: Get setuptools for packaging
-        run: ${{env.python-executable}} -m pip install setuptools
+        run: |
+          source ~/.venv/bin/activate
+          ${{env.python-executable}} -m pip install setuptools
       - name: Get Conan for dependencies
-        run: ${{env.python-executable}} -m pip install conan
+        run: |
+          source ~/.venv/bin/activate
+          ${{env.python-executable}} -m pip install conan
       - name: Detect Conan profile
-        run: conan profile detect --force
+        run: |
+          source ~/.venv/bin/activate
+          conan profile detect --force
       - name: Install Lielab dependencies
-        run: conan install . -s compiler.cppstd=gnu20 -o with_python=True
+        run: |
+          source ~/.venv/bin/activate
+          conan install . -s compiler.cppstd=gnu20 -o with_python=True
       - name: CMake Configure
-        run: cmake --preset conan-release -DPYTHON_EXECUTABLE=${{env.python-executable}}
+        run: |
+          source ~/.venv/bin/activate
+          cmake --preset conan-release -DPYTHON_EXECUTABLE=${{env.python-executable}}
       - name: CMake Build
-        run: cmake --build . --preset conan-release
+        run: |
+          source ~/.venv/bin/activate
+          cmake --build . --preset conan-release
       - name: Make Python wheel
         working-directory: ./python
-        run: ${{env.python-executable}} -m setup bdist_wheel --python-tag=${{env.python-tag}} --plat-name=macosx_14_0_arm64
+        run: |
+          source ~/.venv/bin/activate
+          ${{env.python-executable}} -m setup bdist_wheel --python-tag=${{env.python-tag}} --plat-name=macosx_14_0_arm64
       - name: Archive wheel
         uses: actions/upload-artifact@v4
         with:
