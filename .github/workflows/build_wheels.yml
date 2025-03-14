@@ -16,6 +16,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Install pipx for dependency and environment management
+        run: brew install pipx
       # - name: Create virtual env and activate
       #   run: |
       #     ${{env.python-executable}} -m venv ./venv/pyenv
@@ -23,9 +25,9 @@ jobs:
       # - name: Ensure pip is installed
       #   run: ${{env.python-executable}} -m ensurepip --upgrade
       - name: Get setuptools for packaging
-        run: ${{env.python-executable}} -m pip install setuptools --user
+        run: pipx install setuptools
       - name: Get Conan for dependencies
-        run: ${{env.python-executable}} -m pip install conan --user
+        run: pipx install conan
       - name: Detect Conan profile
         run: conan profile detect --force
       - name: Install Lielab dependencies
