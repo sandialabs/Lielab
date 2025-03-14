@@ -16,16 +16,16 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Create virtual env and activate
-        run: |
-          ${{env.python-executable}} -m venv ./venv/pyenv
-          source ./venv/pyenv/bin/activate
+      # - name: Create virtual env and activate
+      #   run: |
+      #     ${{env.python-executable}} -m venv ./venv/pyenv
+      #     source ./venv/pyenv/bin/activate
       # - name: Ensure pip is installed
       #   run: ${{env.python-executable}} -m ensurepip --upgrade
       - name: Get setuptools for packaging
-        run: ${{env.python-executable}} -m pip install setuptools
+        run: ${{env.python-executable}} -m pip install setuptools --user
       - name: Get Conan for dependencies
-        run: ${{env.python-executable}} -m pip install conan
+        run: ${{env.python-executable}} -m pip install conan --user
       - name: Detect Conan profile
         run: conan profile detect --force
       - name: Install Lielab dependencies
