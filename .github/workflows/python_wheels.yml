@@ -120,11 +120,14 @@ jobs:
         with:
           name: ${{matrix.python.tag}}_manylinux_2_28_x86_64
           path: ./python/dist
+      - name: Install Python dependencies
+        working-directory: ./python
+        run: |
+          ${{matrix.python.executable}} -m pip install -r requirements.txt
+          ${{matrix.python.executable}} -m pip install -r requirements_dev.txt
       - name: Install Lielab on Python from wheel
         working-directory: ./python/dist
         run: ${{matrix.python.executable}} -m pip install --no-index --find-links=. lielab
-      - name: Install pytest requirement
-        run: ${{matrix.python.executable}} -m pip install pytest
       - name: Run tests
         working-directory: ./python
         run: ${{matrix.python.executable}} -m pytest tests
