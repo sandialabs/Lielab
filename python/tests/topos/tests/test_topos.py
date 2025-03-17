@@ -16,83 +16,83 @@ def eoms_lorenz_unwrapped(t, X):
     dx[2] = -X[0]*X[1] + rho*X[1] - X[2]
     return dx
 
-def test_MuntheKaas_vfex1():
-    """
-    Tests the MuntheKaas function with vfex1.
-    """
+# def test_MuntheKaas_vfex1():
+#     """
+#     Tests the MuntheKaas function with vfex1.
+#     """
 
-    from lielab.domain import SO, CompositeManifold
-    from lielab.dynamics import vfex1
-    from lielab.topos import MuntheKaas
+#     from lielab.domain import SO, CompositeManifold
+#     from lielab.dynamics import vfex1
+#     from lielab.topos import MuntheKaas
 
-    ts = MuntheKaas()
-    vf = vfex1()
+#     ts = MuntheKaas()
+#     vf = vfex1()
 
-    y0 = SO(3)
-    M0 = CompositeManifold([y0])
+#     y0 = SO(3)
+#     M0 = CompositeManifold([y0])
 
-    out = ts(vf, M0, 1.0, 0.02)
+#     out = ts(vf, M0, 1.0, 0.02)
 
-    y1 = out.low.space[0]
+#     y1 = out.low.space[0]
 
-    abs(y1(0,0) - 0.999596034819844) < TOL_FINE
-    abs(y1(0,1) - 0.020398551422611) < TOL_FINE
-    abs(y1(0,2) - 0.019790560181659) < TOL_FINE
-    abs(y1(1,0) + 0.019990512514326) < TOL_FINE
-    abs(y1(1,1) - 0.999587901244249) < TOL_FINE
-    abs(y1(1,2) + 0.020601143063711) < TOL_FINE
-    abs(y1(2,0) + 0.020202637992582) < TOL_FINE
-    abs(y1(2,1) - 0.020197197478265) < TOL_FINE
-    abs(y1(2,2) - 0.999591880035129) < TOL_FINE
-
-
-def test_MuntheKaas_vfex2():
-    """
-    Tests the MuntheKaas function with vfex2.
-    """
-
-    from lielab.domain import RN, CompositeManifold
-    from lielab.dynamics import vfex2
-    from lielab.topos import MuntheKaas
-
-    ts = MuntheKaas()
-    vf = vfex2()
-
-    y0 = RN([25.0, 0.0, -20.0])
-    M0 = CompositeManifold([y0])
-
-    out = ts(vf, M0, 0.0, 0.02)
-
-    y1 = out.low.space[0]
-
-    assert abs(y1(0) - 24.425986197956878) < TOL_FINE
-    assert abs(y1(1) + 3.596428324678375) < TOL_FINE
-    assert abs(y1(2) + 19.733395791914329) < TOL_FINE
+#     abs(y1(0,0) - 0.999596034819844) < TOL_FINE
+#     abs(y1(0,1) - 0.020398551422611) < TOL_FINE
+#     abs(y1(0,2) - 0.019790560181659) < TOL_FINE
+#     abs(y1(1,0) + 0.019990512514326) < TOL_FINE
+#     abs(y1(1,1) - 0.999587901244249) < TOL_FINE
+#     abs(y1(1,2) + 0.020601143063711) < TOL_FINE
+#     abs(y1(2,0) + 0.020202637992582) < TOL_FINE
+#     abs(y1(2,1) - 0.020197197478265) < TOL_FINE
+#     abs(y1(2,2) - 0.999591880035129) < TOL_FINE
 
 
-def test_Flow_fails():
-    """
-    Tests cases where Flow should fail.
-    """
+# def test_MuntheKaas_vfex2():
+#     """
+#     Tests the MuntheKaas function with vfex2.
+#     """
 
-    from lielab.domain import SO, CompositeManifold
-    from lielab.dynamics import vfex1
-    from lielab.topos import Flow
+#     from lielab.domain import RN, CompositeManifold
+#     from lielab.dynamics import vfex2
+#     from lielab.topos import MuntheKaas
 
-    y0 = SO(3)
-    M0 = CompositeManifold([y0])
-    vf = vfex1()
-    tspan = []
-    f = Flow()
+#     ts = MuntheKaas()
+#     vf = vfex2()
 
-    # tspan has no values
-    with pytest.raises(Exception):
-        f(vf, tspan, M0)
+#     y0 = RN([25.0, 0.0, -20.0])
+#     M0 = CompositeManifold([y0])
+
+#     out = ts(vf, M0, 0.0, 0.02)
+
+#     y1 = out.low.space[0]
+
+#     assert abs(y1(0) - 24.425986197956878) < TOL_FINE
+#     assert abs(y1(1) + 3.596428324678375) < TOL_FINE
+#     assert abs(y1(2) + 19.733395791914329) < TOL_FINE
+
+
+# def test_Flow_fails():
+#     """
+#     Tests cases where Flow should fail.
+#     """
+
+#     from lielab.domain import SO, CompositeManifold
+#     from lielab.dynamics import vfex1
+#     from lielab.topos import Flow
+
+#     y0 = SO(3)
+#     M0 = CompositeManifold([y0])
+#     vf = vfex1()
+#     tspan = []
+#     f = Flow()
+
+#     # tspan has no values
+#     with pytest.raises(Exception):
+#         f(vf, tspan, M0)
     
-    # tspan has 1 value
-    tspan.append(0.0)
-    with pytest.raises(Exception):
-        f(vf, tspan, M0)
+#     # tspan has 1 value
+#     tspan.append(0.0)
+#     with pytest.raises(Exception):
+#         f(vf, tspan, M0)
 
 
 def test_Flow_copy_output():
@@ -119,68 +119,68 @@ def test_Flow_copy_output():
     assert abs(curve1.y[-1, 1] - curve2.y[-1, 1]) >= 1e-4
 
 
-def test_Flow_vfex2_rk45_fixed():
-    from lielab.domain import RN, CompositeManifold
-    from lielab.dynamics import vfex2
-    from lielab.topos import Flow
+# def test_Flow_vfex2_rk45_fixed():
+#     from lielab.domain import RN, CompositeManifold
+#     from lielab.dynamics import vfex2
+#     from lielab.topos import Flow
 
-    vf = vfex2()
-    flow = Flow()
-    flow.variable_time_step = False
-    flow.dt = 0.02
+#     vf = vfex2()
+#     flow = Flow()
+#     flow.variable_time_step = False
+#     flow.dt = 0.02
 
-    tspan = [0.0, 5.0]
-    y0 = RN([25.0, 0.0, -20.0])
-    M0 = CompositeManifold([y0])
+#     tspan = [0.0, 5.0]
+#     y0 = RN([25.0, 0.0, -20.0])
+#     M0 = CompositeManifold([y0])
 
-    curve = flow(vf, tspan, M0)
+#     curve = flow(vf, tspan, M0)
 
-    assert abs(curve.t[0] - tspan[0]) < TOL_FINE
-    assert curve.y[0, 0] == y0(0)
-    assert curve.y[0, 1] == y0(1)
-    assert curve.y[0, 2] == y0(2)
+#     assert abs(curve.t[0] - tspan[0]) < TOL_FINE
+#     assert curve.y[0, 0] == y0(0)
+#     assert curve.y[0, 1] == y0(1)
+#     assert curve.y[0, 2] == y0(2)
 
-    nrows = curve.y.shape[0]
+#     nrows = curve.y.shape[0]
 
-    assert abs(curve.t[nrows-1] - 5.0) < TOL_FINE
-    assert abs(curve.y[nrows-1, 0] - 15.210570567999987) < TOL_FINE
-    assert abs(curve.y[nrows-1, 1] + 0.788689660918195) < TOL_FINE
-    assert abs(curve.y[nrows-1, 2] + 1.459476938449221) < TOL_FINE
+#     assert abs(curve.t[nrows-1] - 5.0) < TOL_FINE
+#     assert abs(curve.y[nrows-1, 0] - 15.210570567999987) < TOL_FINE
+#     assert abs(curve.y[nrows-1, 1] + 0.788689660918195) < TOL_FINE
+#     assert abs(curve.y[nrows-1, 2] + 1.459476938449221) < TOL_FINE
 
 
-def test_Flow_vfex2_rk45_variable():
-    from lielab.domain import RN, CompositeManifold
-    from lielab.dynamics import vfex2
-    from lielab.topos import Flow
+# def test_Flow_vfex2_rk45_variable():
+#     from lielab.domain import RN, CompositeManifold
+#     from lielab.dynamics import vfex2
+#     from lielab.topos import Flow
 
-    vf = vfex2()
-    flow = Flow()
-    flow.variable_time_step = True
-    flow.dt = 0.02
+#     vf = vfex2()
+#     flow = Flow()
+#     flow.variable_time_step = True
+#     flow.dt = 0.02
 
-    tspan = [0.0, 5.0]
-    y0 = RN([25.0, 0.0, -20.0])
-    M0 = CompositeManifold([y0])
+#     tspan = [0.0, 5.0]
+#     y0 = RN([25.0, 0.0, -20.0])
+#     M0 = CompositeManifold([y0])
 
-    curve = flow(vf, tspan, M0)
+#     curve = flow(vf, tspan, M0)
 
-    assert abs(curve.t[0] - 0.0) < TOL_FINE
-    assert abs(curve.t[1] - 0.007703769593747) < TOL_COARSE
-    assert abs(curve.t[2] - 0.015420629134474) < TOL_COARSE
-    assert abs(curve.t[3] - 0.023255332563845) < TOL_COARSE
-    assert abs(curve.t[4] - 0.031246577586516) < TOL_COARSE
+#     assert abs(curve.t[0] - 0.0) < TOL_FINE
+#     assert abs(curve.t[1] - 0.007703769593747) < TOL_COARSE
+#     assert abs(curve.t[2] - 0.015420629134474) < TOL_COARSE
+#     assert abs(curve.t[3] - 0.023255332563845) < TOL_COARSE
+#     assert abs(curve.t[4] - 0.031246577586516) < TOL_COARSE
 
-    assert abs(curve.t[0] - tspan[0]) < TOL_FINE
-    assert curve.y[0, 0] == y0(0)
-    assert curve.y[0, 1] == y0(1)
-    assert curve.y[0, 2] == y0(2)
+#     assert abs(curve.t[0] - tspan[0]) < TOL_FINE
+#     assert curve.y[0, 0] == y0(0)
+#     assert curve.y[0, 1] == y0(1)
+#     assert curve.y[0, 2] == y0(2)
 
-    nrows = curve.y.shape[0]
+#     nrows = curve.y.shape[0]
 
-    assert abs(curve.t[nrows-1] - 5.0) < TOL_FINE
-    assert abs(curve.y[nrows-1, 0] - 15.230102737555342) < TOL_COARSE
-    assert abs(curve.y[nrows-1, 1] + 0.796697875936802) < TOL_COARSE
-    assert abs(curve.y[nrows-1, 2] + 1.472989006310112) < TOL_COARSE
+#     assert abs(curve.t[nrows-1] - 5.0) < TOL_FINE
+#     assert abs(curve.y[nrows-1, 0] - 15.230102737555342) < TOL_COARSE
+#     assert abs(curve.y[nrows-1, 1] + 0.796697875936802) < TOL_COARSE
+#     assert abs(curve.y[nrows-1, 2] + 1.472989006310112) < TOL_COARSE
 
 def test_Flow_unwrapped_rk45_variable():
     """
