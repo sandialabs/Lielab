@@ -94,3 +94,34 @@ jobs:
         with:
           name: ${{matrix.python.tag}}_manylinux_2_28_x86_64
           path: ./python/dist/*.whl
+
+  test-wheels-linux:
+    runs-on: ubuntu-latest
+    needs: build-wheels-linux
+    strategy:
+      matrix:
+        python: [{executable: python3.6, tag: cp36},
+                 {executable: python3.7, tag: cp37},
+                 {executable: python3.8, tag: cp38},
+                 {executable: python3.9, tag: cp39},
+                 {executable: python3.10, tag: cp310},
+                 {executable: python3.11, tag: cp311},
+                 {executable: python3.12, tag: cp312},
+                 {executable: python3.13, tag: cp313}]
+    container:
+      image: quay.io/pypa/manylinux_2_28_x86_64
+      options: --cpus 1
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Download wheel file
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{matrix.python.tag}}_manylinux_2_28_x86_64
+      - name: Install Lielab on Python
+        working-directory: ./python
+        run: ${{matrix.python.executable}} -m pip install .[dev]
+      - name: Make Python wheel
+        working-directory: ./python
+        run: ${{matrix.python.executable}} -m pytest tests
