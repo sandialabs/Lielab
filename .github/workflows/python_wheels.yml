@@ -129,5 +129,4 @@ jobs:
         working-directory: ./python/dist
         run: ${{matrix.python.executable}} -m pip install --no-index --find-links=. lielab
       - name: Run tests
-        working-directory: ./python
-        run: ${{matrix.python.executable}} -m pytest tests
+        run: ${{matrix.python.executable}} -m pytest python/tests
