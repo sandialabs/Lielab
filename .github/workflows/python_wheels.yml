@@ -117,9 +117,9 @@ jobs:
           fetch-depth: 0
       - name: Download wheel file
         uses: actions/download-artifact@v4
-        path: ./python/dist
         with:
           name: ${{matrix.python.tag}}_manylinux_2_28_x86_64
+          path: ./python/dist
       - name: Install Lielab on Python from wheel
         working-directory: ./python/dist
         run: ${{matrix.python.executable}} -m pip install --no-index --find-links=. lielab
