@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build-wheels-macos-arm:
+  build-wheels-macosx-arm64:
     runs-on: macos-14
     env:
       python-executable: python3
@@ -52,8 +52,41 @@ jobs:
         with:
           name: ${{env.python-tag}}_macosx_14_0_arm64
           path: ./python/dist/*.whl
-      
-  build-wheels-linux:
+  
+  test-wheels-macosx-arm64:
+    runs-on: macos-14
+    needs: build-wheel-macosx-arm64
+    env:
+      python-executable: python3
+      python-tag: cp313
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Download wheel file
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{env.python-tag}}_macosx_14_0_arm64
+          path: ./python/dist
+      - name: Create virtual env
+        run: ${{env.python-executable}} -m venv ~/.venv
+      - name: Install Python dependencies
+        working-directory: ./python
+        run: |
+          source ~/.venv/bin/activate
+          ${{env.python-executable}} -m pip install -r requirements.txt
+          ${{env.python-executable}} -m pip install -r requirements_dev.txt
+      - name: Install Lielab on Python from wheel
+        working-directory: ./python/dist
+        run: |
+          source ~/.venv/bin/activate
+          ${{matrix.python.executable}} -m pip install --no-index --find-links=. lielab
+      - name: Run tests
+        run: |
+          source ~/.venv/bin/activate
+          ${{matrix.python.executable}} -m pytest python/tests
+    
+  build-wheels-linux-x86-64:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -95,9 +128,9 @@ jobs:
           name: ${{matrix.python.tag}}_manylinux_2_28_x86_64
           path: ./python/dist/*.whl
 
-  test-wheels-linux:
+  test-wheels-linux-x86-64:
     runs-on: ubuntu-latest
-    needs: build-wheels-linux
+    needs: build-wheels-linux-x86-64
     strategy:
       matrix:
         python: [{executable: python3.6, tag: cp36},
