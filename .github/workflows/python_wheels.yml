@@ -55,7 +55,7 @@ jobs:
   
   test-wheels-macosx-arm64:
     runs-on: macos-14
-    needs: build-wheel-macosx-arm64
+    needs: build-wheels-macosx-arm64
     env:
       python-executable: python3
       python-tag: cp313
