@@ -80,11 +80,11 @@ jobs:
         working-directory: ./python/dist
         run: |
           source ~/.venv/bin/activate
-          ${{matrix.python.executable}} -m pip install --no-index --find-links=. lielab
+          ${{env.python-executable}} -m pip install --no-index --find-links=. lielab
       - name: Run tests
         run: |
           source ~/.venv/bin/activate
-          ${{matrix.python.executable}} -m pytest python/tests
+          ${{env.python-executable}} -m pytest python/tests
     
   build-wheels-linux-x86-64:
     runs-on: ubuntu-latest
