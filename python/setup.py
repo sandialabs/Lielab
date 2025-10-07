@@ -9,16 +9,15 @@ with open('requirements.txt') as f:
 with open('requirements.txt') as f:
     requirements_dev = f.read().splitlines()
 
-long_description = '''Lielab is a Python-wrapped C++ library implementing various objects and routines for numerical finite-dimensional Lie-theory.'''
+long_description = '''Software for the geometric modeling and numerical analysis of systems, especially those in relation to Lie theory.'''
 
 modules = ['lielab.domain',
-           'lielab.dynamics',
            'lielab.functions',
-           'lielab.kinematics',
-           'lielab.optim',
-           'lielab.testing',
-           'lielab.topos',
-           'lielab.transform']
+           'lielab.integrate',
+           'lielab.integrate.IVPMethods',
+          #  'lielab.integrate.BVPMethods',
+           'lielab.utils',
+           'lielab.testing']
 
 if platform.system() == 'Windows':
   bin_ext = '*.pyd'

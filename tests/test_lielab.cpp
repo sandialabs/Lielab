@@ -1,2 +1,4 @@
-// #include <Eigen/Core>
-// #include <lielab/lielab>
+#ifndef EIGEN_MPL2_ONLY
+#define EIGEN_MPL2_ONLY
+#endif
+#define CATCH_CONFIG_MAIN

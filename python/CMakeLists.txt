@@ -1,10 +1,20 @@
 project(pyLielab LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 20)
 
+if (NOT DEFINED Eigen3_FOUND)
+    find_package(Eigen3 REQUIRED)
+endif()
+
+if (NOT DEFINED pybind11_FOUND)
+    find_package(pybind11 REQUIRED)
+endif()
 
 # Add the pybind11 cpp file
 SET( APP_PYD cppLielab )
-pybind11_add_module(${APP_PYD} cppLielab.cpp)
+pybind11_add_module(${APP_PYD} pyLielab.cpp
+    pydomain.cpp
+    pyfunctions.cpp
+    pyintegrate.cpp
+    pyutils.cpp)
 
 if(MSVC)
     target_compile_definitions(${APP_PYD} PUBLIC _USE_MATH_DEFINES)

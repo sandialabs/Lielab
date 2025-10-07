@@ -1,7 +1,0 @@
-#include "functions/Ad.hpp"
-#include "functions/cayley1.hpp"
-#include "functions/dcayley1inv.hpp"
-#include "functions/dexp.hpp"
-#include "functions/dexpinv.hpp"
-#include "functions/exp.hpp"
-#include "functions/log.hpp"

@@ -1,31 +1,19 @@
-#ifndef _LIELAB_FUNCTIONS_COMMUTATOR_HPP
-#define _LIELAB_FUNCTIONS_COMMUTATOR_HPP
+#ifndef LIELAB_FUNCTIONS_COMMUTATOR_HPP
+#define LIELAB_FUNCTIONS_COMMUTATOR_HPP
 
-#include "../abstract.hpp"
-#include "../domain.hpp"
+#include "Lielab/domain.hpp"
 
-namespace Lielab
+namespace Lielab::functions
 {
-namespace functions
-{
-template <Lielab::abstract::LieAlgebra LA>
-constexpr LA commutator(const LA & a, const LA & b)
-{
-    /*! \f{equation*}{ (\mathfrak{g}, \mathfrak{g}) \rightarrow \mathfrak{g} \f}
-    * This is the commutator function.
-    */
 
-    if (a.shape != b.shape)
-    {
-        throw Lielab::utils::InputError("commutator: Shapes of a and b must be equal.");
-    }
+template <typename LA>
+LA commutator(const LA & a, const LA & b);
 
-    // Abelian speedhack. Return 0.
-    if (a.abelian) return LA(a.shape);
-    
-    return a*b - b*a;
+template <>
+Lielab::domain::CompositeAlgebra commutator(const Lielab::domain::CompositeAlgebra &a, const Lielab::domain::CompositeAlgebra &b);
+
 }
-}
-}
+
+#include "commutator.tpp"
 
 #endif

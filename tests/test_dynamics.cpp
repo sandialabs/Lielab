@@ -7,7 +7,7 @@
 
 //     Lielab::dynamics::vectorfield vf = Lielab::dynamics::vfex1();
 //     Lielab::domain::SO y0(3);
-//     Lielab::domain::CompositeManifold M0{y0};
+//     Lielab::domain::CompositeGroup M0{y0};
 
 //     Lielab::domain::CompositeAlgebra out = vf(2.0, M0);
 

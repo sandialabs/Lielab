@@ -2,14 +2,17 @@
 C++ imports
 """
 
-# Lie Algebras
-from ..cppLielab.domain import (cn, gl, glc, rn, se, so, sp, su)
+# Lie algebras
+from ..cppLielab.domain import (cn, glr, glc, rn, se, so, sp, su)
+from ..cppLielab.domain import CompositeAlgebra
 
-# Lie Groups
-from ..cppLielab.domain import (CN, GL, GLC, RN, SE, SO, SP, SU)
+# Lie groups
+from ..cppLielab.domain import (CN, GLR, GLC, RN, SE, SO, SP, SU)
+from ..cppLielab.domain import CompositeGroup
 
-# Composite Structures
-from ..cppLielab.domain import (CompositeAlgebra, CompositeManifold)
+# Smooth manifolds
+from ..cppLielab.domain import (GrR,)
+from ..cppLielab.domain import CompositeManifold
 
 """
 Python imports

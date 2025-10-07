@@ -1,5 +1,5 @@
-#ifndef _LIELAB_UTILS_H
-#define _LIELAB_UTILS_H
+#ifndef LIELAB_UTILS_HPP
+#define LIELAB_UTILS_HPP
 
 #include <exception>
 #include <optional>
@@ -7,84 +7,11 @@
 
 #include <Eigen/Core>
 
-namespace Lielab
-{
-namespace utils
-{
-struct NotImplementedError : public std::exception
-{
-    std::string s;
-    NotImplementedError(std::string ss) : s(ss) {}
-    ~NotImplementedError() throw () {}
-    const char* what() const throw() { return s.c_str(); }
-};
+#include "utils/eigentools.hpp"
+#include "utils/Error.hpp"
+#include "utils/factorial.hpp"
 
-struct InputError : public std::exception
-{
-    std::string s;
-    InputError(std::string ss) : s(ss) {}
-    ~InputError() throw () {}
-    const char* what() const throw() { return s.c_str(); }
-};
-
-Eigen::VectorXd concatenate(std::vector<Eigen::VectorXd> vlist)
-{
-    if (vlist.size() == 0)
-    {
-        Eigen::VectorXd out(0);
-        return out;
-    }
-
-    Eigen::VectorXd out = vlist[0];
-    for (int ii = 1; ii < vlist.size(); ii++)
-    {
-        Eigen::VectorXd temp(out.size() + vlist[ii].size());
-        temp << out, vlist[ii];
-        out = temp;
-    }
-    return out;
-}
-
-Eigen::VectorXcd concatenate(std::vector<Eigen::VectorXcd> vlist)
-{
-    if (vlist.size() == 0)
-    {
-        Eigen::VectorXcd out(0);
-        return out;
-    }
-
-    Eigen::VectorXcd out = vlist[0];
-    for (int ii = 1; ii < vlist.size(); ii++)
-    {
-        Eigen::VectorXcd temp(out.size() + vlist[ii].size());
-        temp << out, vlist[ii];
-        out = temp;
-    }
-    return out;
-}
-
-template <typename T>
-std::optional<T> smartfind(const std::vector<T> list, const std::function<bool(T)> cond)
-{
-    const auto it = std::find_if(list.begin(), list.end(), cond);
-    if (it == list.end())
-    {
-        return std::nullopt;
-    }
-    return *it;
-}
-
-template <typename T>
-std::optional<size_t> smartfindind(const std::vector<T> list, const std::function<bool(T)> cond)
-{
-    const auto it = std::find_if(list.begin(), list.end(), cond);
-    if (it == list.end())
-    {
-        return std::nullopt;
-    }
-    return std::distance(list.begin(), it);
-}
-}
-}
+#include "utils/newton.hpp"
+#include "utils/golden.hpp"
 
 #endif

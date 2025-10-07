@@ -1,10 +1,10 @@
-build/
-conan/
-doc/
-docs/
-include/
+build
+coverage
+temp
 __pycache__
 *egg-info/
+.vscode
+.git
 
 # Ignore CMake
 CMakeUserPresets.json
@@ -18,3 +18,8 @@ CMakeFiles/
 *.dll
 *.pyc
 *.pyd
+*.whl
+
+# Ignore conan environment scripts
+conan*.bat
+deactivate_conan*.bat

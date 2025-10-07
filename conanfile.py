@@ -1,6 +1,7 @@
 from conan import ConanFile
 from conan.tools.cmake import CMakeToolchain, CMakeDeps, CMake, cmake_layout
 from conan.tools.build import check_min_cppstd
+from conan.tools.files import copy, get, rmdir
 from conan.tools.scm import Version
 from conan.errors import ConanInvalidConfiguration
 import os
@@ -12,18 +13,27 @@ class LielabConan(ConanFile):
     homepage = "https://github.com/sandialabs/Lielab"
     settings = "os", "compiler", "build_type", "arch"
     options = {"with_tests": [True, False],
+               "with_coverage": [True, False],
                "with_python": [True, False]}
+            #    "with_examples": [True, False]}
+    
     default_options = {"with_tests": False,
+                       "with_coverage": False,
                        "with_python": False}
+                    #    "with_examples" : False}
 
-    no_copy_source = True
+    exports_sources = ("Lielab/*",
+                       "CMakeLists.txt",
+                       "Lielab.hpp",
+                       "LICENSE",
+                       "SCR")
 
     def requirements(self):
         self.requires("eigen/3.4.0")
         if self.options.get_safe("with_tests"):
             self.requires("catch2/3.4.0")
         if self.options.get_safe("with_python"):
-            self.requires("pybind11/2.12.0")
+            self.requires("pybind11/[>=2.12.0]")
 
     @property
     def _min_cppstd(self):
@@ -57,8 +67,12 @@ class LielabConan(ConanFile):
         tc.variables["LIELAB_INSTALL_LIBRARY"] = True
         if "with_tests" in self.options:
             tc.variables["LIELAB_BUILD_TESTS"] = self.options.with_tests
+        if "with_coverage" in self.options:
+            tc.variables["LIELAB_WITH_COVERAGE"] = self.options.with_coverage
         if "with_python" in self.options:
             tc.variables["LIELAB_BUILD_PYTHON"] = self.options.with_python
+        # if "with_examples" in self.options:
+        #     tc.variables["LIELAB_BUILD_EXAMPLES"] = self.options.with_examples
         # tc.variables["PYTHON_EXECUTABLE"] = "path to python executable" # Define this to explicitly tell pybind11 which Python to use
         tc.generate()
         cmake = CMakeDeps(self)
@@ -68,4 +82,20 @@ class LielabConan(ConanFile):
         cmake = CMake(self)
         cmake.configure()
         cmake.build()
+    
+    def package(self):
+        copy(self, "LICENSE", dst=os.path.join(self.package_folder, "licenses"), src=self.source_folder)
+        cmake = CMake(self)
+        cmake.configure()
         cmake.install()
+        rmdir(self, os.path.join(self.package_folder, "share"))
+    
+    def package_info(self):
+        # self.cpp_info.bindirs = []
+        self.cpp_info.libs = ["Lielab"]
+
+        self.cpp_info.set_property("cmake_file_name", "Lielab")
+        self.cpp_info.set_property("cmake_target_name", "Lielab::Lielab")
+
+        self.cpp_info.names["cmake_find_package"] = "Lielab"
+        self.cpp_info.names["cmake_find_package_multi"] = "Lielab"

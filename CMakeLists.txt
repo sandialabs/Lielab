@@ -1,49 +1,93 @@
 cmake_minimum_required(VERSION 3.23)
+set(CMAKE_CXX_STANDARD 20)
 
 project("Lielab"
-        VERSION 0.4.1
+        VERSION 0.5.0
         LANGUAGES CXX)
 
-if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
-    # Is top level, compile everything.
-    # Is "PROJECT_IS_TOP_LEVEL" the same thing?
-    set(IS_TOPLEVEL_PROJECT TRUE)
-else()
-    # Not top level. Imported into another project.
-    set(IS_TOPLEVEL_PROJECT FALSE)
-endif()
-
-option(LIELAB_INSTALL_LIBRARY "Install Lielab into default locations." ${IS_TOPLEVEL_PROJECT})
-option(LIELAB_BUILD_TESTS "Build Lielab tests" ${IS_TOPLEVEL_PROJECT})
-option(LIELAB_BUILD_PYTHON "Build Lielab python module" ${IS_TOPLEVEL_PROJECT})
-# set(PYTHON_EXECUTABLE "path to python executable") # Define this to explicitly tell pybind11 which Python to use
-
 ################################
-# Make the main project
-#
-# Always build this regardless of how this CMakeLists is called.
+# Import dependencies
 ################################
-include(GNUInstallDirs)
 
-add_library(Lielab INTERFACE)
-add_library(Lielab::Lielab ALIAS Lielab)
-
-target_include_directories(Lielab INTERFACE 
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Lielab>
-    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
-)
-
-
-# Uncomment these if you want to manually include dependencies and build with CMake.
+# Manually include dependencies
 # add_subdirectory(include/Catch2)
 # add_subdirectory(include/Eigen3)
 # add_subdirectory(include/pybind11)
 
-# Eigen3 required for the header only pure C++ version
-# if (NOT DEFINED Eigen3_FOUND)
-#     find_package(Eigen3 REQUIRED)
-# endif()
+if (NOT DEFINED Eigen3_FOUND)
+    find_package(Eigen3 REQUIRED)
+endif()
+
+################################
+# GLobal project options
+################################
+
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    # TODO:
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    add_compile_options(-Wall -Wextra -Wpedantic)
+    add_compile_options(-Wno-unused-parameter) # Ignore unused parameters
+    add_compile_options(-fPIC)
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+    # TODO:
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    add_compile_options(/W4)
+    add_compile_options(/wd4100) # Ignore unused parameters
+    add_compile_options(/wd4037) # Ignore std::complex<int>
+    add_compile_options(/w44388) # Include signed/unsigned comparison warning
+endif()
+
+option(LIELAB_INSTALL_LIBRARY "Install Lielab into default locations." TRUE)
+
+option(LIELAB_BUILD_PYTHON "Build Lielab python module" FALSE)
+# set(PYTHON_EXECUTABLE "path to python executable") # Define this to explicitly tell pybind11 which Python to use
+option(LIELAB_WITH_COVERAGE "Include test coverage information" FALSE)
+option(LIELAB_BUILD_TESTS "Build Lielab tests" FALSE)
+# option(LIELAB_BUILD_EXAMPLES "Build Lielab examples" FALSE)
+
+
+
+################################
+# Make the main project
+################################
+include(GNUInstallDirs)
+
+# Domain submodule
+file(GLOB LielabDomainCPP "Lielab/domain/*.cpp")
+file(GLOB LielabDomainLieAlgebrasCPP "Lielab/domain/liealgebras/*.cpp")
+file(GLOB LielabDomainLieGroupsCPP "Lielab/domain/liegroups/*.cpp")
+file(GLOB LielabDomainSmoothManifoldsCPP "Lielab/domain/smoothmanifolds/*.cpp")
+
+# Functions submodule
+file(GLOB LielabFunctionsCPP "Lielab/functions/*.cpp")
+
+# Integrate submodule
+file(GLOB LielabIntegrateCPP "Lielab/integrate/*.cpp")
+file(GLOB LielabIntegrateIVPMethodsCPP "Lielab/integrate/IVPMethods/*.cpp")
+# file(GLOB LielabIntegrateBVPMethodsCPP "Lielab/integrate/BVPMethods/*.cpp")
+
+# Utils submodule
+file(GLOB LielabUtilsCPP "Lielab/utils/*.cpp")
+
+add_library(Lielab STATIC ${LielabDomainCPP}
+                          ${LielabDomainLieAlgebrasCPP}
+                          ${LielabDomainLieGroupsCPP}
+                          ${LielabDomainSmoothManifoldsCPP}
+                          ${LielabFunctionsCPP}
+                          ${LielabIntegrateCPP}
+                          ${LielabIntegrateIVPMethodsCPP}
+                        #   ${LielabIntegrateBVPMethodsCPP}
+                          ${LielabUtilsCPP})
+
+target_link_libraries(Lielab PRIVATE Eigen3::Eigen)
+
+add_library(Lielab::Lielab ALIAS Lielab)
+
+target_include_directories(Lielab PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Lielab>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+)
 
 if (LIELAB_INSTALL_LIBRARY)
     # TODO: Are these needed?
@@ -79,30 +123,37 @@ if (LIELAB_INSTALL_LIBRARY)
             DESTINATION licenses)
 
     # Copy the whole "lielab" directory
-    install(DIRECTORY ${PROJECT_SOURCE_DIR}/Lielab DESTINATION include)
+    install(DIRECTORY ${PROJECT_SOURCE_DIR}/Lielab
+        DESTINATION include
+        FILES_MATCHING PATTERN "*.hpp"
+                       PATTERN "*.tpp")
 endif()
 
 
 ###
 # add sources so target shows up in IDE
-# file(GLOB Lielab_main_files "lielab/*.hpp" "lielab/lielab" "lielab/topos" "lielab/functions" "lielab/domain")
-# file(GLOB Lielab_domain_files "lielab/src/domain/*.hpp")
-# file(GLOB Lielab_domain_liealgebras_files "lielab/src/domain/liealgebras/*.hpp")
-# file(GLOB Lielab_domain_liegroups_files "lielab/src/domain/liegroups/*.hpp")
-# file(GLOB Lielab_domain_ops_files "lielab/src/domain/ops/*.hpp")
-# file(GLOB Lielab_functions_files "lielab/src/functions/*.hpp")
-# file(GLOB Lielab_topos_files "lielab/src/topos/*.hpp")
-# file(GLOB Lielab_topos_functions_files "lielab/src/topos/functions/*.hpp")
-# target_sources(Lielab PRIVATE ${Lielab_main_files})
-# target_sources(Lielab PRIVATE ${Lielab_domain_files})
-# target_sources(Lielab PRIVATE ${Lielab_domain_liealgebras_files})
-# target_sources(Lielab PRIVATE ${Lielab_domain_liegroups_files})
-# target_sources(Lielab PRIVATE ${Lielab_domain_ops_files})
-# target_sources(Lielab PRIVATE ${Lielab_functions_files})
-# target_sources(Lielab PRIVATE ${Lielab_topos_files})
-# target_sources(Lielab PRIVATE ${Lielab_topos_functions_files})
+# file(GLOB Lielab_main_files "Lielab.hpp" "Lielab/*.hpp")
+# file(GLOB Lielab_constants_files "Lielab/constants/.hpp")
+# file(GLOB Lielab_domain_liealgebras_files "Lielab/domain/liealgebras/*.hpp")
+# file(GLOB Lielab_domain_liegroups_files "Lielab/domain/liegroups/*.hpp")
+# file(GLOB Lielab_domain_operators_files "Lielab/domain/operators/*.hpp")
+# file(GLOB Lielab_domain_files "Lielab/domain/*.hpp")
+# file(GLOB Lielab_functions_files "Lielab/functions/*.hpp")
+# file(GLOB Lielab_topos_functions_files "Lielab/topos/functions/*.hpp")
+# file(GLOB Lielab_topos_files "Lielab/topos/*.hpp")
+# file(GLOB Lielab_utils_files "Lielab/utils/*.hpp")
+# target_sources(Lielab PUBLIC ${Lielab_main_files})
+# target_sources(Lielab PUBLIC ${Lielab_constants_files})
+# target_sources(Lielab PUBLIC ${Lielab_domain_liealgebras_files})
+# target_sources(Lielab PUBLIC ${Lielab_domain_liegroups_files})
+# target_sources(Lielab PUBLIC ${Lielab_domain_operators_files})
+# target_sources(Lielab PUBLIC ${Lielab_domain_files})
+# target_sources(Lielab PUBLIC ${Lielab_functions_files})
+# target_sources(Lielab PUBLIC ${Lielab_topos_functions_files})
+# target_sources(Lielab PUBLIC ${Lielab_topos_files})
+# target_sources(Lielab PUBLIC ${Lielab_utils_files})
 
-# source_group(TREE "${CMAKE_CURRENT_LIST_DIR}/lielab" FILES ${Lielab_main_files})
+# source_group(TREE "${CMAKE_CURRENT_LIST_DIR}/Lielab" FILES ${Lielab_main_files})
 # source_group(TREE "${CMAKE_CURRENT_LIST_DIR}/lielab/src" FILES 
 #                                ${Lielab_domain_files} 
 #                                ${Lielab_domain_liealgebras_files}
@@ -111,22 +162,6 @@ endif()
 #                                ${Lielab_functions_files}
 #                                ${Lielab_topos_files}
 #                                ${Lielab_topos_functions_files})
-
-# if(MSVC)
-#     target_compile_definitions(Lielab INTERFACE "_USE_MATH_DEFINES")
-#     target_compile_options(Lielab INTERFACE "-bigobj")
-#     target_compile_options(Lielab INTERFACE "/fp:precise")
-#     target_compile_definitions(Lielab INTERFACE "_CRT_SECURE_NO_WARNINGS")
-#     target_compile_options(Lielab INTERFACE "/Zc:preprocessor") # use new standard-conforming preprocessor by default
-#     # CMake does not set include path correctly for interface targets
-#     # get_target_property(EIGEN3_INCLUDE_DIRS Eigen3::Eigen INTERFACE_INCLUDE_DIRECTORIES)
-#     get_target_property(LIELAB_INCLUDE_DIRS Lielab INTERFACE_INCLUDE_DIRECTORIES)
-#     foreach(dir ${EIGEN3_INCLUDE_DIRS} ${LIELAB_INCLUDE_DIRS})
-#         string(APPEND LIELAB_INCLUDE_DIR_STRING "${dir};")
-#     endforeach()
-#     set_target_properties(Lielab PROPERTIES VS_GLOBAL_IncludePath "${LIELAB_INCLUDE_DIR_STRING}")
-# endif(MSVC)
-###
 
 # Set C++20
 target_compile_features(Lielab INTERFACE cxx_std_20)
@@ -139,12 +174,11 @@ export(TARGETS Lielab NAMESPACE Lielab:: FILE LielabTargets.cmake)
 # Make the tests project
 ################################
 if (LIELAB_BUILD_TESTS)
-    if (NOT DEFINED Eigen3_FOUND)
-        find_package(Eigen3 REQUIRED)
-    endif()
-    if (NOT DEFINED Catch2_FOUND)
-        find_package(Catch2 REQUIRED)
-    endif()
+    if (LIELAB_WITH_COVERAGE AND (CMAKE_CXX_COMPILER_ID STREQUAL "GNU"))
+        SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 --coverage -fcondition-coverage")
+        SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0 --coverage -fcondition-coverage")
+        target_link_libraries(Lielab PRIVATE gcov)
+    endif ()
     add_subdirectory(tests)
 endif()
 
@@ -153,19 +187,13 @@ endif()
 # Make the Python library
 ################################
 if (LIELAB_BUILD_PYTHON)
-    if (NOT DEFINED Eigen3_FOUND)
-        find_package(Eigen3 REQUIRED)
-    endif()
-    
-    if (NOT DEFINED pybind11_FOUND)
-        find_package(pybind11 REQUIRED)
-    endif()
     add_subdirectory(python)
 endif()
 
 ################################
-# 32-bit cl.exe will run out of memory building Lielab
+# Make the examples
 ################################
-if (MSVC AND (NOT CMAKE_VS_PLATFORM_TOOLSET_HOST_ARCHITECTURE MATCHES "x64"))
-    message(WARNING "Use /Ax64 and/or /Thost=x64 to make sure 64-bit host toolchain is used. CMAKE_VS_PLATFORM_TOOLSET_HOST_ARCHITECTURE is ${CMAKE_VS_PLATFORM_TOOLSET_HOST_ARCHITECTURE}")
-endif()
+
+# if (LIELAB_BUILD_EXAMPLES)
+#     add_subdirectory(examples)
+# endif()

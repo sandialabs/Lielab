@@ -1,38 +1,19 @@
-#ifndef _LIELAB_FUNCTIONS_ACTIONS_HPP
-#define _LIELAB_FUNCTIONS_ACTIONS_HPP
+#ifndef LIELAB_FUNCTIONS_ACTIONS_HPP
+#define LIELAB_FUNCTIONS_ACTIONS_HPP
 
-#include "../domain.hpp"
 #include "exp.hpp"
 
-namespace Lielab
-{
-namespace functions
-{
-Lielab::domain::CompositeManifold left_product(const Lielab::domain::CompositeManifold & Left, const Lielab::domain::CompositeManifold & Right)
-{
-    /*!
-     * Default action by left product.
-     *
-     * TODO: Probably belongs in the topos namespace.
-     *
-     * @param[in] Left
-     * @param[in] Right
-     * @param[out] out Left*Right
-     * 
-     * Author / Date: Sparapany / 2022
-     */
+#include "Lielab/domain.hpp"
 
-    // Simple error checking on the inputs
-    // TODO: Move this error checking to CompositeManifold?
-    if (Left.space.size() != Right.space.size())
-    {
-        throw SizeError("left_product: Spaces of CompositeManifold must be the same size (" + std::to_string(Left.space.size()) + " != " + std::to_string(Right.space.size()) + ").");
-    }
+namespace Lielab::functions
+{
 
-    // Do the action
-    return Left*Right;
-}
-}
+Lielab::domain::CompositeManifold left_Lie_group_action(const Lielab::domain::CompositeGroup& g, const Lielab::domain::CompositeManifold& y);
+Lielab::domain::CompositeManifold right_Lie_group_action(const Lielab::domain::CompositeGroup& g, const Lielab::domain::CompositeManifold& y);
+
+Lielab::domain::CompositeManifold left_Lie_algebra_action(const Lielab::domain::CompositeAlgebra& xi, const Lielab::domain::CompositeManifold& y);
+Lielab::domain::CompositeManifold right_Lie_algebra_action(const Lielab::domain::CompositeAlgebra& xi, const Lielab::domain::CompositeManifold& y);
+
 }
 
 #endif
