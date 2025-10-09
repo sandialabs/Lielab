@@ -1,0 +1,27 @@
+name: test-cpp
+
+on: 
+ - push
+ - pull_request
+
+jobs:
+  test-linux-x86-64:
+    runs-on: ubuntu-latest
+    container:
+      image: quay.io/pypa/manylinux_2_28_x86_64
+      options: --cpus 1
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Ensure pip is installed
+        run: python3 -m ensurepip --upgrade
+      - name: Get Conan for dependencies
+        run: pip3 install conan
+      - name: Detect Conan profile
+        run: conan profile detect --force
+      - name: Build the tests
+        run: conan build . --version=0.5.0 -s:a build_type=Debug -s:a compiler.cppstd=gnu20 -o:a "&:with_tests=True" --build=missing
+      - name: Run C++ tests
+        working-directory: ./build/Debug/tests
+        run: ./test_Lielab

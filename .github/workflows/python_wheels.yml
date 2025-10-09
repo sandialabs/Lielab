@@ -33,7 +33,7 @@ jobs:
       - name: Install Lielab dependencies
         run: |
           source ~/.venv/bin/activate
-          conan install . -s compiler.cppstd=gnu20 -o with_python=True
+          conan install . -s:a build_type=Release -s:a compiler.cppstd=gnu20 -o:a "&:with_python=True"
       - name: CMake Configure
         run: |
           source ~/.venv/bin/activate
@@ -90,14 +90,13 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python: [{executable: python3.6, tag: cp36},
-                 {executable: python3.7, tag: cp37},
-                 {executable: python3.8, tag: cp38},
+        python: [{executable: python3.8, tag: cp38},
                  {executable: python3.9, tag: cp39},
                  {executable: python3.10, tag: cp310},
                  {executable: python3.11, tag: cp311},
                  {executable: python3.12, tag: cp312},
-                 {executable: python3.13, tag: cp313}]
+                 {executable: python3.13, tag: cp313},
+                 {executable: python3.14, tag: cp314}]
     container:
       image: quay.io/pypa/manylinux_2_28_x86_64
       options: --cpus 1
@@ -114,7 +113,7 @@ jobs:
       - name: Detect Conan profile
         run: conan profile detect --force
       - name: Install Lielab dependencies
-        run: conan install . -s compiler.cppstd=gnu20 -o with_python=True
+        run: conan install . -s:a build_type=Release -s:a compiler.cppstd=gnu20 -o:a "&:with_python=True"
       - name: CMake Configure
         run: cmake --preset conan-release -DPYTHON_EXECUTABLE=${{matrix.python.executable}}
       - name: CMake Build
@@ -133,14 +132,13 @@ jobs:
     needs: build-wheels-linux-x86-64
     strategy:
       matrix:
-        python: [{executable: python3.6, tag: cp36},
-                 {executable: python3.7, tag: cp37},
-                 {executable: python3.8, tag: cp38},
+        python: [{executable: python3.8, tag: cp38},
                  {executable: python3.9, tag: cp39},
                  {executable: python3.10, tag: cp310},
                  {executable: python3.11, tag: cp311},
                  {executable: python3.12, tag: cp312},
-                 {executable: python3.13, tag: cp313}]
+                 {executable: python3.13, tag: cp313},
+                 {executable: python3.14, tag: cp314}]
     container:
       image: quay.io/pypa/manylinux_2_28_x86_64
       options: --cpus 1
