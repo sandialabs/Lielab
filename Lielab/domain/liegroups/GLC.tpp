@@ -12,7 +12,7 @@ namespace Lielab::domain
 {
 
 template<typename OtherDerived>
-GLC::GLC(const Eigen::MatrixBase<OtherDerived> & other)
+GLC::GLC(const Eigen::MatrixBase<OtherDerived>& other)
 {
     /*! \f{eqnarray*}{(\mathbb{R}^{n \times n}) &\rightarrow& GLC \\ (\mathbb{R}^{n \times 1}) &\rightarrow& GLC \f}
     *
@@ -34,7 +34,7 @@ GLC::GLC(const Eigen::MatrixBase<OtherDerived> & other)
 }
 
 template<typename OtherDerived>
-GLC & GLC::operator=(const Eigen::MatrixBase<OtherDerived> & other)
+GLC& GLC::operator=(const Eigen::MatrixBase<OtherDerived>& other)
 {
     /*! \f{eqnarray*}{ GLC &:= \mathbb{C}^{n \times n} \\ &:= \mathbb{C}^{n \times 1} \f}
     * 

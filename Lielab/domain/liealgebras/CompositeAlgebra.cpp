@@ -11,6 +11,7 @@
 
 #include <Eigen/Core>
 
+#include <cassert>
 #include <initializer_list>
 #include <numeric>
 
@@ -591,7 +592,7 @@ std::complex<double> CompositeAlgebra::operator()(const ptrdiff_t index1, const 
     return std::complex<double>(0.0, 0.0);
 }
 
-CompositeAlgebra CompositeAlgebra::operator+(const CompositeAlgebra & other) const
+CompositeAlgebra CompositeAlgebra::operator+(const CompositeAlgebra& other) const
 {
     assert(this->space.size() == other.space.size());
 
@@ -637,7 +638,7 @@ CompositeAlgebra CompositeAlgebra::operator+(const CompositeAlgebra & other) con
     return out;
 }
 
-CompositeAlgebra & CompositeAlgebra::operator+=(const CompositeAlgebra & other)
+CompositeAlgebra& CompositeAlgebra::operator+=(const CompositeAlgebra& other)
 {
     assert(this->space.size() == other.space.size());
 
@@ -681,7 +682,7 @@ CompositeAlgebra & CompositeAlgebra::operator+=(const CompositeAlgebra & other)
     return *this;
 }
 
-CompositeAlgebra CompositeAlgebra::operator-(const CompositeAlgebra & other) const
+CompositeAlgebra CompositeAlgebra::operator-(const CompositeAlgebra& other) const
 {
     CompositeAlgebra out;
 
@@ -725,7 +726,7 @@ CompositeAlgebra CompositeAlgebra::operator-(const CompositeAlgebra & other) con
     return out;
 }
 
-CompositeAlgebra & CompositeAlgebra::operator-=(const CompositeAlgebra & other)
+CompositeAlgebra& CompositeAlgebra::operator-=(const CompositeAlgebra& other)
 {
     assert(this->space.size() == other.space.size());
 
@@ -857,12 +858,12 @@ CompositeAlgebra CompositeAlgebra::operator*(const double other) const
     return out;
 }
 
-CompositeAlgebra operator*(const double other, const CompositeAlgebra & rhs)
+CompositeAlgebra operator*(const double other, const CompositeAlgebra& rhs)
 {
     return rhs*other;
 }
 
-CompositeAlgebra & CompositeAlgebra::operator*=(const double other)
+CompositeAlgebra& CompositeAlgebra::operator*=(const double other)
 {
     for (size_t ii = 0; ii < this->space.size(); ii++)
     {
@@ -948,7 +949,7 @@ CompositeAlgebra CompositeAlgebra::operator/(const double other) const
     return out;
 }
 
-CompositeAlgebra & CompositeAlgebra::operator/=(const double other)
+CompositeAlgebra& CompositeAlgebra::operator/=(const double other)
 {
     for (size_t ii = 0; ii < this->space.size(); ii++)
     {
@@ -993,10 +994,10 @@ CompositeAlgebra & CompositeAlgebra::operator/=(const double other)
 CompositeAlgebra::TYPES CompositeAlgebra::operator[](const ptrdiff_t index) const
 {
     const size_t sz = this->space.size();
-    if (index >= static_cast<ptrdiff_t>(sz)) return Lielab::domain::glc();
+    if (index >= static_cast<ptrdiff_t>(sz)) return glc();
 
-    if (index >= static_cast<ptrdiff_t>(sz)) return Lielab::domain::glc();
-    if (std::abs(index) > static_cast<ptrdiff_t>(sz)) return Lielab::domain::glc();
+    if (index >= static_cast<ptrdiff_t>(sz)) return glc();
+    if (std::abs(index) > static_cast<ptrdiff_t>(sz)) return glc();
 
     size_t _index;
     if (index < 0)
@@ -1043,10 +1044,10 @@ CompositeAlgebra::TYPES CompositeAlgebra::operator[](const ptrdiff_t index) cons
     }
 
     // This should never be called
-    return Lielab::domain::glc();
+    return glc();
 }
 
-std::ostream & operator<<(std::ostream & os, const CompositeAlgebra & other)
+std::ostream& operator<<(std::ostream& os, const CompositeAlgebra& other)
 {
     /*!
     * Overloads the "<<" stream insertion operator.

@@ -29,11 +29,11 @@ class LielabConan(ConanFile):
                        "SCR")
 
     def requirements(self):
-        self.requires("eigen/3.4.0")
+        self.requires("eigen/5.0.0")
         if self.options.get_safe("with_tests"):
             self.requires("catch2/3.4.0")
         if self.options.get_safe("with_python"):
-            self.requires("pybind11/[>=2.12.0]")
+            self.requires("pybind11/[>=3.0.0]")
 
     @property
     def _min_cppstd(self):

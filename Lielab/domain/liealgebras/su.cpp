@@ -7,6 +7,8 @@
 #include <Eigen/Core>
 #include <unsupported/Eigen/MatrixFunctions>
 
+#include <cassert>
+
 namespace Lielab::domain
 {
 
@@ -339,7 +341,7 @@ std::complex<double> su::operator()(const ptrdiff_t index1, const ptrdiff_t inde
     return this->data(_index1, _index2);
 }
 
-su su::operator+(const su & other) const
+su su::operator+(const su& other) const
 {
     /*! \f{equation*}{ (\mathfrak{su}, \mathfrak{su}) \rightarrow \mathfrak{su} \f}
     *
@@ -355,7 +357,7 @@ su su::operator+(const su & other) const
     return su(new_matrix);
 }
 
-su & su::operator+=(const su & other)
+su& su::operator+=(const su& other)
 {
     /*! \f{equation*}{ (\mathfrak{su}, \mathfrak{su}) \rightarrow \mathfrak{su} \f}
     *
@@ -367,7 +369,7 @@ su & su::operator+=(const su & other)
     return *this;
 }
 
-su su::operator-(const su & other) const
+su su::operator-(const su& other) const
 {
     /*! \f{equation*}{ (\mathfrak{su}, \mathfrak{su}) \rightarrow \mathfrak{su} \f}
     *
@@ -383,7 +385,7 @@ su su::operator-(const su & other) const
     return su(new_matrix);
 }
 
-su & su::operator-=(const su & other)
+su& su::operator-=(const su& other)
 {
     /*! \f{equation*}{ (\mathfrak{su}, \mathfrak{su}) \rightarrow \mathfrak{su} \f}
     *
@@ -417,7 +419,7 @@ su su::operator*(const double other) const
     return out;
 }
 
-su operator*(const double other, const su & rhs)
+su operator*(const double other, const su& rhs)
 {
     /*! \f{equation*}{ (\mathbb{R}, \mathfrak{su}) \rightarrow \mathfrak{su} \f}
     *
@@ -438,7 +440,7 @@ su su::operator*(const std::complex<double> other) const
     return out;
 }
 
-su operator*(const std::complex<double> other, const su & rhs)
+su operator*(const std::complex<double> other, const su& rhs)
 {
     /*! \f{equation*}{ (\mathbb{C}, \mathfrak{su}) \rightarrow \mathfrak{su} \f}
     *
@@ -448,7 +450,7 @@ su operator*(const std::complex<double> other, const su & rhs)
     return rhs*other;
 }
 
-su & su::operator*=(const double other)
+su& su::operator*=(const double other)
 {
     /*! \f{equation*}{ (\mathfrak{su}, \mathbb{R}) \rightarrow \mathfrak{su} \f}
     *
@@ -459,7 +461,7 @@ su & su::operator*=(const double other)
     return *this;
 }
 
-su & su::operator*=(const std::complex<double> other)
+su& su::operator*=(const std::complex<double> other)
 {
     /*! \f{equation*}{ (\mathfrak{su}, \mathbb{C}) \rightarrow \mathfrak{su} \f}
     *
@@ -492,7 +494,7 @@ su su::operator/(const std::complex<double> other) const
     return out;
 }
 
-su & su::operator/=(const double other)
+su& su::operator/=(const double other)
 {
     /*! \f{equation*}{ (\mathfrak{su}, \mathbb{R}) \rightarrow \mathfrak{su} \f}
     *
@@ -503,7 +505,7 @@ su & su::operator/=(const double other)
     return *this;
 }
 
-su & su::operator/=(const std::complex<double> other)
+su& su::operator/=(const std::complex<double> other)
 {
     /*! \f{equation*}{ (\mathfrak{su}, \mathbb{C}) \rightarrow \mathfrak{su} \f}
     *
@@ -547,7 +549,7 @@ su su::from_vector(std::initializer_list<double> vector)
 
 // TODO: Project function
 
-std::ostream & operator<<(std::ostream & os, const su & other)
+std::ostream& operator<<(std::ostream& os, const su& other)
 {
     /*!
     * Overloads the "<<" stream insertion operator.

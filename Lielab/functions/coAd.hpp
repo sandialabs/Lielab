@@ -5,7 +5,7 @@
 // {
 
 // template<Lielab::abstract::LieGroup LG>
-// Lielab::domain::cola _coAd(const LG & G, const Lielab::domain::cola & mu)
+// Lielab::domain::cola _coAd(const LG& G, const Lielab::domain::cola& mu)
 // {
 //     // TODO: This can be sped up with .get_vector()
 //     // TODO: coAd needs a rework overall. No more cola's.
@@ -37,7 +37,7 @@
 // }
 
 // template<Lielab::abstract::LieGroup LG>
-// Lielab::domain::cola coAd(const LG & G, const Lielab::domain::cola & mu)
+// Lielab::domain::cola coAd(const LG& G, const Lielab::domain::cola& mu)
 // {
 //     /*! \f{equation*}{ (G, \mathfrak{g}^*) \rightarrow \mathfrak{g}^* \f}
 //     *
@@ -48,7 +48,7 @@
 // }
 
 // template<>
-// Lielab::domain::cola coAd(const Lielab::domain::GL & G, const Lielab::domain::cola & mu)
+// Lielab::domain::cola coAd(const Lielab::domain::GL& G, const Lielab::domain::cola& mu)
 // {
 //     /*! \f{equation*}{ (GL, \mathfrak{gl}^*) \rightarrow \mathfrak{gl}^*}
 //     *
@@ -65,7 +65,7 @@
 // }
 
 // template<>
-// Lielab::domain::cola coAd(const Lielab::domain::SO & G, const Lielab::domain::cola & mu)
+// Lielab::domain::cola coAd(const Lielab::domain::SO& G, const Lielab::domain::cola& mu)
 // {
 //     /*! \f{equation*}{ (SO, \mathfrak{so}^*) \rightarrow \mathfrak{so}^*}
 //     *

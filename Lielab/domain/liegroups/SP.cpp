@@ -5,6 +5,8 @@
 #include <Eigen/Core>
 #include <unsupported/Eigen/MatrixFunctions>
 
+#include <cassert>
+
 namespace Lielab::domain
 {
 
@@ -90,7 +92,7 @@ size_t SP::get_size() const
     return static_cast<size_t>(std::pow(this->_shape, 2));
 }
 
-Eigen::MatrixXd SP::get_matrix() const
+SP::matrix_t SP::get_matrix() const
 {
     /*! \f{equation*}{ () \rightarrow \mathbb{R}^{n \times n} \f}
     * 
@@ -129,7 +131,7 @@ Eigen::VectorXd SP::serialize() const
     return this->data.reshaped<Eigen::RowMajor>();
 }
 
-void SP::unserialize(const Eigen::VectorXd &vec)
+void SP::unserialize(const Eigen::VectorXd& vec)
 {
     /*! \f{equation*}{ (\mathbb{R}^{n \times 1}) \rightarrow () \f}
     * 
@@ -191,7 +193,7 @@ double SP::operator()(const ptrdiff_t index1, const ptrdiff_t index2) const
     return this->data(_index1, _index2);
 }
 
-SP SP::operator*(const SP & other) const
+SP SP::operator*(const SP& other) const
 {
     /*! \f{equation*}{ (SP, SP) \rightarrow SP \f}
     *
@@ -202,7 +204,7 @@ SP SP::operator*(const SP & other) const
     return SP(this->data * other.data);
 }
 
-SP & SP::operator*=(const SP & other)
+SP& SP::operator*=(const SP& other)
 {
     /*! \f{equation*}{ (SP, SP) \rightarrow SP \f}
     *
@@ -214,7 +216,7 @@ SP & SP::operator*=(const SP & other)
     return *this;
 }
 
-std::ostream & operator<<(std::ostream& os, const SP & other)
+std::ostream& operator<<(std::ostream& os, const SP& other)
 {
     /*!
     * Overloads the "<<" stream insertion operator.

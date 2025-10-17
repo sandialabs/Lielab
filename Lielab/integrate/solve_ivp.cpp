@@ -1,14 +1,15 @@
 #include "solve_ivp.hpp"
 
-#include "Coefficients.hpp"
 #include "ODESolution.hpp"
 
+#include "IVPMethods/Coefficients.hpp"
 #include "IVPMethods/IVPSettings.hpp"
 #include "IVPMethods/RungeKutta.hpp"
 
 #include "Lielab/domain.hpp"
 #include "Lielab/utils.hpp"
 
+#include <chrono>
 #include <functional>
 #include <limits>
 
@@ -30,38 +31,114 @@ ODESolution solve_ivp(const EuclideanIVPSystem& dynamics, const Eigen::VectorXd&
     
     TODO
     ----
-
+        - Preprocess values and error control
+        - Flip tspan for descending values
     */
 
-    RungeKuttaFlow F = RungeKuttaFlow();
+    ODESolution out = ODESolution();
 
-    F.dt = options.dt_initial;
+    if (tspan.size() < 2)
+    {
+        out.message = "Error: tspan must have size >= 2. Got " + std::to_string(tspan.size()) + ".";
+        out.success = false;
+        out.status = static_cast<int>(RungeKuttaFlowStatus::ERROR_INPUT);
+        return out;
+    }
+
+    for (ptrdiff_t ii = 0; ii < tspan.size() - 1; ii++)
+    {
+        if (tspan(ii+1) <= tspan(ii))
+        {
+            out.message = "Error: tspan must be ascending.";
+            out.success = false;
+            out.status = -20;
+            return out;
+        }
+    }
+
+    if (options.dt_min > options.dt_max)
+    {
+        out.message = "Error: dt_min must be smaller than dt_max. Got " + std::to_string(options.dt_min) + " </= " + std::to_string(options.dt_max) + ".";
+        out.success = false;
+        out.status = -21;
+        return out;
+    }
+
+    // TODO: Check vf and dy here
+
+    RungeKuttaFlow F = RungeKuttaFlow();
+    F.method = RungeKutta(options.coefficients);
+
+    // Preprocess
+    F.dt = options.dt;
     F.dt_min = options.dt_min;
     F.dt_max = options.dt_max;
 
     F.reltol = options.reltol;
     F.abstol = options.abstol;
 
-    F.method->reltol = options.reltol;
-    F.method->abstol = options.abstol;
-
+    F.method.reltol = options.reltol;
+    F.method.abstol = options.abstol;
+    
     F.variable_time_step = options.variable_time_step;
 
-    ODESolution out = F(dynamics, tspan, y0, options);
+    // Main numerical method
+    auto time_start = std::chrono::high_resolution_clock::now();
+    out = F(dynamics, tspan, y0, options);
+    auto time_end = std::chrono::high_resolution_clock::now();
 
-    if (out.status == 0)
+    // Postprocess
+    out.time_to_solution = std::chrono::duration<double>(time_end - time_start).count();
+
+    if (out.status == static_cast<int>(RungeKuttaFlowStatus::SUCCESS))
     {
-        out.message = "Method converged.";
+        out.message = "Success: Final time reached.";
         out.success = true;
     }
-    else if (out.status == -1)
+    else if (out.status == static_cast<int>(RungeKuttaFlowStatus::SUCCESS_EVENT))
     {
-        out.message = "NaNs in vectorfield.";
+        out.message = "Success: Event triggered.";
+        out.success = true;
+    }
+    else if (out.status == static_cast<int>(RungeKuttaFlowStatus::SUCCESS_BUT_TOL_THO))
+    {
+        out.message = "Success: Final time reached, but integration tolerance was not met.";
+        out.success = true;
+    }
+    else if (out.status == static_cast<int>(RungeKuttaFlowStatus::SUCCESS_EVENT_BUT_TOL_THO))
+    {
+        out.message = "Success: Event triggered, but integration tolerance was not met.";
+        out.success = true;
+    }
+    else if (out.status == static_cast<int>(RungeKuttaFlowStatus::ERROR_NAN))
+    {
+        out.message = "Error: NaNs in vectorfield.";
         out.success = false;
     }
-    else if (out.status == -2)
+    else if (out.status == static_cast<int>(RungeKuttaFlowStatus::ERROR_INF))
     {
-        out.message = "Infs in vectorfield.";
+        out.message = "Error: Infs in vectorfield.";
+        out.success = false;
+    }
+    // else if (out.status == static_cast<int>(RungeKuttaFlowStatus::ERROR_INPUT))
+    // {
+    //     out.message = "Error: tspan must have size greater than 2.";
+    //     out.success = false;
+    // }
+    else if (out.status == static_cast<int>(RungeKuttaFlowStatus::ERROR_MAX_ITERATIONS))
+    {
+        out.message = "Error: Max iterations exceeded.";
+        out.success = false;
+    }
+    else if (out.status == static_cast<int>(RungeKuttaFlowStatus::ERROR_NEGATIVE_DT))
+    {
+        out.message = "Error: dt 0 or negative. Only positive dt is supported.";
+        out.success = false;
+    }
+    else if (out.status == static_cast<int>(RungeKuttaFlowStatus::ERROR_SMALL_DT))
+    {
+        // TODO: Remove the need for this error. Should be treated by dt_min.
+        out.message = "Error: dt became too small.";
         out.success = false;
     }
 
@@ -95,9 +172,35 @@ ODESolution solve_ivp(const HomogeneousIVPSystem& dynamics, const Eigen::VectorX
     */
 
     using namespace Lielab::domain;
-    using namespace Lielab::integrate;
 
-    // TODO: Error check here
+    ODESolution out = ODESolution();
+
+    if (tspan.size() < 2)
+    {
+        out.message = "Error: tspan must have size >= 2. Got " + std::to_string(tspan.size()) + ".";
+        out.success = false;
+        out.status = static_cast<int>(RungeKuttaFlowStatus::ERROR_INPUT);
+        return out;
+    }
+
+    for (ptrdiff_t ii = 0; ii < tspan.size() - 1; ii++)
+    {
+        if (tspan(ii+1) <= tspan(ii))
+        {
+            out.message = "Error: tspan must be ascending.";
+            out.success = false;
+            out.status = -20;
+            return out;
+        }
+    }
+
+    if (options.dt_min > options.dt_max)
+    {
+        out.message = "Error: dt_min must be smaller than dt_max. Got " + std::to_string(options.dt_min) + " </= " + std::to_string(options.dt_max) + ".";
+        out.success = false;
+        out.status = -21;
+        return out;
+    }
 
     const CompositeAlgebra xi0 = dynamics.vectorfield(tspan(0), y0);
 
@@ -105,9 +208,9 @@ ODESolution solve_ivp(const HomogeneousIVPSystem& dynamics, const Eigen::VectorX
     std::vector<CompositeManifold> y0seg;
     y0seg.push_back(y0);
 
-    for (size_t ii = 0; ii < tspan.size() - 1; ii++)
+    for (ptrdiff_t ii = 0; ii < tspan.size() - 1; ii++)
     {
-        auto vf_wrapped = [&](const double t, const Eigen::VectorXd& thetabar)
+        auto vectorfield_wrapped = [&](const double t, const Eigen::VectorXd& thetabar)
         {
             CompositeAlgebra theta = 0.0*xi0; // Awkward statement forcing a copy.
             theta.set_vector(thetabar);
@@ -127,24 +230,26 @@ ODESolution solve_ivp(const HomogeneousIVPSystem& dynamics, const Eigen::VectorX
             return dynamics.event(t, y);
         };
 
+        EuclideanIVPSystem MuntheKaasZannaDynamics(vectorfield_wrapped);
+        MuntheKaasZannaDynamics.event = event_wrapped;
+
         Eigen::VectorXd tseg(2);
         tseg(0) = tspan(ii);
         tseg(1) = tspan(ii+1);
 
-        EuclideanIVPSystem MuntheKaasZannaDynamics;
-        MuntheKaasZannaDynamics.vectorfield = vf_wrapped;
-        MuntheKaasZannaDynamics.event = event_wrapped;
-
         const Eigen::VectorXd thetabar0 = Eigen::VectorXd::Zero(xi0.get_dimension());
 
-        ODESolution segment = solve_ivp(MuntheKaasZannaDynamics, tseg, thetabar0, options);
+        IVPOptions options_rk = options;
+        options_rk.method = IVPMethod::RungeKutta;
+
+        ODESolution segment = solve_ivp(MuntheKaasZannaDynamics, tseg, thetabar0, options_rk);
         const size_t n_t = segment.t.size();
         segment.thetabar = 1.0*segment.ybar;
         segment.theta = std::vector<CompositeAlgebra>(n_t);
         segment.y = std::vector<CompositeManifold>(n_t);
         segment.ybar = Eigen::MatrixXd::Zero(n_t, y0.serialize().size());
 
-        for (size_t jj = 0; jj < segment.t.size(); jj++)
+        for (ptrdiff_t jj = 0; jj < segment.t.size(); jj++)
         {
             CompositeAlgebra thetaj = 0.0*xi0;
             thetaj.set_vector(segment.thetabar.row(jj));
@@ -159,14 +264,14 @@ ODESolution solve_ivp(const HomogeneousIVPSystem& dynamics, const Eigen::VectorX
         y0seg.push_back(segment.y.back());
     }
 
-    ODESolution out = rksols[0];
+    out = rksols[0]; // TODO: Append result as it goes
 
-    for (size_t ii = 0; ii < tspan.size() - 2; ii++)
+    for (ptrdiff_t ii = 0; ii < tspan.size() - 2; ii++)
     {
         const size_t n_t = rksols[ii+1].t.size();
         const Eigen::VectorXd next_t = rksols[ii+1].t(Eigen::seqN(1, n_t - 1));
-        const Eigen::MatrixXd next_thetabar = rksols[ii+1].thetabar(Eigen::seqN(1, n_t - 1), Eigen::all);
-        const Eigen::MatrixXd next_ybar = rksols[ii+1].ybar(Eigen::seqN(1, n_t - 1), Eigen::all);
+        const Eigen::MatrixXd next_thetabar = rksols[ii+1].thetabar(Eigen::seqN(1, n_t - 1), Eigen::placeholders::all);
+        const Eigen::MatrixXd next_ybar = rksols[ii+1].ybar(Eigen::seqN(1, n_t - 1), Eigen::placeholders::all);
         const std::vector<CompositeAlgebra> next_theta(rksols[ii+1].theta.begin() + 1, rksols[ii+1].theta.end());
         const std::vector<CompositeManifold> next_y(rksols[ii+1].y.begin() + 1, rksols[ii+1].y.end());
 

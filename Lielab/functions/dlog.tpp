@@ -9,7 +9,7 @@ namespace Lielab::functions
 {
 
 template <typename LA>
-Lielab::domain::glr dlog_numerical(const LA & a, const size_t order)
+Lielab::domain::glr dlog_numerical(const LA& a, const size_t order)
 {
     /*! \f{equation*}{ (\mathfrak{g}, \mathbb{R}) \rightarrow \mathfrak{glr} \f}
     
@@ -28,7 +28,7 @@ Lielab::domain::glr dlog_numerical(const LA & a, const size_t order)
 }
 
 template <typename LA>
-Lielab::domain::glr dlog(const LA & a, const size_t order)
+Lielab::domain::glr dlog(const LA& a, const size_t order)
 {
     /*! \f{equation*}{ (\mathfrak{g}, \mathbb{R}) \rightarrow \mathfrak{g} \f}
     
@@ -46,7 +46,7 @@ Lielab::domain::glr dlog(const LA & a, const size_t order)
 }
 
 template <typename LA>
-LA dlog_numerical(const LA & a, const LA & b, const size_t order)
+LA dlog_numerical(const LA& a, const LA& b, const size_t order)
 {
     /*! \f{equation*}{ (\mathfrak{g}, \mathfrak{g}, \mathbb{R}) \rightarrow \mathfrak{g} \f}
     
@@ -66,7 +66,7 @@ LA dlog_numerical(const LA & a, const LA & b, const size_t order)
 }
 
 template <typename LA>
-LA dlog(const LA & a, const LA & b, const size_t order)
+LA dlog(const LA& a, const LA& b, const size_t order)
 {
     /*! \f{equation*}{ (\mathfrak{g}, \mathfrak{g}, \mathbb{R}) \rightarrow \mathfrak{g} \f}
     

@@ -3,6 +3,8 @@
 #include <Eigen/Core>
 #include <unsupported/Eigen/MatrixFunctions>
 
+#include <cassert>
+
 namespace Lielab::domain
 {
 
@@ -94,7 +96,7 @@ size_t GLR::get_size() const
     return static_cast<size_t>(std::pow(this->_shape, 2));
 }
 
-Eigen::MatrixXd GLR::get_matrix() const
+GLR::matrix_t GLR::get_matrix() const
 {
     /*! \f{equation*}{ () \rightarrow \mathbb{R}^{n \times n} \f}
     * 
@@ -197,7 +199,7 @@ double GLR::operator()(const ptrdiff_t index1, const ptrdiff_t index2) const
     return this->data(_index1, _index2);
 }
 
-GLR GLR::operator*(const GLR & other) const
+GLR GLR::operator*(const GLR& other) const
 {
     /*! \f{equation*}{ (GLR, GLR) \rightarrow GLR \f}
     *
@@ -208,7 +210,7 @@ GLR GLR::operator*(const GLR & other) const
     return GLR(this->data * other.data);
 }
 
-GLR & GLR::operator*=(const GLR & other)
+GLR& GLR::operator*=(const GLR& other)
 {
     /*! \f{equation*}{ (GLR, GLR) \rightarrow GLR \f}
     *
@@ -220,7 +222,7 @@ GLR & GLR::operator*=(const GLR & other)
     return *this;
 }
 
-std::ostream & operator<<(std::ostream& os, const GLR & other)
+std::ostream& operator<<(std::ostream& os, const GLR& other)
 {
     /*!
     * Overloads the "<<" stream insertion operator.

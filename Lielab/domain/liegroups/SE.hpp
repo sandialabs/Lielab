@@ -17,39 +17,38 @@ class SE : public GLR
     public:
     static constexpr bool abelian = false;
 
-    std::string to_string() const;
+    std::string to_string() const override;
 
     SE();
     SE(const size_t shape);
     static SE from_shape(const size_t shape);
 
     template<typename OtherDerived>
-    SE(const Eigen::MatrixBase<OtherDerived> & other);
+    SE(const Eigen::MatrixBase<OtherDerived>& other);
 
     template<typename OtherDerived>
-    SE & operator=(const Eigen::MatrixBase<OtherDerived> & other);
+    SE& operator=(const Eigen::MatrixBase<OtherDerived>& other);
 
-    size_t get_dimension() const;
-    size_t get_shape() const;
+    size_t get_dimension() const override;
+    size_t get_shape() const override;
+    size_t get_size() const override;
 
-    size_t get_size() const;
-
-    Eigen::MatrixXd get_matrix() const;
+    SE::matrix_t get_matrix() const;
 
     SE inverse() const;
 
     Eigen::VectorXd serialize() const override;
 
-    void unserialize(const Eigen::VectorXd &vec) override;
+    void unserialize(const Eigen::VectorXd& vec) override;
     void unserialize(std::initializer_list<double> vec);
 
     double operator()(const ptrdiff_t index1, const ptrdiff_t index2) const;
 
-    SE operator*(const SE & other) const;
+    SE operator*(const SE& other) const;
 
-    SE & operator*=(const SE & other);
+    SE& operator*=(const SE& other);
 
-    friend std::ostream & operator<<(std::ostream & os, const SE & other);
+    friend std::ostream& operator<<(std::ostream& os, const SE& other);
 };
 
 }

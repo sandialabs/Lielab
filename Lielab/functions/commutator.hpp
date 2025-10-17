@@ -7,10 +7,10 @@ namespace Lielab::functions
 {
 
 template <typename LA>
-LA commutator(const LA & a, const LA & b);
+LA commutator(const LA& a, const LA& b);
 
 template <>
-Lielab::domain::CompositeAlgebra commutator(const Lielab::domain::CompositeAlgebra &a, const Lielab::domain::CompositeAlgebra &b);
+Lielab::domain::CompositeAlgebra commutator(const Lielab::domain::CompositeAlgebra& a, const Lielab::domain::CompositeAlgebra& b);
 
 }
 

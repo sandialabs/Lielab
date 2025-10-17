@@ -12,7 +12,7 @@ namespace Lielab::functions
 {
 
 template <typename LA>
-Lielab::domain::glr coad_numerical(const LA & x, const int p)
+Lielab::domain::glr coad_numerical(const LA& x, const int p)
 {
     /*! \f{equation*}{ (\mathfrak{g}) \rightarrow \mathfrak{glr} \f}
     
@@ -48,7 +48,7 @@ Lielab::domain::glr coad_numerical(const LA & x, const int p)
 }
 
 template <typename LA>
-LA coad_numerical(const LA & x, const LA & y, const int p)
+LA coad_numerical(const LA& x, const LA& y, const int p)
 {
     /*! \f{equation*}{ (\mathfrak{g}, \mathfrak{g}) \rightarrow \mathfrak{g} \f}
     
@@ -71,7 +71,7 @@ LA coad_numerical(const LA & x, const LA & y, const int p)
 }
 
 template <typename LA>
-Lielab::domain::glr coad(const LA & x, const int p)
+Lielab::domain::glr coad(const LA& x, const int p)
 {
     /*! \f{equation*}{ (\mathfrak{g}) \rightarrow \mathfrak{glr} \f}
     
@@ -108,7 +108,7 @@ Lielab::domain::glr coad(const LA & x, const int p)
 }
 
 template <typename LA>
-LA coad(const LA & x, const LA & y, const int p)
+LA coad(const LA& x, const LA& y, const int p)
 {
     /*! \f{equation*}{ (\mathfrak{g}, \mathfrak{g}) \rightarrow \mathfrak{g} \f}
     

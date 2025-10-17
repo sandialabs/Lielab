@@ -3,12 +3,13 @@
 #include <Eigen/Core>
 
 #include <array>
+#include <cassert>
 #include <tuple>
 
 namespace Lielab::integrate
 {
 
-std::tuple<Eigen::MatrixXd, Eigen::VectorXd, Eigen::VectorXd, Eigen::VectorXd, Eigen::VectorXd, int, int, bool> get_butcher_tableau(const Coefficients method)
+std::tuple<Eigen::MatrixXd, Eigen::VectorXd, Eigen::VectorXd, Eigen::VectorXd, Eigen::VectorXd, int, int, bool, bool> get_butcher_tableau(const Coefficients method)
 {
     /*
      * Returns Butcher tableau for a given method.
@@ -23,8 +24,9 @@ std::tuple<Eigen::MatrixXd, Eigen::VectorXd, Eigen::VectorXd, Eigen::VectorXd, E
     int order = 0;
     int stages = 0;
     bool variable = false;
+    bool implicit = false;
 
-    if (method == Coefficients::E1)
+    if (method == Coefficients::FE1)
     {
         // Forward Euler
         // Source: 
@@ -32,6 +34,7 @@ std::tuple<Eigen::MatrixXd, Eigen::VectorXd, Eigen::VectorXd, Eigen::VectorXd, E
         stages = 1;
         order = 1;
         variable = false;
+        implicit = false;
 
         A = Eigen::MatrixXd::Zero(stages, stages);
         b = Eigen::VectorXd::Zero(stages);
@@ -51,6 +54,7 @@ std::tuple<Eigen::MatrixXd, Eigen::VectorXd, Eigen::VectorXd, Eigen::VectorXd, E
         stages = 3;
         order = 3;
         variable = false;
+        implicit = false;
 
         A = Eigen::MatrixXd::Zero(stages, stages);
         b = Eigen::VectorXd::Zero(stages);
@@ -72,6 +76,7 @@ std::tuple<Eigen::MatrixXd, Eigen::VectorXd, Eigen::VectorXd, Eigen::VectorXd, E
         stages = 4;
         order = 4;
         variable = false;
+        implicit = false;
 
         A = Eigen::MatrixXd::Zero(stages, stages);
         b = Eigen::VectorXd::Zero(stages);
@@ -94,6 +99,7 @@ std::tuple<Eigen::MatrixXd, Eigen::VectorXd, Eigen::VectorXd, Eigen::VectorXd, E
         stages = 4;
         order = 4;
         variable = false;
+        implicit = false;
 
         A = Eigen::MatrixXd::Zero(stages, stages);
         b = Eigen::VectorXd::Zero(stages);
@@ -117,6 +123,7 @@ std::tuple<Eigen::MatrixXd, Eigen::VectorXd, Eigen::VectorXd, Eigen::VectorXd, E
         stages = 6;
         order = 5;
         variable = false;
+        implicit = false;
 
         A = Eigen::MatrixXd::Zero(stages, stages);
         b = Eigen::VectorXd::Zero(stages);
@@ -142,6 +149,7 @@ std::tuple<Eigen::MatrixXd, Eigen::VectorXd, Eigen::VectorXd, Eigen::VectorXd, E
         stages = 6;
         order = 5;
         variable = false;
+        implicit = false;
 
         A = Eigen::MatrixXd::Zero(stages, stages);
         b = Eigen::VectorXd::Zero(stages);
@@ -167,6 +175,7 @@ std::tuple<Eigen::MatrixXd, Eigen::VectorXd, Eigen::VectorXd, Eigen::VectorXd, E
         stages = 3;
         order = 1;
         variable = true;
+        implicit = false;
 
         A = Eigen::MatrixXd::Zero(stages, stages);
         b = Eigen::VectorXd::Zero(stages);
@@ -189,6 +198,7 @@ std::tuple<Eigen::MatrixXd, Eigen::VectorXd, Eigen::VectorXd, Eigen::VectorXd, E
         stages = 2;
         order = 1;
         variable = true;
+        implicit = false;
 
         A = Eigen::MatrixXd::Zero(stages, stages);
         b = Eigen::VectorXd::Zero(stages);
@@ -210,6 +220,7 @@ std::tuple<Eigen::MatrixXd, Eigen::VectorXd, Eigen::VectorXd, Eigen::VectorXd, E
         stages = 4;
         order = 2;
         variable = true;
+        implicit = false;
 
         A = Eigen::MatrixXd::Zero(stages, stages);
         b = Eigen::VectorXd::Zero(stages);
@@ -233,6 +244,7 @@ std::tuple<Eigen::MatrixXd, Eigen::VectorXd, Eigen::VectorXd, Eigen::VectorXd, E
         stages = 3;
         order = 2;
         variable = true;
+        implicit = false;
 
         A = Eigen::MatrixXd::Zero(stages, stages);
         b = Eigen::VectorXd::Zero(stages);
@@ -255,6 +267,7 @@ std::tuple<Eigen::MatrixXd, Eigen::VectorXd, Eigen::VectorXd, Eigen::VectorXd, E
         stages = 5;
         order = 3;
         variable = true;
+        implicit = false;
 
         A = Eigen::MatrixXd::Zero(stages, stages);
         b = Eigen::VectorXd::Zero(stages);
@@ -279,6 +292,7 @@ std::tuple<Eigen::MatrixXd, Eigen::VectorXd, Eigen::VectorXd, Eigen::VectorXd, E
         stages = 5;
         order = 3;
         variable = true;
+        implicit = false;
 
         A = Eigen::MatrixXd::Zero(stages, stages);
         b = Eigen::VectorXd::Zero(stages);
@@ -303,6 +317,7 @@ std::tuple<Eigen::MatrixXd, Eigen::VectorXd, Eigen::VectorXd, Eigen::VectorXd, E
         stages = 6;
         order = 4;
         variable = true;
+        implicit = false;
 
         A = Eigen::MatrixXd::Zero(stages, stages);
         b = Eigen::VectorXd::Zero(stages);
@@ -328,6 +343,7 @@ std::tuple<Eigen::MatrixXd, Eigen::VectorXd, Eigen::VectorXd, Eigen::VectorXd, E
         stages = 6;
         order = 4;
         variable = true;
+        implicit = false;
 
         A = Eigen::MatrixXd::Zero(stages, stages);
         b = Eigen::VectorXd::Zero(stages);
@@ -353,6 +369,7 @@ std::tuple<Eigen::MatrixXd, Eigen::VectorXd, Eigen::VectorXd, Eigen::VectorXd, E
         stages = 8;
         order = 5;
         variable = true;
+        implicit = false;
 
         A = Eigen::MatrixXd::Zero(stages, stages);
         b = Eigen::VectorXd::Zero(stages);
@@ -380,6 +397,7 @@ std::tuple<Eigen::MatrixXd, Eigen::VectorXd, Eigen::VectorXd, Eigen::VectorXd, E
         stages = 10;
         order = 6;
         variable = true;
+        implicit = false;
 
         A = Eigen::MatrixXd::Zero(stages, stages);
         b = Eigen::VectorXd::Zero(stages);
@@ -410,6 +428,7 @@ std::tuple<Eigen::MatrixXd, Eigen::VectorXd, Eigen::VectorXd, Eigen::VectorXd, E
         stages = 13;
         order = 7;
         variable = true;
+        implicit = false;
 
         A = Eigen::MatrixXd::Zero(stages, stages);
         b = Eigen::VectorXd::Zero(stages);
@@ -444,6 +463,7 @@ std::tuple<Eigen::MatrixXd, Eigen::VectorXd, Eigen::VectorXd, Eigen::VectorXd, E
         stages = 17;
         order = 8;
         variable = false; // TODO:
+        implicit = false;
 
         A = Eigen::MatrixXd::Zero(stages, stages);
         b = Eigen::VectorXd::Zero(stages);
@@ -570,6 +590,7 @@ std::tuple<Eigen::MatrixXd, Eigen::VectorXd, Eigen::VectorXd, Eigen::VectorXd, E
         stages = 7;
         order = 5;
         variable = true;
+        implicit = false;
 
         A = Eigen::MatrixXd::Zero(stages, stages);
         b = Eigen::VectorXd::Zero(stages);
@@ -590,6 +611,9 @@ std::tuple<Eigen::MatrixXd, Eigen::VectorXd, Eigen::VectorXd, Eigen::VectorXd, E
     else if (method == Coefficients::RKV65e)
     {
         // Verner's "more efficient" 6(5)
+        //
+        // TODO: b sums to np.float64(1.0000000000000138)
+        //
         // Source:
         //     - Verner, James Hamilton. "Explicit Runge–Kutta methods with estimates of the local truncation error." SIAM Journal on Numerical Analysis 15.4 (1978): 772-790.
         //     - Verner, James Hamilton. "Strategies for deriving new explicit Runge-Kutta pairs." Annals of Numerical Mathematics 1 (1994): 225-244.
@@ -598,6 +622,7 @@ std::tuple<Eigen::MatrixXd, Eigen::VectorXd, Eigen::VectorXd, Eigen::VectorXd, E
         stages = 9;
         order = 6;
         variable = true;
+        implicit = false;
 
         A = Eigen::MatrixXd::Zero(stages, stages);
         b = Eigen::VectorXd::Zero(stages);
@@ -640,15 +665,15 @@ std::tuple<Eigen::MatrixXd, Eigen::VectorXd, Eigen::VectorXd, Eigen::VectorXd, E
         A(8,5) =  626271188750.0/142160006043.0;
         A(8,6) = -51160788125000.0/289890548217.0;
         A(8,7) =  163193540017.0/946795234.0;
-        
-        b(0) =  382735282417.0/11129397249634.0;
+
+        b(0) =  0.3438957868357036009278820124728322386520e-1;
         b(1) =  0.0;
         b(2) =  0.0;
-        b(3) =  5535620703125000.0/21434089949505429.0;
-        b(4) =  13867056347656250.0/32943296570459319.0;
-        b(5) =  626271188750.0/142160006043.0;
-        b(6) = -51160788125000.0/289890548217.0;
-        b(7) =  163193540017.0/946795234.0;
+        b(3) =  0.2582624555633503404659558098586120858767;
+        b(4) =  0.4209371189673537150642551514069801967032;
+        b(5) =  4.405396469669310170148836816197095664891;
+        b(6) = -176.4831190242986576151740942499002125029;
+        b(7) =  172.3641334014150730294022582711902413315;
         b(8) =  0.0;
 
         bhat(0) =  273361583.0/5567482366.0;
@@ -682,6 +707,7 @@ std::tuple<Eigen::MatrixXd, Eigen::VectorXd, Eigen::VectorXd, Eigen::VectorXd, E
         stages = 9;
         order = 6;
         variable = true;
+        implicit = false;
 
         A = Eigen::MatrixXd::Zero(stages, stages);
         b = Eigen::VectorXd::Zero(stages);
@@ -766,6 +792,7 @@ std::tuple<Eigen::MatrixXd, Eigen::VectorXd, Eigen::VectorXd, Eigen::VectorXd, E
         stages = 10;
         order = 7;
         variable = true;
+        implicit = false;
 
         A = Eigen::MatrixXd::Zero(stages, stages);
         b = Eigen::VectorXd::Zero(stages);
@@ -862,6 +889,7 @@ std::tuple<Eigen::MatrixXd, Eigen::VectorXd, Eigen::VectorXd, Eigen::VectorXd, E
         stages = 10;
         order = 7;
         variable = true;
+        implicit = false;
 
         A = Eigen::MatrixXd::Zero(stages, stages);
         b = Eigen::VectorXd::Zero(stages);
@@ -950,6 +978,9 @@ std::tuple<Eigen::MatrixXd, Eigen::VectorXd, Eigen::VectorXd, Eigen::VectorXd, E
     else if (method == Coefficients::RKV87e)
     {
         // Verner's "more efficient" 8(7)
+        //
+        // TODO: bhat doesn't sum to exactly 1.0
+        //
         // Source:
         //     - Verner, James Hamilton. "Explicit Runge–Kutta methods with estimates of the local truncation error." SIAM Journal on Numerical Analysis 15.4 (1978): 772-790.
         //     - Verner, James Hamilton. "Strategies for deriving new explicit Runge-Kutta pairs." Annals of Numerical Mathematics 1 (1994): 225-244.
@@ -959,6 +990,7 @@ std::tuple<Eigen::MatrixXd, Eigen::VectorXd, Eigen::VectorXd, Eigen::VectorXd, E
         stages = 13;
         order = 8;
         variable = true;
+        implicit = false;
 
         A = Eigen::MatrixXd::Zero(stages, stages);
         b = Eigen::VectorXd::Zero(stages);
@@ -1097,6 +1129,7 @@ std::tuple<Eigen::MatrixXd, Eigen::VectorXd, Eigen::VectorXd, Eigen::VectorXd, E
         stages = 13;
         order = 8;
         variable = true;
+        implicit = false;
 
         A = Eigen::MatrixXd::Zero(stages, stages);
         b = Eigen::VectorXd::Zero(stages);
@@ -1424,6 +1457,7 @@ std::tuple<Eigen::MatrixXd, Eigen::VectorXd, Eigen::VectorXd, Eigen::VectorXd, E
         stages = 16;
         order = 9;
         variable = true;
+        implicit = false;
 
         A = Eigen::MatrixXd::Zero(stages, stages);
         b = Eigen::VectorXd::Zero(stages);
@@ -1611,6 +1645,7 @@ std::tuple<Eigen::MatrixXd, Eigen::VectorXd, Eigen::VectorXd, Eigen::VectorXd, E
         stages = 5;
         order = 4;
         variable = false;
+        implicit = false;
 
         A = Eigen::MatrixXd::Zero(stages, stages);
         b = Eigen::VectorXd::Zero(stages);
@@ -1627,18 +1662,18 @@ std::tuple<Eigen::MatrixXd, Eigen::VectorXd, Eigen::VectorXd, Eigen::VectorXd, E
         A(4,1) =  0.2390958372307326;
         A(4,2) =  1.3918565724203246;
         A(4,3) = -1.1092979392113465;
+        
+        b(0) =  0.1370831520630755;
+        b(1) = -0.0183698531564020;
+        b(2) =  0.7397813985370780;
+        b(3) = -0.1907142565505889;
+        b(4) =  0.3322195591068374;
 
-        b(1) =  0.1370831520630755;
-        b(2) = -0.0183698531564020;
-        b(3) =  0.7397813985370780;
-        b(4) = -0.1907142565505889;
-        b(5) =  0.3322195591068374;
-
-        c(1) =  0.0;
-        c(2) =  0.8177227988124852;
-        c(3) =  0.3859740639032449;
-        c(4) =  0.3242290522866937;
-        c(5) =  0.8768903263420429;
+        c(0) =  0.0;
+        c(1) =  0.8177227988124852;
+        c(2) =  0.3859740639032449;
+        c(3) =  0.3242290522866937;
+        c(4) =  0.8768903263420429;
     }
     else if (method == Coefficients::CG5a)
     {
@@ -1649,6 +1684,7 @@ std::tuple<Eigen::MatrixXd, Eigen::VectorXd, Eigen::VectorXd, Eigen::VectorXd, E
         stages = 9;
         order = 5;
         variable = false;
+        implicit = false;
 
         A = Eigen::MatrixXd::Zero(stages, stages);
         b = Eigen::VectorXd::Zero(stages);
@@ -1712,7 +1748,23 @@ std::tuple<Eigen::MatrixXd, Eigen::VectorXd, Eigen::VectorXd, Eigen::VectorXd, E
         c(7) =  0.3060326933360294;
         c(8) = -0.1137887307856168;
     }
-    
+    else if (method == Coefficients::BE1)
+    {
+        // Backwards (implicit) Euler.
+        stages = 1;
+        order = 1;
+        variable = false;
+        implicit = true;
+
+        A = Eigen::MatrixXd::Zero(stages, stages);
+        b = Eigen::VectorXd::Zero(stages);
+        bhat = Eigen::VectorXd::Zero(stages);
+        c = Eigen::VectorXd::Zero(stages);
+
+        A << 1.0;
+        b << 1.0;
+        c << 1.0;
+    }
 
     // TODO: 
     // CG 3 and lower should be in CG original paper. 3 stage method in Runge–Kutta methods adapted to manifolds and based on rigid frames
@@ -1720,19 +1772,17 @@ std::tuple<Eigen::MatrixXd, Eigen::VectorXd, Eigen::VectorXd, Eigen::VectorXd, E
 
     // CG6a (derived but not explicitely stated): Jackiewicz, Zdzislaw, Arne Marthinsen, and Brynjulf Owren. "Construction of Runge–Kutta methods of Crouch–Grossman type of high order." Advances in Computational Mathematics 13 (2000): 405-415.
 
-
-
     // Postprocessing
     const Eigen::VectorXd e = bhat - b;
 
-    // Final checks
+    // Final checks, these should never be thrown.
     assert(A.rows() == stages);
     assert(A.cols() == stages);
     assert(b.size() == stages);
     assert(bhat.size() == stages);
     assert(c.size() == stages);
 
-    return {A, b, bhat, c, e, order, stages, variable};
+    return {A, b, bhat, c, e, order, stages, variable, implicit};
 }
 
 }

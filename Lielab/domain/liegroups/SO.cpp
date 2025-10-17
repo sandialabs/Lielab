@@ -5,6 +5,8 @@
 #include <Eigen/Core>
 #include <unsupported/Eigen/MatrixFunctions>
 
+#include <cassert>
+
 namespace Lielab::domain
 {
 
@@ -55,7 +57,7 @@ SO SO::from_shape(const size_t shape)
     return SO(shape);
 }
 
-Eigen::MatrixXd SO::project(const Eigen::MatrixXd & other)
+Eigen::MatrixXd SO::project(const Eigen::MatrixXd& other)
 {
     /*! \f{equation*}{ (\mathbb{R}^{n \times n}) \rightarrow \mathbb{R}^{n \times n} \in \mathfrak{SO} \f}
     *
@@ -115,7 +117,7 @@ size_t SO::get_size() const
     return static_cast<size_t>(std::pow(this->_shape, 2));
 }
 
-Eigen::MatrixXd SO::get_matrix() const
+SO::matrix_t SO::get_matrix() const
 {
     /*! \f{equation*}{ () \rightarrow \mathbb{R}^{n \times n} \f}
     * 
@@ -154,7 +156,7 @@ Eigen::VectorXd SO::serialize() const
     return this->data.reshaped<Eigen::RowMajor>();
 }
 
-void SO::unserialize(const Eigen::VectorXd &vec)
+void SO::unserialize(const Eigen::VectorXd& vec)
 {
     /*! \f{equation*}{ (\mathbb{R}^{n \times 1}) \rightarrow () \f}
     * 
@@ -216,7 +218,7 @@ double SO::operator()(const ptrdiff_t index1, const ptrdiff_t index2) const
     return this->data(_index1, _index2);
 }
 
-SO SO::operator*(const SO & other) const
+SO SO::operator*(const SO& other) const
 {
     /*! \f{equation*}{ (SO, SO) \rightarrow SO \f}
     *
@@ -227,7 +229,7 @@ SO SO::operator*(const SO & other) const
     return this->data * other.data;
 }
 
-SO & SO::operator*=(const SO & other)
+SO& SO::operator*=(const SO& other)
 {
     /*! \f{equation*}{ (SO, SO) \rightarrow SO \f}
     *
@@ -239,7 +241,7 @@ SO & SO::operator*=(const SO & other)
     return *this;
 }
 
-std::ostream & operator<<(std::ostream& os, const SO & other)
+std::ostream& operator<<(std::ostream& os, const SO& other)
 {
     /*!
     * Overloads the "<<" stream insertion operator.
@@ -276,7 +278,7 @@ template SO SO::from_eulerangles_space323<double>(const double, const double, co
 template SO SO::from_quaternion<double>(const double, const double, const double, const double);
 template SO SO::from_rodriguesvector<double>(const double, const double, const double);
 
-SO SO::from_SU2(const SU & other)
+SO SO::from_SU2(const SU& other)
 {
     /*!
         * Transforms an SU(2) object to a Direction Cosine object.

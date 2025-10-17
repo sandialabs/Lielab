@@ -16,7 +16,7 @@ namespace Lielab::domain
 {
 
 template<typename OtherDerived>
-SO::SO(const Eigen::MatrixBase<OtherDerived> & other)
+SO::SO(const Eigen::MatrixBase<OtherDerived>& other)
 {
     /*! \f{equation}{ (\mathbb{R}^{n \times n}) \rightarrow SO \f}
     *
@@ -36,7 +36,7 @@ SO::SO(const Eigen::MatrixBase<OtherDerived> & other)
 }
 
 template<typename OtherDerived>
-SO & SO::operator=(const Eigen::MatrixBase<OtherDerived> & other)
+SO& SO::operator=(const Eigen::MatrixBase<OtherDerived>& other)
 {
     /*! \f{equation}{ SO := \mathbb{R}^{n \times n} \f}
     * 

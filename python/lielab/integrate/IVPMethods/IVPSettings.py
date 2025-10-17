@@ -1,34 +1,31 @@
 from lielab.cppLielab.integrate import IVPOptions
+from lielab.cppLielab.integrate import EuclideanIVPSystem as _EuclideanIVPSystem
+from lielab.cppLielab.integrate import HomogeneousIVPSystem as _HomogeneousIVPSystem
 
-from lielab.functions import left_Lie_group_action, dexpinv, exp
-
-import numpy as np
-
-# class IVPOptions(_IVPOptions):
-#     def __init__(self, *args, **kwargs):
-#         super(IVPOptions, self).__init__(*args, **kwargs)
-
-class EuclideanIVPSystem(object):
+class EuclideanIVPSystem(_EuclideanIVPSystem):
     def __init__(self, vectorfield, event=None):
+        super(EuclideanIVPSystem, self).__init__(vectorfield)
 
         if event is not None:
-            self.__dict__.update({'event': event})
-        else:
-            self.__dict__.update({'event': lambda _t, _y: np.nan})
-        self.__dict__.update({'vectorfield': vectorfield})
+            self.event = event
 
-class HomogeneousIVPSystem(object):
+
+class HomogeneousIVPSystem(_HomogeneousIVPSystem):
     def __init__(self, vectorfield,
-                 action=left_Lie_group_action,
-                 connection=dexpinv,
-                 coordinates=exp,
+                 action=None,
+                 connection=None,
+                 coordinates=None,
                  event=None):
+        super(HomogeneousIVPSystem, self).__init__(vectorfield)
+
+        if action is not None:
+            self.action = action
         
-        self.__dict__.update({'action': action})
-        self.__dict__.update({'connection': connection})
-        self.__dict__.update({'coordinates': coordinates})
+        if connection is not None:
+            self.connection = connection
+        
+        if coordinates is not None:
+            self.coordinates = coordinates
+        
         if event is not None:
-            self.__dict__.update({'event': event})
-        else:
-            self.__dict__.update({'event': lambda _t, _y: np.nan})
-        self.__dict__.update({'vectorfield': vectorfield})
+            self.event = event

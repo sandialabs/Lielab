@@ -19,36 +19,36 @@ class sp : public glr
     std::string to_string() const override;
     sp();
     sp(const size_t n);
-    template<typename OtherDerived> sp(const Eigen::MatrixBase<OtherDerived> & other);
+    template<typename OtherDerived> sp(const Eigen::MatrixBase<OtherDerived>& other);
     static sp basis(const ptrdiff_t i, const size_t n);
     static sp from_shape(const size_t shape);
 
-    size_t get_dimension() const;
-    Eigen::VectorXd get_vector() const;
-    void set_vector(const Eigen::VectorXd& vector);
+    size_t get_dimension() const override;
+    Eigen::VectorXd get_vector() const override;
+    void set_vector(const Eigen::VectorXd& vector) override;
     void set_vector(std::initializer_list<double> vector);
-    sp::matrix_t get_matrix() const;
+    sp::matrix_t get_matrix() const override;
 
     double operator()(const ptrdiff_t index) const;
     double operator()(const ptrdiff_t index1, const ptrdiff_t index2) const;
 
-    sp operator+(const sp & other) const;
-    sp & operator+=(const sp & other);
-    sp operator-(const sp & other) const;
-    sp & operator-=(const sp & other);
+    sp operator+(const sp& other) const;
+    sp& operator+=(const sp& other);
+    sp operator-(const sp& other) const;
+    sp& operator-=(const sp& other);
     sp operator-() const;
     sp operator*(const double other) const;
-    friend sp operator*(const double other, const sp & rhs);
-    sp & operator*=(const double other);
+    friend sp operator*(const double other, const sp& rhs);
+    sp& operator*=(const double other);
     sp operator/(const double other) const;
-    sp & operator/=(const double other);
+    sp& operator/=(const double other);
 
-    static sp from_vector(const Eigen::VectorXd & other);
+    static sp from_vector(const Eigen::VectorXd& other);
     static sp from_vector(std::initializer_list<double> other);
 
-    static Eigen::MatrixXd project(const Eigen::MatrixXd & other);
+    static Eigen::MatrixXd project(const Eigen::MatrixXd& other);
 
-    friend std::ostream& operator<<(std::ostream & os, const sp & other);
+    friend std::ostream& operator<<(std::ostream& os, const sp& other);
 };
 
 }

@@ -14,7 +14,7 @@ namespace Lielab::domain
 {
 
 template<typename OtherDerived>
-glc::glc(const Eigen::MatrixBase<OtherDerived> & other)
+glc::glc(const Eigen::MatrixBase<OtherDerived>& other)
 {
     /*! \f{eqnarray*}{(\mathbb{C}^{n \times n}) &\rightarrow& \mathfrak{glc} \f}
     *

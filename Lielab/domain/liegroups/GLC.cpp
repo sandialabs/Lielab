@@ -5,6 +5,8 @@
 #include <Eigen/Core>
 #include <unsupported/Eigen/MatrixFunctions>
 
+#include <cassert>
+
 namespace Lielab::domain
 {
 
@@ -55,7 +57,7 @@ GLC GLC::from_shape(const size_t shape)
     return GLC(shape);
 }
 
-Eigen::MatrixXcd GLC::project(const Eigen::MatrixXcd & other)
+Eigen::MatrixXcd GLC::project(const Eigen::MatrixXcd& other)
 {
     /*! \f{equation*}{ (\mathbb{C}^{n \times n}) \rightarrow \mathbb{C}^{n \times n} \in GLC \f}
     *
@@ -96,7 +98,7 @@ size_t GLC::get_size() const
     return static_cast<size_t>(2*std::pow(this->_shape, 2));
 }
 
-Eigen::MatrixXcd GLC::get_matrix() const
+GLC::matrix_t GLC::get_matrix() const
 {
     /*! \f{equation*}{ () \rightarrow \mathbb{C}^{n \times n} \f}
     * 
@@ -227,7 +229,7 @@ std::complex<double> GLC::operator()(const ptrdiff_t index1, const ptrdiff_t ind
     return this->data(_index1, _index2);
 }
 
-GLC GLC::operator*(const GLC & other) const
+GLC GLC::operator*(const GLC& other) const
 {
     /*! \f{equation*}{ (GLC, GLC) \rightarrow GLC \f}
     *
@@ -239,7 +241,7 @@ GLC GLC::operator*(const GLC & other) const
     return GLC(this->data * other.data);
 }
 
-GLC & GLC::operator*=(const GLC & other)
+GLC& GLC::operator*=(const GLC& other)
 {
     /*! \f{equation*}{ (GLC, GLC) \rightarrow GLC \f}
     *
@@ -251,7 +253,7 @@ GLC & GLC::operator*=(const GLC & other)
     return *this;
 }
 
-std::ostream & operator<<(std::ostream& os, const GLC & other)
+std::ostream& operator<<(std::ostream& os, const GLC& other)
 {
     /*!
     * Overloads the "<<" stream insertion operator.

@@ -5,6 +5,8 @@
 #include <Eigen/Core>
 #include <unsupported/Eigen/MatrixFunctions>
 
+#include <cassert>
+
 namespace Lielab::domain
 {
 
@@ -64,7 +66,7 @@ SE SE::from_shape(const size_t shape)
     return SE(shape - 1);
 }
 
-// Eigen::MatrixXd SE::project(const Eigen::MatrixXd & other)
+// Eigen::MatrixXd SE::project(const Eigen::MatrixXd& other)
 // {
 //     /*! \f{equation*}{ (\mathbb{R}^{n \times n}) \rightarrow \mathbb{R}^{n \times n} \in \mathfrak{SE} \f}
 //     *
@@ -126,7 +128,7 @@ size_t SE::get_size() const
     return static_cast<size_t>(std::pow(this->_shape, 2));
 }
 
-Eigen::MatrixXd SE::get_matrix() const
+SE::matrix_t SE::get_matrix() const
 {
     /*! \f{equation*}{ () \rightarrow \mathbb{R}^{n \times n} \f}
     * 
@@ -227,7 +229,7 @@ double SE::operator()(const ptrdiff_t index1, const ptrdiff_t index2) const
     return this->data(_index1, _index2);
 }
 
-SE SE::operator*(const SE & other) const
+SE SE::operator*(const SE& other) const
 {
     /*! \f{equation*}{ (SE, SE) \rightarrow SE \f}
     *
@@ -238,7 +240,7 @@ SE SE::operator*(const SE & other) const
     return SE(this->data * other.data);
 }
 
-SE & SE::operator*=(const SE & other)
+SE& SE::operator*=(const SE& other)
 {
     /*! \f{equation*}{ (SE, SE) \rightarrow SE \f}
     *
@@ -250,7 +252,7 @@ SE & SE::operator*=(const SE & other)
     return *this;
 }
 
-std::ostream & operator<<(std::ostream& os, const SE & other)
+std::ostream& operator<<(std::ostream& os, const SE& other)
 {
     /*!
     * Overloads the "<<" stream insertion operator.

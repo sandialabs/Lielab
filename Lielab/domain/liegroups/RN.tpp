@@ -12,7 +12,7 @@ namespace Lielab::domain
 {
 
 template<typename OtherDerived>
-RN::RN(const Eigen::MatrixBase<OtherDerived> & other)
+RN::RN(const Eigen::MatrixBase<OtherDerived>& other)
 {
     /*! \f{eqnarray*}{(\mathbb{R}^{n \times n}) &\rightarrow& RN \\ (\mathbb{R}^{n \times 1}) &\rightarrow& RN \f}
     *

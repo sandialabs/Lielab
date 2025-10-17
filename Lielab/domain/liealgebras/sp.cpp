@@ -7,6 +7,8 @@
 #include <Eigen/Core>
 #include <unsupported/Eigen/MatrixFunctions>
 
+#include <cassert>
+
 namespace Lielab::domain
 {
 
@@ -280,7 +282,7 @@ double sp::operator()(const ptrdiff_t index1, const ptrdiff_t index2) const
     return this->data(_index1, _index2);
 }
 
-sp sp::operator+(const sp & other) const
+sp sp::operator+(const sp& other) const
 {
     /*! \f{equation*}{ (\mathfrak{sp}, \mathfrak{sp}) \rightarrow \mathfrak{sp} \f}
     *
@@ -296,7 +298,7 @@ sp sp::operator+(const sp & other) const
     return sp(new_matrix);
 }
 
-sp & sp::operator+=(const sp & other)
+sp& sp::operator+=(const sp& other)
 {
     /*! \f{equation*}{ (\mathfrak{sp}, \mathfrak{sp}) \rightarrow \mathfrak{sp} \f}
     *
@@ -308,7 +310,7 @@ sp & sp::operator+=(const sp & other)
     return *this;
 }
 
-sp sp::operator-(const sp & other) const
+sp sp::operator-(const sp& other) const
 {
     /*! \f{equation*}{ (\mathfrak{sp}, \mathfrak{sp}) \rightarrow \mathfrak{sp} \f}
     *
@@ -324,7 +326,7 @@ sp sp::operator-(const sp & other) const
     return sp(new_matrix);
 }
 
-sp & sp::operator-=(const sp & other)
+sp& sp::operator-=(const sp& other)
 {
     /*! \f{equation*}{ (\mathfrak{sp}, \mathfrak{sp}) \rightarrow \mathfrak{sp} \f}
     *
@@ -358,7 +360,7 @@ sp sp::operator*(const double other) const
     return out;
 }
 
-sp operator*(const double other, const sp & rhs)
+sp operator*(const double other, const sp& rhs)
 {
     /*! \f{equation*}{ (\mathbb{R}, \mathfrak{sp}) \rightarrow \mathfrak{sp} \f}
     *
@@ -368,7 +370,7 @@ sp operator*(const double other, const sp & rhs)
     return rhs*other;
 }
 
-sp & sp::operator*=(const double other)
+sp& sp::operator*=(const double other)
 {
     /*! \f{equation*}{ (\mathfrak{sp}, \mathbb{R}) \rightarrow \mathfrak{sp} \f}
     *
@@ -390,7 +392,7 @@ sp sp::operator/(const double other) const
     return out;
 }
 
-sp & sp::operator/=(const double other)
+sp& sp::operator/=(const double other)
 {
     /*! \f{equation*}{ (\mathfrak{sp}, \mathbb{R}) \rightarrow \mathfrak{sp} \f}
     *
@@ -433,7 +435,7 @@ sp sp::from_vector(std::initializer_list<double> other)
     return sp::from_vector(Eigen::VectorXd{std::move(other)});
 }
 
-Eigen::MatrixXd sp::project(const Eigen::MatrixXd & other)
+Eigen::MatrixXd sp::project(const Eigen::MatrixXd& other)
 {
     /*! \f{equation*}{ (\mathbb{R}^{n \times n}) \rightarrow \mathbb{R}^{n \times n} \in \mathfrak{sp} \f}
     *
@@ -451,7 +453,7 @@ Eigen::MatrixXd sp::project(const Eigen::MatrixXd & other)
     return J*(temp + temp.transpose())/2.0;
 }
 
-std::ostream & operator<<(std::ostream & os, const sp & other)
+std::ostream& operator<<(std::ostream& os, const sp& other)
 {
     /*!
     * Overloads the "<<" stream insertion operator.

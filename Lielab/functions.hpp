@@ -14,14 +14,11 @@
 #include "functions/coAd.hpp"
 #include "functions/exp.hpp"
 #include "functions/log.hpp"
-#include "functions/bernoulli.hpp"
 #include "functions/dexp.hpp"
 #include "functions/dexpinv.hpp"
 #include "functions/dlog.hpp"
 #include "functions/littlecoad.hpp"
 
 #include "functions/actions.hpp"
-
-#include "functions/functions_extra.hpp"
 
 #endif

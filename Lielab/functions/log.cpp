@@ -278,42 +278,44 @@ Lielab::domain::CompositeAlgebra log(const Lielab::domain::CompositeGroup& M)
      * CompositeGroup logarithm overload
      */
 
-    Lielab::domain::CompositeAlgebra out;
+    using namespace Lielab::domain;
+
+    CompositeAlgebra out;
     
     for (size_t ii = 0; ii < M.space.size(); ii++)
     {
         const size_t ind = M.space[ii].index();
-        if (ind == Lielab::domain::CompositeGroup::INDEX_CN)
+        if (ind == CompositeGroup::INDEX_CN)
         {
-            out.space.push_back(Lielab::functions::log(std::get<Lielab::domain::CN>(M.space[ii])));
+            out.space.push_back(Lielab::functions::log(std::get<CN>(M.space[ii])));
         }
-        else if (ind == Lielab::domain::CompositeGroup::INDEX_GLR)
+        else if (ind == CompositeGroup::INDEX_GLR)
         {
-            out.space.push_back(Lielab::functions::log(std::get<Lielab::domain::GLR>(M.space[ii])));
+            out.space.push_back(Lielab::functions::log(std::get<GLR>(M.space[ii])));
         }
-        else if (ind == Lielab::domain::CompositeGroup::INDEX_GLC)
+        else if (ind == CompositeGroup::INDEX_GLC)
         {
-            out.space.push_back(Lielab::functions::log(std::get<Lielab::domain::GLC>(M.space[ii])));
+            out.space.push_back(Lielab::functions::log(std::get<GLC>(M.space[ii])));
         }
-        else if (ind == Lielab::domain::CompositeGroup::INDEX_RN)
+        else if (ind == CompositeGroup::INDEX_RN)
         {
-            out.space.push_back(Lielab::functions::log(std::get<Lielab::domain::RN>(M.space[ii])));
+            out.space.push_back(Lielab::functions::log(std::get<RN>(M.space[ii])));
         }
-        else if (ind == Lielab::domain::CompositeGroup::INDEX_SE)
+        else if (ind == CompositeGroup::INDEX_SE)
         {
-            out.space.push_back(Lielab::functions::log(std::get<Lielab::domain::SE>(M.space[ii])));
+            out.space.push_back(Lielab::functions::log(std::get<SE>(M.space[ii])));
         }
-        else if (ind == Lielab::domain::CompositeGroup::INDEX_SO)
+        else if (ind == CompositeGroup::INDEX_SO)
         {
-            out.space.push_back(Lielab::functions::log(std::get<Lielab::domain::SO>(M.space[ii])));
+            out.space.push_back(Lielab::functions::log(std::get<SO>(M.space[ii])));
         }
-        else if (ind == Lielab::domain::CompositeGroup::INDEX_SP)
+        else if (ind == CompositeGroup::INDEX_SP)
         {
-            out.space.push_back(Lielab::functions::log(std::get<Lielab::domain::SP>(M.space[ii])));
+            out.space.push_back(Lielab::functions::log(std::get<SP>(M.space[ii])));
         }
-        else if (ind == Lielab::domain::CompositeGroup::INDEX_SU)
+        else if (ind == CompositeGroup::INDEX_SU)
         {
-            out.space.push_back(Lielab::functions::log(std::get<Lielab::domain::SU>(M.space[ii])));
+            out.space.push_back(Lielab::functions::log(std::get<SU>(M.space[ii])));
         }
     }
 

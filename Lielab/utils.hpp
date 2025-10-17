@@ -7,6 +7,7 @@
 
 #include <Eigen/Core>
 
+#include "utils/bernoulli.hpp"
 #include "utils/eigentools.hpp"
 #include "utils/Error.hpp"
 #include "utils/factorial.hpp"

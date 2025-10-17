@@ -42,22 +42,22 @@ class CompositeManifold
     static constexpr size_t INDEX_sp  = 14;
     static constexpr size_t INDEX_su  = 15;
 
-    typedef std::variant<Lielab::domain::CN,
-                         Lielab::domain::GLR,
-                         Lielab::domain::GLC,
-                         Lielab::domain::RN,
-                         Lielab::domain::SE,
-                         Lielab::domain::SO,
-                         Lielab::domain::SP,
-                         Lielab::domain::SU,
-                         Lielab::domain::cn,
-                         Lielab::domain::glr,
-                         Lielab::domain::glc,
-                         Lielab::domain::rn,
-                         Lielab::domain::se,
-                         Lielab::domain::so,
-                         Lielab::domain::sp,
-                         Lielab::domain::su> TYPES;
+    typedef std::variant<CN,
+                         GLR,
+                         GLC,
+                         RN,
+                         SE,
+                         SO,
+                         SP,
+                         SU,
+                         cn,
+                         glr,
+                         glc,
+                         rn,
+                         se,
+                         so,
+                         sp,
+                         su> TYPES;
 
     std::vector<TYPES> space;
 
@@ -83,7 +83,7 @@ class CompositeManifold
 
     std::complex<double> operator()(const ptrdiff_t index1, const ptrdiff_t index2) const;
     TYPES operator[](const ptrdiff_t index) const;
-    friend std::ostream & operator<<(std::ostream & os, const CompositeManifold & other);
+    friend std::ostream& operator<<(std::ostream& os, const CompositeManifold& other);
 };
 
 }

@@ -5,6 +5,8 @@
 #include <Eigen/Core>
 #include <unsupported/Eigen/MatrixFunctions>
 
+#include <cassert>
+
 namespace Lielab::domain
 {
 
@@ -78,7 +80,7 @@ RN RN::from_shape(const size_t shape)
 //     this->_shape = this->data.size() + 1;
 // }
 
-Eigen::MatrixXd RN::project(const Eigen::MatrixXd & other)
+Eigen::MatrixXd RN::project(const Eigen::MatrixXd& other)
 {
     /*! \f{equation*}{ (\mathbb{R}^{n \times n}) \rightarrow \mathbb{R}^{n \times n} \in RN \f}
     *
@@ -129,7 +131,7 @@ size_t RN::get_size() const
     return static_cast<size_t>(this->_shape - 1);
 }
 
-Eigen::MatrixXd RN::get_matrix() const
+RN::matrix_t RN::get_matrix() const
 {
     /*! \f{equation*}{ () \rightarrow \mathbb{R}^{n \times n} \f}
     * 
@@ -275,7 +277,7 @@ double RN::operator()(const ptrdiff_t index1, const ptrdiff_t index2) const
     return this->data(_index1);
 }
 
-RN RN::operator*(const RN & other) const
+RN RN::operator*(const RN& other) const
 {
     /*! \f{equation*}{ (RN, RN) \rightarrow RN \f}
     *
@@ -286,7 +288,7 @@ RN RN::operator*(const RN & other) const
     return RN::from_vector(this->data + other.data);
 }
 
-RN & RN::operator*=(const RN & other)
+RN& RN::operator*=(const RN& other)
 {
     /*! \f{equation*}{ (RN, RN) \rightarrow RN \f}
     *
@@ -327,7 +329,7 @@ RN RN::from_vector(const std::initializer_list<double> other)
     return RN::from_vector(Eigen::VectorXd{std::move(other)});
 }
 
-std::ostream & operator<<(std::ostream& os, const RN & other)
+std::ostream& operator<<(std::ostream& os, const RN& other)
 {
     /*!
     * Overloads the "<<" stream insertion operator.

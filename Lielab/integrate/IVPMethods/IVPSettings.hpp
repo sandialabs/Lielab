@@ -1,6 +1,8 @@
 #ifndef LIELAB_INTEGRATE_IVPSETTINGS_HPP
 #define LIELAB_INTEGRATE_IVPSETTINGS_HPP
 
+#include "Coefficients.hpp"
+
 #include "Lielab/domain.hpp"
 #include "Lielab/functions.hpp"
 
@@ -26,7 +28,9 @@ struct IVPOptions
     IVPMethod method = IVPMethod::Undefined;
 
     // Multi-method options
-    double dt_initial = std::numeric_limits<double>::quiet_NaN();
+    Coefficients coefficients = Coefficients::RKV87r;
+
+    double dt = std::numeric_limits<double>::quiet_NaN();
     double dt_min = 1e-4;
     double dt_max = 10.0;
     bool variable_time_step = true;
@@ -51,6 +55,8 @@ struct EuclideanIVPSystem
 
     EuclideanIVP_event_t event = [](const double t, const Eigen::VectorXd& y){return std::numeric_limits<double>::signaling_NaN();};
     EuclideanIVP_vectorfield_t vectorfield = [](const double t, const Eigen::VectorXd& y){return Eigen::VectorXd::Ones(1)*std::numeric_limits<double>::signaling_NaN();};
+
+    EuclideanIVPSystem(EuclideanIVP_vectorfield_t vf);
 };
 
 using HomogeneousIVP_action_t = std::function<Lielab::domain::CompositeManifold(const Lielab::domain::CompositeGroup&, const Lielab::domain::CompositeManifold&)>;
@@ -68,6 +74,8 @@ struct HomogeneousIVPSystem
     HomogeneousIVP_coordinates_t coordinates = Lielab::functions::exp<Lielab::domain::CompositeAlgebra>;
     HomogeneousIVP_event_t event = [](const double t, const Lielab::domain::CompositeManifold& y){return std::numeric_limits<double>::signaling_NaN();};
     HomogeneousIVP_vectorfield_t vectorfield = [](const double t, const Lielab::domain::CompositeManifold& y){return Lielab::domain::CompositeAlgebra({Lielab::domain::rn::from_vector({std::numeric_limits<double>::signaling_NaN()})});};
+
+    HomogeneousIVPSystem(HomogeneousIVP_vectorfield_t vf);
 };
 
 }

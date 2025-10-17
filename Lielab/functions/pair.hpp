@@ -7,7 +7,7 @@ namespace Lielab::functions
 {
 
 template <typename LA>
-double pair(const LA & a, const LA & b);
+double pair(const LA& a, const LA& b);
 
 }
 

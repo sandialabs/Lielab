@@ -42,19 +42,19 @@ class CompositeGroup : public LieGroup<std::complex<double>>
     static constexpr size_t INDEX_SP  = 6;
     static constexpr size_t INDEX_SU  = 7;
 
-    typedef std::variant<Lielab::domain::CN,
-                         Lielab::domain::GLR,
-                         Lielab::domain::GLC,
-                         Lielab::domain::RN,
-                         Lielab::domain::SE,
-                         Lielab::domain::SO,
-                         Lielab::domain::SP,
-                         Lielab::domain::SU> TYPES;
+    typedef std::variant<CN,
+                         GLR,
+                         GLC,
+                         RN,
+                         SE,
+                         SO,
+                         SP,
+                         SU> TYPES;
 
     std::vector<TYPES> space;
 
     // Lie Group class information
-    std::string to_string() const;
+    std::string to_string() const override;
 
     // Constructors and destructors
     CompositeGroup();
@@ -64,18 +64,18 @@ class CompositeGroup : public LieGroup<std::complex<double>>
     CompositeGroup(const std::vector<TYPES>& others);
 
     // Object information
-    size_t get_dimension() const;
+    size_t get_dimension() const override;
     std::vector<size_t> get_dimensions() const;
-    size_t get_shape() const;
+    size_t get_shape() const override;
     std::vector<size_t> get_shapes() const;
-    size_t get_size() const;
+    size_t get_size() const override;
     std::vector<size_t> get_sizes() const;
 
     // Object IO and data manipulation
-    Eigen::MatrixXcd get_matrix() const;
+    CompositeGroup::matrix_t get_matrix() const;
     // TODO: get_matrices() (plural)
-    Eigen::VectorXd serialize() const;
-    void unserialize(const Eigen::VectorXd& vec);
+    Eigen::VectorXd serialize() const override;
+    void unserialize(const Eigen::VectorXd& vec) override;
     void unserialize(std::initializer_list<double> vec);
 
     // double operator()(const ptrdiff_t index) const;
@@ -83,11 +83,11 @@ class CompositeGroup : public LieGroup<std::complex<double>>
     TYPES operator[](const ptrdiff_t index) const;
 
     // Lie Group math ops
-    CompositeGroup operator*(const CompositeGroup & other) const;
-    CompositeGroup & operator*=(const CompositeGroup & other);
+    CompositeGroup operator*(const CompositeGroup& other) const;
+    CompositeGroup& operator*=(const CompositeGroup& other);
     CompositeGroup inverse() const;
 
-    friend std::ostream & operator<<(std::ostream & os, const CompositeGroup & other);
+    friend std::ostream& operator<<(std::ostream& os, const CompositeGroup& other);
 };
 
 }

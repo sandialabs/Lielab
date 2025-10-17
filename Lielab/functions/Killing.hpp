@@ -6,11 +6,9 @@
 namespace Lielab::functions
 {
 
-template <typename LA>
-double Killing(const LA & a, const LA & b);
+template <typename LA> double Killing(const LA& a, const LA& b);
 
-template <typename LA>
-Eigen::MatrixXd Killingform(const LA & g);
+template <typename LA> Eigen::MatrixXd Killingform(const LA& g);
 
 }
 

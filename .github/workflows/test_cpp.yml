@@ -21,7 +21,7 @@ jobs:
       - name: Detect Conan profile
         run: conan profile detect --force
       - name: Build the tests
-        run: conan build . --version=0.5.0 -s:a build_type=Debug -s:a compiler.cppstd=gnu20 -o:a "&:with_tests=True" --build=missing
+        run: conan build . --version=0.5.1 -s:a build_type=Debug -s:a compiler.cppstd=gnu20 -o:a "&:with_tests=True" --build=missing
       - name: Run C++ tests
         working-directory: ./build/Debug/tests
         run: ./test_Lielab

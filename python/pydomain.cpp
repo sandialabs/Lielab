@@ -79,38 +79,6 @@ void bind_domain(py::module &m_domain)
     Lielab_domain_cn.def(double() * py::self);
     // Lielab_domain_cn.def(std::complex<int>() * py::self);
     Lielab_domain_cn.def(std::complex<double>() * py::self);
-    // Lielab_domain_cn.def("__add__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::cn  & rhs) {return lhs+rhs;});
-    // Lielab_domain_cn.def("__add__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::glr  & rhs) {return lhs+rhs;});
-    // Lielab_domain_cn.def("__add__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::glc & rhs) {return lhs+rhs;});
-    // Lielab_domain_cn.def("__add__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::rn  & rhs) {return lhs+rhs;});
-    // Lielab_domain_cn.def("__add__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::se  & rhs) {return lhs+rhs;});
-    // Lielab_domain_cn.def("__add__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::so  & rhs) {return lhs+rhs;});
-    // Lielab_domain_cn.def("__add__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::sp  & rhs) {return lhs+rhs;});
-    // Lielab_domain_cn.def("__add__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::su  & rhs) {return lhs+rhs;});
-    // Lielab_domain_cn.def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;});
-    // Lielab_domain_cn.def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::glr  & rhs) {return lhs*rhs;});
-    // Lielab_domain_cn.def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;});
-    // Lielab_domain_cn.def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;});
-    // Lielab_domain_cn.def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;});
-    // Lielab_domain_cn.def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;});
-    // Lielab_domain_cn.def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;});
-    // Lielab_domain_cn.def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;});
-    // Lielab_domain_cn.def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::CN  & rhs) {return lhs*rhs;});
-    // Lielab_domain_cn.def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::GLR  & rhs) {return lhs*rhs;});
-    // Lielab_domain_cn.def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::GLC & rhs) {return lhs*rhs;});
-    // Lielab_domain_cn.def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::RN  & rhs) {return lhs*rhs;});
-    // Lielab_domain_cn.def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::SE  & rhs) {return lhs*rhs;});
-    // Lielab_domain_cn.def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::SO  & rhs) {return lhs*rhs;});
-    // Lielab_domain_cn.def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::SP  & rhs) {return lhs*rhs;});
-    // Lielab_domain_cn.def("__mul__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::SU  & rhs) {return lhs*rhs;});
-    // Lielab_domain_cn.def("__sub__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::cn  & rhs) {return lhs-rhs;});
-    // Lielab_domain_cn.def("__sub__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::glr  & rhs) {return lhs-rhs;});
-    // Lielab_domain_cn.def("__sub__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::glc & rhs) {return lhs-rhs;});
-    // Lielab_domain_cn.def("__sub__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::rn  & rhs) {return lhs-rhs;});
-    // Lielab_domain_cn.def("__sub__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::se  & rhs) {return lhs-rhs;});
-    // Lielab_domain_cn.def("__sub__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::so  & rhs) {return lhs-rhs;});
-    // Lielab_domain_cn.def("__sub__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::sp  & rhs) {return lhs-rhs;});
-    // Lielab_domain_cn.def("__sub__", [](const Lielab::domain::cn  & lhs, const Lielab::domain::su  & rhs) {return lhs-rhs;});
     Lielab_domain_cn.def("__repr__", [](const Lielab::domain::cn& self)
         {
             return "<lielab.domain.cn>";
@@ -165,40 +133,6 @@ void bind_domain(py::module &m_domain)
     Lielab_domain_glr.def(py::self /= double());
     Lielab_domain_glr.def(int() * py::self);
     Lielab_domain_glr.def(double() * py::self);
-
-    // Lielab_domain_gl.def("__add__", [](const Lielab::domain::glr  & lhs, const Lielab::domain::cn  & rhs) {return lhs+rhs;});
-    // Lielab_domain_gl.def("__add__", [](const Lielab::domain::glr  & lhs, const Lielab::domain::glr  & rhs) {return lhs+rhs;});
-    // Lielab_domain_gl.def("__add__", [](const Lielab::domain::glr  & lhs, const Lielab::domain::glc & rhs) {return lhs+rhs;});
-    // Lielab_domain_gl.def("__add__", [](const Lielab::domain::glr  & lhs, const Lielab::domain::rn  & rhs) {return lhs+rhs;});
-    // Lielab_domain_gl.def("__add__", [](const Lielab::domain::glr  & lhs, const Lielab::domain::se  & rhs) {return lhs+rhs;});
-    // Lielab_domain_gl.def("__add__", [](const Lielab::domain::glr  & lhs, const Lielab::domain::so  & rhs) {return lhs+rhs;});
-    // Lielab_domain_gl.def("__add__", [](const Lielab::domain::glr  & lhs, const Lielab::domain::sp  & rhs) {return lhs+rhs;});
-    // Lielab_domain_gl.def("__add__", [](const Lielab::domain::glr  & lhs, const Lielab::domain::su  & rhs) {return lhs+rhs;});
-    // Lielab_domain_gl.def("__mul__", [](const Lielab::domain::glr  & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;});
-    // Lielab_domain_gl.def("__mul__", [](const Lielab::domain::glr  & lhs, const Lielab::domain::glr  & rhs) {return lhs*rhs;});
-    // Lielab_domain_gl.def("__mul__", [](const Lielab::domain::glr  & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;});
-    // Lielab_domain_gl.def("__mul__", [](const Lielab::domain::glr  & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;});
-    // Lielab_domain_gl.def("__mul__", [](const Lielab::domain::glr  & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;});
-    // Lielab_domain_gl.def("__mul__", [](const Lielab::domain::glr  & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;});
-    // Lielab_domain_gl.def("__mul__", [](const Lielab::domain::glr  & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;});
-    // Lielab_domain_gl.def("__mul__", [](const Lielab::domain::glr  & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;});
-    // Lielab_domain_gl.def("__mul__", [](const Lielab::domain::glr  & lhs, const Lielab::domain::CN  & rhs) {return lhs*rhs;});
-    // Lielab_domain_gl.def("__mul__", [](const Lielab::domain::glr  & lhs, const Lielab::domain::GLR  & rhs) {return lhs*rhs;});
-    // Lielab_domain_gl.def("__mul__", [](const Lielab::domain::glr  & lhs, const Lielab::domain::GLC & rhs) {return lhs*rhs;});
-    // Lielab_domain_gl.def("__mul__", [](const Lielab::domain::glr  & lhs, const Lielab::domain::RN  & rhs) {return lhs*rhs;});
-    // Lielab_domain_gl.def("__mul__", [](const Lielab::domain::glr  & lhs, const Lielab::domain::SE  & rhs) {return lhs*rhs;});
-    // Lielab_domain_gl.def("__mul__", [](const Lielab::domain::glr  & lhs, const Lielab::domain::SO  & rhs) {return lhs*rhs;});
-    // Lielab_domain_gl.def("__mul__", [](const Lielab::domain::glr  & lhs, const Lielab::domain::SP  & rhs) {return lhs*rhs;});
-    // Lielab_domain_gl.def("__mul__", [](const Lielab::domain::glr  & lhs, const Lielab::domain::SU  & rhs) {return lhs*rhs;});
-    // Lielab_domain_gl.def("__sub__", [](const Lielab::domain::glr  & lhs, const Lielab::domain::cn  & rhs) {return lhs-rhs;});
-    // Lielab_domain_gl.def("__sub__", [](const Lielab::domain::glr  & lhs, const Lielab::domain::glr  & rhs) {return lhs-rhs;});
-    // Lielab_domain_gl.def("__sub__", [](const Lielab::domain::glr  & lhs, const Lielab::domain::glc & rhs) {return lhs-rhs;});
-    // Lielab_domain_gl.def("__sub__", [](const Lielab::domain::glr  & lhs, const Lielab::domain::rn  & rhs) {return lhs-rhs;});
-    // Lielab_domain_gl.def("__sub__", [](const Lielab::domain::glr  & lhs, const Lielab::domain::se  & rhs) {return lhs-rhs;});
-    // Lielab_domain_gl.def("__sub__", [](const Lielab::domain::glr  & lhs, const Lielab::domain::so  & rhs) {return lhs-rhs;});
-    // Lielab_domain_gl.def("__sub__", [](const Lielab::domain::glr  & lhs, const Lielab::domain::sp  & rhs) {return lhs-rhs;});
-    // Lielab_domain_gl.def("__sub__", [](const Lielab::domain::glr  & lhs, const Lielab::domain::su  & rhs) {return lhs-rhs;});
-
     Lielab_domain_glr.def("__repr__", [](const Lielab::domain::glr& self)
         {
             return "<lielab.domain.glr>";
@@ -264,40 +198,6 @@ void bind_domain(py::module &m_domain)
     Lielab_domain_glc.def(std::complex<double>() * py::self);
     Lielab_domain_glc.def_static("from_vector", py::overload_cast<const Eigen::VectorXd&>(&Lielab::domain::glc::from_vector));
     Lielab_domain_glc.def_static("from_complex_vector", py::overload_cast<const Eigen::VectorXcd&>(&Lielab::domain::glc::from_complex_vector));
-
-    // Lielab_domain_glc.def("__add__", [](const Lielab::domain::glc & lhs, const Lielab::domain::cn  & rhs) {return lhs+rhs;});
-    // Lielab_domain_glc.def("__add__", [](const Lielab::domain::glc & lhs, const Lielab::domain::glr  & rhs) {return lhs+rhs;});
-    // Lielab_domain_glc.def("__add__", [](const Lielab::domain::glc & lhs, const Lielab::domain::glc & rhs) {return lhs+rhs;});
-    // Lielab_domain_glc.def("__add__", [](const Lielab::domain::glc & lhs, const Lielab::domain::rn  & rhs) {return lhs+rhs;});
-    // Lielab_domain_glc.def("__add__", [](const Lielab::domain::glc & lhs, const Lielab::domain::se  & rhs) {return lhs+rhs;});
-    // Lielab_domain_glc.def("__add__", [](const Lielab::domain::glc & lhs, const Lielab::domain::so  & rhs) {return lhs+rhs;});
-    // Lielab_domain_glc.def("__add__", [](const Lielab::domain::glc & lhs, const Lielab::domain::sp  & rhs) {return lhs+rhs;});
-    // Lielab_domain_glc.def("__add__", [](const Lielab::domain::glc & lhs, const Lielab::domain::su  & rhs) {return lhs+rhs;});
-    // Lielab_domain_glc.def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;});
-    // Lielab_domain_glc.def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::glr  & rhs) {return lhs*rhs;});
-    // Lielab_domain_glc.def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;});
-    // Lielab_domain_glc.def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;});
-    // Lielab_domain_glc.def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;});
-    // Lielab_domain_glc.def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;});
-    // Lielab_domain_glc.def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;});
-    // Lielab_domain_glc.def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;});
-    // Lielab_domain_glc.def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::CN  & rhs) {return lhs*rhs;});
-    // Lielab_domain_glc.def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::GLR  & rhs) {return lhs*rhs;});
-    // Lielab_domain_glc.def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::GLC & rhs) {return lhs*rhs;});
-    // Lielab_domain_glc.def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::RN  & rhs) {return lhs*rhs;});
-    // Lielab_domain_glc.def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::SE  & rhs) {return lhs*rhs;});
-    // Lielab_domain_glc.def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::SO  & rhs) {return lhs*rhs;});
-    // Lielab_domain_glc.def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::SP  & rhs) {return lhs*rhs;});
-    // Lielab_domain_glc.def("__mul__", [](const Lielab::domain::glc & lhs, const Lielab::domain::SU  & rhs) {return lhs*rhs;});
-    // Lielab_domain_glc.def("__sub__", [](const Lielab::domain::glc & lhs, const Lielab::domain::cn  & rhs) {return lhs-rhs;});
-    // Lielab_domain_glc.def("__sub__", [](const Lielab::domain::glc & lhs, const Lielab::domain::glr  & rhs) {return lhs-rhs;});
-    // Lielab_domain_glc.def("__sub__", [](const Lielab::domain::glc & lhs, const Lielab::domain::glc & rhs) {return lhs-rhs;});
-    // Lielab_domain_glc.def("__sub__", [](const Lielab::domain::glc & lhs, const Lielab::domain::rn  & rhs) {return lhs-rhs;});
-    // Lielab_domain_glc.def("__sub__", [](const Lielab::domain::glc & lhs, const Lielab::domain::se  & rhs) {return lhs-rhs;});
-    // Lielab_domain_glc.def("__sub__", [](const Lielab::domain::glc & lhs, const Lielab::domain::so  & rhs) {return lhs-rhs;});
-    // Lielab_domain_glc.def("__sub__", [](const Lielab::domain::glc & lhs, const Lielab::domain::sp  & rhs) {return lhs-rhs;});
-    // Lielab_domain_glc.def("__sub__", [](const Lielab::domain::glc & lhs, const Lielab::domain::su  & rhs) {return lhs-rhs;});
-
     Lielab_domain_glc.def("__repr__", [](const Lielab::domain::glc& self)
         {
             return "<lielab.domain.glc>";
@@ -350,40 +250,6 @@ void bind_domain(py::module &m_domain)
     Lielab_domain_rn.def(py::self /= double());
     Lielab_domain_rn.def(int() * py::self);
     Lielab_domain_rn.def(double() * py::self);
-
-    // Lielab_domain_rn.def("__add__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::cn  & rhs) {return lhs+rhs;});
-    // Lielab_domain_rn.def("__add__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::glr  & rhs) {return lhs+rhs;});
-    // Lielab_domain_rn.def("__add__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::glc & rhs) {return lhs+rhs;});
-    // Lielab_domain_rn.def("__add__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::rn  & rhs) {return lhs+rhs;});
-    // Lielab_domain_rn.def("__add__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::se  & rhs) {return lhs+rhs;});
-    // Lielab_domain_rn.def("__add__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::so  & rhs) {return lhs+rhs;});
-    // Lielab_domain_rn.def("__add__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::sp  & rhs) {return lhs+rhs;});
-    // Lielab_domain_rn.def("__add__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::su  & rhs) {return lhs+rhs;});
-    // Lielab_domain_rn.def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;});
-    // Lielab_domain_rn.def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::glr  & rhs) {return lhs*rhs;});
-    // Lielab_domain_rn.def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;});
-    // Lielab_domain_rn.def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;});
-    // Lielab_domain_rn.def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;});
-    // Lielab_domain_rn.def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;});
-    // Lielab_domain_rn.def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;});
-    // Lielab_domain_rn.def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;});
-    // Lielab_domain_rn.def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::CN  & rhs) {return lhs*rhs;});
-    // Lielab_domain_rn.def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::GLR  & rhs) {return lhs*rhs;});
-    // Lielab_domain_rn.def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::GLC & rhs) {return lhs*rhs;});
-    // Lielab_domain_rn.def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::RN  & rhs) {return lhs*rhs;});
-    // Lielab_domain_rn.def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::SE  & rhs) {return lhs*rhs;});
-    // Lielab_domain_rn.def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::SO  & rhs) {return lhs*rhs;});
-    // Lielab_domain_rn.def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::SP  & rhs) {return lhs*rhs;});
-    // Lielab_domain_rn.def("__mul__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::SU  & rhs) {return lhs*rhs;});
-    // Lielab_domain_rn.def("__sub__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::cn  & rhs) {return lhs-rhs;});
-    // Lielab_domain_rn.def("__sub__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::glr  & rhs) {return lhs-rhs;});
-    // Lielab_domain_rn.def("__sub__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::glc & rhs) {return lhs-rhs;});
-    // Lielab_domain_rn.def("__sub__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::rn  & rhs) {return lhs-rhs;});
-    // Lielab_domain_rn.def("__sub__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::se  & rhs) {return lhs-rhs;});
-    // Lielab_domain_rn.def("__sub__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::so  & rhs) {return lhs-rhs;});
-    // Lielab_domain_rn.def("__sub__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::sp  & rhs) {return lhs-rhs;});
-    // Lielab_domain_rn.def("__sub__", [](const Lielab::domain::rn  & lhs, const Lielab::domain::su  & rhs) {return lhs-rhs;});
-
     Lielab_domain_rn.def("__repr__", [](const Lielab::domain::rn& self)
         {
             return "<lielab.domain.rn>";
@@ -436,40 +302,6 @@ void bind_domain(py::module &m_domain)
     Lielab_domain_se.def(py::self /= double());
     Lielab_domain_se.def(int() * py::self);
     Lielab_domain_se.def(double() * py::self);
-
-    // Lielab_domain_se.def("__add__", [](const Lielab::domain::se  & lhs, const Lielab::domain::cn  & rhs) {return lhs+rhs;});
-    // Lielab_domain_se.def("__add__", [](const Lielab::domain::se  & lhs, const Lielab::domain::glr  & rhs) {return lhs+rhs;});
-    // Lielab_domain_se.def("__add__", [](const Lielab::domain::se  & lhs, const Lielab::domain::glc & rhs) {return lhs+rhs;});
-    // Lielab_domain_se.def("__add__", [](const Lielab::domain::se  & lhs, const Lielab::domain::rn  & rhs) {return lhs+rhs;});
-    // Lielab_domain_se.def("__add__", [](const Lielab::domain::se  & lhs, const Lielab::domain::se  & rhs) {return lhs+rhs;});
-    // Lielab_domain_se.def("__add__", [](const Lielab::domain::se  & lhs, const Lielab::domain::so  & rhs) {return lhs+rhs;});
-    // Lielab_domain_se.def("__add__", [](const Lielab::domain::se  & lhs, const Lielab::domain::sp  & rhs) {return lhs+rhs;});
-    // Lielab_domain_se.def("__add__", [](const Lielab::domain::se  & lhs, const Lielab::domain::su  & rhs) {return lhs+rhs;});
-    // Lielab_domain_se.def("__mul__", [](const Lielab::domain::se  & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;});
-    // Lielab_domain_se.def("__mul__", [](const Lielab::domain::se  & lhs, const Lielab::domain::glr  & rhs) {return lhs*rhs;});
-    // Lielab_domain_se.def("__mul__", [](const Lielab::domain::se  & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;});
-    // Lielab_domain_se.def("__mul__", [](const Lielab::domain::se  & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;});
-    // Lielab_domain_se.def("__mul__", [](const Lielab::domain::se  & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;});
-    // Lielab_domain_se.def("__mul__", [](const Lielab::domain::se  & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;});
-    // Lielab_domain_se.def("__mul__", [](const Lielab::domain::se  & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;});
-    // Lielab_domain_se.def("__mul__", [](const Lielab::domain::se  & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;});
-    // Lielab_domain_se.def("__mul__", [](const Lielab::domain::se  & lhs, const Lielab::domain::CN  & rhs) {return lhs*rhs;});
-    // Lielab_domain_se.def("__mul__", [](const Lielab::domain::se  & lhs, const Lielab::domain::GLR  & rhs) {return lhs*rhs;});
-    // Lielab_domain_se.def("__mul__", [](const Lielab::domain::se  & lhs, const Lielab::domain::GLC & rhs) {return lhs*rhs;});
-    // Lielab_domain_se.def("__mul__", [](const Lielab::domain::se  & lhs, const Lielab::domain::RN  & rhs) {return lhs*rhs;});
-    // Lielab_domain_se.def("__mul__", [](const Lielab::domain::se  & lhs, const Lielab::domain::SE  & rhs) {return lhs*rhs;});
-    // Lielab_domain_se.def("__mul__", [](const Lielab::domain::se  & lhs, const Lielab::domain::SO  & rhs) {return lhs*rhs;});
-    // Lielab_domain_se.def("__mul__", [](const Lielab::domain::se  & lhs, const Lielab::domain::SP  & rhs) {return lhs*rhs;});
-    // Lielab_domain_se.def("__mul__", [](const Lielab::domain::se  & lhs, const Lielab::domain::SU  & rhs) {return lhs*rhs;});
-    // Lielab_domain_se.def("__sub__", [](const Lielab::domain::se  & lhs, const Lielab::domain::cn  & rhs) {return lhs-rhs;});
-    // Lielab_domain_se.def("__sub__", [](const Lielab::domain::se  & lhs, const Lielab::domain::glr  & rhs) {return lhs-rhs;});
-    // Lielab_domain_se.def("__sub__", [](const Lielab::domain::se  & lhs, const Lielab::domain::glc & rhs) {return lhs-rhs;});
-    // Lielab_domain_se.def("__sub__", [](const Lielab::domain::se  & lhs, const Lielab::domain::rn  & rhs) {return lhs-rhs;});
-    // Lielab_domain_se.def("__sub__", [](const Lielab::domain::se  & lhs, const Lielab::domain::se  & rhs) {return lhs-rhs;});
-    // Lielab_domain_se.def("__sub__", [](const Lielab::domain::se  & lhs, const Lielab::domain::so  & rhs) {return lhs-rhs;});
-    // Lielab_domain_se.def("__sub__", [](const Lielab::domain::se  & lhs, const Lielab::domain::sp  & rhs) {return lhs-rhs;});
-    // Lielab_domain_se.def("__sub__", [](const Lielab::domain::se  & lhs, const Lielab::domain::su  & rhs) {return lhs-rhs;});
-
     Lielab_domain_se.def("__repr__", [](const Lielab::domain::se& self)
         {
             return "<lielab.domain.se>";
@@ -523,40 +355,6 @@ void bind_domain(py::module &m_domain)
     Lielab_domain_so.def(py::self /= double());
     Lielab_domain_so.def(int() * py::self);
     Lielab_domain_so.def(double() * py::self);
-
-    // Lielab_domain_so.def("__add__", [](const Lielab::domain::so  & lhs, const Lielab::domain::cn  & rhs) {return lhs+rhs;});
-    // Lielab_domain_so.def("__add__", [](const Lielab::domain::so  & lhs, const Lielab::domain::glr  & rhs) {return lhs+rhs;});
-    // Lielab_domain_so.def("__add__", [](const Lielab::domain::so  & lhs, const Lielab::domain::glc & rhs) {return lhs+rhs;});
-    // Lielab_domain_so.def("__add__", [](const Lielab::domain::so  & lhs, const Lielab::domain::rn  & rhs) {return lhs+rhs;});
-    // Lielab_domain_so.def("__add__", [](const Lielab::domain::so  & lhs, const Lielab::domain::se  & rhs) {return lhs+rhs;});
-    // Lielab_domain_so.def("__add__", [](const Lielab::domain::so  & lhs, const Lielab::domain::so  & rhs) {return lhs+rhs;});
-    // Lielab_domain_so.def("__add__", [](const Lielab::domain::so  & lhs, const Lielab::domain::sp  & rhs) {return lhs+rhs;});
-    // Lielab_domain_so.def("__add__", [](const Lielab::domain::so  & lhs, const Lielab::domain::su  & rhs) {return lhs+rhs;});
-    // Lielab_domain_so.def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;});
-    // Lielab_domain_so.def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::glr  & rhs) {return lhs*rhs;});
-    // Lielab_domain_so.def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;});
-    // Lielab_domain_so.def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;});
-    // Lielab_domain_so.def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;});
-    // Lielab_domain_so.def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;});
-    // Lielab_domain_so.def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;});
-    // Lielab_domain_so.def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;});
-    // Lielab_domain_so.def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::CN  & rhs) {return lhs*rhs;});
-    // Lielab_domain_so.def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::GLR  & rhs) {return lhs*rhs;});
-    // Lielab_domain_so.def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::GLC & rhs) {return lhs*rhs;});
-    // Lielab_domain_so.def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::RN  & rhs) {return lhs*rhs;});
-    // Lielab_domain_so.def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::SE  & rhs) {return lhs*rhs;});
-    // Lielab_domain_so.def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::SO  & rhs) {return lhs*rhs;});
-    // Lielab_domain_so.def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::SP  & rhs) {return lhs*rhs;});
-    // Lielab_domain_so.def("__mul__", [](const Lielab::domain::so  & lhs, const Lielab::domain::SU  & rhs) {return lhs*rhs;});
-    // Lielab_domain_so.def("__sub__", [](const Lielab::domain::so  & lhs, const Lielab::domain::cn  & rhs) {return lhs-rhs;});
-    // Lielab_domain_so.def("__sub__", [](const Lielab::domain::so  & lhs, const Lielab::domain::glr  & rhs) {return lhs-rhs;});
-    // Lielab_domain_so.def("__sub__", [](const Lielab::domain::so  & lhs, const Lielab::domain::glc & rhs) {return lhs-rhs;});
-    // Lielab_domain_so.def("__sub__", [](const Lielab::domain::so  & lhs, const Lielab::domain::rn  & rhs) {return lhs-rhs;});
-    // Lielab_domain_so.def("__sub__", [](const Lielab::domain::so  & lhs, const Lielab::domain::se  & rhs) {return lhs-rhs;});
-    // Lielab_domain_so.def("__sub__", [](const Lielab::domain::so  & lhs, const Lielab::domain::so  & rhs) {return lhs-rhs;});
-    // Lielab_domain_so.def("__sub__", [](const Lielab::domain::so  & lhs, const Lielab::domain::sp  & rhs) {return lhs-rhs;});
-    // Lielab_domain_so.def("__sub__", [](const Lielab::domain::so  & lhs, const Lielab::domain::su  & rhs) {return lhs-rhs;});
-
     Lielab_domain_so.def("__repr__", [](const Lielab::domain::so& self)
         {
             return "<lielab.domain.so>";
@@ -609,40 +407,6 @@ void bind_domain(py::module &m_domain)
     Lielab_domain_sp.def(py::self /= double());
     Lielab_domain_sp.def(int() * py::self);
     Lielab_domain_sp.def(double() * py::self);
-
-    // Lielab_domain_sp.def("__add__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::cn  & rhs) {return lhs+rhs;});
-    // Lielab_domain_sp.def("__add__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::glr  & rhs) {return lhs+rhs;});
-    // Lielab_domain_sp.def("__add__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::glc & rhs) {return lhs+rhs;});
-    // Lielab_domain_sp.def("__add__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::rn  & rhs) {return lhs+rhs;});
-    // Lielab_domain_sp.def("__add__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::se  & rhs) {return lhs+rhs;});
-    // Lielab_domain_sp.def("__add__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::so  & rhs) {return lhs+rhs;});
-    // Lielab_domain_sp.def("__add__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::sp  & rhs) {return lhs+rhs;});
-    // Lielab_domain_sp.def("__add__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::su  & rhs) {return lhs+rhs;});
-    // Lielab_domain_sp.def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;});
-    // Lielab_domain_sp.def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::glr  & rhs) {return lhs*rhs;});
-    // Lielab_domain_sp.def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;});
-    // Lielab_domain_sp.def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;});
-    // Lielab_domain_sp.def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;});
-    // Lielab_domain_sp.def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;});
-    // Lielab_domain_sp.def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;});
-    // Lielab_domain_sp.def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;});
-    // Lielab_domain_sp.def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::CN  & rhs) {return lhs*rhs;});
-    // Lielab_domain_sp.def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::GLR  & rhs) {return lhs*rhs;});
-    // Lielab_domain_sp.def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::GLC & rhs) {return lhs*rhs;});
-    // Lielab_domain_sp.def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::RN  & rhs) {return lhs*rhs;});
-    // Lielab_domain_sp.def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::SE  & rhs) {return lhs*rhs;});
-    // Lielab_domain_sp.def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::SO  & rhs) {return lhs*rhs;});
-    // Lielab_domain_sp.def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::SP  & rhs) {return lhs*rhs;});
-    // Lielab_domain_sp.def("__mul__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::SU  & rhs) {return lhs*rhs;});
-    // Lielab_domain_sp.def("__sub__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::cn  & rhs) {return lhs-rhs;});
-    // Lielab_domain_sp.def("__sub__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::glr  & rhs) {return lhs-rhs;});
-    // Lielab_domain_sp.def("__sub__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::glc & rhs) {return lhs-rhs;});
-    // Lielab_domain_sp.def("__sub__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::rn  & rhs) {return lhs-rhs;});
-    // Lielab_domain_sp.def("__sub__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::se  & rhs) {return lhs-rhs;});
-    // Lielab_domain_sp.def("__sub__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::so  & rhs) {return lhs-rhs;});
-    // Lielab_domain_sp.def("__sub__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::sp  & rhs) {return lhs-rhs;});
-    // Lielab_domain_sp.def("__sub__", [](const Lielab::domain::sp  & lhs, const Lielab::domain::su  & rhs) {return lhs-rhs;});
-
     Lielab_domain_sp.def("__repr__", [](const Lielab::domain::sp& self)
         {
             return "<lielab.domain.sp>";
@@ -706,40 +470,6 @@ void bind_domain(py::module &m_domain)
     Lielab_domain_su.def(double() * py::self);
         // .def(std::complex<int>() * py::self);
     Lielab_domain_su.def(std::complex<double>() * py::self);
-
-    // Lielab_domain_su.def("__add__", [](const Lielab::domain::su  & lhs, const Lielab::domain::cn  & rhs) {return lhs+rhs;});
-    // Lielab_domain_su.def("__add__", [](const Lielab::domain::su  & lhs, const Lielab::domain::glr  & rhs) {return lhs+rhs;});
-    // Lielab_domain_su.def("__add__", [](const Lielab::domain::su  & lhs, const Lielab::domain::glc & rhs) {return lhs+rhs;});
-    // Lielab_domain_su.def("__add__", [](const Lielab::domain::su  & lhs, const Lielab::domain::rn  & rhs) {return lhs+rhs;});
-    // Lielab_domain_su.def("__add__", [](const Lielab::domain::su  & lhs, const Lielab::domain::se  & rhs) {return lhs+rhs;});
-    // Lielab_domain_su.def("__add__", [](const Lielab::domain::su  & lhs, const Lielab::domain::so  & rhs) {return lhs+rhs;});
-    // Lielab_domain_su.def("__add__", [](const Lielab::domain::su  & lhs, const Lielab::domain::sp  & rhs) {return lhs+rhs;});
-    // Lielab_domain_su.def("__add__", [](const Lielab::domain::su  & lhs, const Lielab::domain::su  & rhs) {return lhs+rhs;});
-    // Lielab_domain_su.def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;});
-    // Lielab_domain_su.def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::glr  & rhs) {return lhs*rhs;});
-    // Lielab_domain_su.def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;});
-    // Lielab_domain_su.def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;});
-    // Lielab_domain_su.def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;});
-    // Lielab_domain_su.def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;});
-    // Lielab_domain_su.def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;});
-    // Lielab_domain_su.def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;});
-    // Lielab_domain_su.def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::CN  & rhs) {return lhs*rhs;});
-    // Lielab_domain_su.def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::GLR  & rhs) {return lhs*rhs;});
-    // Lielab_domain_su.def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::GLC & rhs) {return lhs*rhs;});
-    // Lielab_domain_su.def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::RN  & rhs) {return lhs*rhs;});
-    // Lielab_domain_su.def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::SE  & rhs) {return lhs*rhs;});
-    // Lielab_domain_su.def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::SO  & rhs) {return lhs*rhs;});
-    // Lielab_domain_su.def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::SP  & rhs) {return lhs*rhs;});
-    // Lielab_domain_su.def("__mul__", [](const Lielab::domain::su  & lhs, const Lielab::domain::SU  & rhs) {return lhs*rhs;});
-    // Lielab_domain_su.def("__sub__", [](const Lielab::domain::su  & lhs, const Lielab::domain::cn  & rhs) {return lhs-rhs;});
-    // Lielab_domain_su.def("__sub__", [](const Lielab::domain::su  & lhs, const Lielab::domain::glr  & rhs) {return lhs-rhs;});
-    // Lielab_domain_su.def("__sub__", [](const Lielab::domain::su  & lhs, const Lielab::domain::glc & rhs) {return lhs-rhs;});
-    // Lielab_domain_su.def("__sub__", [](const Lielab::domain::su  & lhs, const Lielab::domain::rn  & rhs) {return lhs-rhs;});
-    // Lielab_domain_su.def("__sub__", [](const Lielab::domain::su  & lhs, const Lielab::domain::se  & rhs) {return lhs-rhs;});
-    // Lielab_domain_su.def("__sub__", [](const Lielab::domain::su  & lhs, const Lielab::domain::so  & rhs) {return lhs-rhs;});
-    // Lielab_domain_su.def("__sub__", [](const Lielab::domain::su  & lhs, const Lielab::domain::sp  & rhs) {return lhs-rhs;});
-    // Lielab_domain_su.def("__sub__", [](const Lielab::domain::su  & lhs, const Lielab::domain::su  & rhs) {return lhs-rhs;});
-
     Lielab_domain_su.def("__repr__", [](const Lielab::domain::su& self)
         {
             return "<lielab.domain.su>";
@@ -787,16 +517,6 @@ void bind_domain(py::module &m_domain)
         });
     Lielab_domain_CN.def(py::self * py::self);
     Lielab_domain_CN.def(py::self *= py::self);
-
-    // Lielab_domain_CN.def("__mul__", [](const Lielab::domain::CN  & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;});
-    // Lielab_domain_CN.def("__mul__", [](const Lielab::domain::CN  & lhs, const Lielab::domain::glr  & rhs) {return lhs*rhs;});
-    // Lielab_domain_CN.def("__mul__", [](const Lielab::domain::CN  & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;});
-    // Lielab_domain_CN.def("__mul__", [](const Lielab::domain::CN  & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;});
-    // Lielab_domain_CN.def("__mul__", [](const Lielab::domain::CN  & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;});
-    // Lielab_domain_CN.def("__mul__", [](const Lielab::domain::CN  & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;});
-    // Lielab_domain_CN.def("__mul__", [](const Lielab::domain::CN  & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;});
-    // Lielab_domain_CN.def("__mul__", [](const Lielab::domain::CN  & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;});
-
     Lielab_domain_CN.def("__repr__", [](const Lielab::domain::CN& self)
         {
             return "<lielab.domain.CN>";
@@ -830,16 +550,6 @@ void bind_domain(py::module &m_domain)
         });
     Lielab_domain_GLR.def(py::self * py::self);
     Lielab_domain_GLR.def(py::self *= py::self);
-
-    // Lielab_domain_GL.def("__mul__", [](const Lielab::domain::GLR  & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;});
-    // Lielab_domain_GL.def("__mul__", [](const Lielab::domain::GLR  & lhs, const Lielab::domain::glr  & rhs) {return lhs*rhs;});
-    // Lielab_domain_GL.def("__mul__", [](const Lielab::domain::GLR  & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;});
-    // Lielab_domain_GL.def("__mul__", [](const Lielab::domain::GLR  & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;});
-    // Lielab_domain_GL.def("__mul__", [](const Lielab::domain::GLR  & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;});
-    // Lielab_domain_GL.def("__mul__", [](const Lielab::domain::GLR  & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;});
-    // Lielab_domain_GL.def("__mul__", [](const Lielab::domain::GLR  & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;});
-    // Lielab_domain_GL.def("__mul__", [](const Lielab::domain::GLR  & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;});
-
     Lielab_domain_GLR.def("__repr__", [](const Lielab::domain::GLR& self)
         {
             return "<lielab.domain.GLR>";
@@ -871,16 +581,6 @@ void bind_domain(py::module &m_domain)
         });
     Lielab_domain_GLC.def(py::self * py::self);
     Lielab_domain_GLC.def(py::self *= py::self);
-
-    // Lielab_domain_GLC.def("__mul__", [](const Lielab::domain::GLC & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;});
-    // Lielab_domain_GLC.def("__mul__", [](const Lielab::domain::GLC & lhs, const Lielab::domain::glr  & rhs) {return lhs*rhs;});
-    // Lielab_domain_GLC.def("__mul__", [](const Lielab::domain::GLC & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;});
-    // Lielab_domain_GLC.def("__mul__", [](const Lielab::domain::GLC & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;});
-    // Lielab_domain_GLC.def("__mul__", [](const Lielab::domain::GLC & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;});
-    // Lielab_domain_GLC.def("__mul__", [](const Lielab::domain::GLC & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;});
-    // Lielab_domain_GLC.def("__mul__", [](const Lielab::domain::GLC & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;});
-    // Lielab_domain_GLC.def("__mul__", [](const Lielab::domain::GLC & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;});
-
     Lielab_domain_GLC.def("__repr__", [](const Lielab::domain::GLC& self)
         {
             return "<lielab.domain.GLC>";
@@ -916,16 +616,6 @@ void bind_domain(py::module &m_domain)
         });
     Lielab_domain_RN.def(py::self * py::self);
     Lielab_domain_RN.def(py::self *= py::self);
-
-    // Lielab_domain_RN.def("__mul__", [](const Lielab::domain::RN  & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;});
-    // Lielab_domain_RN.def("__mul__", [](const Lielab::domain::RN  & lhs, const Lielab::domain::glr  & rhs) {return lhs*rhs;});
-    // Lielab_domain_RN.def("__mul__", [](const Lielab::domain::RN  & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;});
-    // Lielab_domain_RN.def("__mul__", [](const Lielab::domain::RN  & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;});
-    // Lielab_domain_RN.def("__mul__", [](const Lielab::domain::RN  & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;});
-    // Lielab_domain_RN.def("__mul__", [](const Lielab::domain::RN  & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;});
-    // Lielab_domain_RN.def("__mul__", [](const Lielab::domain::RN  & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;});
-    // Lielab_domain_RN.def("__mul__", [](const Lielab::domain::RN  & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;});
-
     Lielab_domain_RN.def("__repr__", [](const Lielab::domain::RN& self)
         {
             return "<lielab.domain.RN>";
@@ -958,16 +648,6 @@ void bind_domain(py::module &m_domain)
         });
     Lielab_domain_SE.def(py::self * py::self);
     Lielab_domain_SE.def(py::self *= py::self);
-
-    // Lielab_domain_SE.def("__mul__", [](const Lielab::domain::SE  & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;});
-    // Lielab_domain_SE.def("__mul__", [](const Lielab::domain::SE  & lhs, const Lielab::domain::glr  & rhs) {return lhs*rhs;});
-    // Lielab_domain_SE.def("__mul__", [](const Lielab::domain::SE  & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;});
-    // Lielab_domain_SE.def("__mul__", [](const Lielab::domain::SE  & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;});
-    // Lielab_domain_SE.def("__mul__", [](const Lielab::domain::SE  & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;});
-    // Lielab_domain_SE.def("__mul__", [](const Lielab::domain::SE  & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;});
-    // Lielab_domain_SE.def("__mul__", [](const Lielab::domain::SE  & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;});
-    // Lielab_domain_SE.def("__mul__", [](const Lielab::domain::SE  & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;});
-
     Lielab_domain_SE.def("__repr__", [](const Lielab::domain::SE& self)
         {
             return "<lielab.domain.SE>";
@@ -999,16 +679,6 @@ void bind_domain(py::module &m_domain)
         });
     Lielab_domain_SO.def(py::self * py::self);
     Lielab_domain_SO.def(py::self *= py::self);
-
-    // Lielab_domain_SO.def("__mul__", [](const Lielab::domain::SO  & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;});
-    // Lielab_domain_SO.def("__mul__", [](const Lielab::domain::SO  & lhs, const Lielab::domain::glr  & rhs) {return lhs*rhs;});
-    // Lielab_domain_SO.def("__mul__", [](const Lielab::domain::SO  & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;});
-    // Lielab_domain_SO.def("__mul__", [](const Lielab::domain::SO  & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;});
-    // Lielab_domain_SO.def("__mul__", [](const Lielab::domain::SO  & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;});
-    // Lielab_domain_SO.def("__mul__", [](const Lielab::domain::SO  & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;});
-    // Lielab_domain_SO.def("__mul__", [](const Lielab::domain::SO  & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;});
-    // Lielab_domain_SO.def("__mul__", [](const Lielab::domain::SO  & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;});
-
     Lielab_domain_SO.def("__repr__", [](const Lielab::domain::SO& self)
         {
             return "<lielab.domain.SO>";
@@ -1094,16 +764,6 @@ void bind_domain(py::module &m_domain)
         });
     Lielab_domain_SP.def(py::self * py::self);
     Lielab_domain_SP.def(py::self *= py::self);
-
-    // Lielab_domain_SP.def("__mul__", [](const Lielab::domain::SP  & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;});
-    // Lielab_domain_SP.def("__mul__", [](const Lielab::domain::SP  & lhs, const Lielab::domain::glr  & rhs) {return lhs*rhs;});
-    // Lielab_domain_SP.def("__mul__", [](const Lielab::domain::SP  & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;});
-    // Lielab_domain_SP.def("__mul__", [](const Lielab::domain::SP  & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;});
-    // Lielab_domain_SP.def("__mul__", [](const Lielab::domain::SP  & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;});
-    // Lielab_domain_SP.def("__mul__", [](const Lielab::domain::SP  & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;});
-    // Lielab_domain_SP.def("__mul__", [](const Lielab::domain::SP  & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;});
-    // Lielab_domain_SP.def("__mul__", [](const Lielab::domain::SP  & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;});
-
     Lielab_domain_SP.def("__repr__", [](const Lielab::domain::SP& self)
         {
             return "<lielab.domain.SP>";
@@ -1135,16 +795,6 @@ void bind_domain(py::module &m_domain)
         });
     Lielab_domain_SU.def(py::self * py::self);
     Lielab_domain_SU.def(py::self *= py::self);
-
-    // Lielab_domain_SU.def("__mul__", [](const Lielab::domain::SU  & lhs, const Lielab::domain::cn  & rhs) {return lhs*rhs;});
-    // Lielab_domain_SU.def("__mul__", [](const Lielab::domain::SU  & lhs, const Lielab::domain::glr  & rhs) {return lhs*rhs;});
-    // Lielab_domain_SU.def("__mul__", [](const Lielab::domain::SU  & lhs, const Lielab::domain::glc & rhs) {return lhs*rhs;});
-    // Lielab_domain_SU.def("__mul__", [](const Lielab::domain::SU  & lhs, const Lielab::domain::rn  & rhs) {return lhs*rhs;});
-    // Lielab_domain_SU.def("__mul__", [](const Lielab::domain::SU  & lhs, const Lielab::domain::se  & rhs) {return lhs*rhs;});
-    // Lielab_domain_SU.def("__mul__", [](const Lielab::domain::SU  & lhs, const Lielab::domain::so  & rhs) {return lhs*rhs;});
-    // Lielab_domain_SU.def("__mul__", [](const Lielab::domain::SU  & lhs, const Lielab::domain::sp  & rhs) {return lhs*rhs;});
-    // Lielab_domain_SU.def("__mul__", [](const Lielab::domain::SU  & lhs, const Lielab::domain::su  & rhs) {return lhs*rhs;});
-
     Lielab_domain_SU.def("__repr__", [](const Lielab::domain::SU & self)
         {
             return "<lielab.domain.SU>";

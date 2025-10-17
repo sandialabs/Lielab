@@ -6,7 +6,7 @@
 namespace Lielab::functions
 {
 // template <Lielab::abstract::LieAlgebra LA>
-// double copair(const Lielab::domain::cola & mu, const LA & g)
+// double copair(const Lielab::domain::cola& mu, const LA& g)
 // {
 //     /*! \f{equation*}{ (\mathfrak{g}^*, \mathfrak{g}) \rightarrow \mathbb{R} \f}
 //     *

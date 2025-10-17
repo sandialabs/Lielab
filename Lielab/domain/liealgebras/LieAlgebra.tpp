@@ -5,6 +5,7 @@
 
 #include <Eigen/Core>
 
+#include <cassert>
 #include <string>
 
 namespace Lielab::domain

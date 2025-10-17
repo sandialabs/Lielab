@@ -3,6 +3,7 @@
 
 // Common
 #include "ODESolution.hpp"
+#include "IVPMethods/Coefficients.hpp"
 #include "IVPMethods/IVPSettings.hpp"
 
 // Methods

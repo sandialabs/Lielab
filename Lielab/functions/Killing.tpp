@@ -1,6 +1,7 @@
 #ifndef LIELAB_FUNCTIONS_KILLING_TPP
 #define LIELAB_FUNCTIONS_KILLING_TPP
 
+#include "commutator.hpp"
 #include "Killing.hpp"
 
 #include "Lielab/domain.hpp"
@@ -9,7 +10,7 @@ namespace Lielab::functions
 {
 
 template <typename LA>
-double Killing(const LA & a, const LA & b)
+double Killing(const LA& a, const LA& b)
 {
     /*!
     * 
@@ -44,7 +45,7 @@ double Killing(const LA & a, const LA & b)
 }
 
 template <typename LA>
-Eigen::MatrixXd Killingform(const LA & g)
+Eigen::MatrixXd Killingform(const LA& g)
 {
     /*!
     *

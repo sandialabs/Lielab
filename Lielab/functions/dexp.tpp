@@ -15,7 +15,7 @@ namespace Lielab::functions
 {
 
 template <typename LA>
-Lielab::domain::glr dexp_numerical(const LA & a, const size_t order)
+Lielab::domain::glr dexp_numerical(const LA& a, const size_t order)
 {
     /*! \f{equation*}{ (\mathfrak{g}, \mathbb{R}) \rightarrow \mathfrak{glr} \f}
     
@@ -63,7 +63,7 @@ Lielab::domain::glr dexp_numerical(const LA & a, const size_t order)
 
     for (size_t ii = 1; ii <= order; ii++)
     {
-        out = out + 1.0/factorial(ii+1)*ad<LA>(a, ii);
+        out = out + 1.0/factorial(static_cast<unsigned int>(ii)+1)*ad<LA>(a, static_cast<int>(ii));
         // TODO: The formula on wikipedia uses -1^ii but Munthe Kaas and Engo both don't have that term?
         // I don't know how to derive this myself and not sure of any identities to check.
         // out = out + adjc*std::pow(-1.0, static_cast<double>(ii))/factorial(ii+1);
@@ -73,7 +73,7 @@ Lielab::domain::glr dexp_numerical(const LA & a, const size_t order)
 }
 
 template <typename LA>
-Lielab::domain::glr dexp(const LA & a, const size_t order)
+Lielab::domain::glr dexp(const LA& a, const size_t order)
 {
     /*! \f{equation*}{ (\mathfrak{g}, \mathbb{R}) \rightarrow \mathfrak{glr} \f}
     
@@ -92,7 +92,7 @@ Lielab::domain::glr dexp(const LA & a, const size_t order)
 }
 
 template <typename LA>
-LA dexp_numerical(const LA & a, const LA & b, const size_t order)
+LA dexp_numerical(const LA& a, const LA& b, const size_t order)
 {
     /*! \f{equation*}{ (\mathfrak{g}, \mathfrak{g}, \mathbb{R}) \rightarrow \mathfrak{g} \f}
     
@@ -151,7 +151,7 @@ LA dexp_numerical(const LA & a, const LA & b, const size_t order)
     for (size_t ii = 1; ii <= order; ii++)
     {
         adjc = commutator<LA>(a, adjc);
-        out = out + adjc*1.0/factorial(ii+1);
+        out = out + adjc*1.0/factorial(static_cast<unsigned int>(ii)+1);
         // TODO: The formula on wikipedia uses -1^ii but Munthe Kaas and Engo both don't have that term?
         // I don't know how to derive this myself and not sure of any identities to check.
         // out = out + adjc*std::pow(-1.0, static_cast<double>(ii))/factorial(ii+1);
@@ -161,7 +161,7 @@ LA dexp_numerical(const LA & a, const LA & b, const size_t order)
 }
 
 template <typename LA>
-LA dexp(const LA & a, const LA & b, const size_t order)
+LA dexp(const LA& a, const LA& b, const size_t order)
 {
     /*! \f{equation*}{ (\mathfrak{g}, \mathfrak{g}, \mathbb{R}) \rightarrow \mathfrak{g} \f}
     

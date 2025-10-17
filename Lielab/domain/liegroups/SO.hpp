@@ -21,40 +21,39 @@ class SO : public GLR
     public:
     static constexpr bool abelian = false;
     
-    std::string to_string() const;
+    std::string to_string() const override;
     SO();
     SO(const size_t shape);
     static SO from_shape(const size_t shape);
 
     template<typename OtherDerived>
-    SO(const Eigen::MatrixBase<OtherDerived> & other);
+    SO(const Eigen::MatrixBase<OtherDerived>& other);
 
     template<typename OtherDerived>
-    SO & operator=(const Eigen::MatrixBase<OtherDerived> & other);
+    SO& operator=(const Eigen::MatrixBase<OtherDerived>& other);
 
-    static Eigen::MatrixXd project(const Eigen::MatrixXd & other);
+    static Eigen::MatrixXd project(const Eigen::MatrixXd& other);
 
-    size_t get_dimension() const;
-    size_t get_shape() const;
+    size_t get_dimension() const override;
+    size_t get_shape() const override;
+    size_t get_size() const override;
 
-    size_t get_size() const;
-
-    Eigen::MatrixXd get_matrix() const;
+    SO::matrix_t get_matrix() const;
 
     SO inverse() const;
 
     Eigen::VectorXd serialize() const override;
 
-    void unserialize(const Eigen::VectorXd &vec) override;
+    void unserialize(const Eigen::VectorXd& vec) override;
     void unserialize(std::initializer_list<double> vec);
 
     double operator()(const ptrdiff_t index1, const ptrdiff_t index2) const;
 
-    SO operator*(const SO & other) const;
+    SO operator*(const SO& other) const;
 
-    SO & operator*=(const SO & other);
+    SO& operator*=(const SO& other);
 
-    friend std::ostream & operator<<(std::ostream & os, const SO & other);
+    friend std::ostream& operator<<(std::ostream& os, const SO& other);
 
     /*
      * Additional static initializers. Not a part of the core Lie group, but are convenient.
@@ -137,7 +136,7 @@ class SO : public GLR
     template <typename T>
     static SO from_rodriguesvector(const T g1, const T g2, const T g3);
 
-    static SO from_SU2(const SU & quaternion);
+    static SO from_SU2(const SU& quaternion);
 
     /*
     * Additional outputs. Not a part of the core Lie group, but are convenient.

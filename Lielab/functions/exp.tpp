@@ -12,7 +12,7 @@ namespace Lielab::functions
 {
 
 template<typename LA>
-Lielab::domain::LieIII<LA> exp_numerical(const LA & la)
+Lielab::domain::LieIII<LA> exp_numerical(const LA& la)
 {
     /*! \f{equation*}{ (\mathfrak{g}) \rightarrow G \f}
     
@@ -30,7 +30,7 @@ Lielab::domain::LieIII<LA> exp_numerical(const LA & la)
 }
 
 template<typename LA>
-Lielab::domain::LieIII<LA> exp(const LA & la)
+Lielab::domain::LieIII<LA> exp(const LA& la)
 {
     /*! \f{equation*}{ (\mathfrak{g}) \rightarrow G \f}
     

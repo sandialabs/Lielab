@@ -7,6 +7,8 @@
 #include <Eigen/Core>
 #include <unsupported/Eigen/MatrixFunctions>
 
+#include <cassert>
+
 namespace Lielab::domain
 {
 
@@ -267,7 +269,7 @@ double se::operator()(const ptrdiff_t index1, const ptrdiff_t index2) const
     return this->data(_index1, _index2);
 }
 
-se se::operator+(const se & other) const
+se se::operator+(const se& other) const
 {
     /*! \f{equation*}{ (\mathfrak{se}, \mathfrak{se}) \rightarrow \mathfrak{se} \f}
     *
@@ -283,7 +285,7 @@ se se::operator+(const se & other) const
     return se(new_matrix);
 }
 
-se & se::operator+=(const se & other)
+se& se::operator+=(const se& other)
 {
     /*! \f{equation*}{ (\mathfrak{se}, \mathfrak{se}) \rightarrow \mathfrak{se} \f}
     *
@@ -295,7 +297,7 @@ se & se::operator+=(const se & other)
     return *this;
 }
 
-se se::operator-(const se & other) const
+se se::operator-(const se& other) const
 {
     /*! \f{equation*}{ (\mathfrak{se}, \mathfrak{se}) \rightarrow \mathfrak{se} \f}
     *
@@ -311,7 +313,7 @@ se se::operator-(const se & other) const
     return se(new_matrix);
 }
 
-se & se::operator-=(const se & other)
+se& se::operator-=(const se& other)
 {
     /*! \f{equation*}{ (\mathfrak{se}, \mathfrak{se}) \rightarrow \mathfrak{se} \f}
     *
@@ -344,7 +346,7 @@ se se::operator*(const double other) const
     return out;
 }
 
-se operator*(const double other, const se & rhs)
+se operator*(const double other, const se& rhs)
 {
     /*! \f{equation*}{ (\mathbb{R}, \mathfrak{se}) \rightarrow \mathfrak{se} \f}
     *
@@ -354,7 +356,7 @@ se operator*(const double other, const se & rhs)
     return rhs*other;
 }
 
-se & se::operator*=(const double other)
+se& se::operator*=(const double other)
 {
     /*! \f{equation*}{ (\mathfrak{se}, \mathbb{R}) \rightarrow \mathfrak{se} \f}
     *
@@ -376,7 +378,7 @@ se se::operator/(const double other) const
     return out;
 }
 
-se & se::operator/=(const double other)
+se& se::operator/=(const double other)
 {
     /*! \f{equation*}{ (\mathfrak{se}, \mathbb{RR}) \rightarrow \mathfrak{se} \f}
     *
@@ -418,7 +420,7 @@ se se::from_vector(std::initializer_list<double> other)
     return se::from_vector(Eigen::VectorXd{std::move(other)});
 }
 
-// static Eigen::MatrixXd project(const Eigen::MatrixXd & other)
+// static Eigen::MatrixXd project(const Eigen::MatrixXd& other)
 // {
 //     /*! \f{equation*}{ (\mathbb{R}^{n \times n}) \rightarrow \mathbb{R}^{n \times n} \in \mathfrak{se} \f}
 //     *
@@ -433,7 +435,7 @@ se se::from_vector(std::initializer_list<double> other)
 //     return (other - other.transpose())/2;
 // }
 
-// Eigen::MatrixXd se::project(const Eigen::MatrixXd & other)
+// Eigen::MatrixXd se::project(const Eigen::MatrixXd& other)
 // {
 //     /*! \f{equation*}{ (\mathbb{R}^{n \times n}) \rightarrow \mathbb{R}^{n \times n} \in \mathfrak{se} \f}
 //     *
@@ -448,7 +450,7 @@ se se::from_vector(std::initializer_list<double> other)
 //     return (other - other.transpose())/2;
 // }
 
-std::ostream & operator<<(std::ostream & os, const se & other)
+std::ostream& operator<<(std::ostream& os, const se& other)
 {
     /*!
     * Overloads the "<<" stream insertion operator.

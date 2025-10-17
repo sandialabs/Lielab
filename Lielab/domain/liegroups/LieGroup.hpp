@@ -3,6 +3,7 @@
 
 #include <Eigen/Core>
 
+#include <cassert>
 #include <string>
 
 namespace Lielab::domain
@@ -16,43 +17,36 @@ class LieGroup
 {
     public:
 
+    // Storage and typing
     using field_t = Field;
     using matrix_t = Eigen::Matrix<Field, Eigen::Dynamic, Eigen::Dynamic>;
     using data_t = Eigen::Matrix<Field, Eigen::Dynamic, Eigen::Dynamic>;
-
-    // Lie group base info
-    // bool abelian = false;
-    // virtual bool is_abelian() {return this->abelian;}
-    // bool complex = true;
-    // virtual bool is_complex() {return this->complex;}
-
     data_t data = data_t::Zero(0, 0);
 
-    // std::string name = "LieAlgebra";
-    // ptrdiff_t shape = 0;
-    // virtual ptrdiff_t get_shape() {return this->shape;}
+    // Lie Group class information
+    virtual bool is_abelian() const;
+    virtual bool is_complex() const;
+    virtual std::string to_string() const;
 
-    // data_t data = data_t::Zero(0, 0);
-
-    // virtual matrix_t get_matrix() {return this->data;}
-    // virtual data_t get_data() {return this->data;}
-
-    LieGroup() { }
-    virtual Eigen::VectorXd serialize() const = 0;
-    virtual void unserialize(const Eigen::VectorXd&) = 0;
+    // Constructors and destructors
+    LieGroup();
+    LieGroup(const size_t n);
+    LieGroup(const LieGroup::matrix_t& other);
+    ~LieGroup();
+    
+    // Object information
+    virtual size_t get_dimension() const = 0;
     virtual size_t get_shape() const = 0;
     virtual size_t get_size() const = 0;
-    // LieGroup(const matrix_t &other)
-    // {
-        // assert(other.rows() == other.cols());
 
-        // this->data = other;
-        // this->shape = other.rows();
-    // }
+    // Object IO and data manipulation
+    // virtual matrix_t get_matrix() = 0;
+    virtual Eigen::VectorXd serialize() const = 0;
+    virtual void unserialize(const Eigen::VectorXd& vec) = 0;
+    
+    // operator() and []'s here
 
-    // virtual ~LieGroup() {}
-
-    // virtual size_t get_dimension() const = 0;
+    // Lie Group math ops
 };
 
 }

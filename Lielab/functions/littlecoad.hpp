@@ -12,16 +12,16 @@ namespace Lielab::functions
 {
 
 template <typename LA>
-Lielab::domain::glr coad_numerical(const LA & x, const int p = 1);
+Lielab::domain::glr coad_numerical(const LA& x, const int p = 1);
 
 template <typename LA>
-LA coad_numerical(const LA & x, const LA & y, const int p = 1);
+LA coad_numerical(const LA& x, const LA& y, const int p = 1);
 
 template <typename LA>
-Lielab::domain::glr coad(const LA & x, const int p = 1);
+Lielab::domain::glr coad(const LA& x, const int p = 1);
 
 template <typename LA>
-LA coad(const LA & x, const LA & y, const int p = 1);
+LA coad(const LA& x, const LA& y, const int p = 1);
 
 }
 

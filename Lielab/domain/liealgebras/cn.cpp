@@ -293,7 +293,7 @@ std::complex<double> cn::operator[](const ptrdiff_t index) const
     return this->data(_index);
 }
 
-cn cn::operator+(const cn & other) const
+cn cn::operator+(const cn& other) const
 {
     /*! \f{equation*}{ (\mathfrak{cn}, \mathfrak{cn}) \rightarrow \mathfrak{cn} \f}
     *
@@ -306,7 +306,7 @@ cn cn::operator+(const cn & other) const
     return cn::from_complex_vector(new_vector);
 }
 
-cn & cn::operator+=(const cn & other)
+cn& cn::operator+=(const cn& other)
 {
     /*! \f{equation*}{ (\mathfrak{cn}, \mathfrak{cn}) \rightarrow \mathfrak{cn} \f}
     *
@@ -317,7 +317,7 @@ cn & cn::operator+=(const cn & other)
     return *this;
 }
 
-cn cn::operator-(const cn & other) const
+cn cn::operator-(const cn& other) const
 {
     /*! \f{equation*}{ (\mathfrak{cn}, \mathfrak{cn}) \rightarrow \mathfrak{cn} \f}
     *
@@ -330,7 +330,7 @@ cn cn::operator-(const cn & other) const
     return cn::from_complex_vector(new_vector);
 }
 
-cn & cn::operator-=(const cn & other)
+cn& cn::operator-=(const cn& other)
 {
     /*! \f{equation*}{ (\mathfrak{cn}, \mathfrak{cn}) \rightarrow \mathfrak{cn} \f}
     *
@@ -361,7 +361,7 @@ cn cn::operator*(const double other) const
     return cn::from_complex_vector(this->data*other);
 }
 
-cn operator*(const double other, const cn & rhs)
+cn operator*(const double other, const cn& rhs)
 {
     /*! \f{equation*}{ (\mathbb{R}, \mathfrak{cn}) \rightarrow \mathfrak{cn} \f}
     *
@@ -393,7 +393,7 @@ cn cn::operator*(const std::complex<double> other) const
     return cn::from_complex_vector(this->data*other);
 }
 
-cn operator*(const std::complex<int> other, const cn & rhs)
+cn operator*(const std::complex<int> other, const cn& rhs)
 {
     /*! \f{equation*}{ (\mathbb{C}, \mathfrak{cn}) \rightarrow \mathfrak{cn} \f}
     *
@@ -405,7 +405,7 @@ cn operator*(const std::complex<int> other, const cn & rhs)
     return cn::from_complex_vector(otherd*rhs.data);
 }
 
-cn operator*(const std::complex<double> other, const cn & rhs)
+cn operator*(const std::complex<double> other, const cn& rhs)
 {
     /*! \f{equation*}{ (\mathbb{C}, \mathfrak{cn}) \rightarrow \mathfrak{cn} \f}
     *
@@ -415,7 +415,7 @@ cn operator*(const std::complex<double> other, const cn & rhs)
     return cn::from_complex_vector(other*rhs.data);
 }
 
-cn & cn::operator*=(const double other)
+cn& cn::operator*=(const double other)
 {
     /*! \f{equation*}{ (\mathfrak{cn}, \mathbb{R}) \rightarrow \mathfrak{cn} \f}
     *
@@ -426,7 +426,7 @@ cn & cn::operator*=(const double other)
     return *this;
 }
 
-cn & cn::operator*=(const std::complex<int> other)
+cn& cn::operator*=(const std::complex<int> other)
 {
     /*! \f{equation*}{ (\mathfrak{cn}, \mathbb{C}) \rightarrow \mathfrak{cn} \f}
     *
@@ -439,7 +439,7 @@ cn & cn::operator*=(const std::complex<int> other)
     return *this;
 }
 
-cn & cn::operator*=(const std::complex<double> other)
+cn& cn::operator*=(const std::complex<double> other)
 {
     /*! \f{equation*}{ (\mathfrak{cn}, \mathbb{C}) \rightarrow \mathfrak{cn} \f}
     *
@@ -482,7 +482,7 @@ cn cn::operator/(const std::complex<double> other) const
     return cn::from_complex_vector(this->data/other);
 }
 
-cn & cn::operator/=(const double other)
+cn& cn::operator/=(const double other)
 {
     /*! \f{equation*}{ (\mathfrak{cn}, \mathbb{R}) \rightarrow \mathfrak{cn} \f}
     *
@@ -493,7 +493,7 @@ cn & cn::operator/=(const double other)
     return *this;
 }
 
-cn & cn::operator/=(const std::complex<int> other)
+cn& cn::operator/=(const std::complex<int> other)
 {
     /*! \f{equation*}{ (\mathfrak{cn}, \mathbb{C}) \rightarrow \mathfrak{cn} \f}
     *
@@ -506,7 +506,7 @@ cn & cn::operator/=(const std::complex<int> other)
     return *this;
 }
 
-cn & cn::operator/=(const std::complex<double> other)
+cn& cn::operator/=(const std::complex<double> other)
 {
     /*! \f{equation*}{ (\mathfrak{cn}, \mathbb{C}) \rightarrow \mathfrak{cn} \f}
     *
@@ -547,7 +547,7 @@ cn cn::from_vector(std::initializer_list<double> vector)
     return cn::from_vector(Eigen::VectorXd{std::move(vector)});
 }
 
-cn cn::from_complex_vector(const Eigen::VectorXcd &other)
+cn cn::from_complex_vector(const Eigen::VectorXcd& other)
 {
     /*! \f{equation}{(\mathbb{C}^{n \times 1}) \rightarrow \mathfrak{cn} \f}
     *
@@ -585,7 +585,7 @@ Eigen::VectorXcd cn::to_complex_vector() const
     return this->data;
 }
 
-Eigen::MatrixXcd cn::project(const Eigen::MatrixXcd & other)
+Eigen::MatrixXcd cn::project(const Eigen::MatrixXcd& other)
 {
     /*! \f{equation*}{ (\mathbb{C}^{n \times n}) \rightarrow \mathbb{C}^{n \times n} \in \mathfrak{cn} \f}
     *
@@ -604,7 +604,7 @@ Eigen::MatrixXcd cn::project(const Eigen::MatrixXcd & other)
     return out;
 }
 
-std::ostream& operator<<(std::ostream & os, const cn & other)
+std::ostream& operator<<(std::ostream& os, const cn& other)
 {
     /*!
     * Overloads the "<<" stream insertion operator.

@@ -18,7 +18,7 @@ class GLR : public LieGroup<double>
     static constexpr bool abelian = false;
     size_t _shape = 0;
 
-    std::string to_string() const;
+    std::string to_string() const override;
 
     // Initialization methods
 
@@ -28,19 +28,18 @@ class GLR : public LieGroup<double>
     static GLR from_shape(const size_t shape);
 
     template<typename OtherDerived>
-    GLR(const Eigen::MatrixBase<OtherDerived> & other);
+    GLR(const Eigen::MatrixBase<OtherDerived>& other);
 
     template<typename OtherDerived>
-    GLR & operator=(const Eigen::MatrixBase<OtherDerived> & other);
+    GLR& operator=(const Eigen::MatrixBase<OtherDerived>& other);
 
-    static Eigen::MatrixXd project(const Eigen::MatrixXd & other);
+    static Eigen::MatrixXd project(const Eigen::MatrixXd& other);
 
-    size_t get_dimension() const;
-    size_t get_shape() const;
+    size_t get_dimension() const override;
+    size_t get_shape() const override;
+    size_t get_size() const override;
 
-    size_t get_size() const;
-
-    Eigen::MatrixXd get_matrix() const;
+    GLR::matrix_t get_matrix() const;
 
     GLR inverse() const;
 
@@ -48,16 +47,16 @@ class GLR : public LieGroup<double>
 
     Eigen::VectorXd serialize() const override;
 
-    void unserialize(const Eigen::VectorXd &vec) override;
+    void unserialize(const Eigen::VectorXd& vec) override;
     void unserialize(std::initializer_list<double> vec);
 
     double operator()(const ptrdiff_t index1, const ptrdiff_t index2) const;
 
-    GLR operator*(const GLR & other) const;
+    GLR operator*(const GLR& other) const;
 
-    GLR & operator*=(const GLR & other);
+    GLR& operator*=(const GLR& other);
 
-    friend std::ostream & operator<<(std::ostream& os, const GLR & other);
+    friend std::ostream& operator<<(std::ostream& os, const GLR& other);
 };
 
 }

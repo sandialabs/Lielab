@@ -12,7 +12,7 @@ namespace Lielab::domain
 {
 
 template<typename OtherDerived>
-CN::CN(const Eigen::MatrixBase<OtherDerived> & other)
+CN::CN(const Eigen::MatrixBase<OtherDerived>& other)
 {
     /*! \f{eqnarray*}{(\mathbb{C}^{n \times n}) &\rightarrow& CN \\ (\mathbb{C}^{n \times 1}) &\rightarrow& CN \f}
     *

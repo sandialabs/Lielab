@@ -1,4 +1,3 @@
-#include "integrate/Coefficients.hpp"
 #include "integrate/ODESolution.hpp"
 
 #include "integrate/IVPMethods.hpp"

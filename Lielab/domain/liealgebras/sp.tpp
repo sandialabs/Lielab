@@ -14,7 +14,7 @@ namespace Lielab::domain
 {
 
 template<typename OtherDerived>
-sp::sp(const Eigen::MatrixBase<OtherDerived> & other)
+sp::sp(const Eigen::MatrixBase<OtherDerived>& other)
 {
     /*! \f{equation}{ (\mathbb{R}^{n \times n}) \rightarrow \mathfrak{sp} \f}
     *

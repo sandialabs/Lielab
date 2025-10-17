@@ -19,15 +19,15 @@ class se : public glr
     std::string to_string() const override;
     se();
     se(const size_t n);
-    template<typename OtherDerived> se(const Eigen::MatrixBase<OtherDerived> & other);
+    template<typename OtherDerived> se(const Eigen::MatrixBase<OtherDerived>& other);
     static se basis(const ptrdiff_t i, const size_t n);
     static se from_shape(const size_t shape);
 
-    size_t get_dimension() const;
-    Eigen::VectorXd get_vector() const;
-    void set_vector(const Eigen::VectorXd& vector);
+    size_t get_dimension() const override;
+    Eigen::VectorXd get_vector() const override;
+    void set_vector(const Eigen::VectorXd& vector) override;
     void set_vector(std::initializer_list<double> vector);
-    se::matrix_t get_matrix() const;
+    se::matrix_t get_matrix() const override;
 
     double operator()(const ptrdiff_t index) const;
     double operator()(const ptrdiff_t index1, const ptrdiff_t index2) const;

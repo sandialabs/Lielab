@@ -22,6 +22,4 @@ ODESolution solve_ivp(const HomogeneousIVPSystem& dynamics, const Eigen::VectorX
 
 }
 
-#include "solve_ivp.tpp"
-
 #endif

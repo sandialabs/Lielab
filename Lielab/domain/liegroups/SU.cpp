@@ -7,6 +7,8 @@
 #include <Eigen/Core>
 #include <unsupported/Eigen/MatrixFunctions>
 
+#include <cassert>
+
 namespace Lielab::domain
 {
 
@@ -88,7 +90,7 @@ size_t SU::get_size() const
     return static_cast<size_t>(2*std::pow(this->_shape, 2));
 }
 
-Eigen::MatrixXcd SU::get_matrix() const
+SU::matrix_t SU::get_matrix() const
 {
     /*! \f{equation*}{ () \rightarrow \mathbb{C}^{n \times n} \f}
     * 
@@ -143,7 +145,7 @@ Eigen::VectorXd SU::serialize() const
     return out;
 }
 
-void SU::unserialize(const Eigen::VectorXd &vec)
+void SU::unserialize(const Eigen::VectorXd& vec)
 {
     /*! \f{equation*}{ (\mathbb{R}^{n \times 1}) \rightarrow SU \f}
     * 
@@ -214,7 +216,7 @@ std::complex<double> SU::operator()(const ptrdiff_t index1, const ptrdiff_t inde
     return this->data(_index1, _index2);
 }
 
-SU SU::operator*(const SU & other) const
+SU SU::operator*(const SU& other) const
 {
     /*! \f{equation*}{ (SU, SU) \rightarrow SU \f}
     *
@@ -225,7 +227,7 @@ SU SU::operator*(const SU & other) const
     return this->data * other.data;
 }
 
-SU & SU::operator*=(const SU & other)
+SU& SU::operator*=(const SU& other)
 {
     /*! \f{equation*}{ (SU, SU) \rightarrow SU \f}
     *
@@ -237,7 +239,7 @@ SU & SU::operator*=(const SU & other)
     return *this;
 }
 
-std::ostream & operator<<(std::ostream& os, const SU & other)
+std::ostream& operator<<(std::ostream& os, const SU& other)
 {
     /*!
     * Overloads the "<<" stream insertion operator.
@@ -252,7 +254,7 @@ std::ostream & operator<<(std::ostream& os, const SU & other)
 */
 template SU SU::from_quaternion<double>(const double, const double, const double, const double);
 
-SU SU::from_SO3(const SO & dcm)
+SU SU::from_SO3(const SO& dcm)
 {
     /*!
     * Transforms an SO(3) object into an SU(2) object.

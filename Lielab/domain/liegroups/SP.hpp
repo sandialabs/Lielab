@@ -17,7 +17,7 @@ class SP : public GLR
     public:
     static constexpr bool abelian = false;
 
-    std::string to_string() const;
+    std::string to_string() const override;
 
     // Initialization methods
 
@@ -26,34 +26,33 @@ class SP : public GLR
     static SP from_shape(const size_t shape);
 
     template<typename OtherDerived>
-    SP(const Eigen::MatrixBase<OtherDerived> & other);
+    SP(const Eigen::MatrixBase<OtherDerived>& other);
 
     template<typename OtherDerived>
-    SP & operator=(const Eigen::MatrixBase<OtherDerived> & other);
+    SP& operator=(const Eigen::MatrixBase<OtherDerived>& other);
 
     // TODO: project
 
-    size_t get_dimension() const;
-    size_t get_shape() const;
+    size_t get_dimension() const override;
+    size_t get_shape() const override;
+    size_t get_size() const override;
 
-    size_t get_size() const;
-
-    Eigen::MatrixXd get_matrix() const;
+    SP::matrix_t get_matrix() const;
 
     SP inverse() const;
 
     Eigen::VectorXd serialize() const override;
 
-    void unserialize(const Eigen::VectorXd &vec) override;
+    void unserialize(const Eigen::VectorXd& vec) override;
     void unserialize(std::initializer_list<double> vec);
 
     double operator()(const ptrdiff_t index1, const ptrdiff_t index2) const;
 
-    SP operator*(const SP & other) const;
+    SP operator*(const SP& other) const;
 
-    SP & operator*=(const SP & other);
+    SP& operator*=(const SP& other);
 
-    friend std::ostream & operator<<(std::ostream& os, const SP & other);
+    friend std::ostream& operator<<(std::ostream& os, const SP& other);
 };
 
 }

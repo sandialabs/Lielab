@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.23)
 set(CMAKE_CXX_STANDARD 20)
 
 project("Lielab"
-        VERSION 0.5.0
+        VERSION 0.5.1
         LANGUAGES CXX)
 
 ################################

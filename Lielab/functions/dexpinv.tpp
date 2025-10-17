@@ -3,17 +3,17 @@
 
 #include "dexpinv.hpp"
 
-#include "bernoulli.hpp"
 #include "dexp.hpp"
 #include "littlead.hpp"
 
 #include "Lielab/domain.hpp"
+#include "Lielab/utils/bernoulli.hpp"
 
 namespace Lielab::functions
 {
 
 template <typename LA>
-Lielab::domain::glr dexpinv_numerical(const LA & a, const size_t order)
+Lielab::domain::glr dexpinv_numerical(const LA& a, const size_t order)
 {
     /*! \f{equation*}{ (\mathfrak{g}, \mathbb{R}) \rightarrow \mathfrak{glr} \f}
     
@@ -50,6 +50,7 @@ Lielab::domain::glr dexpinv_numerical(const LA & a, const size_t order)
 
     */
 
+    using Lielab::utils::bernoulli;
     using Lielab::utils::factorial;
 
     Lielab::domain::glr out = ad<LA>(a, 0);
@@ -62,14 +63,14 @@ Lielab::domain::glr dexpinv_numerical(const LA & a, const size_t order)
 
     for (size_t ii = 1; ii <= order; ii++)
     {
-        out = out + bernoulli(ii)/Lielab::utils::factorial(ii)*ad<LA>(a, ii);
+        out = out + bernoulli(static_cast<int>(ii))/factorial(static_cast<unsigned int>(ii))*ad<LA>(a, static_cast<int>(ii));
     }
 
     return out;
 }
 
 template <typename LA>
-Lielab::domain::glr dexpinv(const LA & a, const size_t order)
+Lielab::domain::glr dexpinv(const LA& a, const size_t order)
 {
     /*! \f{equation*}{ (\mathfrak{g}, \mathbb{R}) \rightarrow \mathfrak{g} \f}
     
@@ -88,7 +89,7 @@ Lielab::domain::glr dexpinv(const LA & a, const size_t order)
 }
 
 template <typename LA>
-LA dexpinv_numerical(const LA & a, const LA & b, const size_t order)
+LA dexpinv_numerical(const LA& a, const LA& b, const size_t order)
 {
     /*! \f{equation*}{ (\mathfrak{g}, \mathfrak{g}, \mathbb{R}) \rightarrow \mathfrak{g} \f}
     
@@ -126,6 +127,7 @@ LA dexpinv_numerical(const LA & a, const LA & b, const size_t order)
 
     */
 
+    using Lielab::utils::bernoulli;
     using Lielab::utils::factorial;
 
     const size_t shape = a.get_shape();
@@ -148,14 +150,14 @@ LA dexpinv_numerical(const LA & a, const LA & b, const size_t order)
     for (size_t ii = 1; ii <= order; ii++)
     {
         adjc = commutator<LA>(a, adjc);
-        out = out + adjc*bernoulli(ii)/factorial(ii);
+        out = out + adjc*bernoulli(static_cast<int>(ii))/factorial(static_cast<unsigned int>(ii));
     }
 
     return out;
 }
 
 template <typename LA>
-LA dexpinv(const LA & a, const LA & b, const size_t order)
+LA dexpinv(const LA& a, const LA& b, const size_t order)
 {
     /*! \f{equation*}{ (\mathfrak{g}, \mathfrak{g}, \mathbb{R}) \rightarrow \mathfrak{g} \f}
     

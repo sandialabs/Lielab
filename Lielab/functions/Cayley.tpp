@@ -11,7 +11,7 @@ namespace Lielab::functions
 {
 
 template <typename LA>
-Lielab::domain::LieIII<LA> Cayley(const LA & g)
+Lielab::domain::LieIII<LA> Cayley(const LA& g)
 {
     /*! \f{equation*}{ (\mathfrak{g}) \rightarrow G \f}
     *
@@ -38,7 +38,7 @@ Lielab::domain::LieIII<LA> Cayley(const LA & g)
 }
 
 template <typename LA>
-Lielab::domain::LieIII<LA> Cayley2(const LA & g)
+Lielab::domain::LieIII<LA> Cayley2(const LA& g)
 {
     /*! \f{equation*}{ (\mathfrak{g}) \rightarrow G \f}
     *
@@ -71,7 +71,7 @@ Lielab::domain::LieIII<LA> Cayley2(const LA & g)
 }
 
 template <typename LA>
-LA dCayleyinv(const LA & u, const LA & v)
+LA dCayleyinv(const LA& u, const LA& v)
 {
     /*! \f{equation*}{ (\mathfrak{g}, \mathfrak{g}) \rightarrow \mathfrak{g} \f}
     * 

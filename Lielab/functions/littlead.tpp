@@ -15,7 +15,7 @@ namespace Lielab::functions
 {
 
 template <typename LA>
-Lielab::domain::glr ad_numerical(const LA & a, const int p)
+Lielab::domain::glr ad_numerical(const LA& a, const int p)
 {
     /*! \f{equation*}{ (\mathfrak{g}, \mathbb{R}) \rightarrow \mathfrak{glr} \f}
     
@@ -115,18 +115,13 @@ Lielab::domain::glr ad_numerical(const LA & a, const int p)
     }
 
     // Raise adjoint matrix to the specified power.
-    // Eigen::MatrixXd adjap = Eigen::MatrixXd::Identity(dim, dim);
-    // for (size_t ii = 0; ii < static_cast<size_t>(p); ii++)
-    // {
-    //     adjap = adja*adjap;
-    // }
     const Eigen::MatrixXd adjap = adja.pow(p);
 
     return Lielab::domain::glr(adjap);
 }
 
 template <typename LA>
-Lielab::domain::glr ad(const LA & a, const int p)
+Lielab::domain::glr ad(const LA& a, const int p)
 {
     /*! \f{equation*}{ (\mathfrak{g}, \mathbb{R}) \rightarrow \mathfrak{glr} \f}
     
@@ -145,7 +140,7 @@ Lielab::domain::glr ad(const LA & a, const int p)
 }
 
 template <typename LA>
-LA ad_numerical(const LA & a, const LA & b, const int p)
+LA ad_numerical(const LA& a, const LA& b, const int p)
 {
     /*! \f{equation*}{ (\mathfrak{g}, \mathfrak{g}, \mathbb{R}) \rightarrow \mathfrak{g} \f}
     
@@ -188,7 +183,7 @@ LA ad_numerical(const LA & a, const LA & b, const int p)
 }
 
 template <typename LA>
-LA ad(const LA & a, const LA & b, const int p)
+LA ad(const LA& a, const LA& b, const int p)
 {
     /*! \f{equation*}{ (\mathfrak{g}, \mathfrak{g}, \mathbb{R}) \rightarrow \mathfrak{g} \f}
     

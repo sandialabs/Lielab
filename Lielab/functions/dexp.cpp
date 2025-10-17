@@ -12,7 +12,7 @@ namespace Lielab::functions
 {
 
 template <>
-Lielab::domain::glr dexp(const Lielab::domain::glr & x, const size_t order)
+Lielab::domain::glr dexp(const Lielab::domain::glr& x, const size_t order)
 {
     /*! \f{equation*}{ (\mathfrak{glr}, \mathbb{R}) \rightarrow \mathfrak{glr} \f}
     
@@ -73,7 +73,7 @@ Lielab::domain::glr dexp(const Lielab::domain::glr & x, const size_t order)
 }
 
 template <>
-Lielab::domain::glr dexp(const Lielab::domain::glr & x, const Lielab::domain::glr & y, const size_t order)
+Lielab::domain::glr dexp(const Lielab::domain::glr& x, const Lielab::domain::glr& y, const size_t order)
 {
     /*! \f{equation*}{ (\mathfrak{glr}, \mathfrak{glr}, \mathbb{R}) \rightarrow \mathfrak{glr} \f}
     
@@ -114,123 +114,7 @@ Lielab::domain::glr dexp(const Lielab::domain::glr & x, const Lielab::domain::gl
 }
 
 template <>
-Lielab::domain::glr dexp(const Lielab::domain::so & x, const size_t order)
-{
-    /*! \f{equation*}{ (\mathfrak{so}, \mathbb{R}) \rightarrow \mathfrak{glr} \f}
-    
-    Overloaded derivative of the exponential function for so.
-
-    For \f$x \in \mathfrak{so}(3)\f$, this uses [1]:
-
-    \f{equation*}{\theta = \Vert x \Vert, \; v = \frac{\theta}{2} \f}
-
-    \f{equation*}{\text{dexp}(x) = \mathbf{I} + \frac{\sin^2(v)}{2v^2}\hat{x} + \frac{\theta - \sin(\theta)}{\theta^3}\hat{x}^2 \f}
-
-    Arguments
-    ---------
-    @param[in] x Instance of so
-    @param[in] order Order of the series expansion.
-    @param[out] out An instance of glr
-
-    References
-    ----------
-    [1] Arieh Iserles, Hans Z Munthe-Kaas, Syvert P Nørsett, and Antonella
-        Zanna. Lie-group methods. Acta numerica, 9:215–365, 2000.
-
-    */
-
-    const size_t shape = x.get_shape();
-
-    if (shape == 2)
-    {
-        return Lielab::domain::glr(Eigen::MatrixXd::Identity(1,1));
-    }
-
-    if (shape == 3)
-    {
-        // Source: Iserles
-        const Eigen::Vector3d xbar = x.get_vector();
-        const Eigen::MatrixXd ad1 = Lielab::functions::ad(x, 1).get_matrix();
-        const Eigen::MatrixXd ad2 = Lielab::functions::ad(x, 2).get_matrix();
-        const Eigen::MatrixXd I = Eigen::MatrixXd::Identity(3, 3);
-
-        const double theta = std::sqrt(std::pow(xbar(0), 2.0) + std::pow(xbar(1), 2.0) + std::pow(xbar(2), 2.0));
-        const double v = theta/2.0;
-        const double v2 = std::pow(v, 2.0);
-        const double theta3 = std::pow(theta, 3.0);
-
-        double c1 = std::pow(std::sin(v), 2.0)/(2.0*v2);
-        double c2 = (theta - std::sin(theta))/(theta3);
-        if (std::abs(theta) <= 1e-14)
-        {
-            c1 = 0.5;
-            c2 = 1.0/6.0;
-        }
-
-        const Eigen::MatrixXd left = I + c1*ad1 + c2*ad2;
-        return Lielab::domain::glr(left);
-    }
-
-    return dexp_numerical<Lielab::domain::so>(x, order);
-}
-
-template <>
-Lielab::domain::so dexp(const Lielab::domain::so & a, const Lielab::domain::so & b, const size_t order)
-{
-    /*! \f{equation*}{ (\mathfrak{so}, \mathfrak{so}, \mathbb{R}) \rightarrow \mathfrak{so} \f}
-    
-    Overloaded derivative of the exponential function for so.
-
-    For \f$x \in \mathfrak{so}(2)\f$, this uses [1]:
-
-    \f{equation*}{\text{dexp}_{a}(b) = b \f}
-
-    For \f$x \in \mathfrak{so}(3)\f$, this uses [1]:
-
-    \f{equation*}{\text{dexp}_{a}(b) = \text{dexp}(a)\bar{b} \f}
-
-    For \f$a \in \mathfrak{so}(4+)\f$, this uses the numerical procedure.
-
-    Arguments
-    ---------
-    @param[in] a First instance of so
-    @param[in] b Second instance of so
-    @param[in] order Order of the series expansion.
-    @param[out] out An instance of so
-
-    References
-    ----------
-    [1] Arieh Iserles, Hans Z Munthe-Kaas, Syvert P Nørsett, and Antonella
-        Zanna. Lie-group methods. Acta numerica, 9:215–365, 2000.
-
-    */
-
-    const size_t shape = a.get_shape();
-
-    if (shape != b.get_shape())
-    {
-        throw Lielab::utils::InputError("dexp: Shapes of a and b must be equal.");
-    }
-
-    if (shape == 2)
-    {
-        return b;
-    }
-
-    if (shape == 3)
-    {
-        const Lielab::domain::glr left = dexp(a);
-        const Eigen::MatrixXd y = b.get_vector();
-        Lielab::domain::so out(3);
-        out.set_vector(left.get_matrix()*y);
-        return out;
-    }
-
-    return dexp_numerical<Lielab::domain::so>(a, b, order);
-}
-
-template <>
-Lielab::domain::glr dexp(const Lielab::domain::se & y, const size_t order)
+Lielab::domain::glr dexp(const Lielab::domain::se& y, const size_t order)
 {
     /*! \f{equation*}{ (\mathfrak{se}, \mathbb{R}) \rightarrow \mathfrak{glr} \f}
     
@@ -369,7 +253,7 @@ Lielab::domain::glr dexp(const Lielab::domain::se & y, const size_t order)
         double q2 = (bw - 3.0*cw)/wmag2;
         if (std::abs(wmag) <= 1e-14)
         {
-            aw = 1.0;
+            // aw = 1.0;
             bw = 0.5;
             cw = 1.0/6.0;
             q1 = -1.0/12.0;
@@ -384,7 +268,7 @@ Lielab::domain::glr dexp(const Lielab::domain::se & y, const size_t order)
 }
 
 template <>
-Lielab::domain::se dexp(const Lielab::domain::se & a, const Lielab::domain::se & b, const size_t order)
+Lielab::domain::se dexp(const Lielab::domain::se& a, const Lielab::domain::se& b, const size_t order)
 {
     /*! \f{equation*}{ (\mathfrak{se}, \mathfrak{se}, \mathbb{R}) \rightarrow \mathfrak{se} \f}
     
@@ -439,7 +323,123 @@ Lielab::domain::se dexp(const Lielab::domain::se & a, const Lielab::domain::se &
 }
 
 template <>
-Lielab::domain::glr dexp(const Lielab::domain::su & x, const size_t order)
+Lielab::domain::glr dexp(const Lielab::domain::so& x, const size_t order)
+{
+    /*! \f{equation*}{ (\mathfrak{so}, \mathbb{R}) \rightarrow \mathfrak{glr} \f}
+    
+    Overloaded derivative of the exponential function for so.
+
+    For \f$x \in \mathfrak{so}(3)\f$, this uses [1]:
+
+    \f{equation*}{\theta = \Vert x \Vert, \; v = \frac{\theta}{2} \f}
+
+    \f{equation*}{\text{dexp}(x) = \mathbf{I} + \frac{\sin^2(v)}{2v^2}\hat{x} + \frac{\theta - \sin(\theta)}{\theta^3}\hat{x}^2 \f}
+
+    Arguments
+    ---------
+    @param[in] x Instance of so
+    @param[in] order Order of the series expansion.
+    @param[out] out An instance of glr
+
+    References
+    ----------
+    [1] Arieh Iserles, Hans Z Munthe-Kaas, Syvert P Nørsett, and Antonella
+        Zanna. Lie-group methods. Acta numerica, 9:215–365, 2000.
+
+    */
+
+    const size_t shape = x.get_shape();
+
+    if (shape == 2)
+    {
+        return Lielab::domain::glr(Eigen::MatrixXd::Identity(1,1));
+    }
+
+    if (shape == 3)
+    {
+        // Source: Iserles
+        const Eigen::Vector3d xbar = x.get_vector();
+        const Eigen::MatrixXd ad1 = Lielab::functions::ad(x, 1).get_matrix();
+        const Eigen::MatrixXd ad2 = Lielab::functions::ad(x, 2).get_matrix();
+        const Eigen::MatrixXd I = Eigen::MatrixXd::Identity(3, 3);
+
+        const double theta = std::sqrt(std::pow(xbar(0), 2.0) + std::pow(xbar(1), 2.0) + std::pow(xbar(2), 2.0));
+        const double v = theta/2.0;
+        const double v2 = std::pow(v, 2.0);
+        const double theta3 = std::pow(theta, 3.0);
+
+        double c1 = std::pow(std::sin(v), 2.0)/(2.0*v2);
+        double c2 = (theta - std::sin(theta))/(theta3);
+        if (std::abs(theta) <= 1e-14)
+        {
+            c1 = 0.5;
+            c2 = 1.0/6.0;
+        }
+
+        const Eigen::MatrixXd left = I + c1*ad1 + c2*ad2;
+        return Lielab::domain::glr(left);
+    }
+
+    return dexp_numerical<Lielab::domain::so>(x, order);
+}
+
+template <>
+Lielab::domain::so dexp(const Lielab::domain::so& a, const Lielab::domain::so& b, const size_t order)
+{
+    /*! \f{equation*}{ (\mathfrak{so}, \mathfrak{so}, \mathbb{R}) \rightarrow \mathfrak{so} \f}
+    
+    Overloaded derivative of the exponential function for so.
+
+    For \f$x \in \mathfrak{so}(2)\f$, this uses [1]:
+
+    \f{equation*}{\text{dexp}_{a}(b) = b \f}
+
+    For \f$x \in \mathfrak{so}(3)\f$, this uses [1]:
+
+    \f{equation*}{\text{dexp}_{a}(b) = \text{dexp}(a)\bar{b} \f}
+
+    For \f$a \in \mathfrak{so}(4+)\f$, this uses the numerical procedure.
+
+    Arguments
+    ---------
+    @param[in] a First instance of so
+    @param[in] b Second instance of so
+    @param[in] order Order of the series expansion.
+    @param[out] out An instance of so
+
+    References
+    ----------
+    [1] Arieh Iserles, Hans Z Munthe-Kaas, Syvert P Nørsett, and Antonella
+        Zanna. Lie-group methods. Acta numerica, 9:215–365, 2000.
+
+    */
+
+    const size_t shape = a.get_shape();
+
+    if (shape != b.get_shape())
+    {
+        throw Lielab::utils::InputError("dexp: Shapes of a and b must be equal.");
+    }
+
+    if (shape == 2)
+    {
+        return b;
+    }
+
+    if (shape == 3)
+    {
+        const Lielab::domain::glr left = dexp(a);
+        const Eigen::MatrixXd y = b.get_vector();
+        Lielab::domain::so out(3);
+        out.set_vector(left.get_matrix()*y);
+        return out;
+    }
+
+    return dexp_numerical<Lielab::domain::so>(a, b, order);
+}
+
+template <>
+Lielab::domain::glr dexp(const Lielab::domain::su& x, const size_t order)
 {
     /*! \f{equation*}{ (\mathfrak{su}, \mathbb{R}) \rightarrow \mathfrak{glr} \f}
     
@@ -497,7 +497,7 @@ Lielab::domain::glr dexp(const Lielab::domain::su & x, const size_t order)
 }
 
 template <>
-Lielab::domain::su dexp(const Lielab::domain::su & a, const Lielab::domain::su & b, const size_t order)
+Lielab::domain::su dexp(const Lielab::domain::su& a, const Lielab::domain::su& b, const size_t order)
 {
     /*! \f{equation*}{ (\mathfrak{su}, \mathfrak{su}, \mathbb{R}) \rightarrow \mathfrak{su} \f}
     
@@ -547,56 +547,58 @@ Lielab::domain::su dexp(const Lielab::domain::su & a, const Lielab::domain::su &
 }
 
 template <>
-Lielab::domain::CompositeAlgebra dexp(const Lielab::domain::CompositeAlgebra & a, const Lielab::domain::CompositeAlgebra & b, const size_t order)
+Lielab::domain::CompositeAlgebra dexp(const Lielab::domain::CompositeAlgebra& a, const Lielab::domain::CompositeAlgebra& b, const size_t order)
 {
     /*!
     * CompositeAlgebra derivative of the exponential overload.
     */
 
-    Lielab::domain::CompositeAlgebra out;
+    using namespace Lielab::domain;
+
+    CompositeAlgebra out;
 
     for (size_t ii = 0; ii < a.space.size(); ii++)
     {
         const size_t ind = a.space[ii].index();
-        if (ind == Lielab::domain::CompositeAlgebra::INDEX_cn)
+        if (ind == CompositeAlgebra::INDEX_cn)
         {
-            out.space.push_back(Lielab::functions::dexp(std::get<Lielab::domain::cn>(a.space[ii]),
-                                                        std::get<Lielab::domain::cn>(b.space[ii]), order));
+            out.space.push_back(Lielab::functions::dexp(std::get<cn>(a.space[ii]),
+                                                        std::get<cn>(b.space[ii]), order));
         }
-        else if (ind == Lielab::domain::CompositeAlgebra::INDEX_glr)
+        else if (ind == CompositeAlgebra::INDEX_glr)
         {
-            out.space.push_back(Lielab::functions::dexp(std::get<Lielab::domain::glr>(a.space[ii]),
-                                                        std::get<Lielab::domain::glr>(b.space[ii]), order));
+            out.space.push_back(Lielab::functions::dexp(std::get<glr>(a.space[ii]),
+                                                        std::get<glr>(b.space[ii]), order));
         }
-        else if (ind == Lielab::domain::CompositeAlgebra::INDEX_glc)
+        else if (ind == CompositeAlgebra::INDEX_glc)
         {
-            out.space.push_back(Lielab::functions::dexp(std::get<Lielab::domain::glc>(a.space[ii]),
-                                                        std::get<Lielab::domain::glc>(b.space[ii]), order));
+            out.space.push_back(Lielab::functions::dexp(std::get<glc>(a.space[ii]),
+                                                        std::get<glc>(b.space[ii]), order));
         }
-        else if (ind == Lielab::domain::CompositeAlgebra::INDEX_rn)
+        else if (ind == CompositeAlgebra::INDEX_rn)
         {
-            out.space.push_back(Lielab::functions::dexp(std::get<Lielab::domain::rn>(a.space[ii]),
-                                                        std::get<Lielab::domain::rn>(b.space[ii]), order));
+            out.space.push_back(Lielab::functions::dexp(std::get<rn>(a.space[ii]),
+                                                        std::get<rn>(b.space[ii]), order));
         }
-        else if (ind == Lielab::domain::CompositeAlgebra::INDEX_se)
+        else if (ind == CompositeAlgebra::INDEX_se)
         {
-            out.space.push_back(Lielab::functions::dexp(std::get<Lielab::domain::se>(a.space[ii]),
-                                                        std::get<Lielab::domain::se>(b.space[ii]), order));
+            out.space.push_back(Lielab::functions::dexp(std::get<se>(a.space[ii]),
+                                                        std::get<se>(b.space[ii]), order));
         }
-        else if (ind == Lielab::domain::CompositeAlgebra::INDEX_so)
+        else if (ind == CompositeAlgebra::INDEX_so)
         {
-            out.space.push_back(Lielab::functions::dexp(std::get<Lielab::domain::so>(a.space[ii]),
-                                                        std::get<Lielab::domain::so>(b.space[ii]), order));
+            out.space.push_back(Lielab::functions::dexp(std::get<so>(a.space[ii]),
+                                                        std::get<so>(b.space[ii]), order));
         }
-        else if (ind == Lielab::domain::CompositeAlgebra::INDEX_sp)
+        else if (ind == CompositeAlgebra::INDEX_sp)
         {
-            out.space.push_back(Lielab::functions::dexp(std::get<Lielab::domain::sp>(a.space[ii]),
-                                                        std::get<Lielab::domain::sp>(b.space[ii]), order));
+            out.space.push_back(Lielab::functions::dexp(std::get<sp>(a.space[ii]),
+                                                        std::get<sp>(b.space[ii]), order));
         }
-        else if (ind == Lielab::domain::CompositeAlgebra::INDEX_su)
+        else if (ind == CompositeAlgebra::INDEX_su)
         {
-            out.space.push_back(Lielab::functions::dexp(std::get<Lielab::domain::su>(a.space[ii]),
-                                                        std::get<Lielab::domain::su>(b.space[ii]), order));
+            out.space.push_back(Lielab::functions::dexp(std::get<su>(a.space[ii]),
+                                                        std::get<su>(b.space[ii]), order));
         }
     }
 

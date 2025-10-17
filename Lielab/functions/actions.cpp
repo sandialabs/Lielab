@@ -39,35 +39,35 @@ Lielab::domain::CompositeManifold left_Lie_group_action(const Lielab::domain::Co
         const size_t indy = y.space[ii].index();
         if (indg == CompositeGroup::INDEX_CN && indy == CompositeManifold::INDEX_CN)
         {
-            out.space.push_back(std::get<Lielab::domain::CN>(g.space[ii]) * std::get<Lielab::domain::CN>(y.space[ii]));
+            out.space.push_back(std::get<CN>(g.space[ii]) * std::get<CN>(y.space[ii]));
         }
         else if (indg == CompositeGroup::INDEX_GLR && indy == CompositeManifold::INDEX_GLR)
         {
-            out.space.push_back(std::get<Lielab::domain::GLR>(g.space[ii]) * std::get<Lielab::domain::GLR>(y.space[ii]));
+            out.space.push_back(std::get<GLR>(g.space[ii]) * std::get<GLR>(y.space[ii]));
         }
         else if (indg == CompositeGroup::INDEX_GLC && indy == CompositeManifold::INDEX_GLC)
         {
-            out.space.push_back(std::get<Lielab::domain::GLC>(g.space[ii]) * std::get<Lielab::domain::GLC>(y.space[ii]));
+            out.space.push_back(std::get<GLC>(g.space[ii]) * std::get<GLC>(y.space[ii]));
         }
         else if (indg == CompositeGroup::INDEX_RN && indy == CompositeManifold::INDEX_RN)
         {
-            out.space.push_back(std::get<Lielab::domain::RN>(g.space[ii]) * std::get<Lielab::domain::RN>(y.space[ii]));
+            out.space.push_back(std::get<RN>(g.space[ii]) * std::get<RN>(y.space[ii]));
         }
         else if (indg == CompositeGroup::INDEX_SE && indy == CompositeManifold::INDEX_SE)
         {
-            out.space.push_back(std::get<Lielab::domain::SE>(g.space[ii]) * std::get<Lielab::domain::SE>(y.space[ii]));
+            out.space.push_back(std::get<SE>(g.space[ii]) * std::get<SE>(y.space[ii]));
         }
         else if (indg == CompositeGroup::INDEX_SO && indy == CompositeManifold::INDEX_SO)
         {
-            out.space.push_back(std::get<Lielab::domain::SO>(g.space[ii]) * std::get<Lielab::domain::SO>(y.space[ii]));
+            out.space.push_back(std::get<SO>(g.space[ii]) * std::get<SO>(y.space[ii]));
         }
         else if (indg == CompositeGroup::INDEX_SP && indy == CompositeManifold::INDEX_SP)
         {
-            out.space.push_back(std::get<Lielab::domain::SP>(g.space[ii]) * std::get<Lielab::domain::SP>(y.space[ii]));
+            out.space.push_back(std::get<SP>(g.space[ii]) * std::get<SP>(y.space[ii]));
         }
         else if (indg == CompositeGroup::INDEX_SU && indy == CompositeManifold::INDEX_SU)
         {
-            out.space.push_back(std::get<Lielab::domain::SU>(g.space[ii]) * std::get<Lielab::domain::SU>(y.space[ii]));
+            out.space.push_back(std::get<SU>(g.space[ii]) * std::get<SU>(y.space[ii]));
         }
         else
         {
@@ -109,35 +109,35 @@ Lielab::domain::CompositeManifold right_Lie_group_action(const Lielab::domain::C
         const size_t indy = y.space[ii].index();
         if (indg == CompositeGroup::INDEX_CN && indy == CompositeManifold::INDEX_CN)
         {
-            out.space.push_back(std::get<Lielab::domain::CN>(y.space[ii]) * std::get<Lielab::domain::CN>(g.space[ii]));
+            out.space.push_back(std::get<CN>(y.space[ii]) * std::get<CN>(g.space[ii]));
         }
         else if (indg == CompositeGroup::INDEX_GLR && indy == CompositeManifold::INDEX_GLR)
         {
-            out.space.push_back(std::get<Lielab::domain::GLR>(y.space[ii]) * std::get<Lielab::domain::GLR>(g.space[ii]));
+            out.space.push_back(std::get<GLR>(y.space[ii]) * std::get<GLR>(g.space[ii]));
         }
         else if (indg == CompositeGroup::INDEX_GLC && indy == CompositeManifold::INDEX_GLC)
         {
-            out.space.push_back(std::get<Lielab::domain::GLC>(y.space[ii]) * std::get<Lielab::domain::GLC>(g.space[ii]));
+            out.space.push_back(std::get<GLC>(y.space[ii]) * std::get<GLC>(g.space[ii]));
         }
         else if (indg == CompositeGroup::INDEX_RN && indy == CompositeManifold::INDEX_RN)
         {
-            out.space.push_back(std::get<Lielab::domain::RN>(y.space[ii]) * std::get<Lielab::domain::RN>(g.space[ii]));
+            out.space.push_back(std::get<RN>(y.space[ii]) * std::get<RN>(g.space[ii]));
         }
         else if (indg == CompositeGroup::INDEX_SE && indy == CompositeManifold::INDEX_SE)
         {
-            out.space.push_back(std::get<Lielab::domain::SE>(y.space[ii]) * std::get<Lielab::domain::SE>(g.space[ii]));
+            out.space.push_back(std::get<SE>(y.space[ii]) * std::get<SE>(g.space[ii]));
         }
         else if (indg == CompositeGroup::INDEX_SO && indy == CompositeManifold::INDEX_SO)
         {
-            out.space.push_back(std::get<Lielab::domain::SO>(y.space[ii]) * std::get<Lielab::domain::SO>(g.space[ii]));
+            out.space.push_back(std::get<SO>(y.space[ii]) * std::get<SO>(g.space[ii]));
         }
         else if (indg == CompositeGroup::INDEX_SP && indy == CompositeManifold::INDEX_SP)
         {
-            out.space.push_back(std::get<Lielab::domain::SP>(y.space[ii]) * std::get<Lielab::domain::SP>(g.space[ii]));
+            out.space.push_back(std::get<SP>(y.space[ii]) * std::get<SP>(g.space[ii]));
         }
         else if (indg == CompositeGroup::INDEX_SU && indy == CompositeManifold::INDEX_SU)
         {
-            out.space.push_back(std::get<Lielab::domain::SU>(y.space[ii]) * std::get<Lielab::domain::SU>(g.space[ii]));
+            out.space.push_back(std::get<SU>(y.space[ii]) * std::get<SU>(g.space[ii]));
         }
         else
         {

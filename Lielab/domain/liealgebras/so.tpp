@@ -14,7 +14,7 @@ namespace Lielab::domain
 {
 
 template<typename OtherDerived>
-so::so(const Eigen::MatrixBase<OtherDerived> & other)
+so::so(const Eigen::MatrixBase<OtherDerived>& other)
 {
     /*! \f{eqnarray*}{(\mathbb{R}^{n \times n}) &\rightarrow& \mathfrak{so} \\ (\mathbb{R}^{n \times 1}) &\rightarrow& \mathfrak{so} \f}
     *

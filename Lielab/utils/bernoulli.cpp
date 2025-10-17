@@ -2,7 +2,7 @@
 
 #include <vector>
 
-namespace Lielab::functions
+namespace Lielab::utils
 {
 
 double bernoulli(const int num, const int sign)

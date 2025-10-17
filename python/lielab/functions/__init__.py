@@ -2,7 +2,7 @@
 C++ imports
 """
 
-from ..cppLielab.functions import (Ad_numerical, Ad, bernoulli, Cayley, Cayley2, commutator,
+from ..cppLielab.functions import (Ad_numerical, Ad, Cayley, Cayley2, commutator,
                                    Killing, Killingform, ad_numerical, ad,
                                    exp_numerical, exp, log_numerical,
                                    log, dCayleyinv, dexp_numerical,

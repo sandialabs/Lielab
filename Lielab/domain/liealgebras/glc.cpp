@@ -266,7 +266,7 @@ std::complex<double> glc::operator()(const ptrdiff_t index1, const ptrdiff_t ind
     return this->data(_index1, _index2);
 }
 
-glc glc::operator+(const glc & other) const
+glc glc::operator+(const glc& other) const
 {
     /*! \f{equation*}{ (\mathfrak{glc}, \mathfrak{glc}) \rightarrow \mathfrak{glc} \f}
     *
@@ -282,7 +282,7 @@ glc glc::operator+(const glc & other) const
     return glc(new_matrix);
 }
 
-glc & glc::operator+=(const glc & other)
+glc& glc::operator+=(const glc& other)
 {
     /*! \f{equation*}{ (\mathfrak{glc}, \mathfrak{glc}) \rightarrow \mathfrak{glc} \f}
     *
@@ -297,7 +297,7 @@ glc & glc::operator+=(const glc & other)
     return *this;
 }
 
-glc glc::operator-(const glc & other) const
+glc glc::operator-(const glc& other) const
 {
     /*! \f{equation*}{ (\mathfrak{glc}, \mathfrak{glc}) \rightarrow \mathfrak{glc} \f}
     *
@@ -313,7 +313,7 @@ glc glc::operator-(const glc & other) const
     return glc(new_matrix);
 }
 
-glc & glc::operator-=(const glc & other)
+glc& glc::operator-=(const glc& other)
 {
     /*! \f{equation*}{ (\mathfrak{glc}, \mathfrak{glc}) \rightarrow \mathfrak{glc} \f}
     *
@@ -352,7 +352,7 @@ glc glc::operator*(const double other) const
     return this_matrix * other;
 }
 
-glc operator*(const double other, const glc & rhs)
+glc operator*(const double other, const glc& rhs)
 {
     /*! \f{equation*}{ (\mathbb{R}, \mathfrak{glc}) \rightarrow \mathfrak{glc} \f}
     *
@@ -374,7 +374,7 @@ glc glc::operator*(const std::complex<double> other) const
     return this_matrix * other;
 }
 
-glc operator*(const std::complex<double> other, const glc & rhs)
+glc operator*(const std::complex<double> other, const glc& rhs)
 {
     /*! \f{equation*}{ (\mathbb{C}, \mathfrak{glc}) \rightarrow \mathfrak{glc} \f}
     *
@@ -384,7 +384,7 @@ glc operator*(const std::complex<double> other, const glc & rhs)
     return rhs*other;
 }
 
-glc & glc::operator*=(const double other)
+glc& glc::operator*=(const double other)
 {
     /*! \f{equation*}{ (\mathfrak{glc}, \mathbb{R}) \rightarrow \mathfrak{glc} \f}
     *
@@ -395,7 +395,7 @@ glc & glc::operator*=(const double other)
     return *this;
 }
 
-glc & glc::operator*=(const std::complex<double> other)
+glc& glc::operator*=(const std::complex<double> other)
 {
     /*! \f{equation*}{ (\mathfrak{glc}, \mathbb{C}) \rightarrow \mathfrak{glc} \f}
     *
@@ -428,7 +428,7 @@ glc glc::operator/(const std::complex<double> other) const
     return this_matrix / other;
 }
 
-glc & glc::operator/=(const double other)
+glc& glc::operator/=(const double other)
 {
     /*! \f{equation*}{ (\mathfrak{glc}, \mathbb{R}) \rightarrow \mathfrak{glc} \f}
     *
@@ -439,7 +439,7 @@ glc & glc::operator/=(const double other)
     return *this;
 }
 
-glc & glc::operator/=(const std::complex<double> other)
+glc& glc::operator/=(const std::complex<double> other)
 {
     /*! \f{equation*}{ (\mathfrak{glc}, \mathbb{C}) \rightarrow \mathfrak{glc} \f}
     *
@@ -480,7 +480,7 @@ glc glc::from_vector(std::initializer_list<double> other)
     return glc::from_vector(Eigen::VectorXd{std::move(other)});
 }
 
-glc glc::from_complex_vector(const Eigen::VectorXcd &other)
+glc glc::from_complex_vector(const Eigen::VectorXcd& other)
 {
     /*! \f{equation}{(\mathbb{R}^{n \times 1}) \rightarrow \mathfrak{glc} \f}
     *
@@ -521,7 +521,7 @@ glc glc::from_complex_vector(std::initializer_list<std::complex<double>> other)
     return glc::from_complex_vector(Eigen::VectorXcd{std::move(other)});
 }
 
-Eigen::MatrixXcd glc::project(const Eigen::MatrixXcd & other)
+Eigen::MatrixXcd glc::project(const Eigen::MatrixXcd& other)
 {
     /*! \f{equation*}{ (\mathbb{C}^{n \times n}) \rightarrow \mathbb{C}^{n \times n} \in \mathfrak{glc} \f}
     *
@@ -532,7 +532,7 @@ Eigen::MatrixXcd glc::project(const Eigen::MatrixXcd & other)
     return other(Eigen::seqN(0, shape), Eigen::seqN(0, shape));
 }
 
-std::ostream& operator<<(std::ostream & os, const glc & other)
+std::ostream& operator<<(std::ostream& os, const glc& other)
 {
     /*!
     * Overloads the "<<" stream insertion operator.

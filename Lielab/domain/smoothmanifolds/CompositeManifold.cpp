@@ -349,67 +349,67 @@ std::vector<size_t> CompositeManifold::get_shapes() const
         const size_t ind = space[ii].index();
         if (ind == INDEX_CN)
         {
-            out[ii] = static_cast<int>(std::get<Lielab::domain::CN>(space[ii]).get_shape());
+            out[ii] = static_cast<int>(std::get<CN>(space[ii]).get_shape());
         }
         else if (ind == INDEX_GLR)
         {
-            out[ii] = static_cast<int>(std::get<Lielab::domain::GLR>(space[ii]).get_shape());
+            out[ii] = static_cast<int>(std::get<GLR>(space[ii]).get_shape());
         }
         else if (ind == INDEX_GLC)
         {
-            out[ii] = static_cast<int>(std::get<Lielab::domain::GLC>(space[ii]).get_shape());
+            out[ii] = static_cast<int>(std::get<GLC>(space[ii]).get_shape());
         }
         else if (ind == INDEX_RN)
         {
-            out[ii] = static_cast<int>(std::get<Lielab::domain::RN>(space[ii]).get_shape());
+            out[ii] = static_cast<int>(std::get<RN>(space[ii]).get_shape());
         }
         else if (ind == INDEX_SE)
         {
-            out[ii] = static_cast<int>(std::get<Lielab::domain::SE>(space[ii]).get_shape());
+            out[ii] = static_cast<int>(std::get<SE>(space[ii]).get_shape());
         }
         else if (ind == INDEX_SO)
         {
-            out[ii] = static_cast<int>(std::get<Lielab::domain::SO>(space[ii]).get_shape());
+            out[ii] = static_cast<int>(std::get<SO>(space[ii]).get_shape());
         }
         else if (ind == INDEX_SP)
         {
-            out[ii] = static_cast<int>(std::get<Lielab::domain::SP>(space[ii]).get_shape());
+            out[ii] = static_cast<int>(std::get<SP>(space[ii]).get_shape());
         }
         else if (ind == INDEX_SU)
         {
-            out[ii] = static_cast<int>(std::get<Lielab::domain::SU>(space[ii]).get_shape());
+            out[ii] = static_cast<int>(std::get<SU>(space[ii]).get_shape());
         }
         else if (ind == INDEX_cn)
         {
-            out[ii] = static_cast<int>(std::get<Lielab::domain::cn>(space[ii]).get_shape());
+            out[ii] = static_cast<int>(std::get<cn>(space[ii]).get_shape());
         }
         else if (ind == INDEX_glr)
         {
-            out[ii] = static_cast<int>(std::get<Lielab::domain::glr>(space[ii]).get_shape());
+            out[ii] = static_cast<int>(std::get<glr>(space[ii]).get_shape());
         }
         else if (ind == INDEX_glc)
         {
-            out[ii] = static_cast<int>(std::get<Lielab::domain::glc>(space[ii]).get_shape());
+            out[ii] = static_cast<int>(std::get<glc>(space[ii]).get_shape());
         }
         else if (ind == INDEX_rn)
         {
-            out[ii] = static_cast<int>(std::get<Lielab::domain::rn>(space[ii]).get_shape());
+            out[ii] = static_cast<int>(std::get<rn>(space[ii]).get_shape());
         }
         else if (ind == INDEX_se)
         {
-            out[ii] = static_cast<int>(std::get<Lielab::domain::se>(space[ii]).get_shape());
+            out[ii] = static_cast<int>(std::get<se>(space[ii]).get_shape());
         }
         else if (ind == INDEX_so)
         {
-            out[ii] = static_cast<int>(std::get<Lielab::domain::so>(space[ii]).get_shape());
+            out[ii] = static_cast<int>(std::get<so>(space[ii]).get_shape());
         }
         else if (ind == INDEX_sp)
         {
-            out[ii] = static_cast<int>(std::get<Lielab::domain::sp>(space[ii]).get_shape());
+            out[ii] = static_cast<int>(std::get<sp>(space[ii]).get_shape());
         }
         else if (ind == INDEX_su)
         {
-            out[ii] = static_cast<int>(std::get<Lielab::domain::su>(space[ii]).get_shape());
+            out[ii] = static_cast<int>(std::get<su>(space[ii]).get_shape());
         }
     }
 
@@ -433,67 +433,67 @@ Eigen::VectorXd CompositeManifold::serialize() const
 
         if (ind == INDEX_CN)
         {
-            serials.push_back(std::get<Lielab::domain::CN>(space[ii]).serialize());
+            serials.push_back(std::get<CN>(space[ii]).serialize());
         }
         else if (ind == INDEX_GLR)
         {
-            serials.push_back(std::get<Lielab::domain::GLR>(space[ii]).serialize());
+            serials.push_back(std::get<GLR>(space[ii]).serialize());
         }
         else if (ind == INDEX_GLC)
         {
-            serials.push_back(std::get<Lielab::domain::GLC>(space[ii]).serialize());
+            serials.push_back(std::get<GLC>(space[ii]).serialize());
         }
         else if (ind == INDEX_RN)
         {
-            serials.push_back(std::get<Lielab::domain::RN>(space[ii]).serialize());
+            serials.push_back(std::get<RN>(space[ii]).serialize());
         }
         else if (ind == INDEX_SE)
         {
-            serials.push_back(std::get<Lielab::domain::SE>(space[ii]).serialize());
+            serials.push_back(std::get<SE>(space[ii]).serialize());
         }
         else if (ind == INDEX_SO)
         {
-            serials.push_back(std::get<Lielab::domain::SO>(space[ii]).serialize());
+            serials.push_back(std::get<SO>(space[ii]).serialize());
         }
         else if (ind == INDEX_SP)
         {
-            serials.push_back(std::get<Lielab::domain::SP>(space[ii]).serialize());
+            serials.push_back(std::get<SP>(space[ii]).serialize());
         }
         else if (ind == INDEX_SU)
         {
-            serials.push_back(std::get<Lielab::domain::SU>(space[ii]).serialize());
+            serials.push_back(std::get<SU>(space[ii]).serialize());
         }
         else if (ind == INDEX_cn)
         {
-            serials.push_back(std::get<Lielab::domain::cn>(space[ii]).get_vector());
+            serials.push_back(std::get<cn>(space[ii]).get_vector());
         }
         else if (ind == INDEX_glr)
         {
-            serials.push_back(std::get<Lielab::domain::glr>(space[ii]).get_vector());
+            serials.push_back(std::get<glr>(space[ii]).get_vector());
         }
         else if (ind == INDEX_glc)
         {
-            serials.push_back(std::get<Lielab::domain::glc>(space[ii]).get_vector());
+            serials.push_back(std::get<glc>(space[ii]).get_vector());
         }
         else if (ind == INDEX_rn)
         {
-            serials.push_back(std::get<Lielab::domain::rn>(space[ii]).get_vector());
+            serials.push_back(std::get<rn>(space[ii]).get_vector());
         }
         else if (ind == INDEX_se)
         {
-            serials.push_back(std::get<Lielab::domain::se>(space[ii]).get_vector());
+            serials.push_back(std::get<se>(space[ii]).get_vector());
         }
         else if (ind == INDEX_so)
         {
-            serials.push_back(std::get<Lielab::domain::so>(space[ii]).get_vector());
+            serials.push_back(std::get<so>(space[ii]).get_vector());
         }
         else if (ind == INDEX_sp)
         {
-            serials.push_back(std::get<Lielab::domain::sp>(space[ii]).get_vector());
+            serials.push_back(std::get<sp>(space[ii]).get_vector());
         }
         else if (ind == INDEX_su)
         {
-            serials.push_back(std::get<Lielab::domain::su>(space[ii]).get_vector());
+            serials.push_back(std::get<su>(space[ii]).get_vector());
         }
     }
     
@@ -501,95 +501,95 @@ Eigen::VectorXd CompositeManifold::serialize() const
     return out;
 }
 
-void CompositeManifold::unserialize(const Eigen::VectorXd &vec)
+void CompositeManifold::unserialize(const Eigen::VectorXd& vec)
 {
     size_t jj = 0;
     size_t sz = 0;
 
-    for (auto & M : this->space)
+    for (auto& M : this->space)
     {
         const size_t ind = M.index();
         jj += sz;
 
         if (ind == INDEX_CN)
         {
-            sz = std::get<Lielab::domain::CN>(M).get_size();
-            std::get<Lielab::domain::CN>(M).unserialize(vec(Eigen::seqN(jj, sz)));
+            sz = std::get<CN>(M).get_size();
+            std::get<CN>(M).unserialize(vec(Eigen::seqN(jj, sz)));
         }
         else if (ind == INDEX_GLR)
         {
-            sz = std::get<Lielab::domain::GLR>(M).get_size();
-            std::get<Lielab::domain::GLR>(M).unserialize(vec(Eigen::seqN(jj, sz)));
+            sz = std::get<GLR>(M).get_size();
+            std::get<GLR>(M).unserialize(vec(Eigen::seqN(jj, sz)));
         }
         else if (ind == INDEX_GLC)
         {
-            sz = std::get<Lielab::domain::GLC>(M).get_size();
-            std::get<Lielab::domain::GLC>(M).unserialize(vec(Eigen::seqN(jj, sz)));
+            sz = std::get<GLC>(M).get_size();
+            std::get<GLC>(M).unserialize(vec(Eigen::seqN(jj, sz)));
         }
         else if (ind == INDEX_RN)
         {
-            sz = std::get<Lielab::domain::RN>(M).get_size();
-            std::get<Lielab::domain::RN>(M).unserialize(vec(Eigen::seqN(jj, sz)));
+            sz = std::get<RN>(M).get_size();
+            std::get<RN>(M).unserialize(vec(Eigen::seqN(jj, sz)));
         }
         else if (ind == INDEX_SE)
         {
-            sz = std::get<Lielab::domain::SE>(M).get_size();
-            std::get<Lielab::domain::SE>(M).unserialize(vec(Eigen::seqN(jj, sz)));
+            sz = std::get<SE>(M).get_size();
+            std::get<SE>(M).unserialize(vec(Eigen::seqN(jj, sz)));
         }
         else if (ind == INDEX_SO)
         {
-            sz = std::get<Lielab::domain::SO>(M).get_size();
-            std::get<Lielab::domain::SO>(M).unserialize(vec(Eigen::seqN(jj, sz)));
+            sz = std::get<SO>(M).get_size();
+            std::get<SO>(M).unserialize(vec(Eigen::seqN(jj, sz)));
         }
         else if (ind == INDEX_SP)
         {
-            sz = std::get<Lielab::domain::SP>(M).get_size();
-            std::get<Lielab::domain::SP>(M).unserialize(vec(Eigen::seqN(jj, sz)));
+            sz = std::get<SP>(M).get_size();
+            std::get<SP>(M).unserialize(vec(Eigen::seqN(jj, sz)));
         }
         else if (ind == INDEX_SU)
         {
-            sz = std::get<Lielab::domain::SU>(M).get_size();
-            std::get<Lielab::domain::SU>(M).unserialize(vec(Eigen::seqN(jj, sz)));
+            sz = std::get<SU>(M).get_size();
+            std::get<SU>(M).unserialize(vec(Eigen::seqN(jj, sz)));
         }
         else if (ind == INDEX_cn)
         {
-            sz = std::get<Lielab::domain::cn>(M).get_dimension();
-            std::get<Lielab::domain::cn>(M).set_vector(vec(Eigen::seqN(jj, sz)));
+            sz = std::get<cn>(M).get_dimension();
+            std::get<cn>(M).set_vector(vec(Eigen::seqN(jj, sz)));
         }
         else if (ind == INDEX_glr)
         {
-            sz = std::get<Lielab::domain::glr>(M).get_dimension();
-            std::get<Lielab::domain::glr>(M).set_vector(vec(Eigen::seqN(jj, sz)));
+            sz = std::get<glr>(M).get_dimension();
+            std::get<glr>(M).set_vector(vec(Eigen::seqN(jj, sz)));
         }
         else if (ind == INDEX_glc)
         {
-            sz = std::get<Lielab::domain::glc>(M).get_dimension();
-            std::get<Lielab::domain::glc>(M).set_vector(vec(Eigen::seqN(jj, sz)));
+            sz = std::get<glc>(M).get_dimension();
+            std::get<glc>(M).set_vector(vec(Eigen::seqN(jj, sz)));
         }
         else if (ind == INDEX_rn)
         {
-            sz = std::get<Lielab::domain::rn>(M).get_dimension();
-            std::get<Lielab::domain::rn>(M).set_vector(vec(Eigen::seqN(jj, sz)));
+            sz = std::get<rn>(M).get_dimension();
+            std::get<rn>(M).set_vector(vec(Eigen::seqN(jj, sz)));
         }
         else if (ind == INDEX_se)
         {
-            sz = std::get<Lielab::domain::se>(M).get_dimension();
-            std::get<Lielab::domain::se>(M).set_vector(vec(Eigen::seqN(jj, sz)));
+            sz = std::get<se>(M).get_dimension();
+            std::get<se>(M).set_vector(vec(Eigen::seqN(jj, sz)));
         }
         else if (ind == INDEX_so)
         {
-            sz = std::get<Lielab::domain::so>(M).get_dimension();
-            std::get<Lielab::domain::so>(M).set_vector(vec(Eigen::seqN(jj, sz)));
+            sz = std::get<so>(M).get_dimension();
+            std::get<so>(M).set_vector(vec(Eigen::seqN(jj, sz)));
         }
         else if (ind == INDEX_sp)
         {
-            sz = std::get<Lielab::domain::sp>(M).get_dimension();
-            std::get<Lielab::domain::sp>(M).set_vector(vec(Eigen::seqN(jj, sz)));
+            sz = std::get<sp>(M).get_dimension();
+            std::get<sp>(M).set_vector(vec(Eigen::seqN(jj, sz)));
         }
         else if (ind == INDEX_su)
         {
-            sz = std::get<Lielab::domain::su>(M).get_dimension();
-            std::get<Lielab::domain::su>(M).set_vector(vec(Eigen::seqN(jj, sz)));
+            sz = std::get<su>(M).get_dimension();
+            std::get<su>(M).set_vector(vec(Eigen::seqN(jj, sz)));
         }
     }
 }
@@ -617,67 +617,67 @@ Eigen::MatrixXcd CompositeManifold::get_matrix() const
         const size_t ind = this->space[ii].index();
         if (ind == INDEX_CN)
         {
-            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<Lielab::domain::CN>(this->space[ii]).get_matrix();
+            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<CN>(this->space[ii]).get_matrix();
         }
         else if (ind == INDEX_GLR)
         {
-            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<Lielab::domain::GLR>(this->space[ii]).get_matrix();
+            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<GLR>(this->space[ii]).get_matrix();
         }
         else if (ind == INDEX_GLC)
         {
-            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<Lielab::domain::GLC>(this->space[ii]).get_matrix();
+            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<GLC>(this->space[ii]).get_matrix();
         }
         else if (ind == INDEX_RN)
         {
-            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<Lielab::domain::RN>(this->space[ii]).get_matrix();
+            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<RN>(this->space[ii]).get_matrix();
         }
         else if (ind == INDEX_SE)
         {
-            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<Lielab::domain::SE>(this->space[ii]).get_matrix();
+            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<SE>(this->space[ii]).get_matrix();
         }
         else if (ind == INDEX_SO)
         {
-            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<Lielab::domain::SO>(this->space[ii]).get_matrix();
+            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<SO>(this->space[ii]).get_matrix();
         }
         else if (ind == INDEX_SP)
         {
-            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<Lielab::domain::SP>(this->space[ii]).get_matrix();
+            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<SP>(this->space[ii]).get_matrix();
         }
         else if (ind == INDEX_SU)
         {
-            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<Lielab::domain::SU>(this->space[ii]).get_matrix();
+            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<SU>(this->space[ii]).get_matrix();
         }
         else if (ind == INDEX_cn)
         {
-            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<Lielab::domain::cn>(this->space[ii]).get_matrix();
+            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<cn>(this->space[ii]).get_matrix();
         }
         else if (ind == INDEX_glr)
         {
-            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<Lielab::domain::glr>(this->space[ii]).get_matrix();
+            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<glr>(this->space[ii]).get_matrix();
         }
         else if (ind == INDEX_glc)
         {
-            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<Lielab::domain::glc>(this->space[ii]).get_matrix();
+            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<glc>(this->space[ii]).get_matrix();
         }
         else if (ind == INDEX_rn)
         {
-            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<Lielab::domain::rn>(this->space[ii]).get_matrix();
+            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<rn>(this->space[ii]).get_matrix();
         }
         else if (ind == INDEX_se)
         {
-            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<Lielab::domain::se>(this->space[ii]).get_matrix();
+            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<se>(this->space[ii]).get_matrix();
         }
         else if (ind == INDEX_so)
         {
-            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<Lielab::domain::so>(this->space[ii]).get_matrix();
+            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<so>(this->space[ii]).get_matrix();
         }
         else if (ind == INDEX_sp)
         {
-            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<Lielab::domain::sp>(this->space[ii]).get_matrix();
+            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<sp>(this->space[ii]).get_matrix();
         }
         else if (ind == INDEX_su)
         {
-            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<Lielab::domain::su>(this->space[ii]).get_matrix();
+            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<su>(this->space[ii]).get_matrix();
         }
         kk += shapes[ii];
     }
@@ -803,10 +803,10 @@ std::complex<double> CompositeManifold::operator()(const ptrdiff_t index1, const
 CompositeManifold::TYPES CompositeManifold::operator[](const ptrdiff_t index) const
 {
     const size_t sz = this->space.size();
-    if (index >= static_cast<ptrdiff_t>(sz)) return Lielab::domain::glc();
+    if (index >= static_cast<ptrdiff_t>(sz)) return glc();
 
-    if (index >= static_cast<ptrdiff_t>(sz)) return Lielab::domain::glc();
-    if (std::abs(index) > static_cast<ptrdiff_t>(sz)) return Lielab::domain::glc();
+    if (index >= static_cast<ptrdiff_t>(sz)) return glc();
+    if (std::abs(index) > static_cast<ptrdiff_t>(sz)) return glc();
 
     size_t _index;
     if (index < 0)
@@ -821,74 +821,74 @@ CompositeManifold::TYPES CompositeManifold::operator[](const ptrdiff_t index) co
     const size_t ind = space[_index].index();
     if (ind == INDEX_CN)
     {
-        return std::get<Lielab::domain::CN>(space[_index]);
+        return std::get<CN>(space[_index]);
     }
     else if (ind == INDEX_GLR)
     {
-        return std::get<Lielab::domain::GLR>(space[_index]);
+        return std::get<GLR>(space[_index]);
     }
     else if (ind == INDEX_GLC)
     {
-        return std::get<Lielab::domain::GLC>(space[_index]);
+        return std::get<GLC>(space[_index]);
     }
     else if (ind == INDEX_RN)
     {
-        return std::get<Lielab::domain::RN>(space[_index]);
+        return std::get<RN>(space[_index]);
     }
     else if (ind == INDEX_SE)
     {
-        return std::get<Lielab::domain::SE>(space[_index]);
+        return std::get<SE>(space[_index]);
     }
     else if (ind == INDEX_SO)
     {
-        return std::get<Lielab::domain::SO>(space[_index]);
+        return std::get<SO>(space[_index]);
     }
     else if (ind == INDEX_SP)
     {
-        return std::get<Lielab::domain::SP>(space[_index]);
+        return std::get<SP>(space[_index]);
     }
     else if (ind == INDEX_SU)
     {
-        return std::get<Lielab::domain::SU>(space[_index]);
+        return std::get<SU>(space[_index]);
     }
     else if (ind == INDEX_cn)
     {
-        return std::get<Lielab::domain::cn>(space[_index]);
+        return std::get<cn>(space[_index]);
     }
     else if (ind == INDEX_glr)
     {
-        return std::get<Lielab::domain::glr>(space[_index]);
+        return std::get<glr>(space[_index]);
     }
     else if (ind == INDEX_glc)
     {
-        return std::get<Lielab::domain::glc>(space[_index]);
+        return std::get<glc>(space[_index]);
     }
     else if (ind == INDEX_rn)
     {
-        return std::get<Lielab::domain::rn>(space[_index]);
+        return std::get<rn>(space[_index]);
     }
     else if (ind == INDEX_se)
     {
-        return std::get<Lielab::domain::se>(space[_index]);
+        return std::get<se>(space[_index]);
     }
     else if (ind == INDEX_so)
     {
-        return std::get<Lielab::domain::so>(space[_index]);
+        return std::get<so>(space[_index]);
     }
     else if (ind == INDEX_sp)
     {
-        return std::get<Lielab::domain::sp>(space[_index]);
+        return std::get<sp>(space[_index]);
     }
     else if (ind == INDEX_su)
     {
-        return std::get<Lielab::domain::su>(space[_index]);
+        return std::get<su>(space[_index]);
     }
 
     // This should never be called
-    return Lielab::domain::glc();
+    return glc();
 }
 
-std::ostream & operator<<(std::ostream & os, const CompositeManifold & other)
+std::ostream& operator<<(std::ostream& os, const CompositeManifold& other)
 {
     /*!
     * Overloads the "<<" stream insertion operator.

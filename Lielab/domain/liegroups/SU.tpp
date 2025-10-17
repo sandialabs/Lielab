@@ -12,7 +12,7 @@ namespace Lielab::domain
 {
 
 template<typename OtherDerived>
-SU::SU(const Eigen::MatrixBase<OtherDerived> & other)
+SU::SU(const Eigen::MatrixBase<OtherDerived>& other)
 {
     /*! \f{equation}{(\mathbb{C}^{n \times n}) \rightarrow SU \f}
     *
@@ -32,7 +32,7 @@ SU::SU(const Eigen::MatrixBase<OtherDerived> & other)
 }
 
 template<typename OtherDerived>
-SU & SU::operator=(const Eigen::MatrixBase<OtherDerived> & other)
+SU& SU::operator=(const Eigen::MatrixBase<OtherDerived>& other)
 {
     /*! \f{equation}{ SU := \mathbb{C}^{n \times n} \f}
     * 

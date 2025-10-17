@@ -12,7 +12,7 @@ namespace Lielab::domain
 {
 
 template<typename OtherDerived>
-SP::SP(const Eigen::MatrixBase<OtherDerived> & other)
+SP::SP(const Eigen::MatrixBase<OtherDerived>& other)
 {
     /*! \f{equation}{(\mathbb{R}^{n \times n}) \rightarrow SP \f}
     *
@@ -37,7 +37,7 @@ SP::SP(const Eigen::MatrixBase<OtherDerived> & other)
 }
 
 template<typename OtherDerived>
-SP & SP::operator=(const Eigen::MatrixBase<OtherDerived> & other)
+SP& SP::operator=(const Eigen::MatrixBase<OtherDerived>& other)
 {
     /*! \f{equation}{ SP := \mathbb{R}^{n \times n} \f}
     * 

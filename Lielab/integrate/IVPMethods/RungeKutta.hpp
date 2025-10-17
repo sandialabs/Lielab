@@ -1,10 +1,10 @@
 #ifndef LIELAB_INTEGRATE_IVPMETHODS_RUNGEKUTTA_HPP
 #define LIELAB_INTEGRATE_IVPMETHODS_RUNGEKUTTA_HPP
 
-#include "../Coefficients.hpp"
-#include "../ODESolution.hpp"
-
+#include "Coefficients.hpp"
 #include "IVPSettings.hpp"
+
+#include "../ODESolution.hpp"
 
 #include "Lielab/domain.hpp"
 #include "Lielab/functions.hpp"
@@ -21,10 +21,12 @@ namespace Lielab::integrate
 
 enum class RungeKuttaStatus
 {
+    ERROR_MAX_ITER = -3,
+    ERROR_INF = -2,
+    ERROR_NAN = -1,
     SUCCESS = 0,
-    DO_STEP0 = 1,
-    DO_STEP1 = 2,
-    ESTIMATE_ERROR = 3,
+    DO_POSTPROCESS = 1,
+    ESTIMATE_ERROR = 2,
 };
 
 /*!
@@ -58,14 +60,14 @@ enum class RungeKuttaStatus
 class RungeKutta
 {
     public:
-    int status = 0;
-    std::string message = "";
+    RungeKuttaStatus status;
 
     double reltol = 1.0e-4;
     double abstol = 1.0e-8;
     double error_estimate;
 
     bool can_variable_step = false;
+    bool implicit = false;
     size_t order = 0;
 
 
@@ -78,36 +80,29 @@ class RungeKutta
     size_t n;
     
     // Other
-    size_t stage = 0;
-    double t0;
-    double dt;
-    std::vector<Eigen::VectorXd> K;
-
-    double next_t;
-    Eigen::VectorXd next_theta;
-    Eigen::VectorXd next_theta2;
+    Eigen::MatrixXd K;
 
     RungeKutta();
     RungeKutta(const Coefficients tableau);
 
-    virtual RungeKuttaStatus init(const double t0, const double dt, const Eigen::VectorXd& dy);
-    virtual RungeKuttaStatus step_0();
-    virtual RungeKuttaStatus step_1(const Eigen::VectorXd& dy);
-    virtual RungeKuttaStatus postprocess();
-    virtual RungeKuttaStatus estimate_error(const Eigen::VectorXd &yl, const Eigen::VectorXd &yh);
-    Eigen::VectorXd operator()(const EuclideanIVP_vectorfield_t vf, const Eigen::VectorXd& y0, const double t0_, const double dt_);
+    void estimate_error(const Eigen::VectorXd& yl, const Eigen::VectorXd& yh, const double dt);
+    Eigen::VectorXd operator()(const EuclideanIVP_vectorfield_t vf, const Eigen::VectorXd& y0, const double t0, const double dt);
 };
 
 enum class RungeKuttaFlowStatus
 {
-    ERROR_SMALL_DT = -5,
-    ERROR_NEGATIVE_DT = -4,
-    ERROR_SUCCEEDED_BUT_TOL_THO = -3,
-    ERROR_MAX_ITERATIONS = -2,
-    ERROR_INPUT = -1,
+    ERROR_SMALL_DT = -6,
+    ERROR_NEGATIVE_DT = -5,
+    ERROR_MAX_ITERATIONS = -4,
+    ERROR_INPUT = -3,
+    ERROR_INF = -2,
+    ERROR_NAN = -1,
     SUCCESS = 0,
     DO_STEP0 = 1,
     DO_STEP1 = 2,
+    SUCCESS_EVENT = 3,
+    SUCCESS_BUT_TOL_THO = 4,
+    SUCCESS_EVENT_BUT_TOL_THO = 5,
 };
 
 /*
@@ -135,7 +130,7 @@ class RungeKuttaFlow
     double event_current = std::numeric_limits<double>::quiet_NaN();
     double event_next = std::numeric_limits<double>::quiet_NaN();
 
-    std::shared_ptr<RungeKutta> method = std::make_shared<RungeKutta>(RungeKutta());
+    RungeKutta method = RungeKutta();
     Lielab::utils::newton search;
 
     int new_exact = 1;
@@ -162,11 +157,8 @@ class RungeKuttaFlow
     ODESolution _out;
 
     RungeKuttaFlowStatus init(const Eigen::VectorXd& tspan, const Eigen::VectorXd& y0);
-
-    // bool step0(const Eigen::VectorXd& next_low);
     RungeKuttaFlowStatus step0(const Eigen::VectorXd& next_low, const double next_error);
     RungeKuttaFlowStatus step1();
-    void stepE(double event_val);
     void postprocess();
 
     ODESolution operator()(const EuclideanIVPSystem& dynamics, const Eigen::VectorXd& tspan, const Eigen::VectorXd& y0, const Lielab::integrate::IVPOptions& options);

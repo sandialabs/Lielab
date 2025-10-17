@@ -21,7 +21,12 @@ class CN : public GLC
     using data_t = Eigen::VectorXcd;
     data_t data;
 
-    std::string to_string() const;
+    
+    // CN class information
+    bool is_abelian() const override;
+    bool is_complex() const override;
+    std::string to_string() const override;
+
     // Initialization methods
 
     CN();
@@ -29,16 +34,16 @@ class CN : public GLC
     static CN from_shape(const size_t shape);
 
     template<typename OtherDerived>
-    CN(const Eigen::MatrixBase<OtherDerived> & other);
+    CN(const Eigen::MatrixBase<OtherDerived>& other);
 
     template<typename OtherDerived>
-    CN & operator=(const Eigen::MatrixBase<OtherDerived> & other);
+    CN& operator=(const Eigen::MatrixBase<OtherDerived>& other);
 
-    size_t get_dimension() const;
-    size_t get_shape() const;
-    size_t get_size() const;
+    size_t get_dimension() const override;
+    size_t get_shape() const override;
+    size_t get_size() const override;
 
-    Eigen::MatrixXcd get_matrix() const;
+    CN::matrix_t get_matrix() const;
 
     CN inverse() const;
 
@@ -50,11 +55,11 @@ class CN : public GLC
     void unserialize(const std::initializer_list<double> vector); // override;
 
     double operator()(const ptrdiff_t index) const;
-    // std::complex<double> & operator()(const size_t index);
+    // std::complex<double>& operator()(const size_t index);
     std::complex<double> operator()(const ptrdiff_t index1, const ptrdiff_t index2) const;
 
-    CN operator*(const CN & other) const;
-    CN & operator*=(const CN & other);
+    CN operator*(const CN& other) const;
+    CN& operator*=(const CN& other);
 
     std::complex<double> operator[](const ptrdiff_t index) const;
 
@@ -64,9 +69,9 @@ class CN : public GLC
     static CN from_complex_vector(const std::initializer_list<std::complex<double>> other);
     Eigen::VectorXcd to_complex_vector() const;
 
-    static Eigen::MatrixXcd project(const Eigen::MatrixXcd & other);
+    static Eigen::MatrixXcd project(const Eigen::MatrixXcd& other);
 
-    friend std::ostream & operator<<(std::ostream& os, const CN & other);
+    friend std::ostream& operator<<(std::ostream& os, const CN& other);
 };
 
 }

@@ -7,6 +7,8 @@
 #include <Eigen/Core>
 #include <unsupported/Eigen/MatrixFunctions>
 
+#include <cassert>
+
 namespace Lielab::domain
 {
 
@@ -123,7 +125,7 @@ Eigen::VectorXd so::get_vector() const
     return out;
 }
 
-void so::set_vector(const Eigen::VectorXd & vector)
+void so::set_vector(const Eigen::VectorXd& vector)
 {
     /*! \f{equation*}{ \mathfrak{so} := \mathbb{R}^{n \times 1} \f}
     * 
@@ -242,7 +244,7 @@ double so::operator()(const ptrdiff_t index1, const ptrdiff_t index2) const
     return this->data(_index1, _index2);
 }
 
-so so::operator+(const so & other) const
+so so::operator+(const so& other) const
 {
     /*! \f{equation*}{ (\mathfrak{so}, \mathfrak{so}) \rightarrow \mathfrak{so} \f}
     *
@@ -258,7 +260,7 @@ so so::operator+(const so & other) const
     return so(new_matrix);
 }
 
-so & so::operator+=(const so & other)
+so& so::operator+=(const so& other)
 {
     /*! \f{equation*}{ (\mathfrak{so}, \mathfrak{so}) \rightarrow \mathfrak{so} \f}
     *
@@ -270,7 +272,7 @@ so & so::operator+=(const so & other)
     return *this;
 }
 
-so so::operator-(const so & other) const
+so so::operator-(const so& other) const
 {
     /*! \f{equation*}{ (\mathfrak{so}, \mathfrak{so}) \rightarrow \mathfrak{so} \f}
     *
@@ -286,7 +288,7 @@ so so::operator-(const so & other) const
     return so(new_matrix);
 }
 
-so & so::operator-=(const so & other)
+so& so::operator-=(const so& other)
 {
     /*! \f{equation*}{ (\mathfrak{so}, \mathfrak{so}) \rightarrow \mathfrak{so} \f}
     *
@@ -319,7 +321,7 @@ so so::operator*(const double other) const
     return out;
 }
 
-so operator*(const double other, const so & rhs)
+so operator*(const double other, const so& rhs)
 {
     /*! \f{equation*}{ (\mathbb{R}, \mathfrak{so}) \rightarrow \mathfrak{so} \f}
     *
@@ -329,7 +331,7 @@ so operator*(const double other, const so & rhs)
     return rhs*other;
 }
 
-so & so::operator*=(const double other)
+so& so::operator*=(const double other)
 {
     /*! \f{equation*}{ (\mathfrak{so}, \mathbb{R}) \rightarrow \mathfrak{so} \f}
     *
@@ -351,7 +353,7 @@ so so::operator/(const double other) const
     return out;
 }
 
-so & so::operator/=(const double other)
+so& so::operator/=(const double other)
 {
     /*! \f{equation*}{ (\mathfrak{so}, \mathbb{RR}) \rightarrow \mathfrak{so} \f}
     *
@@ -362,7 +364,7 @@ so & so::operator/=(const double other)
     return *this;
 }
 
-so so::from_vector(const Eigen::VectorXd &other)
+so so::from_vector(const Eigen::VectorXd& other)
 {
     /*! \f{equation}{(\mathbb{R}^{n \times 1}) \rightarrow \mathfrak{so} \f}
     *
@@ -393,7 +395,7 @@ so so::from_vector(std::initializer_list<double> other)
     return so::from_vector(Eigen::VectorXd{std::move(other)});
 }
 
-Eigen::MatrixXd so::project(const Eigen::MatrixXd & other)
+Eigen::MatrixXd so::project(const Eigen::MatrixXd& other)
 {
     /*! \f{equation*}{ (\mathbb{R}^{n \times n}) \rightarrow \mathbb{R}^{n \times n} \in \mathfrak{so} \f}
     *
@@ -406,7 +408,7 @@ Eigen::MatrixXd so::project(const Eigen::MatrixXd & other)
     return (square_mat - square_mat.transpose())/2;
 }
 
-std::ostream & operator<<(std::ostream & os, const so & other)
+std::ostream& operator<<(std::ostream& os, const so& other)
 {
     /*!
     * Overloads the "<<" stream insertion operator.

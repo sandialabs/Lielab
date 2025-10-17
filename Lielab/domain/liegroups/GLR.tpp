@@ -12,7 +12,7 @@ namespace Lielab::domain
 {
 
 template<typename OtherDerived>
-GLR::GLR(const Eigen::MatrixBase<OtherDerived> & other)
+GLR::GLR(const Eigen::MatrixBase<OtherDerived>& other)
 {
     /*! \f{eqnarray*}{(\mathbb{R}^{n \times n}) &\rightarrow& GLR \\ (\mathbb{R}^{n \times 1}) &\rightarrow& GLR \f}
     *
@@ -34,7 +34,7 @@ GLR::GLR(const Eigen::MatrixBase<OtherDerived> & other)
 }
 
 template<typename OtherDerived>
-GLR & GLR::operator=(const Eigen::MatrixBase<OtherDerived> & other)
+GLR& GLR::operator=(const Eigen::MatrixBase<OtherDerived>& other)
 {
     /*! \f{eqnarray*}{ GLR &:= \mathbb{R}^{n \times n} \\ &:= \mathbb{R}^{n \times 1} \f}
     * 

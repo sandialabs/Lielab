@@ -5,6 +5,7 @@
 #include <pybind11/operators.h>
 #include <pybind11/functional.h>
 #include <pybind11/complex.h>
+#include <pybind11/native_enum.h>
 #include <pybind11/eigen.h>
 #include <pybind11/numpy.h>
 #include <pybind11/stl.h>
@@ -27,8 +28,8 @@ void bind_integrate(py::module &m_integrate)
 {
     m_integrate.def("get_butcher_tableau", &Lielab::integrate::get_butcher_tableau);
 
-    auto Lielab_integrate_Coefficients = py::enum_<Lielab::integrate::Coefficients>(m_integrate, "Coefficients");
-    Lielab_integrate_Coefficients.value("E1", Lielab::integrate::Coefficients::E1);
+    auto Lielab_integrate_Coefficients = py::native_enum<Lielab::integrate::Coefficients>(m_integrate, "Coefficients", "enum.Enum");
+    Lielab_integrate_Coefficients.value("FE1", Lielab::integrate::Coefficients::FE1);
     Lielab_integrate_Coefficients.value("RK3", Lielab::integrate::Coefficients::RK3);
     Lielab_integrate_Coefficients.value("RK4a", Lielab::integrate::Coefficients::RK4a);
     Lielab_integrate_Coefficients.value("RK4b", Lielab::integrate::Coefficients::RK4b);
@@ -57,6 +58,8 @@ void bind_integrate(py::module &m_integrate)
     Lielab_integrate_Coefficients.value("RKV98r", Lielab::integrate::Coefficients::RKV98r);
     Lielab_integrate_Coefficients.value("CG4a", Lielab::integrate::Coefficients::CG4a);
     Lielab_integrate_Coefficients.value("CG5a", Lielab::integrate::Coefficients::CG5a);
+    Lielab_integrate_Coefficients.value("BE1", Lielab::integrate::Coefficients::BE1);
+    Lielab_integrate_Coefficients.finalize();
     
     auto Lielab_integrate_ODESolution = py::class_<Lielab::integrate::ODESolution>(m_integrate, "ODESolution");
     Lielab_integrate_ODESolution.def_readwrite("success", &Lielab::integrate::ODESolution::success);
@@ -101,17 +104,20 @@ void bind_integrate(py::module &m_integrate)
         });
 
     
-    auto Lielab_integrate_RungeKuttaStatus = py::enum_<Lielab::integrate::RungeKuttaStatus>(m_integrate, "RungeKuttaStatus");
+    auto Lielab_integrate_RungeKuttaStatus = py::native_enum<Lielab::integrate::RungeKuttaStatus>(m_integrate, "RungeKuttaStatus", "enum.Enum");
+    Lielab_integrate_RungeKuttaStatus.value("ERROR_MAX_ITER", Lielab::integrate::RungeKuttaStatus::ERROR_MAX_ITER);
+    Lielab_integrate_RungeKuttaStatus.value("ERROR_INF", Lielab::integrate::RungeKuttaStatus::ERROR_INF);
+    Lielab_integrate_RungeKuttaStatus.value("ERROR_NAN", Lielab::integrate::RungeKuttaStatus::ERROR_NAN);
     Lielab_integrate_RungeKuttaStatus.value("SUCCESS", Lielab::integrate::RungeKuttaStatus::SUCCESS);
-    Lielab_integrate_RungeKuttaStatus.value("DO_STEP0", Lielab::integrate::RungeKuttaStatus::DO_STEP0);
-    Lielab_integrate_RungeKuttaStatus.value("DO_STEP1", Lielab::integrate::RungeKuttaStatus::DO_STEP1);
+    Lielab_integrate_RungeKuttaStatus.value("DO_POSTPROCESS", Lielab::integrate::RungeKuttaStatus::DO_POSTPROCESS);
     Lielab_integrate_RungeKuttaStatus.value("ESTIMATE_ERROR", Lielab::integrate::RungeKuttaStatus::ESTIMATE_ERROR);
+    Lielab_integrate_RungeKuttaStatus.finalize();
 
     auto Lielab_integrate_RungeKutta = py::class_<Lielab::integrate::RungeKutta>(m_integrate, "RungeKutta");
     Lielab_integrate_RungeKutta.def_readwrite("status", &Lielab::integrate::RungeKutta::status);
-    Lielab_integrate_RungeKutta.def_readwrite("message", &Lielab::integrate::RungeKutta::message);
     Lielab_integrate_RungeKutta.def_readwrite("error_estimate", &Lielab::integrate::RungeKutta::error_estimate);
     Lielab_integrate_RungeKutta.def_readwrite("can_variable_step", &Lielab::integrate::RungeKutta::can_variable_step);
+    Lielab_integrate_RungeKutta.def_readwrite("implicit", &Lielab::integrate::RungeKutta::implicit);
     Lielab_integrate_RungeKutta.def_readwrite("order", &Lielab::integrate::RungeKutta::order);
     Lielab_integrate_RungeKutta.def_readwrite("A", &Lielab::integrate::RungeKutta::A);
     Lielab_integrate_RungeKutta.def_readwrite("B", &Lielab::integrate::RungeKutta::B);
@@ -121,21 +127,12 @@ void bind_integrate(py::module &m_integrate)
     Lielab_integrate_RungeKutta.def_readwrite("n", &Lielab::integrate::RungeKutta::n);
     Lielab_integrate_RungeKutta.def_readwrite("reltol", &Lielab::integrate::RungeKutta::reltol);
     Lielab_integrate_RungeKutta.def_readwrite("abstol", &Lielab::integrate::RungeKutta::abstol);
-    Lielab_integrate_RungeKutta.def_readwrite("stage", &Lielab::integrate::RungeKutta::stage);
-    Lielab_integrate_RungeKutta.def_readwrite("t0", &Lielab::integrate::RungeKutta::t0);
-    Lielab_integrate_RungeKutta.def_readwrite("dt", &Lielab::integrate::RungeKutta::dt);
     Lielab_integrate_RungeKutta.def_readwrite("K", &Lielab::integrate::RungeKutta::K);
-    Lielab_integrate_RungeKutta.def_readwrite("next_t", &Lielab::integrate::RungeKutta::next_t);
-    Lielab_integrate_RungeKutta.def_readwrite("next_theta", &Lielab::integrate::RungeKutta::next_theta);
-    Lielab_integrate_RungeKutta.def_readwrite("next_theta2", &Lielab::integrate::RungeKutta::next_theta2);
     
     Lielab_integrate_RungeKutta.def(py::init());
     Lielab_integrate_RungeKutta.def(py::init<Lielab::integrate::Coefficients>());
-    Lielab_integrate_RungeKutta.def("init", &Lielab::integrate::RungeKutta::init);
-    Lielab_integrate_RungeKutta.def("step_0", &Lielab::integrate::RungeKutta::step_0);
-    Lielab_integrate_RungeKutta.def("step_1", &Lielab::integrate::RungeKutta::step_1);
-    Lielab_integrate_RungeKutta.def("postprocess", &Lielab::integrate::RungeKutta::postprocess);
     Lielab_integrate_RungeKutta.def("estimate_error", &Lielab::integrate::RungeKutta::estimate_error);
+    Lielab_integrate_RungeKutta.def("__call__", &Lielab::integrate::RungeKutta::operator());
     Lielab_integrate_RungeKutta.def("__repr__",
         [](const Lielab::integrate::RungeKutta& self)
         {
@@ -147,14 +144,16 @@ void bind_integrate(py::module &m_integrate)
             return "<lielab.integrate.RungeKutta>";
         });
     
-    auto Lielab_integrate_IVPMethod = py::enum_<Lielab::integrate::IVPMethod>(m_integrate, "IVPMethod");
+    auto Lielab_integrate_IVPMethod = py::native_enum<Lielab::integrate::IVPMethod>(m_integrate, "IVPMethod", "enum.Enum");
     Lielab_integrate_IVPMethod.value("Undefined", Lielab::integrate::IVPMethod::Undefined);
     Lielab_integrate_IVPMethod.value("RungeKutta", Lielab::integrate::IVPMethod::RungeKutta);
     Lielab_integrate_IVPMethod.value("MuntheKaas", Lielab::integrate::IVPMethod::MuntheKaas);
+    Lielab_integrate_IVPMethod.finalize();
 
     auto Lielab_integrate_IVPOptions = py::class_<Lielab::integrate::IVPOptions>(m_integrate, "IVPOptions");
     Lielab_integrate_IVPOptions.def(py::init<>());
-    Lielab_integrate_IVPOptions.def_readwrite("dt_initial", &Lielab::integrate::IVPOptions::dt_initial);
+    Lielab_integrate_IVPOptions.def_readwrite("coefficients", &Lielab::integrate::IVPOptions::coefficients);
+    Lielab_integrate_IVPOptions.def_readwrite("dt", &Lielab::integrate::IVPOptions::dt);
     Lielab_integrate_IVPOptions.def_readwrite("dt_min", &Lielab::integrate::IVPOptions::dt_min);
     Lielab_integrate_IVPOptions.def_readwrite("dt_max", &Lielab::integrate::IVPOptions::dt_max);
     Lielab_integrate_IVPOptions.def_readwrite("reltol", &Lielab::integrate::IVPOptions::reltol);
@@ -164,15 +163,33 @@ void bind_integrate(py::module &m_integrate)
     Lielab_integrate_IVPOptions.def_readwrite("pessimist", &Lielab::integrate::IVPOptions::pessimist);
     Lielab_integrate_IVPOptions.def_readwrite("variable_time_step", &Lielab::integrate::IVPOptions::variable_time_step);
 
-    auto Lielab_integrate_RungeKuttaFlowStatus = py::enum_<Lielab::integrate::RungeKuttaFlowStatus>(m_integrate, "RungeKuttaFlowStatus");
+    auto Lielab_integrate_EuclideanIVPSystem = py::class_<Lielab::integrate::EuclideanIVPSystem>(m_integrate, "EuclideanIVPSystem");
+    Lielab_integrate_EuclideanIVPSystem.def(py::init<Lielab::integrate::EuclideanIVP_vectorfield_t>());
+    Lielab_integrate_EuclideanIVPSystem.def_readwrite("event", &Lielab::integrate::EuclideanIVPSystem::event);
+    Lielab_integrate_EuclideanIVPSystem.def_readwrite("vectorfield", &Lielab::integrate::EuclideanIVPSystem::vectorfield);
+
+    auto Lielab_integrate_HomogeneousIVPSystem = py::class_<Lielab::integrate::HomogeneousIVPSystem>(m_integrate, "HomogeneousIVPSystem");
+    Lielab_integrate_HomogeneousIVPSystem.def(py::init<Lielab::integrate::HomogeneousIVP_vectorfield_t>());
+    Lielab_integrate_HomogeneousIVPSystem.def_readwrite("action", &Lielab::integrate::HomogeneousIVPSystem::action);
+    Lielab_integrate_HomogeneousIVPSystem.def_readwrite("connection", &Lielab::integrate::HomogeneousIVPSystem::connection);
+    Lielab_integrate_HomogeneousIVPSystem.def_readwrite("coordinates", &Lielab::integrate::HomogeneousIVPSystem::coordinates);
+    Lielab_integrate_HomogeneousIVPSystem.def_readwrite("event", &Lielab::integrate::HomogeneousIVPSystem::event);
+    Lielab_integrate_HomogeneousIVPSystem.def_readwrite("vectorfield", &Lielab::integrate::HomogeneousIVPSystem::vectorfield);
+
+    auto Lielab_integrate_RungeKuttaFlowStatus = py::native_enum<Lielab::integrate::RungeKuttaFlowStatus>(m_integrate, "RungeKuttaFlowStatus", "enum.Enum");
     Lielab_integrate_RungeKuttaFlowStatus.value("ERROR_SMALL_DT", Lielab::integrate::RungeKuttaFlowStatus::ERROR_SMALL_DT);
     Lielab_integrate_RungeKuttaFlowStatus.value("ERROR_NEGATIVE_DT", Lielab::integrate::RungeKuttaFlowStatus::ERROR_NEGATIVE_DT);
-    Lielab_integrate_RungeKuttaFlowStatus.value("ERROR_SUCCEEDED_BUT_TOL_THO", Lielab::integrate::RungeKuttaFlowStatus::ERROR_SUCCEEDED_BUT_TOL_THO);
     Lielab_integrate_RungeKuttaFlowStatus.value("ERROR_MAX_ITERATIONS", Lielab::integrate::RungeKuttaFlowStatus::ERROR_MAX_ITERATIONS);
     Lielab_integrate_RungeKuttaFlowStatus.value("ERROR_INPUT", Lielab::integrate::RungeKuttaFlowStatus::ERROR_INPUT);
+    Lielab_integrate_RungeKuttaFlowStatus.value("ERROR_INF", Lielab::integrate::RungeKuttaFlowStatus::ERROR_INF);
+    Lielab_integrate_RungeKuttaFlowStatus.value("ERROR_NAN", Lielab::integrate::RungeKuttaFlowStatus::ERROR_NAN);
     Lielab_integrate_RungeKuttaFlowStatus.value("SUCCESS", Lielab::integrate::RungeKuttaFlowStatus::SUCCESS);
     Lielab_integrate_RungeKuttaFlowStatus.value("DO_STEP0", Lielab::integrate::RungeKuttaFlowStatus::DO_STEP0);
     Lielab_integrate_RungeKuttaFlowStatus.value("DO_STEP1", Lielab::integrate::RungeKuttaFlowStatus::DO_STEP1);
+    Lielab_integrate_RungeKuttaFlowStatus.value("SUCCESS_EVENT", Lielab::integrate::RungeKuttaFlowStatus::SUCCESS_EVENT);
+    Lielab_integrate_RungeKuttaFlowStatus.value("SUCCESS_BUT_TOL_THO", Lielab::integrate::RungeKuttaFlowStatus::SUCCESS_BUT_TOL_THO);
+    Lielab_integrate_RungeKuttaFlowStatus.value("SUCCESS_EVENT_BUT_TOL_THO", Lielab::integrate::RungeKuttaFlowStatus::SUCCESS_EVENT_BUT_TOL_THO);
+    Lielab_integrate_RungeKuttaFlowStatus.finalize();
 
     auto Lielab_integrate_RungeKuttaFlow = py::class_<Lielab::integrate::RungeKuttaFlow>(m_integrate, "RungeKuttaFlow");
     Lielab_integrate_RungeKuttaFlow.def_readwrite("small", &Lielab::integrate::RungeKuttaFlow::small);
@@ -181,7 +198,10 @@ void bind_integrate(py::module &m_integrate)
     Lielab_integrate_RungeKuttaFlow.def_readwrite("dt_min", &Lielab::integrate::RungeKuttaFlow::dt_min);
     Lielab_integrate_RungeKuttaFlow.def_readwrite("dt_max", &Lielab::integrate::RungeKuttaFlow::dt_max);
     Lielab_integrate_RungeKuttaFlow.def_readwrite("dt", &Lielab::integrate::RungeKuttaFlow::dt);
+    Lielab_integrate_RungeKuttaFlow.def_readwrite("reltol", &Lielab::integrate::RungeKuttaFlow::reltol);
+    Lielab_integrate_RungeKuttaFlow.def_readwrite("abstol", &Lielab::integrate::RungeKuttaFlow::abstol);
     Lielab_integrate_RungeKuttaFlow.def_readwrite("variable_time_step", &Lielab::integrate::RungeKuttaFlow::variable_time_step);
+    Lielab_integrate_RungeKuttaFlow.def_readwrite("tolerance_not_met", &Lielab::integrate::RungeKuttaFlow::tolerance_not_met);
     Lielab_integrate_RungeKuttaFlow.def_readwrite("has_event", &Lielab::integrate::RungeKuttaFlow::has_event);
     Lielab_integrate_RungeKuttaFlow.def_readwrite("event_current", &Lielab::integrate::RungeKuttaFlow::event_current);
     Lielab_integrate_RungeKuttaFlow.def_readwrite("event_next", &Lielab::integrate::RungeKuttaFlow::event_next);
@@ -190,7 +210,6 @@ void bind_integrate(py::module &m_integrate)
     Lielab_integrate_RungeKuttaFlow.def("init", &Lielab::integrate::RungeKuttaFlow::init);
     Lielab_integrate_RungeKuttaFlow.def("step0", &Lielab::integrate::RungeKuttaFlow::step0);
     Lielab_integrate_RungeKuttaFlow.def("step1", &Lielab::integrate::RungeKuttaFlow::step1);
-    Lielab_integrate_RungeKuttaFlow.def("stepE", &Lielab::integrate::RungeKuttaFlow::stepE);
     Lielab_integrate_RungeKuttaFlow.def("postprocess", &Lielab::integrate::RungeKuttaFlow::postprocess);
     Lielab_integrate_RungeKuttaFlow.def_readwrite("_tcurrent", &Lielab::integrate::RungeKuttaFlow::_tcurrent);
     Lielab_integrate_RungeKuttaFlow.def_readwrite("_ycurrent", &Lielab::integrate::RungeKuttaFlow::_ycurrent);
@@ -199,6 +218,8 @@ void bind_integrate(py::module &m_integrate)
     
     Lielab_integrate_RungeKuttaFlow.def_readwrite("_out", &Lielab::integrate::RungeKuttaFlow::_out);
     Lielab_integrate_RungeKuttaFlow.def_readwrite("method", &Lielab::integrate::RungeKuttaFlow::method);
+    Lielab_integrate_RungeKuttaFlow.def_readwrite("search", &Lielab::integrate::RungeKuttaFlow::search);
+    Lielab_integrate_RungeKuttaFlow.def("__call__", &Lielab::integrate::RungeKuttaFlow::operator());
     Lielab_integrate_RungeKuttaFlow.def("__repr__",
         [](const Lielab::integrate::RungeKuttaFlow & self)
         {
@@ -209,4 +230,7 @@ void bind_integrate(py::module &m_integrate)
         {
             return "<lielab.integrate.RungeKuttaFlow>";
         });
+    
+    m_integrate.def("solve_ivp", py::overload_cast<const Lielab::integrate::EuclideanIVPSystem&, const Eigen::VectorXd&, const Eigen::VectorXd&, const Lielab::integrate::IVPOptions>(&Lielab::integrate::solve_ivp), py::arg("dynamics"), py::arg("tspan"), py::arg("y0"), py::arg("options") = Lielab::integrate::IVPOptions());
+    m_integrate.def("solve_ivp", py::overload_cast<const Lielab::integrate::HomogeneousIVPSystem&, const Eigen::VectorXd&, const Lielab::domain::CompositeManifold&, const Lielab::integrate::IVPOptions>(&Lielab::integrate::solve_ivp), py::arg("dynamics"), py::arg("tspan"), py::arg("y0"), py::arg("options") = Lielab::integrate::IVPOptions());
 }

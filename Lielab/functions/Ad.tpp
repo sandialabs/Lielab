@@ -13,33 +13,33 @@ namespace Lielab::functions
 {
 
 template <typename LA>
-Lielab::domain::GLR Ad_numerical(const LA & a)
+Lielab::domain::GLR Ad_numerical(const LA& a)
 {
     const Lielab::domain::glr ada = Lielab::functions::ad_numerical<LA>(a);
     return Lielab::functions::exp_numerical<Lielab::domain::glr>(ada);
 }
 
 template <typename LA>
-Lielab::domain::GLR Ad(const LA & a)
+Lielab::domain::GLR Ad(const LA& a)
 {
     const Lielab::domain::glr ada = Lielab::functions::ad<LA>(a);
     return Lielab::functions::exp<Lielab::domain::glr>(ada);
 }
 
 // template <typename LG>
-// Lielab::domain::GLR Ad_numerical(const LG & A)
+// Lielab::domain::GLR Ad_numerical(const LG& A)
 // {
 //     // TODO:
 // }
 
 // template <typename LG>
-// Lielab::domain::GLR Ad(const LG & A)
+// Lielab::domain::GLR Ad(const LG& A)
 // {
 //     // TODO:
 // }
 
 template <typename LA>
-LA Ad(const LA & a, const LA & b)
+LA Ad(const LA& a, const LA& b)
 {
     /*! \f{equation*}{ (\mathfrak{g}, \mathfrak{g}) \rightarrow \mathfrak{g} \f}
     * 
@@ -64,7 +64,7 @@ LA Ad(const LA & a, const LA & b)
 }
 
 template <typename LA>
-LA Ad(const Lielab::domain::LieIII<LA> & A, const LA & b)
+LA Ad(const Lielab::domain::LieIII<LA>& A, const LA& b)
 {
     /*! \f{equation*}{ (G, \mathfrak{g}) \rightarrow \mathfrak{g} \f}
     * 

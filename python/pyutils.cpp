@@ -24,6 +24,8 @@ void bind_utils(py::module &m_utils)
 {
     m_utils.def("factorial", &Lielab::utils::factorial, "The factorial function");
 
+    m_utils.def("bernoulli", &Lielab::utils::bernoulli, "The bernoulli function.");
+
     auto Lielab_utils_golden = py::class_<Lielab::utils::opt_golden>(m_utils, "opt_golden");
     Lielab_utils_golden.def(py::init());
     Lielab_utils_golden.def("init", &Lielab::utils::opt_golden::init);
@@ -61,7 +63,8 @@ void bind_utils(py::module &m_utils)
     Lielab_utils_newton.def_readwrite("fnext", &Lielab::utils::newton::fnext);
     Lielab_utils_newton.def_readwrite("m", &Lielab::utils::newton::m);
     Lielab_utils_newton.def_readwrite("mnext", &Lielab::utils::newton::mnext);
-
+    
+    // Eigentools
     m_utils.def("concatenate", py::overload_cast<const std::vector<Eigen::VectorXi>&>(&Lielab::utils::concatenate<int>));
     m_utils.def("concatenate", py::overload_cast<const std::vector<Eigen::VectorXd>&>(&Lielab::utils::concatenate<double>));
 
@@ -77,7 +80,12 @@ void bind_utils(py::module &m_utils)
     m_utils.def("tile", py::overload_cast<const Eigen::VectorXd&, const ptrdiff_t>(&Lielab::utils::tile<double>));
 
     m_utils.def("linspace", py::overload_cast<const double, const double, const ptrdiff_t>(&Lielab::utils::linspace<double>));
+    m_utils.def("logspace", py::overload_cast<const double, const double, const ptrdiff_t>(&Lielab::utils::logspace<double>));
 
     m_utils.def("column_stack", py::overload_cast<const std::vector<Eigen::VectorXi>&>(&Lielab::utils::column_stack<int>));
     m_utils.def("column_stack", py::overload_cast<const std::vector<Eigen::VectorXd>&>(&Lielab::utils::column_stack<double>));
+
+    m_utils.def("vertical_stack", py::overload_cast<const std::vector<Eigen::MatrixXd>&>(&Lielab::utils::vertical_stack<double>));
+
+    m_utils.def("linear_interpolate", py::overload_cast<const Eigen::VectorXd&, const Eigen::VectorXd&, const Eigen::MatrixXd&>(&Lielab::utils::linear_interpolate<double>));
 }

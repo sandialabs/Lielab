@@ -34,14 +34,15 @@ class LieAlgebra
     ~LieAlgebra();
 
     // Object information
-    virtual size_t get_shape() const;
     virtual size_t get_dimension() const = 0;
+    virtual size_t get_shape() const;
 
     // Object IO and data manipulation
     virtual data_t get_data() const;
     virtual matrix_t get_matrix() const = 0;
     virtual Eigen::VectorXd get_vector() const = 0;
-    virtual void set_vector(const Eigen::VectorXd &vec) = 0;
+    virtual void set_vector(const Eigen::VectorXd& vec) = 0;
+    // virtual void set_vector(std::initializer_list<double> vec) = 0;
 
     // operator() and []'s here
 

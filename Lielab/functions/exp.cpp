@@ -9,7 +9,7 @@ namespace Lielab::functions
 {
 
 template<>
-Lielab::domain::CN exp(const Lielab::domain::cn & la)
+Lielab::domain::CN exp(const Lielab::domain::cn& la)
 {
     /*! \f{equation*}{ (\mathfrak{cn}) \rightarrow CN \f}
     
@@ -28,7 +28,7 @@ Lielab::domain::CN exp(const Lielab::domain::cn & la)
 }
 
 template<>
-Lielab::domain::GLR exp(const Lielab::domain::glr & x)
+Lielab::domain::GLR exp(const Lielab::domain::glr& x)
 {
     /*! \f{equation*}{ (\mathfrak{glr}) \rightarrow GLR \f}
     
@@ -98,7 +98,7 @@ Lielab::domain::GLR exp(const Lielab::domain::glr & x)
 }
 
 template<>
-Lielab::domain::GLC exp(const Lielab::domain::glc & x)
+Lielab::domain::GLC exp(const Lielab::domain::glc& x)
 {
     /*! \f{equation*}{ (\mathfrak{glc}) \rightarrow GLC \f}
     
@@ -159,7 +159,7 @@ Lielab::domain::GLC exp(const Lielab::domain::glc & x)
 }
 
 template<>
-Lielab::domain::RN exp(const Lielab::domain::rn & la)
+Lielab::domain::RN exp(const Lielab::domain::rn& la)
 {
     /*! \f{equation*}{ (\mathfrak{rn}) \rightarrow RN \f}
     
@@ -178,86 +178,7 @@ Lielab::domain::RN exp(const Lielab::domain::rn & la)
 }
 
 template<>
-Lielab::domain::SO exp(const Lielab::domain::so & x)
-{
-    /*! \f{equation*}{ (\mathfrak{so}) \rightarrow SO \f}
-    
-    Exponential function overload for \f$\mathfrak{so}\f$.
-
-    For \f$x \in \mathfrak{so}(2)\f$, this uses:
-
-    \f{equation*}{\theta = \Vert x \Vert\f}
-
-    \f{equation*}{\exp(x) = \begin{bmatrix}
-    \cos \theta & - \sin \theta \\
-    \sin \theta & \cos \theta
-    \end{bmatrix} \f}
-
-    For \f$x \in \mathfrak{so}(3)\f$, this uses the Euler-Rodriguez formula [1]:
-
-    \f{equation*}{\theta = \Vert x \Vert, \; v = \frac{\theta}{2} \f}
-
-    \f{equation*}{\exp(x) = \mathbf{I} + \frac{\sin(\theta)}{\theta}\hat{x} + \frac{1}{2}\frac{\sin^2(v)}{v^2}\hat{x}^2 \f}
-    
-    For \f$x \in \mathfrak{so}(4+)\f$, this uses the numerical procedure.
-
-    Arguments
-    ---------
-    @param[in] x An instance of so
-    @param[out] out An instance of SO
-
-    References
-    ----------
-    [1] Arieh Iserles, Hans Z Munthe-Kaas, Syvert P Nørsett, and Antonella
-        Zanna. Lie-group methods. Acta numerica, 9:215–365, 2000
-
-    */
-
-    const size_t shape = x.get_shape();
-
-    if (shape == 2)
-    {
-        const Eigen::VectorXd v = x.get_vector();
-        const double st = std::sin(v(0));
-        const double ct = std::cos(v(0));
-        Eigen::MatrixXd outdata = Eigen::MatrixXd::Zero(2, 2);
-        outdata(0, 0) = ct;
-        outdata(0, 1) = -st;
-        outdata(1, 0) = st;
-        outdata(1, 1) = ct;
-        return Lielab::domain::SO(outdata);
-    }
-
-    if (shape == 3)
-    {
-        // Euler-Rodrigues formula for so(3). Source: Iserles
-        const Eigen::Vector3d xbar = x.get_vector();
-        const Eigen::MatrixXd xhat = x.get_matrix();
-        const Eigen::MatrixXd xhat2 = xhat*xhat;
-        const Eigen::MatrixXd I = Eigen::MatrixXd::Identity(3, 3);
-
-        const double theta = std::sqrt(std::pow(xbar(0), 2.0) + std::pow(xbar(1), 2.0) + std::pow(xbar(2), 2.0));
-        const double v = theta/2.0;
-        const double v2 = std::pow(v, 2.0);
-
-        double c1 = std::sin(theta)/theta;
-        double c2 = 1.0/2.0*std::pow(std::sin(v), 2.0)/(v2);
-
-        if (std::abs(theta) <= 1e-14)
-        {
-            c1 = 1.0;
-            c2 = 0.5;
-        }
-
-        const Eigen::MatrixXd data = I + c1*xhat + c2*xhat2;
-        return Lielab::domain::SO(data);
-    }
-
-    return exp_numerical(x);
-}
-
-template<>
-Lielab::domain::SE exp(const Lielab::domain::se & y)
+Lielab::domain::SE exp(const Lielab::domain::se& y)
 {
     /*! \f{equation*}{ (\mathfrak{se}) \rightarrow SE \f}
     
@@ -389,49 +310,130 @@ Lielab::domain::SE exp(const Lielab::domain::se & y)
     return exp_numerical(y);
 }
 
+template<>
+Lielab::domain::SO exp(const Lielab::domain::so& x)
+{
+    /*! \f{equation*}{ (\mathfrak{so}) \rightarrow SO \f}
+    
+    Exponential function overload for \f$\mathfrak{so}\f$.
+
+    For \f$x \in \mathfrak{so}(2)\f$, this uses:
+
+    \f{equation*}{\theta = \Vert x \Vert\f}
+
+    \f{equation*}{\exp(x) = \begin{bmatrix}
+    \cos \theta & - \sin \theta \\
+    \sin \theta & \cos \theta
+    \end{bmatrix} \f}
+
+    For \f$x \in \mathfrak{so}(3)\f$, this uses the Euler-Rodriguez formula [1]:
+
+    \f{equation*}{\theta = \Vert x \Vert, \; v = \frac{\theta}{2} \f}
+
+    \f{equation*}{\exp(x) = \mathbf{I} + \frac{\sin(\theta)}{\theta}\hat{x} + \frac{1}{2}\frac{\sin^2(v)}{v^2}\hat{x}^2 \f}
+    
+    For \f$x \in \mathfrak{so}(4+)\f$, this uses the numerical procedure.
+
+    Arguments
+    ---------
+    @param[in] x An instance of so
+    @param[out] out An instance of SO
+
+    References
+    ----------
+    [1] Arieh Iserles, Hans Z Munthe-Kaas, Syvert P Nørsett, and Antonella
+        Zanna. Lie-group methods. Acta numerica, 9:215–365, 2000
+
+    */
+
+    const size_t shape = x.get_shape();
+
+    if (shape == 2)
+    {
+        const Eigen::VectorXd v = x.get_vector();
+        const double st = std::sin(v(0));
+        const double ct = std::cos(v(0));
+        Eigen::MatrixXd outdata = Eigen::MatrixXd::Zero(2, 2);
+        outdata(0, 0) = ct;
+        outdata(0, 1) = -st;
+        outdata(1, 0) = st;
+        outdata(1, 1) = ct;
+        return Lielab::domain::SO(outdata);
+    }
+
+    if (shape == 3)
+    {
+        // Euler-Rodrigues formula for so(3). Source: Iserles
+        const Eigen::Vector3d xbar = x.get_vector();
+        const Eigen::MatrixXd xhat = x.get_matrix();
+        const Eigen::MatrixXd xhat2 = xhat*xhat;
+        const Eigen::MatrixXd I = Eigen::MatrixXd::Identity(3, 3);
+
+        const double theta = std::sqrt(std::pow(xbar(0), 2.0) + std::pow(xbar(1), 2.0) + std::pow(xbar(2), 2.0));
+        const double v = theta/2.0;
+        const double v2 = std::pow(v, 2.0);
+
+        double c1 = std::sin(theta)/theta;
+        double c2 = 1.0/2.0*std::pow(std::sin(v), 2.0)/(v2);
+
+        if (std::abs(theta) <= 1e-14)
+        {
+            c1 = 1.0;
+            c2 = 0.5;
+        }
+
+        const Eigen::MatrixXd data = I + c1*xhat + c2*xhat2;
+        return Lielab::domain::SO(data);
+    }
+
+    return exp_numerical(x);
+}
+
 template <>
-Lielab::domain::CompositeGroup exp(const Lielab::domain::CompositeAlgebra & la)
+Lielab::domain::CompositeGroup exp(const Lielab::domain::CompositeAlgebra& la)
 {
     /*!
     * CompositeAlgebra exponential overload.
     */
+    
+    using namespace Lielab::domain;
 
-    Lielab::domain::CompositeGroup out;
+    CompositeGroup out;
 
     for (size_t ii = 0; ii < la.space.size(); ii++)
     {
         const size_t ind = la.space[ii].index();
-        if (ind == Lielab::domain::CompositeAlgebra::INDEX_cn)
+        if (ind == CompositeAlgebra::INDEX_cn)
         {
-            out.space.push_back(Lielab::functions::exp(std::get<Lielab::domain::cn>(la.space[ii])));
+            out.space.push_back(Lielab::functions::exp(std::get<cn>(la.space[ii])));
         }
-        else if (ind == Lielab::domain::CompositeAlgebra::INDEX_glr)
+        else if (ind == CompositeAlgebra::INDEX_glr)
         {
-            out.space.push_back(Lielab::functions::exp(std::get<Lielab::domain::glr>(la.space[ii])));
+            out.space.push_back(Lielab::functions::exp(std::get<glr>(la.space[ii])));
         }
-        else if (ind == Lielab::domain::CompositeAlgebra::INDEX_glc)
+        else if (ind == CompositeAlgebra::INDEX_glc)
         {
-            out.space.push_back(Lielab::functions::exp(std::get<Lielab::domain::glc>(la.space[ii])));
+            out.space.push_back(Lielab::functions::exp(std::get<glc>(la.space[ii])));
         }
-        else if (ind == Lielab::domain::CompositeAlgebra::INDEX_rn)
+        else if (ind == CompositeAlgebra::INDEX_rn)
         {
-            out.space.push_back(Lielab::functions::exp(std::get<Lielab::domain::rn>(la.space[ii])));
+            out.space.push_back(Lielab::functions::exp(std::get<rn>(la.space[ii])));
         }
-        else if (ind == Lielab::domain::CompositeAlgebra::INDEX_se)
+        else if (ind == CompositeAlgebra::INDEX_se)
         {
-            out.space.push_back(Lielab::functions::exp(std::get<Lielab::domain::se>(la.space[ii])));
+            out.space.push_back(Lielab::functions::exp(std::get<se>(la.space[ii])));
         }
-        else if (ind == Lielab::domain::CompositeAlgebra::INDEX_so)
+        else if (ind == CompositeAlgebra::INDEX_so)
         {
-            out.space.push_back(Lielab::functions::exp(std::get<Lielab::domain::so>(la.space[ii])));
+            out.space.push_back(Lielab::functions::exp(std::get<so>(la.space[ii])));
         }
-        else if (ind == Lielab::domain::CompositeAlgebra::INDEX_sp)
+        else if (ind == CompositeAlgebra::INDEX_sp)
         {
-            out.space.push_back(Lielab::functions::exp(std::get<Lielab::domain::sp>(la.space[ii])));
+            out.space.push_back(Lielab::functions::exp(std::get<sp>(la.space[ii])));
         }
-        else if (ind == Lielab::domain::CompositeAlgebra::INDEX_su)
+        else if (ind == CompositeAlgebra::INDEX_su)
         {
-            out.space.push_back(Lielab::functions::exp(std::get<Lielab::domain::su>(la.space[ii])));
+            out.space.push_back(Lielab::functions::exp(std::get<su>(la.space[ii])));
         }
     }
 

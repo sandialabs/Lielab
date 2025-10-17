@@ -7,6 +7,8 @@
 #include <Eigen/Core>
 #include <unsupported/Eigen/MatrixFunctions>
 
+#include <cassert>
+
 namespace Lielab::domain
 {
 
@@ -230,7 +232,7 @@ double glr::operator()(const ptrdiff_t index1, const ptrdiff_t index2) const
     return this->data(_index1, _index2);
 }
 
-glr glr::operator+(const glr & other) const
+glr glr::operator+(const glr& other) const
 {
     /*! \f{equation*}{ (\mathfrak{glr}, \mathfrak{glr}) \rightarrow \mathfrak{glr} \f}
     *
@@ -246,7 +248,7 @@ glr glr::operator+(const glr & other) const
     return glr(new_matrix);
 }
 
-glr & glr::operator+=(const glr & other)
+glr& glr::operator+=(const glr& other)
 {
     /*! \f{equation*}{ (\mathfrak{glr}, \mathfrak{glr}) \rightarrow \mathfrak{glr} \f}
     *
@@ -258,7 +260,7 @@ glr & glr::operator+=(const glr & other)
     return *this;
 }
 
-glr glr::operator-(const glr & other) const
+glr glr::operator-(const glr& other) const
 {
     /*! \f{equation*}{ (\mathfrak{glr}, \mathfrak{glr}) \rightarrow \mathfrak{glr} \f}
     *
@@ -274,7 +276,7 @@ glr glr::operator-(const glr & other) const
     return glr(new_matrix);
 }
 
-glr & glr::operator-=(const glr & other)
+glr& glr::operator-=(const glr& other)
 {
     /*! \f{equation*}{ (\mathfrak{glr}, \mathfrak{glr}) \rightarrow \mathfrak{glr} \f}
     *
@@ -306,7 +308,7 @@ glr glr::operator*(const double other) const
     return this->data * other;
 }
 
-glr operator*(const double other, const glr & rhs)
+glr operator*(const double other, const glr& rhs)
 {
     /*! \f{equation*}{ (\mathbb{R}, \mathfrak{glr}) \rightarrow \mathfrak{glr} \f}
     *
@@ -316,7 +318,7 @@ glr operator*(const double other, const glr & rhs)
     return rhs*other;
 }
 
-glr & glr::operator*=(const double other)
+glr& glr::operator*=(const double other)
 {
     /*! \f{equation*}{ (\mathfrak{glr}, \mathbb{R}) \rightarrow \mathfrak{glr} \f}
     *
@@ -337,7 +339,7 @@ glr glr::operator/(const double other) const
     return this->data / other;
 }
 
-glr & glr::operator/=(const double other)
+glr& glr::operator/=(const double other)
 {
     /*! \f{equation*}{ (\mathfrak{glr}, \mathbb{R}) \rightarrow \mathfrak{glr} \f}
     *
@@ -348,7 +350,7 @@ glr & glr::operator/=(const double other)
     return *this;
 }
 
-glr glr::from_vector(const Eigen::VectorXd &other)
+glr glr::from_vector(const Eigen::VectorXd& other)
 {
     /*! \f{equation}{(\mathbb{R}^{n \times 1}) \rightarrow \mathfrak{glr} \f}
     *
@@ -390,7 +392,7 @@ Eigen::MatrixXd glr::project(const Eigen::MatrixXd& other)
 }
 
 
-std::ostream& operator<<(std::ostream & os, const glr & other)
+std::ostream& operator<<(std::ostream& os, const glr& other)
 {
     /*!
     * Overloads the "<<" stream insertion operator.

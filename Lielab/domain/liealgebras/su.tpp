@@ -14,7 +14,7 @@ namespace Lielab::domain
 {
 
 template<typename OtherDerived>
-su::su(const Eigen::MatrixBase<OtherDerived> & other)
+su::su(const Eigen::MatrixBase<OtherDerived>& other)
 {
     /*! \f{equation}{ (\mathbb{C}^{n \times n}) \rightarrow \mathfrak{su} \f}
     *

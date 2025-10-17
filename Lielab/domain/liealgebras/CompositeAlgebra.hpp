@@ -41,14 +41,14 @@ class CompositeAlgebra : public LieAlgebra<std::complex<double>>
     static constexpr size_t INDEX_sp  = 6;
     static constexpr size_t INDEX_su  = 7;
 
-    typedef std::variant<Lielab::domain::cn,
-                         Lielab::domain::glr,
-                         Lielab::domain::glc,
-                         Lielab::domain::rn,
-                         Lielab::domain::se,
-                         Lielab::domain::so,
-                         Lielab::domain::sp,
-                         Lielab::domain::su> TYPES;
+    typedef std::variant<cn,
+                         glr,
+                         glc,
+                         rn,
+                         se,
+                         so,
+                         sp,
+                         su> TYPES;
 
     std::vector<TYPES> space;
 
@@ -64,17 +64,17 @@ class CompositeAlgebra : public LieAlgebra<std::complex<double>>
     CompositeAlgebra(const std::vector<TYPES>& others);
 
     // Object information
-    size_t get_dimension() const;
+    size_t get_dimension() const override;
     std::vector<size_t> get_dimensions() const;
-    size_t get_shape() const;
+    size_t get_shape() const override;
     std::vector<size_t> get_shapes() const;
 
     // Object IO and data manipulation
-    CompositeAlgebra::matrix_t get_matrix() const;
+    CompositeAlgebra::matrix_t get_matrix() const override;
     // TODO: std::vector<Eigen::MatrixBase> get_matrices() (plural)
-    Eigen::VectorXd get_vector() const;
+    Eigen::VectorXd get_vector() const override;
     std::vector<Eigen::VectorXd> get_vectors() const;
-    void set_vector(const Eigen::VectorXd& vec);
+    void set_vector(const Eigen::VectorXd& vec) override;
     void set_vector(std::initializer_list<double> vec);
     // TODO: set_vectors() (plural)
 
@@ -83,21 +83,21 @@ class CompositeAlgebra : public LieAlgebra<std::complex<double>>
     TYPES operator[](const ptrdiff_t index) const;
 
     // Lie Algebra math ops
-    CompositeAlgebra operator+(const CompositeAlgebra & other) const;
-    CompositeAlgebra & operator+=(const CompositeAlgebra & other);
-    CompositeAlgebra operator-(const CompositeAlgebra & other) const;
-    CompositeAlgebra & operator-=(const CompositeAlgebra & other);
+    CompositeAlgebra operator+(const CompositeAlgebra& other) const;
+    CompositeAlgebra& operator+=(const CompositeAlgebra& other);
+    CompositeAlgebra operator-(const CompositeAlgebra& other) const;
+    CompositeAlgebra& operator-=(const CompositeAlgebra& other);
     CompositeAlgebra operator-() const;
     CompositeAlgebra operator*(const double other) const;
-    friend CompositeAlgebra operator*(const double other, const CompositeAlgebra & rhs);
-    CompositeAlgebra & operator*=(const double other);
+    friend CompositeAlgebra operator*(const double other, const CompositeAlgebra& rhs);
+    CompositeAlgebra& operator*=(const double other);
     CompositeAlgebra operator/(const double other) const;
-    CompositeAlgebra & operator/=(const double other);
+    CompositeAlgebra& operator/=(const double other);
 
-    friend std::ostream & operator<<(std::ostream & os, const CompositeAlgebra & other);
+    friend std::ostream& operator<<(std::ostream& os, const CompositeAlgebra& other);
 };
 
-// inline std::ostream & operator<<(std::ostream & os, const CompositeAlgebra & other)
+// inline std::ostream& operator<<(std::ostream& os, const CompositeAlgebra& other)
 // {
 //     /*!
 //     * Overloads the "<<" stream insertion operator.
@@ -107,7 +107,7 @@ class CompositeAlgebra : public LieAlgebra<std::complex<double>>
 //     return os;
 // }
 
-// inline CompositeAlgebra operator*(const double other, const CompositeAlgebra & rhs)
+// inline CompositeAlgebra operator*(const double other, const CompositeAlgebra& rhs)
 // {
 //     // TODO: Get rid of inline
 //     return rhs*other;

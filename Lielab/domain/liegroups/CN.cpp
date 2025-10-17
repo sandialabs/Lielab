@@ -3,8 +3,20 @@
 #include <Eigen/Core>
 #include <unsupported/Eigen/MatrixFunctions>
 
+#include <cassert>
+
 namespace Lielab::domain
 {
+
+bool CN::is_abelian() const
+{
+    return true;
+}
+
+bool CN::is_complex() const
+{
+    return true;
+}
 
 std::string CN::to_string() const
 {
@@ -94,7 +106,7 @@ size_t CN::get_size() const
     return 2*(this->_shape - 1);
 }
 
-Eigen::MatrixXcd CN::get_matrix() const
+CN::matrix_t CN::get_matrix() const
 {
     /*! \f{equation*}{ () \rightarrow \mathbb{C}^{n \times n} \f}
     * 
@@ -110,7 +122,7 @@ Eigen::MatrixXcd CN::get_matrix() const
     *               Matematicheskikh Nauk 2.6 (1947): 159-173.
     */
 
-    Eigen::MatrixXcd out = Eigen::MatrixXcd::Identity(this->_shape, this->_shape);
+    CN::matrix_t out = CN::matrix_t::Identity(this->_shape, this->_shape);
 
     if (this->_shape == 0) return out;
 
@@ -218,7 +230,7 @@ double CN::operator()(const ptrdiff_t index) const
     return this->data(_index/2).imag();
 }
 
-// std::complex<double> & CN::operator()(const size_t index)
+// std::complex<double>& CN::operator()(const size_t index)
 // {
 //     /*! \f{equation*}{ CN(\mathbb{Z}) := \mathbb{C} \f}
 //     *
@@ -297,7 +309,7 @@ std::complex<double> CN::operator[](const ptrdiff_t index) const
     return this->data(_index);
 }
 
-CN CN::operator*(const CN & other) const
+CN CN::operator*(const CN& other) const
 {
     /*! \f{equation*}{ (CN, CN) \rightarrow CN \f}
     *
@@ -309,7 +321,7 @@ CN CN::operator*(const CN & other) const
     return CN::from_complex_vector(this->data + other.data);
 }
 
-CN & CN::operator*=(const CN & other)
+CN& CN::operator*=(const CN& other)
 {
     /*! \f{equation*}{ (CN, CN) \rightarrow CN \f}
     *
@@ -352,7 +364,7 @@ CN CN::from_vector(std::initializer_list<double> vector)
     return CN::from_vector(Eigen::VectorXd{std::move(vector)});
 }
 
-CN CN::from_complex_vector(const Eigen::VectorXcd &other)
+CN CN::from_complex_vector(const Eigen::VectorXcd& other)
 {
     /*! \f{equation}{(\mathbb{C}^{n \times 1}) \rightarrow \mathfrak{CN} \f}
     *
@@ -391,7 +403,7 @@ Eigen::VectorXcd CN::to_complex_vector() const
     return Eigen::VectorXcd(this->data);
 }
 
-Eigen::MatrixXcd CN::project(const Eigen::MatrixXcd & other)
+Eigen::MatrixXcd CN::project(const Eigen::MatrixXcd& other)
 {
     /*! \f{equation*}{ (\mathbb{C}^{n \times n}) \rightarrow \mathbb{C}^{n \times n} \in CN \f}
     *
@@ -410,7 +422,7 @@ Eigen::MatrixXcd CN::project(const Eigen::MatrixXcd & other)
     return out;
 }
 
-std::ostream & operator<<(std::ostream& os, const CN & other)
+std::ostream& operator<<(std::ostream& os, const CN& other)
 {
     /*!
     * Overloads the "<<" stream insertion operator.

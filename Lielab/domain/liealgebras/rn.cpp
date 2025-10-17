@@ -7,6 +7,8 @@
 #include <Eigen/Core>
 #include <unsupported/Eigen/MatrixFunctions>
 
+#include <cassert>
+
 namespace Lielab::domain
 {
 
@@ -233,7 +235,7 @@ double rn::operator()(const ptrdiff_t index1, const ptrdiff_t index2) const
     return this->data(_index1);
 }
 
-rn rn::operator+(const rn & other) const
+rn rn::operator+(const rn& other) const
 {
     /*! \f{equation*}{ (\mathfrak{rn}, \mathfrak{rn}) \rightarrow \mathfrak{rn} \f}
     *
@@ -246,7 +248,7 @@ rn rn::operator+(const rn & other) const
     return rn::from_vector(new_vector);
 }
 
-rn & rn::operator+=(const rn & other)
+rn& rn::operator+=(const rn& other)
 {
     /*! \f{equation*}{ (\mathfrak{rn}, \mathfrak{rn}) \rightarrow \mathfrak{rn} \f}
     *
@@ -258,7 +260,7 @@ rn & rn::operator+=(const rn & other)
     return *this;
 }
 
-rn rn::operator-(const rn & other) const
+rn rn::operator-(const rn& other) const
 {
     /*! \f{equation*}{ (\mathfrak{rn}, \mathfrak{rn}) \rightarrow \mathfrak{rn} \f}
     *
@@ -271,7 +273,7 @@ rn rn::operator-(const rn & other) const
     return rn::from_vector(new_vector);
 }
 
-rn & rn::operator-=(const rn & other)
+rn& rn::operator-=(const rn& other)
 {
     /*! \f{equation*}{ (\mathfrak{rn}, \mathfrak{rn}) \rightarrow \mathfrak{rn} \f}
     *
@@ -303,7 +305,7 @@ rn rn::operator*(const double other) const
     return rn::from_vector(this->data * other);
 }
 
-rn operator*(const double other, const rn & rhs)
+rn operator*(const double other, const rn& rhs)
 {
     /*! \f{equation*}{ (\mathbb{R}, \mathfrak{rn}) \rightarrow \mathfrak{rn} \f}
     *
@@ -313,7 +315,7 @@ rn operator*(const double other, const rn & rhs)
     return rn::from_vector(rhs.data * other);
 }
 
-rn & rn::operator*=(const double other)
+rn& rn::operator*=(const double other)
 {
     /*! \f{equation*}{ (\mathfrak{rn}, \mathbb{R}) \rightarrow \mathfrak{rn} \f}
     *
@@ -334,7 +336,7 @@ rn rn::operator/(const double other) const
     return rn::from_vector(this->data / other);
 }
 
-rn & rn::operator/=(const double other)
+rn& rn::operator/=(const double other)
 {
     /*! \f{equation*}{ (\mathfrak{rn}, \mathbb{R}) \rightarrow \mathfrak{rn} \f}
     *
@@ -375,7 +377,7 @@ rn rn::from_vector(std::initializer_list<double> other)
     return rn::from_vector(Eigen::VectorXd{std::move(other)});
 }
 
-Eigen::MatrixXd rn::project(const Eigen::MatrixXd & other)
+Eigen::MatrixXd rn::project(const Eigen::MatrixXd& other)
 {
     /*! \f{equation*}{ (\mathbb{R}^{n \times n}) \rightarrow \mathbb{R}^{n \times n} \in \mathfrak{rn} \f}
     *
@@ -394,7 +396,7 @@ Eigen::MatrixXd rn::project(const Eigen::MatrixXd & other)
     return out;
 }
 
-std::ostream& operator<<(std::ostream & os, const rn & other)
+std::ostream& operator<<(std::ostream& os, const rn& other)
 {
     /*!
     * Overloads the "<<" stream insertion operator.

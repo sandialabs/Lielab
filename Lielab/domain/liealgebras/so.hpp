@@ -18,15 +18,15 @@ class so : public glr
     std::string to_string() const override;
     so();
     so(const size_t n);
-    template<typename OtherDerived> so(const Eigen::MatrixBase<OtherDerived> & other);
+    template<typename OtherDerived> so(const Eigen::MatrixBase<OtherDerived>& other);
     static so basis(const ptrdiff_t i, const size_t n);
     static so from_shape(const size_t shape);
 
-    size_t get_dimension() const;
-    Eigen::VectorXd get_vector() const;
-    void set_vector(const Eigen::VectorXd& vector);
+    size_t get_dimension() const override;
+    Eigen::VectorXd get_vector() const override;
+    void set_vector(const Eigen::VectorXd& vector) override;
     void set_vector(std::initializer_list<double> vector);
-    so::matrix_t get_matrix() const;
+    so::matrix_t get_matrix() const override;
 
     double operator()(const ptrdiff_t index) const;
     double operator()(const ptrdiff_t index1, const ptrdiff_t index2) const;
