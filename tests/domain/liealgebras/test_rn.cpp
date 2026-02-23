@@ -1,13 +1,13 @@
-#include <Lielab.hpp>
+#include <Lielab/domain/liealgebras/rn.hpp>
 #include <iostream>
 
 #include <catch2/catch_all.hpp>
 
 TEST_CASE("rn to_string", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::rn;
 
-    const rn xzero = rn::from_shape(0);
+    const rn xzero = rn::zero(0);
     CHECK(xzero.to_string() == "r^nan");
     const rn x0 = rn(0);
     CHECK(x0.to_string() == "r^0");
@@ -19,7 +19,7 @@ TEST_CASE("rn to_string", "[domain]")
 
 TEST_CASE("rn main_initializer", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::rn;
 
     const rn xblank = rn();
     CHECK(xblank.get_dimension() == 0);
@@ -34,7 +34,7 @@ TEST_CASE("rn main_initializer", "[domain]")
 
 TEST_CASE("rn matrix_initializer", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::rn;
 
     const rn x0 = rn(Eigen::MatrixXd::Random(0, 0));
     CHECK(x0.get_shape() == 0);
@@ -51,7 +51,7 @@ TEST_CASE("rn matrix_initializer", "[domain]")
 
 TEST_CASE("rn basis_initializer", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::rn;
 
     const rn xm10 = rn::basis(-1, 0);
     CHECK(xm10.get_dimension() == 0);
@@ -94,23 +94,23 @@ TEST_CASE("rn basis_initializer", "[domain]")
     CHECK(x02bar(1) == 0.0);
 }
 
-TEST_CASE("rn from_shape_initializer", "[domain]")
+TEST_CASE("rn zero_initializer", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::rn;
 
-    const rn x0 = rn::from_shape(0);
+    const rn x0 = rn::zero(0);
     CHECK(x0.get_dimension() == 0);
     const Eigen::MatrixXd x0hat = x0.get_matrix();
     CHECK(x0hat.rows() == 0);
     CHECK(x0hat.cols() == 0);
 
-    const rn x1 = rn::from_shape(1);
+    const rn x1 = rn::zero(1);
     CHECK(x1.get_dimension() == 0);
     const Eigen::MatrixXd x1hat = x1.get_matrix();
     CHECK(x1hat.rows() == 1);
     CHECK(x1hat.cols() == 1);
 
-    const rn x2 = rn::from_shape(2);
+    const rn x2 = rn::zero(2);
     CHECK(x2.get_dimension() == 1);
     const Eigen::MatrixXd x2hat = x2.get_matrix();
     CHECK(x2hat.rows() == 2);
@@ -119,9 +119,9 @@ TEST_CASE("rn from_shape_initializer", "[domain]")
 
 TEST_CASE("rn get_dimension", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::rn;
 
-    rn veryzero = rn::from_shape(0);
+    rn veryzero = rn::zero(0);
     rn zero(0), one(1), two(2), three(3), four(4), five(5), six(6), seven(7), eight(8);
 
     // Dimensions
@@ -143,9 +143,9 @@ TEST_CASE("rn set/get_vector", "[domain]")
     * Tests the set/get_vector operation.
     */
 
-    using namespace Lielab::domain;
+    using Lielab::domain::rn;
 
-    rn xzero = rn::from_shape(0);
+    rn xzero = rn::zero(0);
     xzero.set_vector({});
     Eigen::VectorXd xzerobar = xzero.get_vector();
 
@@ -211,9 +211,9 @@ TEST_CASE("rn get_matrix", "[domain]")
     * Tests the get_matrix operation.
     */
 
-    using namespace Lielab::domain;
+    using Lielab::domain::rn;
 
-    rn xzero = rn::from_shape(0);
+    rn xzero = rn::zero(0);
     xzero.set_vector({});
     Eigen::MatrixXd xzerohat = xzero.get_matrix();
 
@@ -311,9 +311,9 @@ TEST_CASE("rn get_matrix", "[domain]")
 
 TEST_CASE("rn operator()", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::rn;
 
-    rn xzero = rn::from_shape(0);
+    rn xzero = rn::zero(0);
     xzero.set_vector({});
 
     // Out of bounds
@@ -401,11 +401,55 @@ TEST_CASE("rn operator()", "[domain]")
     CHECK(std::isnan(x2(3, 3)));
 }
 
+TEST_CASE("rn operator[]", "[domain]")
+{
+    using Lielab::domain::rn;
+
+    rn xzero = rn::zero(0);
+    xzero.set_vector({});
+
+    // Out of bounds
+    CHECK_THROWS(xzero[-1]);
+    CHECK_THROWS(xzero[-1]);
+    CHECK_THROWS(xzero[0]);
+    CHECK_THROWS(xzero[0]);
+    CHECK_THROWS(xzero[1]);
+    CHECK_THROWS(xzero[1]);
+
+    rn x1 = rn(1);
+    x1.set_vector({1.0});
+
+    // In bounds
+    CHECK(x1[0] == 1.0);
+    CHECK(x1[-1] == 1.0);
+
+    // Out of bounds
+    CHECK_THROWS(x1[-2]);
+    CHECK_THROWS(x1[-2]);
+    CHECK_THROWS(x1[1]);
+    CHECK_THROWS(x1[1]);
+
+    rn x2 = rn(2);
+    x2.set_vector({1.0, 2.0});
+
+    // In bounds
+    CHECK(x2[0] == 1.0);
+    CHECK(x2[1] == 2.0);
+    CHECK(x2[-1] == 2.0);
+    CHECK(x2[-2] == 1.0);
+
+    // Out of bounds
+    CHECK_THROWS(x2[-3]);
+    CHECK_THROWS(x2[-3]);
+    CHECK_THROWS(x2[2]);
+    CHECK_THROWS(x2[2]);
+}
+
 // TODO: math ops int
 
 TEST_CASE("rn math_ops_double", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::rn;
 
     rn x1(2);
     x1.set_vector({1.25, 2.5});
@@ -435,7 +479,7 @@ TEST_CASE("rn math_ops_double", "[domain]")
 
 TEST_CASE("rn math_ops_rn", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::rn;
 
     rn x1(2), x2(2);
     x1.set_vector({1.0, 2.0});
@@ -472,7 +516,7 @@ TEST_CASE("rn from_vector", "[domain]")
     * Tests the from_vector operation.
     */
 
-    using namespace Lielab::domain;
+    using Lielab::domain::rn;
 
     const rn x0 = rn::from_vector({});
     const Eigen::VectorXd x0bar = x0.get_vector();
@@ -507,10 +551,10 @@ TEST_CASE("rn from_vector", "[domain]")
 
 TEST_CASE("rn project", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::rn;
 
     const Eigen::MatrixXd rand_2_2 = Eigen::MatrixXd::Random(2, 2);
-    const Eigen::MatrixXd proj_2_2 = rn::project(rand_2_2);
+    const Eigen::MatrixXd proj_2_2 = rn::project(rand_2_2).get_matrix();
 
     REQUIRE(proj_2_2.rows() == 2);
     REQUIRE(proj_2_2.cols() == 2);
@@ -520,7 +564,7 @@ TEST_CASE("rn project", "[domain]")
     CHECK(proj_2_2(1, 1) == 0.0);
 
     const Eigen::MatrixXd rand_3_3 = Eigen::MatrixXd::Random(3, 3);
-    const Eigen::MatrixXd proj_3_3 = rn::project(rand_3_3);
+    const Eigen::MatrixXd proj_3_3 = rn::project(rand_3_3).get_matrix();
 
     REQUIRE(proj_3_3.rows() == 3);
     REQUIRE(proj_3_3.cols() == 3);
@@ -535,7 +579,7 @@ TEST_CASE("rn project", "[domain]")
     CHECK(proj_3_3(2, 2) == 0.0);
 
     const Eigen::MatrixXd rand_2_3 = Eigen::MatrixXd::Random(2, 3);
-    const Eigen::MatrixXd proj_2_3 = rn::project(rand_2_3);
+    const Eigen::MatrixXd proj_2_3 = rn::project(rand_2_3).get_matrix();
 
     REQUIRE(proj_2_3.rows() == 2);
     REQUIRE(proj_2_3.cols() == 2);
@@ -545,7 +589,7 @@ TEST_CASE("rn project", "[domain]")
     CHECK(proj_2_3(1, 1) == 0.0);
 
     const Eigen::MatrixXd rand_3_2 = Eigen::MatrixXd::Random(3, 2);
-    const Eigen::MatrixXd proj_3_2 = rn::project(rand_3_2);
+    const Eigen::MatrixXd proj_3_2 = rn::project(rand_3_2).get_matrix();
 
     REQUIRE(proj_3_2.rows() == 2);
     REQUIRE(proj_3_2.cols() == 2);

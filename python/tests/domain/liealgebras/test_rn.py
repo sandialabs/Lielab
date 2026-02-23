@@ -4,7 +4,7 @@ import pytest
 def test_rn_to_string():
     from lielab.domain import rn
 
-    xzero = rn.from_shape(0)
+    xzero = rn.zero(0)
     assert (xzero.to_string() == "r^nan")
     x0 = rn(0)
     assert (x0.to_string() == "r^0")
@@ -87,22 +87,22 @@ def test_rn_basis_initializer():
     assert (x02bar[0] == 1.0)
     assert (x02bar[1] == 0.0)
 
-def test_rn_from_shape_initializer():
+def test_rn_zero_initializer():
     from lielab.domain import rn
 
-    x0 = rn.from_shape(0)
+    x0 = rn.zero(0)
     assert (x0.get_dimension() == 0)
     x0hat = x0.get_matrix()
     assert (x0hat.shape[0] == 0)
     assert (x0hat.shape[1] == 0)
 
-    x1 = rn.from_shape(1)
+    x1 = rn.zero(1)
     assert (x1.get_dimension() == 0)
     x1hat = x1.get_matrix()
     assert (x1hat.shape[0] == 1)
     assert (x1hat.shape[1] == 1)
 
-    x2 = rn.from_shape(2)
+    x2 = rn.zero(2)
     assert (x2.get_dimension() == 1)
     x2hat = x2.get_matrix()
     assert (x2hat.shape[0] == 2)
@@ -111,7 +111,7 @@ def test_rn_from_shape_initializer():
 def test_rn_get_dimension():
     from lielab.domain import rn
 
-    veryzero = rn.from_shape(0)
+    veryzero = rn.zero(0)
     zero = rn(0)
     one = rn(1)
     two = rn(2)
@@ -141,7 +141,7 @@ def test_rn_set_get_vector():
 
     from lielab.domain import rn
 
-    xzero = rn.from_shape(0)
+    xzero = rn.zero(0)
     xzero.set_vector([])
     xzerobar = xzero.get_vector()
 
@@ -207,7 +207,7 @@ def test_rn_get_matrix():
 
     from lielab.domain import rn
 
-    xzero = rn.from_shape(0)
+    xzero = rn.zero(0)
     xzero.set_vector([])
     xzerohat = xzero.get_matrix()
 
@@ -305,7 +305,7 @@ def test_rn_get_matrix():
 def test_rn_operator_parenthesis():
     from lielab.domain import rn
 
-    xzero = rn.from_shape(0)
+    xzero = rn.zero(0)
     xzero.set_vector([])
 
     # Out of bounds
@@ -391,6 +391,48 @@ def test_rn_operator_parenthesis():
     assert (np.isnan(x2(0, 3)))
     assert (np.isnan(x2(3, 0)))
     assert (np.isnan(x2(3, 3)))
+
+def test_rn_operator_bracket():
+    from lielab.domain import rn
+
+    xzero = rn.zero(0)
+    xzero.set_vector([])
+
+    # Out of bounds
+    with pytest.raises(RuntimeError): xzero[-1]
+    with pytest.raises(RuntimeError): xzero[-1]
+    with pytest.raises(RuntimeError): xzero[0]
+    with pytest.raises(RuntimeError): xzero[0]
+    with pytest.raises(RuntimeError): xzero[1]
+    with pytest.raises(RuntimeError): xzero[1]
+
+    x1 = rn(1)
+    x1.set_vector([1.0])
+
+    # In bounds
+    assert (x1[0] == 1.0)
+    assert (x1[-1] == 1.0)
+
+    # Out of bounds
+    with pytest.raises(RuntimeError): x1[-2]
+    with pytest.raises(RuntimeError): x1[-2]
+    with pytest.raises(RuntimeError): x1[1]
+    with pytest.raises(RuntimeError): x1[1]
+
+    x2 = rn(2)
+    x2.set_vector([1.0, 2.0])
+
+    # In bounds
+    assert (x2[0] == 1.0)
+    assert (x2[1] == 2.0)
+    assert (x2[-1] == 2.0)
+    assert (x2[-2] == 1.0)
+
+    # Out of bounds
+    with pytest.raises(RuntimeError): x2[-3]
+    with pytest.raises(RuntimeError): x2[-3]
+    with pytest.raises(RuntimeError): x2[2]
+    with pytest.raises(RuntimeError): x2[2]
 
 # TODO: math ops int
 
@@ -495,7 +537,7 @@ def test_rn_project():
     from lielab.domain import rn
 
     rand_2_2 = np.random.rand(2, 2)
-    proj_2_2 = rn.project(rand_2_2)
+    proj_2_2 = rn.project(rand_2_2).get_matrix()
 
     assert (proj_2_2.shape[0] == 2)
     assert (proj_2_2.shape[1] == 2)
@@ -505,7 +547,7 @@ def test_rn_project():
     assert (proj_2_2[1, 1] == 0.0)
 
     rand_3_3 = np.random.rand(3, 3)
-    proj_3_3 = rn.project(rand_3_3)
+    proj_3_3 = rn.project(rand_3_3).get_matrix()
 
     assert (proj_3_3.shape[0] == 3)
     assert (proj_3_3.shape[1] == 3)
@@ -520,7 +562,7 @@ def test_rn_project():
     assert (proj_3_3[2, 2] == 0.0)
 
     rand_2_3 = np.random.rand(2, 3)
-    proj_2_3 = rn.project(rand_2_3)
+    proj_2_3 = rn.project(rand_2_3).get_matrix()
 
     assert (proj_2_3.shape[0] == 2)
     assert (proj_2_3.shape[1] == 2)
@@ -530,7 +572,7 @@ def test_rn_project():
     assert (proj_2_3[1, 1] == 0.0)
 
     rand_3_2 = np.random.rand(3, 2)
-    proj_3_2 = rn.project(rand_3_2)
+    proj_3_2 = rn.project(rand_3_2).get_matrix()
 
     assert (proj_3_2.shape[0] == 2)
     assert (proj_3_2.shape[1] == 2)

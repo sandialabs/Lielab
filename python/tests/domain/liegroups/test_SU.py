@@ -45,22 +45,22 @@ def test_SU_matrix_initializer():
     with pytest.raises(RuntimeError):
         SU(np.random.rand(3, 2) + 1j*np.random.rand(3, 2))
 
-def test_SU_from_shape_initializer():
+def test_SU_identity_initializer():
     from lielab.domain import SU
 
-    x0 = SU.from_shape(0)
+    x0 = SU.identity(0)
     assert (x0.get_dimension() == 0)
     x0hat = x0.get_matrix()
     assert (x0hat.shape[0] == 0)
     assert (x0hat.shape[1] == 0)
 
-    x1 = SU.from_shape(1)
+    x1 = SU.identity(1)
     assert (x1.get_dimension() == 0)
     x1hat = x1.get_matrix()
     assert (x1hat.shape[0] == 1)
     assert (x1hat.shape[1] == 1)
 
-    x2 = SU.from_shape(2)
+    x2 = SU.identity(2)
     assert (x2.get_dimension() == 3)
     x2hat = x2.get_matrix()
     assert (x2hat.shape[0] == 2)
@@ -231,7 +231,7 @@ def test_SU_get_matrix():
 def test_SU_operator_parenthesis():
     from lielab.domain import SU
 
-    x0 = SU.from_shape(0)
+    x0 = SU.identity(0)
     x0.unserialize([])
 
     # Out of bounds
@@ -375,7 +375,7 @@ def test_SU_math_ops_SU():
 #     from lielab.domain import SU
 
 #     rand_2_2 = Eigen::MatrixXcd::Random(2, 2)
-#     proj_2_2 = SU.project(rand_2_2)
+#     proj_2_2 = SU.project(rand_2_2).get_matrix()
 
 #     assert (proj_2_2.shape[0] == 2)
 #     assert (proj_2_2.shape[1] == 2)
@@ -385,7 +385,7 @@ def test_SU_math_ops_SU():
 #     assert (proj_2_2(1, 1) == rand_2_2(1, 1))
 
 #     rand_3_3 = Eigen::MatrixXcd::Random(3, 3)
-#     proj_3_3 = SU.project(rand_3_3)
+#     proj_3_3 = SU.project(rand_3_3).get_matrix()
 
 #     assert (proj_3_3.shape[0] == 3)
 #     assert (proj_3_3.shape[1] == 3)
@@ -400,7 +400,7 @@ def test_SU_math_ops_SU():
 #     assert (proj_3_3(2, 2) == rand_3_3(2, 2))
 
 #     rand_2_3 = Eigen::MatrixXcd::Random(2, 3)
-#     proj_2_3 = SU.project(rand_2_3)
+#     proj_2_3 = SU.project(rand_2_3).get_matrix()
 
 #     assert (proj_2_3.shape[0] == 2)
 #     assert (proj_2_3.shape[1] == 2)
@@ -410,7 +410,7 @@ def test_SU_math_ops_SU():
 #     assert (proj_2_3(1, 1) == rand_2_3(1, 1))
 
 #     rand_3_2 = Eigen::MatrixXcd::Random(3, 2)
-#     proj_3_2 = SU.project(rand_3_2)
+#     proj_3_2 = SU.project(rand_3_2).get_matrix()
 
 #     assert (proj_3_2.shape[0] == 2)
 #     assert (proj_3_2.shape[1] == 2)

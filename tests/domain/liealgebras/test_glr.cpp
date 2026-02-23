@@ -1,4 +1,4 @@
-#include <Lielab.hpp>
+#include <Lielab/domain/liealgebras/glr.hpp>
 
 #include <catch2/catch_all.hpp>
 
@@ -6,7 +6,7 @@
 
 TEST_CASE("glr to_string", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::glr;
 
     const glr x0 = glr(0);
     CHECK(x0.to_string() == "gl(0, R)");
@@ -18,7 +18,7 @@ TEST_CASE("glr to_string", "[domain]")
 
 TEST_CASE("glr main_initializer", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::glr;
 
     const glr xblank = glr();
     CHECK(xblank.get_dimension() == 0);
@@ -33,7 +33,7 @@ TEST_CASE("glr main_initializer", "[domain]")
 
 TEST_CASE("glr matrix_initializer", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::glr;
 
     const glr x0 = glr(Eigen::MatrixXd::Random(0, 0));
     CHECK(x0.get_shape() == 0);
@@ -50,7 +50,7 @@ TEST_CASE("glr matrix_initializer", "[domain]")
 
 TEST_CASE("glr basis_initializer", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::glr;
 
     const glr xm10 = glr::basis(-1, 0);
     CHECK(xm10.get_dimension() == 0);
@@ -89,23 +89,23 @@ TEST_CASE("glr basis_initializer", "[domain]")
     CHECK(x02bar(3) == 0.0);
 }
 
-TEST_CASE("glr from_shape_initializer", "[domain]")
+TEST_CASE("glr zero_initializer", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::glr;
 
-    const glr x0 = glr::from_shape(0);
+    const glr x0 = glr::zero(0);
     CHECK(x0.get_dimension() == 0);
     const Eigen::MatrixXd x0hat = x0.get_matrix();
     CHECK(x0hat.rows() == 0);
     CHECK(x0hat.cols() == 0);
 
-    const glr x1 = glr::from_shape(1);
+    const glr x1 = glr::zero(1);
     CHECK(x1.get_dimension() == 1);
     const Eigen::MatrixXd x1hat = x1.get_matrix();
     CHECK(x1hat.rows() == 1);
     CHECK(x1hat.cols() == 1);
 
-    const glr x2 = glr::from_shape(2);
+    const glr x2 = glr::zero(2);
     CHECK(x2.get_dimension() == 4);
     const Eigen::MatrixXd x2hat = x2.get_matrix();
     CHECK(x2hat.rows() == 2);
@@ -114,7 +114,7 @@ TEST_CASE("glr from_shape_initializer", "[domain]")
 
 TEST_CASE("glr get_dimension", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::glr;
 
     glr zero(0), one(1), two(2), three(3), four(4), five(5), six(6), seven(7), eight(8);
 
@@ -136,7 +136,7 @@ TEST_CASE("glr set/get_vector", "[domain]")
     * Tests the set/get_vector operation.
     */
 
-    using namespace Lielab::domain;
+    using Lielab::domain::glr;
 
     glr x0 = glr(0);
     x0.set_vector({});
@@ -198,7 +198,7 @@ TEST_CASE("glr get_matrix", "[domain]")
     * Tests the get_matrix operation.
     */
 
-    using namespace Lielab::domain;
+    using Lielab::domain::glr;
 
     glr x0 = glr(0);
     x0.set_vector({});
@@ -260,9 +260,9 @@ TEST_CASE("glr get_matrix", "[domain]")
 
 TEST_CASE("glr operator()", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::glr;
 
-    glr x0 = glr::from_shape(0);
+    glr x0 = glr::zero(0);
     x0.set_vector({});
 
     // Out of bounds
@@ -298,9 +298,9 @@ TEST_CASE("glr operator()", "[domain]")
     CHECK(std::isnan(x1(0, -2)));
     CHECK(std::isnan(x1(-2, 0)));
     CHECK(std::isnan(x1(-2, -2)));
-    CHECK(std::isnan(x1(0, 2)));
-    CHECK(std::isnan(x1(2, 0)));
-    CHECK(std::isnan(x1(2, 2)));
+    CHECK(std::isnan(x1(0, 1)));
+    CHECK(std::isnan(x1(1, 0)));
+    CHECK(std::isnan(x1(1, 1)));
 
     glr x2 = glr(2);
     x2.set_vector({1.0, 2.0, 3.0, 4.0});
@@ -342,7 +342,7 @@ TEST_CASE("glr operator()", "[domain]")
 
 TEST_CASE("glr math_ops_double", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::glr;
 
     glr x1(2);
     x1.set_vector({1.25, 2.5, 3.75, 1.0});
@@ -382,7 +382,7 @@ TEST_CASE("glr math_ops_double", "[domain]")
 
 TEST_CASE("glr math_ops_cn", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::glr;
 
     glr x1(2), x2(2);
     x1.set_vector({1.0, 2.0, 3.0, 4.0});
@@ -429,7 +429,7 @@ TEST_CASE("glr get/from_vector", "[domain]")
     * Tests the get/from_vector operation.
     */
 
-    using namespace Lielab::domain;
+    using Lielab::domain::glr;
 
     const glr x0 = glr::from_vector({});
     const Eigen::VectorXd x0bar = x0.get_vector();
@@ -482,10 +482,10 @@ TEST_CASE("glr get/from_vector", "[domain]")
 
 TEST_CASE("glr project", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::glr;
 
     const Eigen::MatrixXd rand_2_2 = Eigen::MatrixXd::Random(2, 2);
-    const Eigen::MatrixXd proj_2_2 = glr::project(rand_2_2);
+    const Eigen::MatrixXd proj_2_2 = glr::project(rand_2_2).get_matrix();
 
     REQUIRE(proj_2_2.rows() == 2);
     REQUIRE(proj_2_2.cols() == 2);
@@ -495,7 +495,7 @@ TEST_CASE("glr project", "[domain]")
     CHECK(proj_2_2(1, 1) == rand_2_2(1, 1));
 
     const Eigen::MatrixXd rand_3_3 = Eigen::MatrixXd::Random(3, 3);
-    const Eigen::MatrixXd proj_3_3 = glr::project(rand_3_3);
+    const Eigen::MatrixXd proj_3_3 = glr::project(rand_3_3).get_matrix();
 
     REQUIRE(proj_3_3.rows() == 3);
     REQUIRE(proj_3_3.cols() == 3);
@@ -510,7 +510,7 @@ TEST_CASE("glr project", "[domain]")
     CHECK(proj_3_3(2, 2) == rand_3_3(2, 2));
 
     const Eigen::MatrixXd rand_2_3 = Eigen::MatrixXd::Random(2, 3);
-    const Eigen::MatrixXd proj_2_3 = glr::project(rand_2_3);
+    const Eigen::MatrixXd proj_2_3 = glr::project(rand_2_3).get_matrix();
 
     REQUIRE(proj_2_3.rows() == 2);
     REQUIRE(proj_2_3.cols() == 2);
@@ -520,7 +520,7 @@ TEST_CASE("glr project", "[domain]")
     CHECK(proj_2_3(1, 1) == rand_2_3(1, 1));
 
     const Eigen::MatrixXd rand_3_2 = Eigen::MatrixXd::Random(3, 2);
-    const Eigen::MatrixXd proj_3_2 = glr::project(rand_3_2);
+    const Eigen::MatrixXd proj_3_2 = glr::project(rand_3_2).get_matrix();
 
     REQUIRE(proj_3_2.rows() == 2);
     REQUIRE(proj_3_2.cols() == 2);

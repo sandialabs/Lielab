@@ -2,20 +2,13 @@
 
 #include "SO.hpp"
 
-#include "Lielab/utils/Error.hpp"
+#include "Lielab/testing.hpp"
 
 #include <Eigen/Core>
 #include <unsupported/Eigen/MatrixFunctions>
 
-#include <cassert>
-
 namespace Lielab::domain
 {
-
-std::string SU::to_string() const
-{
-    return "SU(" + std::to_string(this->_shape) + ")";
-}
 
 SU::SU() : SU(0)
 {
@@ -29,7 +22,38 @@ SU::SU() : SU(0)
 
 }
 
-SU::SU(const size_t shape)
+// SU::~SU();
+
+SU::SU(const SU::matrix_t& matrix)
+{
+    /*! \f{equation}{(\mathbb{C}^{n \times n}) \rightarrow SU \f}
+    *
+    * Constructor instantiating an \f$SU\f$ object from an
+    * \f$n \times n\f$ imaginary matrix.
+    *
+    */
+
+    lielab_assert(matrix.rows() == matrix.cols(), "Input matrix must be square.");
+
+    this->point.noalias() = matrix;
+}
+
+SU SU::identity(const int shape)
+{
+    /*! \f{equation*}{ (\mathbb{Z}) \rightarrow SU \f}
+    *
+    * Returns an identity group with given shape.
+    * 
+    * @param[in] shape The shape of the group.
+    * @param[out] out The SU element. 
+    */
+
+    return SU(shape);
+}
+
+// TODO: project
+
+SU::SU(const int shape)
 {
     /*! \f{equation*}{ (\mathbb{Z}) \rightarrow SU \f}
     *
@@ -42,52 +66,152 @@ SU::SU(const size_t shape)
     * @param[in] shape The shape of the data matrix.
     */
 
-    this->data = Eigen::MatrixXcd::Identity(shape, shape);
-    this->_shape = shape;
+    this->point.noalias() = Eigen::MatrixXcd::Identity(shape, shape);
 }
 
-SU SU::from_shape(const size_t shape)
+SU SU::from_quaternion(const double e0, const double e1, const double e2, const double e3)
 {
-    /*! \f{equation*}{ (\mathbb{Z}) \rightarrow SU \f}
+    /*! \f{equation*}{ (\mathbb{R}^4) \rightarrow SU \f}
+     *
+     * Constructor instantiating a Quaternion as an \f$SU\f$ object.
+     * 
+     * Enables instatiation like:
+     * 
+     *     Lielab::domain::SU Quaternion0 = Lielab::domain::SU::from_quaternion(1.0, 0.0, 0.0, 0.0);
+     * 
+     * @param[out] quaternion An SU object representing the Quaternion.
+     */
+
+    constexpr std::complex<double> j(0.0, 1.0);
+    SU qout = SU(2);
+
+    qout.point(0,0) = e0 + e1*j;
+    qout.point(1,1) = e0 - e1*j;
+    qout.point(0,1) = -e2 + e3*j;
+    qout.point(1,0) = e2 + e3*j;
+
+    return qout;
+}
+
+SU SU::from_SO3(const SO& dcm)
+{
+    /*!
+    * Transforms an SO(3) object into an SU(2) object.
     *
-    * Returns a zero algebra with given shape.
-    * 
-    * @param[in] shape The shape of the algebra.
-    * @param[out] out The SU element. 
+    * @param[in] dcm A direction cosine as an SO object of shape 3.
+    * @param[out] q A quaternion as an SU object of shape 2.
     */
 
-    return SU(shape);
+    lielab_assert(dcm.get_shape(), "Expected input shape 3. Got " + std::to_string(dcm.get_shape()) + ".");
+
+    const auto [q0, q1, q2, q3] = dcm.to_quaternion();
+
+    return SU::from_quaternion(q0, q1, q2, q3);
+
 }
 
-size_t SU::get_dimension() const
+std::string SU::to_string() const
+{
+    return "SU(" + std::to_string(this->get_shape()) + ")";
+}
+
+int SU::get_dimension() const
 {
     /*! \f{equation*}{ () \rightarrow \mathbb{Z} \f}
     * 
     * Gets the dimension of the group.
     */
 
-    if (this->_shape == 0) return 0;
-    return this->_shape * this->_shape - 1;
+    if (this->get_shape() == 0) return 0;
+    return this->get_shape() * this->get_shape() - 1;
 }
 
-size_t SU::get_shape() const
-{
-    /*! \f{equation*}{ () \rightarrow \mathbb{Z} \f}
-    * 
-    * Gets the shape of the group.
-    */
-
-    return this->_shape;
-}
-
-size_t SU::get_size() const
+int SU::get_size() const
 {
     /*! \f{quation*}{ () \rightarrow \mathbb{Z} \f}
         *
         * Gets the size of the data representation.
         */
 
-    return static_cast<size_t>(2*std::pow(this->_shape, 2));
+    return 2*static_cast<int>(std::pow(this->get_shape(), 2));
+}
+
+bool SU::is_abelian() const
+{
+    return false;
+}
+
+int SU::get_shape() const
+{
+    /*! \f{equation*}{ () \rightarrow \mathbb{Z} \f}
+    * 
+    * Gets the shape of the group.
+    */
+
+    return static_cast<int>(this->point.rows());
+}
+
+SU::point_t SU::get_point() const
+{
+    return this->point;
+}
+
+Eigen::VectorXd SU::serialize() const
+{
+    /*! \f{equation*}{ () \rightarrow \mathbb{C}^{n \times 1} \f}
+    * 
+    * Returns a serialized representation.
+    */
+    
+    if (this->get_shape() == 0) return Eigen::VectorXd::Zero(0);
+
+    const Eigen::MatrixXcd A = this->get_matrix();
+
+    Eigen::VectorXd out = Eigen::VectorXd::Zero(this->get_size());
+    int kk = 0;
+    for (int ii = 0; ii < this->get_shape(); ii++)
+    {
+        for (int jj = 0; jj < this->get_shape(); jj++)
+        {
+            out(kk) = std::real(A(ii,jj));
+            out(kk+1) = std::imag(A(ii,jj));
+            kk = kk + 2;
+        }
+    }
+
+    return out;
+}
+
+void SU::unserialize(const Eigen::VectorXd& serialized)
+{
+    /*! \f{equation*}{ (\mathbb{R}^{n \times 1}) \rightarrow SU \f}
+    * 
+    * Sets the SP object from a serialized vector.
+    */
+
+    const int vdim = static_cast<int>(serialized.size());
+    const int max_ind = std::min(this->get_size(), vdim);
+    
+    for (int vind = 0; vind < max_ind; vind++)
+    {
+        const int rem = vind % 2;
+        const int row = (vind / 2) / this->get_shape();
+        const int col = (vind / 2) % this->get_shape();
+        
+        if (rem == 0)
+        {
+            this->point(row, col).real(serialized(vind));
+        }
+        else
+        {
+            this->point(row, col).imag(serialized(vind));
+        }
+    }
+}
+
+void SU::unserialize(std::initializer_list<double> serialized)
+{
+    this->unserialize(Eigen::VectorXd{std::move(serialized)});
 }
 
 SU::matrix_t SU::get_matrix() const
@@ -106,78 +230,10 @@ SU::matrix_t SU::get_matrix() const
     *               Matematicheskikh Nauk 2.6 (1947): 159-173.
     */
 
-    return this->data;
+    return this->point;
 }
 
-SU SU::inverse() const
-{
-    /*! \f{equation*}{ () \rightarrow SU \f}
-    * 
-    * Returns the inverse.
-    */
-
-    return this->data.inverse();
-}
-
-Eigen::VectorXd SU::serialize() const
-{
-    /*! \f{equation*}{ () \rightarrow \mathbb{C}^{n \times 1} \f}
-    * 
-    * Returns a serialized representation.
-    */
-    
-    if (this->_shape == 0) return Eigen::VectorXd::Zero(0);
-
-    const Eigen::MatrixXcd A = this->get_matrix();
-
-    Eigen::VectorXd out = Eigen::VectorXd::Zero(this->get_size());
-    size_t kk = 0;
-    for (size_t ii = 0; ii < this->_shape; ii++)
-    {
-        for (size_t jj = 0; jj < this->_shape; jj++)
-        {
-            out(kk) = std::real(A(ii,jj));
-            out(kk+1) = std::imag(A(ii,jj));
-            kk = kk + 2;
-        }
-    }
-
-    return out;
-}
-
-void SU::unserialize(const Eigen::VectorXd& vec)
-{
-    /*! \f{equation*}{ (\mathbb{R}^{n \times 1}) \rightarrow SU \f}
-    * 
-    * Sets the SP object from a serialized vector.
-    */
-
-    const size_t vdim = vec.size();
-    const size_t max_ind = std::min(this->get_size(), vdim);
-    
-    for (size_t vind = 0; vind < max_ind; vind++)
-    {
-        const size_t rem = vind % 2;
-        const size_t row = static_cast<size_t>(std::floor((vind/2) / this->_shape));
-        const size_t col = (vind/2) % this->_shape;
-        
-        if (rem == 0)
-        {
-            this->data(row, col).real(vec(vind));
-        }
-        else
-        {
-            this->data(row, col).imag(vec(vind));
-        }
-    }
-}
-
-void SU::unserialize(std::initializer_list<double> vec)
-{
-    this->unserialize(Eigen::VectorXd{std::move(vec)});
-}
-
-std::complex<double> SU::operator()(const ptrdiff_t index1, const ptrdiff_t index2) const
+SU::field_t SU::operator()(const int index1, const int index2) const
 {
     /*! \f{equation*}{ (\mathbb{Z}, \mathbb{Z}) \rightarrow \mathbb{C} \f}
     *
@@ -185,93 +241,20 @@ std::complex<double> SU::operator()(const ptrdiff_t index1, const ptrdiff_t inde
     */
 
     const double nan = std::numeric_limits<double>::quiet_NaN();
-    const size_t shape = this->get_shape();
+    const int shape = this->get_shape();
     if (shape == 0) return std::complex<double>(nan, nan);
 
-    if (index1 >= static_cast<ptrdiff_t>(shape)) return std::complex<double>(nan, nan);
-    if (index2 >= static_cast<ptrdiff_t>(shape)) return std::complex<double>(nan, nan);
-    if (std::abs(index1) > static_cast<ptrdiff_t>(shape)) return std::complex<double>(nan, nan);
-    if (std::abs(index2) > static_cast<ptrdiff_t>(shape)) return std::complex<double>(nan, nan);
+    // If input index is negative, index from the back of the array
+    const int _index1 = (index1 < 0) ? shape + index1 : index1;
+    const int _index2 = (index2 < 0) ? shape + index2 : index2;
 
-    size_t _index1;
-    if (index1 < 0)
-    {
-        _index1 = static_cast<size_t>(static_cast<ptrdiff_t>(shape) + index1);
-    }
-    else
-    {
-        _index1 = static_cast<size_t>(index1);
-    }
-
-    size_t _index2;
-    if (index2 < 0)
-    {
-        _index2 = static_cast<size_t>(static_cast<ptrdiff_t>(shape) + index2);
-    }
-    else
-    {
-        _index2 = static_cast<size_t>(index2);
-    }
+    // Error check for out of bounds
+    if (_index1 < 0) return std::complex<double>(nan, nan);
+    if (_index1 >= shape) return std::complex<double>(nan, nan);
+    if (_index2 < 0) return std::complex<double>(nan, nan);
+    if (_index2 >= shape) return std::complex<double>(nan, nan);
     
-    return this->data(_index1, _index2);
-}
-
-SU SU::operator*(const SU& other) const
-{
-    /*! \f{equation*}{ (SU, SU) \rightarrow SU \f}
-    *
-    * Group product.
-    */
-
-    assert(this->_shape == other.get_shape());
-    return this->data * other.data;
-}
-
-SU& SU::operator*=(const SU& other)
-{
-    /*! \f{equation*}{ (SU, SU) \rightarrow SU \f}
-    *
-    * In place group product.
-    */
-
-    assert(this->_shape == other.get_shape());
-    this->data *= other.data;
-    return *this;
-}
-
-std::ostream& operator<<(std::ostream& os, const SU& other)
-{
-    /*!
-    * Overloads the "<<" stream insertion operator.
-    */
-
-    os << static_cast<const Eigen::MatrixXcd>(other.data);
-    return os;
-}
-
-/*
-* Additional static initializers. Not a part of the core Lie group, but are convenient.
-*/
-template SU SU::from_quaternion<double>(const double, const double, const double, const double);
-
-SU SU::from_SO3(const SO& dcm)
-{
-    /*!
-    * Transforms an SO(3) object into an SU(2) object.
-    *
-    * @param[in] dcm A direction cosine as an SO object of shape 3.
-    * @param[out] q A quaternion as an SU object of shape 2.
-    */
-
-    if (dcm.get_shape() != 3)
-    {
-        throw std::domain_error("SU::from_SO3: Expected input shape 3. Got " + std::to_string(dcm.get_shape()) + ".");
-    }
-
-    const auto [q0, q1, q2, q3] = dcm.to_quaternion<double>();
-
-    return SU::from_quaternion(q0, q1, q2, q3);
-
+    return this->point(_index1, _index2);
 }
 
 std::array<double, 4> SU::to_quaternion() const
@@ -287,17 +270,50 @@ std::array<double, 4> SU::to_quaternion() const
      * @param[out] quaternion An array representing the Quaternion.
      */
 
-    if (this->_shape != 2)
+    if (this->get_shape() != 2)
     {
-        throw std::domain_error("SU::to_quaternion: Expected input shape 2. Got " + std::to_string(this->_shape) + ".");
+        throw std::domain_error("SU::to_quaternion: Expected input shape 2. Got " + std::to_string(this->get_shape()) + ".");
     }
 
-    const double q0 = (this->data(0,0).real() + this->data(1,1).real())/2.0;
-    const double q1 = (this->data(0,0).imag() - this->data(1,1).imag())/2.0;
-    const double q2 = (-this->data(0,1).real() + this->data(1,0).real())/2.0;
-    const double q3 = (this->data(0,1).imag() + this->data(1,0).imag())/2.0;
+    const double q0 = (this->point(0,0).real() + this->point(1,1).real())/2.0;
+    const double q1 = (this->point(0,0).imag() - this->point(1,1).imag())/2.0;
+    const double q2 = (-this->point(0,1).real() + this->point(1,0).real())/2.0;
+    const double q3 = (this->point(0,1).imag() + this->point(1,0).imag())/2.0;
 
     return {q0, q1, q2, q3};
+}
+
+SU SU::operator*(const SU& other) const
+{
+    /*! \f{equation*}{ (SU, SU) \rightarrow SU \f}
+    *
+    * Group product.
+    */
+
+    lielab_assert(this->get_shape() == other.get_shape(), "Shapes must be equal.");
+    return SU(this->point * other.point);
+}
+
+SU& SU::operator*=(const SU& other)
+{
+    /*! \f{equation*}{ (SU, SU) \rightarrow SU \f}
+    *
+    * In place group product.
+    */
+
+    lielab_assert(this->get_shape() == other.get_shape(), "Shapes must be equal.");
+    this->point *= other.point;
+    return *this;
+}
+
+SU SU::inverse() const
+{
+    /*! \f{equation*}{ () \rightarrow SU \f}
+    * 
+    * Returns the inverse.
+    */
+
+    return SU(this->point.inverse());
 }
 
 }

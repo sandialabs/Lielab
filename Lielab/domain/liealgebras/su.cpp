@@ -1,21 +1,12 @@
 #include "su.hpp"
 
-#include "LieAlgebra.hpp"
-
-#include "Lielab/utils/Error.hpp"
+#include "Lielab/testing.hpp"
 
 #include <Eigen/Core>
 #include <unsupported/Eigen/MatrixFunctions>
 
-#include <cassert>
-
 namespace Lielab::domain
 {
-
-std::string su::to_string() const
-{
-    return "su(" + std::to_string(this->_shape) + ")";
-}
 
 su::su() : su(0)
 {
@@ -29,49 +20,45 @@ su::su() : su(0)
 
 }
 
-su::su(const size_t n)
+// su::~su();
+
+su::su(const su::matrix_t& matrix)
 {
-    /*! \f{equation*}{ (\mathbb{Z}) \rightarrow \mathfrak{su} \f}
+    /*! \f{equation}{ (\mathbb{C}^{n \times n}) \rightarrow \mathfrak{su} \f}
     *
-    * Constructor instantiating an \f$\mathfrak{su}\f$ object.
-    * 
-    * Enables instantiation like:
-    * 
-    *     Lielab::domain::su x(2), y(3), z(4);
-    * 
-    * @param[in] shape The shape of the data matrix.
+    * Constructor instantiating an \f$\mathfrak{su}\f$ object from an
+    * \f$n \times n\f$ real matrix.
     */
     
-    this->_shape = n;
-    this->data = Eigen::MatrixXcd::Zero(n, n);
+    lielab_assert(matrix.rows() == matrix.cols(), "Input matrix must be square.");
+
+    this->point.noalias() = matrix;
 }
 
-su su::basis(const ptrdiff_t i, const size_t n)
+su su::basis(const int index, const int shape)
 {
     /*! \f{equation*}{ (\mathbb{Z}, \mathbb{Z}) \rightarrow \mathfrak{su} \f}
     *
     * Returns the i'th basis element of the su algebra.
     * 
-    * @param[in] i The basis vector.
-    * @param[in] n The size of the algebra.
+    * @param[in] index The basis vector.
+    * @param[in] shape The shape of the algebra.
     * @param[out] out The su element.
     */
 
-    su out(n);
-    if (i < 0) return out;
+    su out(shape);
+    if (index < 0) return out;
 
-    const size_t ind = static_cast<size_t>(i);
-
-    const size_t dim = out.get_dimension();
-    if (ind >= dim) return out;
+    const int dim = out.get_dimension();
+    if (index >= dim) return out;
 
     Eigen::VectorXd v = Eigen::VectorXd::Zero(dim);
-    v(ind) = 1.0;
+    v(index) = 1.0;
     out.set_vector(v);
     return out;
 }
 
-su su::from_shape(const size_t shape)
+su su::zero(const int shape)
 {
     /*! \f{equation*}{ (\mathbb{Z}) \rightarrow \mathfrak{su} \f}
     *
@@ -84,16 +71,139 @@ su su::from_shape(const size_t shape)
     return su(shape);
 }
 
-size_t su::get_dimension() const
+su su::from_vector(const Eigen::VectorXd& vector)
+{
+    /*! \f{equation}{(\mathbb{R}^{n \times 1}) \rightarrow \mathfrak{su} \f}
+    *
+    * Constructor instantiating an \f$\mathfrak{su}\f$ object from either a
+    * \f$n \times 1\f$ real vector.
+    *
+    * @param[in] other The object to instantiate from as a real vector.
+    */
+
+    const int len = static_cast<int>(vector.size());
+    const int shape = static_cast<int>(std::ceil((std::sqrt(4*(len+1)))/2));
+    
+    su out(shape);
+    out.set_vector(vector);
+    return out;
+}
+
+su su::from_vector(std::initializer_list<double> vector)
+{
+    /*! \f{equation}{(\mathbb{R}^{n \times 1}) \rightarrow \mathfrak{su} \f}
+    *
+    * Constructor instantiating an \f$\mathfrak{su}\f$ object from either a
+    * \f$n \times 1\f$ real vector.
+    *
+    * @param[in] vector The object to instantiate from as a real vector.
+    */
+
+    return su::from_vector(Eigen::VectorXd{std::move(vector)});
+}
+
+su su::project(const su::matrix_t& matrix)
+{
+    const size_t shape = std::min(matrix.rows(), matrix.cols());
+
+    if (shape == 0) return su::zero(0);
+
+    su::matrix_t matrix_sq = matrix(Eigen::seqN(0, shape), Eigen::seqN(0, shape));
+
+    const su::matrix_t temp = (matrix_sq - matrix_sq.adjoint())/(std::complex<double>(2.0, 0.0));
+    const std::complex<double> trace = temp.trace();
+    const su::matrix_t matrix_projected = temp - trace/static_cast<double>(shape)*Eigen::MatrixXcd::Identity(shape, shape);
+    return su(matrix_projected);
+}
+
+su::su(const int n)
+{
+    /*! \f{equation*}{ (\mathbb{Z}) \rightarrow \mathfrak{su} \f}
+    *
+    * Constructor instantiating an \f$\mathfrak{su}\f$ object.
+    * 
+    * Enables instantiation like:
+    * 
+    *     Lielab::domain::su x(2), y(3), z(4);
+    * 
+    * @param[in] shape The shape of the data matrix.
+    */
+    
+    this->point.noalias() = Eigen::MatrixXcd::Zero(n, n);
+}
+
+std::string su::to_string() const
+{
+    return "su(" + std::to_string(this->get_shape()) + ")";
+}
+
+int su::get_dimension() const
 {
     /*! \f{equation*}{ () \rightarrow \mathbb{Z} \f}
     * 
     * Gets the dimension of the algebra.
     */
 
-    if (this->_shape == 0) return 0;
+    if (this->get_shape() == 0) return 0;
 
-    return this->_shape * this->_shape - 1;
+    return this->get_shape() * this->get_shape() - 1;
+}
+
+int su::get_size() const
+{
+    return this->get_dimension();
+}
+
+bool su::is_abelian() const
+{
+    return false;
+}
+
+int su::get_shape() const
+{
+    return static_cast<int>(this->point.rows());
+}
+
+su::point_t su::get_point() const
+{
+    /*!
+    */
+
+    return this->point;
+}
+
+Eigen::VectorXd su::serialize() const
+{
+    return this->get_vector();
+}
+
+void su::unserialize(const Eigen::VectorXd& serialized)
+{
+    this->set_vector(serialized);
+}
+
+void su::unserialize(std::initializer_list<double> serialized)
+{
+    this->unserialize(Eigen::VectorXd{std::move(serialized)});
+}
+
+su::matrix_t su::get_matrix() const
+{
+    /*! \f{equation*}{ () \rightarrow \mathbb{R}^{n \times n} \f}
+    * 
+    * Returns a matrix representation.
+    * 
+    * Formerly called "get_ados_representation()".
+    * 
+    * Ado, Igor D. "Note on the representation of finite continuous groups by
+    *               means of linear substitutions, Izv. Fiz." Mat. Obsch.(Kazan)
+    *               7.1 (1935): 935.
+    * 
+    * Ado, Igor D. "The representation of Lie algebras by matrices." Uspekhi
+    *               Matematicheskikh Nauk 2.6 (1947): 159-173.
+    */
+
+    return this->point;
 }
 
 Eigen::VectorXd su::get_vector() const
@@ -109,7 +219,7 @@ Eigen::VectorXd su::get_vector() const
     *         created by Eric W. Weisstein. https://mathworld.wolfram.com/GeneralizedGell-MannMatrix.html 
     */
 
-    if (this->_shape <= 1)
+    if (this->get_shape() <= 1)
     {
         return Eigen::VectorXd::Zero(0);
     }
@@ -118,38 +228,38 @@ Eigen::VectorXd su::get_vector() const
     Eigen::VectorXd out = Eigen::VectorXd::Zero(dim);
 
     // General case of su(2+). Use's the Generalized Gell-Mann matrices
-    size_t k = 0;
+    int k = 0;
 
     // Symmetric
-    for (size_t jj = 1; jj < this->_shape; jj++)
+    for (int jj = 1; jj < this->get_shape(); jj++)
     {
-        for (size_t ii = 0; ii < jj; ii++)
+        for (int ii = 0; ii < jj; ii++)
         {
-            out(k) = std::imag(this->data(ii, jj) + this->data(jj, ii))/2.0;
+            out(k) = std::imag(this->point(ii, jj) + this->point(jj, ii))/2.0;
             k++;
         }
     }
 
     // Anti-symmetric
-    for (size_t jj = 1; jj < this->_shape; jj++)
+    for (int jj = 1; jj < this->get_shape(); jj++)
     {
-        for (size_t ii = 0; ii < jj; ii++)
+        for (int ii = 0; ii < jj; ii++)
         {
-            out(k) = std::real(this->data(jj, ii) - this->data(ii, jj))/2.0;
+            out(k) = std::real(this->point(jj, ii) - this->point(ii, jj))/2.0;
             k++;
         }
     }
 
     // Diagonal
-    size_t zz = this->_shape;
-    k = out.size() - 1;
+    int zz = this->get_shape();
+    k = static_cast<int>(out.size()) - 1;
     Eigen::MatrixXcd temp = this->get_matrix();
-    for (size_t yy = this->_shape - 1; yy >= 1; yy--)
+    for (int yy = this->get_shape() - 1; yy >= 1; yy--)
     {
         const double multiplier = std::sqrt(2.0/((zz-1)*(zz)));
         out(k) = -std::imag(temp(yy, yy))/(multiplier*(zz - 1));
 
-        for (size_t ii = 0; ii < yy; ii++)
+        for (int ii = 0; ii < yy; ii++)
         {
             temp(ii, ii) -= std::complex<double>(0.0, multiplier*out(k)); // Do not use std::imag(). This doesn't work w/ inplace operations with Eigen.
         }
@@ -174,11 +284,11 @@ void su::set_vector(const Eigen::VectorXd& vector)
     *         created by Eric W. Weisstein. https://mathworld.wolfram.com/GeneralizedGell-MannMatrix.html 
     */
     
-    const size_t vdim = vector.size();
-    const size_t dim = this->get_dimension();
+    const int vdim = static_cast<int>(vector.size());
+    const int dim = this->get_dimension();
 
     // su(0) and su(1) are 0-dimensional. Do nothing.
-    if (this->_shape <= 1) return;
+    if (this->get_shape() <= 1) return;
 
     // Reuse data from current object if vdim < dim
     // TODO: This function could be made more efficient if
@@ -186,7 +296,7 @@ void su::set_vector(const Eigen::VectorXd& vector)
     //       new values instead of rewriting the entire matrix.
     const Eigen::VectorXd vec0 = this->get_vector();
     Eigen::VectorXd vec_assign = Eigen::VectorXd::Zero(dim);
-    for (size_t ii = 0; ii < dim; ii++)
+    for (int ii = 0; ii < dim; ii++)
     {
         if (ii < vdim)
         {
@@ -197,48 +307,48 @@ void su::set_vector(const Eigen::VectorXd& vector)
             vec_assign(ii) = vec0(ii);
         }
     }
-    this->data = data_t::Zero(this->_shape, this->_shape);
+    this->point = point_t::Zero(this->get_shape(), this->get_shape());
 
     // General case of su(2+). Use's the Generalized Gell-Mann matrices
-    size_t k = 0;
+    int k = 0;
 
     // Symmetric
-    for (size_t jj = 1; jj < this->_shape; jj++)
+    for (int jj = 1; jj < this->get_shape(); jj++)
     {
-        for (size_t ii = 0; ii < jj; ii++)
+        for (int ii = 0; ii < jj; ii++)
         {
-            this->data(ii, jj) = std::complex<double>(0.0, vec_assign(k));
-            this->data(jj, ii) = std::complex<double>(0.0, vec_assign(k));
+            this->point(ii, jj) = std::complex<double>(0.0, vec_assign(k));
+            this->point(jj, ii) = std::complex<double>(0.0, vec_assign(k));
             k++;
         }
     }
 
     // Anti-symmetric
-    for (size_t jj = 1; jj < this->_shape; jj++)
+    for (int jj = 1; jj < this->get_shape(); jj++)
     {
-        for (size_t ii = 0; ii < jj; ii++)
+        for (int ii = 0; ii < jj; ii++)
         {
-            this->data(ii, jj) += std::complex<double>(-vec_assign(k), 0.0);
-            this->data(jj, ii) += std::complex<double>(vec_assign(k), 0.0);
+            this->point(ii, jj) += std::complex<double>(-vec_assign(k), 0.0);
+            this->point(jj, ii) += std::complex<double>(vec_assign(k), 0.0);
             k++;
         }
     }
 
     // Diagonal
-    size_t zz = 2;
+    int zz = 2;
     while (k < dim)
     {
         const double multiplier = std::sqrt(2.0/((zz-1)*(zz)));
 
-        for (size_t ii = 0; ii < zz; ii++)
+        for (int ii = 0; ii < zz; ii++)
         {
             if (ii == (zz - 1))
             {
-                this->data(ii, ii) -= std::complex<double>(0.0, multiplier*(zz - 1)*vec_assign(k));
+                this->point(ii, ii) -= std::complex<double>(0.0, multiplier*(zz - 1)*vec_assign(k));
             }
             else
             {
-                this->data(ii, ii) += std::complex<double>(0.0, multiplier*vec_assign(k));
+                this->point(ii, ii) += std::complex<double>(0.0, multiplier*vec_assign(k));
             }
         }
 
@@ -257,26 +367,7 @@ void su::set_vector(std::initializer_list<double> vector)
     this->set_vector(Eigen::VectorXd{std::move(vector)});
 }
 
-su::matrix_t su::get_matrix() const
-{
-    /*! \f{equation*}{ () \rightarrow \mathbb{R}^{n \times n} \f}
-    * 
-    * Returns a matrix representation.
-    * 
-    * Formerly called "get_ados_representation()".
-    * 
-    * Ado, Igor D. "Note on the representation of finite continuous groups by
-    *               means of linear substitutions, Izv. Fiz." Mat. Obsch.(Kazan)
-    *               7.1 (1935): 935.
-    * 
-    * Ado, Igor D. "The representation of Lie algebras by matrices." Uspekhi
-    *               Matematicheskikh Nauk 2.6 (1947): 159-173.
-    */
-
-    return this->data;
-}
-
-double su::operator()(const ptrdiff_t index) const
+double su::operator()(const int index) const
 {
     /*! \f{equation*}{ (\mathbb{Z}) \rightarrow \mathbb{R} \f}
     *
@@ -284,25 +375,19 @@ double su::operator()(const ptrdiff_t index) const
     */
 
     const double nan = std::numeric_limits<double>::quiet_NaN();
-    const size_t dim = this->get_dimension();
+    const int dim = this->get_dimension();
 
-    if (index >= static_cast<ptrdiff_t>(dim)) return nan;
-    if (std::abs(index) > static_cast<ptrdiff_t>(dim)) return nan;
+    // If input index is negative, index from the back of the array
+    const int _index = (index < 0) ? dim + index : index;
 
-    size_t _index;
-    if (index < 0)
-    {
-        _index = static_cast<size_t>(static_cast<ptrdiff_t>(dim) + index);
-    }
-    else
-    {
-        _index = static_cast<size_t>(index);
-    }
+    // Error check for out of bounds
+    if (_index < 0) return nan;
+    if (_index >= dim) return nan;
 
     return this->get_vector()(_index);
 }
 
-std::complex<double> su::operator()(const ptrdiff_t index1, const ptrdiff_t index2) const
+su::field_t su::operator()(const int index1, const int index2) const
 {
     /*! \f{equation*}{ (\mathbb{Z}, \mathbb{Z}) \rightarrow \mathbb{C} \f}
     *
@@ -310,35 +395,20 @@ std::complex<double> su::operator()(const ptrdiff_t index1, const ptrdiff_t inde
     */
 
     const double nan = std::numeric_limits<double>::quiet_NaN();
-    const size_t shape = this->get_shape();
+    const int shape = this->get_shape();
     if (shape == 0) return std::complex<double>(nan, nan);
 
-    if (index1 >= static_cast<ptrdiff_t>(shape)) return std::complex<double>(nan, nan);
-    if (index2 >= static_cast<ptrdiff_t>(shape)) return std::complex<double>(nan, nan);
-    if (std::abs(index1) > static_cast<ptrdiff_t>(shape)) return std::complex<double>(nan, nan);
-    if (std::abs(index2) > static_cast<ptrdiff_t>(shape)) return std::complex<double>(nan, nan);
+    // If input index is negative, index from the back of the array
+    const int _index1 = (index1 < 0) ? shape + index1 : index1;
+    const int _index2 = (index2 < 0) ? shape + index2 : index2;
 
-    size_t _index1;
-    if (index1 < 0)
-    {
-        _index1 = static_cast<size_t>(static_cast<ptrdiff_t>(shape) + index1);
-    }
-    else
-    {
-        _index1 = static_cast<size_t>(index1);
-    }
+    // Error check for out of bounds
+    if (_index1 < 0) return std::complex<double>(nan, nan);
+    if (_index1 >= shape) return std::complex<double>(nan, nan);
+    if (_index2 < 0) return std::complex<double>(nan, nan);
+    if (_index2 >= shape) return std::complex<double>(nan, nan);
 
-    size_t _index2;
-    if (index2 < 0)
-    {
-        _index2 = static_cast<size_t>(static_cast<ptrdiff_t>(shape) + index2);
-    }
-    else
-    {
-        _index2 = static_cast<size_t>(index2);
-    }
-
-    return this->data(_index1, _index2);
+    return this->point(_index1, _index2);
 }
 
 su su::operator+(const su& other) const
@@ -348,13 +418,8 @@ su su::operator+(const su& other) const
     * Addition of two vectors in the algebra.
     */
 
-    const size_t new_shape = std::min(this->_shape, other.get_shape());
-    const Eigen::ArithmeticSequence slice = Eigen::seqN(0, new_shape);
-    const Eigen::MatrixXcd lhs_matrix = this->get_matrix();
-    const Eigen::MatrixXcd rhs_matrix = other.get_matrix();
-    const Eigen::MatrixXcd new_matrix = lhs_matrix(slice, slice) + rhs_matrix(slice, slice);
-
-    return su(new_matrix);
+    lielab_assert(this->get_shape() == other.get_shape(), "Shapes must be equal.");
+    return su(this->point + other.point);
 }
 
 su& su::operator+=(const su& other)
@@ -364,8 +429,8 @@ su& su::operator+=(const su& other)
     * In place addition of two vectors in the algebra.
     */
 
-    assert(this->_shape == other.get_shape());
-    this->data += other.data;
+    lielab_assert(this->get_shape() == other.get_shape(), "Shapes must be equal.");
+    this->point += other.point;
     return *this;
 }
 
@@ -376,13 +441,8 @@ su su::operator-(const su& other) const
     * Subtraction of two vectors in the algebra.
     */
 
-    const size_t new_shape = std::min(this->_shape, other.get_shape());
-    const Eigen::ArithmeticSequence slice = Eigen::seqN(0, new_shape);
-    const Eigen::MatrixXcd lhs_matrix = this->get_matrix();
-    const Eigen::MatrixXcd rhs_matrix = other.get_matrix();
-    const Eigen::MatrixXcd new_matrix = lhs_matrix(slice, slice) - rhs_matrix(slice, slice);
-
-    return su(new_matrix);
+    lielab_assert(this->get_shape() == other.get_shape(), "Shapes must be equal.");
+    return su(this->point - other.point);
 }
 
 su& su::operator-=(const su& other)
@@ -392,8 +452,8 @@ su& su::operator-=(const su& other)
     * In place subtraction of two vectors in the algebra.
     */
 
-    assert(this->_shape == other.get_shape());
-    this->data -= other.data;
+    lielab_assert(this->get_shape() == other.get_shape(), "Shapes must be equal.");
+    this->point -= other.point;
     return *this;
 }
 
@@ -404,8 +464,7 @@ su su::operator-() const
     * Unary negative of the vector.
     */
 
-    Eigen::MatrixXcd out = -this->data;
-    return out;
+    return su(-this->point);
 }
 
 su su::operator*(const double other) const
@@ -415,34 +474,13 @@ su su::operator*(const double other) const
     * Scalar product.
     */
 
-    Eigen::MatrixXcd out = this->data * other;
+    Eigen::MatrixXcd out = this->point * other;
     return out;
 }
 
 su operator*(const double other, const su& rhs)
 {
     /*! \f{equation*}{ (\mathbb{R}, \mathfrak{su}) \rightarrow \mathfrak{su} \f}
-    *
-    * Scalar product.
-    */
-
-    return rhs*other;
-}
-
-su su::operator*(const std::complex<double> other) const
-{
-    /*! \f{equation*}{ (\mathfrak{su}, \mathbb{C}) \rightarrow \mathfrak{su} \f}
-    *
-    * Scalar product.
-    */
-
-    Eigen::MatrixXcd out = this->data * other;
-    return out;
-}
-
-su operator*(const std::complex<double> other, const su& rhs)
-{
-    /*! \f{equation*}{ (\mathbb{C}, \mathfrak{su}) \rightarrow \mathfrak{su} \f}
     *
     * Scalar product.
     */
@@ -457,18 +495,7 @@ su& su::operator*=(const double other)
     * In place scalar product.
     */
 
-    this->data *= other;
-    return *this;
-}
-
-su& su::operator*=(const std::complex<double> other)
-{
-    /*! \f{equation*}{ (\mathfrak{su}, \mathbb{C}) \rightarrow \mathfrak{su} \f}
-    *
-    * In place scalar product.
-    */
-
-    this->data *= other;
+    this->point *= other;
     return *this;
 }
 
@@ -479,18 +506,7 @@ su su::operator/(const double other) const
     * Scalar division.
     */
 
-    Eigen::MatrixXcd out = this->data / other;
-    return out;
-}
-
-su su::operator/(const std::complex<double> other) const
-{
-    /*! \f{equation*}{ (\mathfrak{su}, \mathbb{C}) \rightarrow \mathfrak{su} \f}
-    *
-    * Scalar division.
-    */
-
-    Eigen::MatrixXcd out = this->data / other;
+    Eigen::MatrixXcd out = this->point / other;
     return out;
 }
 
@@ -501,61 +517,8 @@ su& su::operator/=(const double other)
     * In place scalar division.
     */
 
-    this->data /= other;
+    this->point /= other;
     return *this;
-}
-
-su& su::operator/=(const std::complex<double> other)
-{
-    /*! \f{equation*}{ (\mathfrak{su}, \mathbb{C}) \rightarrow \mathfrak{su} \f}
-    *
-    * In place scalar division.
-    */
-
-    this->data /= other;
-    return *this;
-}
-
-su su::from_vector(const Eigen::VectorXd& vector)
-{
-    /*! \f{equation}{(\mathbb{R}^{n \times 1}) \rightarrow \mathfrak{su} \f}
-    *
-    * Constructor instantiating an \f$\mathfrak{su}\f$ object from either a
-    * \f$n \times 1\f$ real vector.
-    *
-    * @param[in] other The object to instantiate from as a real vector.
-    */
-
-    const size_t len = vector.size();
-    const size_t shape = static_cast<size_t>(std::ceil((std::sqrt(4*(len+1)))/2));
-    
-    su out(shape);
-    out.set_vector(vector);
-    return out;
-}
-
-su su::from_vector(std::initializer_list<double> vector)
-{
-    /*! \f{equation}{(\mathbb{R}^{n \times 1}) \rightarrow \mathfrak{su} \f}
-    *
-    * Constructor instantiating an \f$\mathfrak{su}\f$ object from either a
-    * \f$n \times 1\f$ real vector.
-    *
-    * @param[in] vector The object to instantiate from as a real vector.
-    */
-
-    return su::from_vector(Eigen::VectorXd{std::move(vector)});
-}
-
-// TODO: Project function
-
-std::ostream& operator<<(std::ostream& os, const su& other)
-{
-    /*!
-    * Overloads the "<<" stream insertion operator.
-    */
-    os << static_cast<const Eigen::MatrixXcd>(other.data);
-    return os;
 }
 
 }

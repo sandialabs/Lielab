@@ -1,4 +1,4 @@
-#include <Lielab.hpp>
+#include <Lielab/domain/liealgebras/su.hpp>
 
 #include <catch2/catch_all.hpp>
 
@@ -8,7 +8,7 @@
 
 TEST_CASE("su to_string", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::su;
 
     const su x0 = su(0);
     CHECK(x0.to_string() == "su(0)");
@@ -20,7 +20,7 @@ TEST_CASE("su to_string", "[domain]")
 
 TEST_CASE("su main_initializer", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::su;
 
     const su xblank = su();
     CHECK(xblank.get_dimension() == 0);
@@ -35,7 +35,7 @@ TEST_CASE("su main_initializer", "[domain]")
 
 TEST_CASE("su matrix_initializer", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::su;
 
     const su x0 = su(Eigen::MatrixXcd::Random(0, 0));
     CHECK(x0.get_shape() == 0);
@@ -52,7 +52,7 @@ TEST_CASE("su matrix_initializer", "[domain]")
 
 TEST_CASE("su basis_initializer", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::su;
 
     const su xm10 = su::basis(-1, 0);
     CHECK(xm10.get_dimension() == 0);
@@ -115,23 +115,23 @@ TEST_CASE("su basis_initializer", "[domain]")
     CHECK(x03bar(7) == 0.0);
 }
 
-TEST_CASE("su from_shape_initializer", "[domain]")
+TEST_CASE("su zero_initializer", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::su;
 
-    const su x0 = su::from_shape(0);
+    const su x0 = su::zero(0);
     CHECK(x0.get_dimension() == 0);
     const Eigen::MatrixXcd x0hat = x0.get_matrix();
     CHECK(x0hat.rows() == 0);
     CHECK(x0hat.cols() == 0);
 
-    const su x1 = su::from_shape(1);
+    const su x1 = su::zero(1);
     CHECK(x1.get_dimension() == 0);
     const Eigen::MatrixXcd x1hat = x1.get_matrix();
     CHECK(x1hat.rows() == 1);
     CHECK(x1hat.cols() == 1);
 
-    const su x2 = su::from_shape(2);
+    const su x2 = su::zero(2);
     CHECK(x2.get_dimension() == 3);
     const Eigen::MatrixXcd x2hat = x2.get_matrix();
     CHECK(x2hat.rows() == 2);
@@ -140,7 +140,7 @@ TEST_CASE("su from_shape_initializer", "[domain]")
 
 TEST_CASE("su get_dimension", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::su;
 
     su zero(0), one(1), two(2), three(3), four(4), five(5), six(6), seven(7), eight(8);
 
@@ -161,7 +161,7 @@ TEST_CASE("su set/get_vector", "[domain]")
     * Tests the set/get_vector operation.
     */
 
-    using namespace Lielab::domain;
+    using Lielab::domain::su;
 
     su x0 = su(0);
     x0.set_vector({});
@@ -241,7 +241,7 @@ TEST_CASE("su get_matrix", "[domain]")
     * Tests the get_matrix operation.
     */
 
-    using namespace Lielab::domain;
+    using Lielab::domain::su;
 
     su x0 = su(0);
     x0.set_vector({});
@@ -292,7 +292,7 @@ TEST_CASE("su get_matrix", "[domain]")
 
 TEST_CASE("su operator()", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::su;
 
     su x0 = su(0);
     x0.set_vector({});
@@ -388,7 +388,7 @@ TEST_CASE("su operator()", "[domain]")
 
 TEST_CASE("su math_ops_double", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::su;
     
     const std::complex<double> j(0.0, 1.0);
 
@@ -411,23 +411,6 @@ TEST_CASE("su math_ops_double", "[domain]")
     CHECK(x1(2) == 7.5);
 
     x1.set_vector({1.25, 2.5, 3.75});
-    // TODO: Imaginary ops move elements out of the algebra. Dunno how this should be handled.
-    const su x1_lm_2j = (2.0*j)*x1;
-    CHECK(x1_lm_2j(0) == 0.0);
-    CHECK(x1_lm_2j(1) == 0.0);
-    CHECK(x1_lm_2j(2) == 0.0);
-
-    const su x1_rm_2j = x1*(2.0*j);
-    CHECK(x1_rm_2j(0) == 0.0);
-    CHECK(x1_rm_2j(1) == 0.0);
-    CHECK(x1_rm_2j(2) == 0.0);
-
-    x1 *= 2.0*j;
-    CHECK(x1(0) == 0.0);
-    CHECK(x1(1) == 0.0);
-    CHECK(x1(2) == 0.0);
-
-    x1.set_vector({1.25, 2.5, 3.75});
 
     const su x1_d_2 = x1/2.0;
     CHECK(x1_d_2(0) == 0.625);
@@ -438,23 +421,11 @@ TEST_CASE("su math_ops_double", "[domain]")
     CHECK(x1(0) == 0.625);
     CHECK(x1(1) == 1.25);
     CHECK(x1(2) == 1.875);
-
-    x1.set_vector({1.25, 2.5, 3.75});
-
-    const su x1_d_2j = x1/(2.0*j);
-    CHECK(x1_d_2j(0) == 0.0);
-    CHECK(x1_d_2j(1) == 0.0);
-    CHECK(x1_d_2j(2) == 0.0);
-
-    x1 /= 2.0*j;
-    CHECK(x1(0) == 0.0);
-    CHECK(x1(1) == 0.0);
-    CHECK(x1(2) == 0.0);
 }
 
 TEST_CASE("su math_ops_cn", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::su;
 
     su x1(2), x2(2);
     x1.set_vector({1.0, 2.0, 3.0});
@@ -496,7 +467,7 @@ TEST_CASE("su from_vector", "[domain]")
     * Tests the from_vector operation.
     */
 
-    using namespace Lielab::domain;
+    using Lielab::domain::su;
 
     const su x0 = su::from_vector({});
     const Eigen::VectorXd x0bar = x0.get_vector();
@@ -532,7 +503,53 @@ TEST_CASE("su from_vector", "[domain]")
     CHECK(x3bar(2) == 3.0);
 }
 
-// TODO: Project
+TEST_CASE("su project", "[domain]")
+{
+    using Lielab::domain::su;
+    using Lielab::testing::check_almost_equal_nulp;
+
+    const Eigen::MatrixXcd uhat = su::basis(0, 2).get_matrix();
+    const Eigen::MatrixXcd vhat = su::basis(1, 2).get_matrix();
+    const Eigen::MatrixXcd what = su::basis(2, 2).get_matrix();
+
+    const Eigen::MatrixXcd proju = su::project(uhat).get_matrix();
+
+    REQUIRE(proju.rows() == 2);
+    REQUIRE(proju.cols() == 2);
+    CHECK(proju(0, 0) == uhat(0, 0));
+    CHECK(proju(0, 1) == uhat(0, 1));
+    CHECK(proju(1, 0) == uhat(1, 0));
+    CHECK(proju(1, 1) == uhat(1, 1));
+
+    const Eigen::MatrixXcd projv = su::project(vhat).get_matrix();
+
+    REQUIRE(projv.rows() == 2);
+    REQUIRE(projv.cols() == 2);
+    CHECK(projv(0, 0) == vhat(0, 0));
+    CHECK(projv(0, 1) == vhat(0, 1));
+    CHECK(projv(1, 0) == vhat(1, 0));
+    CHECK(projv(1, 1) == vhat(1, 1));
+
+    const Eigen::MatrixXcd projw = su::project(what).get_matrix();
+
+    REQUIRE(projw.rows() == 2);
+    REQUIRE(projw.cols() == 2);
+    CHECK(projw(0, 0) == what(0, 0));
+    CHECK(projw(0, 1) == what(0, 1));
+    CHECK(projw(1, 0) == what(1, 0));
+    CHECK(projw(1, 1) == what(1, 1));
+
+    const Eigen::MatrixXcd rand_2_2 = Eigen::MatrixXcd::Random(2, 2);
+    const Eigen::MatrixXcd proj_2_2 = su::project(rand_2_2).get_matrix();
+
+    REQUIRE(proj_2_2.rows() == 2);
+    REQUIRE(proj_2_2.cols() == 2);
+    const double trr = proj_2_2.trace().real();
+    const double tri = proj_2_2.trace().imag();
+    CHECK(check_almost_equal_nulp(trr, 0.0, 1, true));
+    CHECK(check_almost_equal_nulp(tri, 0.0, 1, true));
+    CHECK(check_almost_equal_nulp(proj_2_2, -proj_2_2.adjoint(), 1, true));
+}
 
 TEST_CASE("su2", "[domain]")
 {
@@ -540,25 +557,26 @@ TEST_CASE("su2", "[domain]")
     * Tests the su algebra with su(2).
     */
 
-    using namespace Lielab::domain;
-    using namespace Lielab::functions;
+    using Lielab::domain::su;
+    using Lielab::functions::commutator;
+    using Lielab::testing::check_almost_equal_nulp;
 
-    const size_t D = su::basis(0, 2).get_dimension();
+    const int D = su::basis(0, 2).get_dimension();
 
     // Construct the su2 basis
     std::vector<su> basis;
-    for (size_t ii = 0; ii < D; ii++)
+    for (int ii = 0; ii < D; ii++)
     {
         basis.push_back(su::basis(ii, 2));
     }
 
     // su2 specific identities
-    assert_domain(commutator(basis[0], basis[1]),  2*basis[2]);
-    assert_domain(commutator(basis[1], basis[2]),  2*basis[0]);
-    assert_domain(commutator(basis[2], basis[0]),  2*basis[1]);
-    assert_domain(commutator(basis[1], basis[0]), -2*basis[2]);
-    assert_domain(commutator(basis[2], basis[1]), -2*basis[0]);
-    assert_domain(commutator(basis[0], basis[2]), -2*basis[1]);
+    CHECK(check_almost_equal_nulp(commutator(basis[0], basis[1]).get_matrix(), (2.0*basis[2]).get_matrix(), 1, true));
+    CHECK(check_almost_equal_nulp(commutator(basis[1], basis[2]).get_matrix(), (2.0*basis[0]).get_matrix(), 1, true));
+    CHECK(check_almost_equal_nulp(commutator(basis[2], basis[0]).get_matrix(), (2.0*basis[1]).get_matrix(), 1, true));
+    CHECK(check_almost_equal_nulp(commutator(basis[1], basis[0]).get_matrix(), (-2.0*basis[2]).get_matrix(), 1, true));
+    CHECK(check_almost_equal_nulp(commutator(basis[2], basis[1]).get_matrix(), (-2.0*basis[0]).get_matrix(), 1, true));
+    CHECK(check_almost_equal_nulp(commutator(basis[0], basis[2]).get_matrix(), (-2.0*basis[1]).get_matrix(), 1, true));
 
     // Hamilton's identities
     // Note that i^2 = j^2 = k^2 = -1^2 isn't checked since this isn't true for the algebra
@@ -582,13 +600,13 @@ TEST_CASE("su3", "[domain]")
     * Tests the su algebra with su(3).
     */
 
-    using namespace Lielab::domain;
+    using Lielab::domain::su;
 
-    const size_t D = su::basis(0, 3).get_dimension();
+    const int D = su::basis(0, 3).get_dimension();
 
     // Construct the su3 basis
     std::vector<su> b;
-    for (size_t ii = 0; ii < D; ii++)
+    for (int ii = 0; ii < D; ii++)
     {
         b.push_back(su::basis(ii, 3));
     }

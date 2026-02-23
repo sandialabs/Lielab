@@ -2,6 +2,8 @@
 Unit-like tests for solve_ivp with Euclidean systems.
 """
 
+import pytest
+
 """
 Error handling
 """
@@ -11,7 +13,7 @@ def test_solve_ivp_Euclidean_nan():
     Tests solve_ivp for error handling when nans appear in the vectorfield.
     """
 
-    from lielab.integrate import EuclideanIVPSystem, solve_ivp
+    from lielab.integrate import EuclideanIVPSystem, solve_ivp, IVPStatus
     import numpy as np
 
     m = -0.5
@@ -34,7 +36,7 @@ def test_solve_ivp_Euclidean_nan():
 
     curve = solve_ivp(dynamics, tspan, y0)
 
-    assert (curve.status == -1)
+    assert (curve.status == IVPStatus.ERROR_NANS_IN_VF)
     assert (curve.success == False)
 
 def test_solve_ivp_Euclidean_inf():
@@ -42,7 +44,7 @@ def test_solve_ivp_Euclidean_inf():
     Tests solve_ivp for error handling when infs appear in the vectorfield.
     """
 
-    from lielab.integrate import EuclideanIVPSystem, solve_ivp
+    from lielab.integrate import EuclideanIVPSystem, solve_ivp, IVPStatus
     import numpy as np
 
     m = -0.5
@@ -65,7 +67,7 @@ def test_solve_ivp_Euclidean_inf():
 
     curve = solve_ivp(dynamics, tspan, y0)
 
-    assert (curve.status == -2)
+    assert (curve.status == IVPStatus.ERROR_INFS_IN_VF)
     assert (curve.success == False)
 
 def test_solve_ivp_Euclidean_tspan_short():
@@ -73,7 +75,7 @@ def test_solve_ivp_Euclidean_tspan_short():
     Tests solve_ivp for error handling when tspan is too short.
     """
 
-    from lielab.integrate import EuclideanIVPSystem, solve_ivp
+    from lielab.integrate import EuclideanIVPSystem, solve_ivp, IVPStatus
     import numpy as np
 
     m = -0.5
@@ -94,17 +96,15 @@ def test_solve_ivp_Euclidean_tspan_short():
 
     dynamics = EuclideanIVPSystem(eoms)
 
-    curve = solve_ivp(dynamics, tspan, y0)
-
-    assert (curve.status == -3)
-    assert (curve.success == False)
+    with pytest.raises(RuntimeError):
+        curve = solve_ivp(dynamics, tspan, y0)
 
 def test_solve_ivp_Euclidean_tspan_repeat():
     """
     Tests solve_ivp for error handling when tspan has repeated values.
     """
 
-    from lielab.integrate import EuclideanIVPSystem, solve_ivp
+    from lielab.integrate import EuclideanIVPSystem, solve_ivp, IVPStatus
     import numpy as np
 
     m = -0.5
@@ -125,17 +125,15 @@ def test_solve_ivp_Euclidean_tspan_repeat():
 
     dynamics = EuclideanIVPSystem(eoms)
 
-    curve = solve_ivp(dynamics, tspan, y0)
-
-    assert (curve.status == -20)
-    assert (curve.success == False)
+    with pytest.raises(RuntimeError):
+        curve = solve_ivp(dynamics, tspan, y0)
 
 def test_solve_ivp_Euclidean_tspan_descending():
     """
     Tests solve_ivp for error handling when tspan is in descending order.
     """
 
-    from lielab.integrate import EuclideanIVPSystem, solve_ivp
+    from lielab.integrate import EuclideanIVPSystem, solve_ivp, IVPStatus
     import numpy as np
 
     m = -0.5
@@ -156,10 +154,39 @@ def test_solve_ivp_Euclidean_tspan_descending():
 
     dynamics = EuclideanIVPSystem(eoms)
 
-    curve = solve_ivp(dynamics, tspan, y0)
+    with pytest.raises(RuntimeError):
+        curve = solve_ivp(dynamics, tspan, y0)
+    
+def test_solve_ivp_Euclidean_topos():
+    """
+    Tests solve_ivp for error handling when the differential eqs are the wrong size.
+    """
 
-    assert (curve.status == -20)
-    assert (curve.success == False)
+    from lielab.integrate import EuclideanIVPSystem, solve_ivp, IVPStatus
+    import numpy as np
+
+    m = -0.5
+    tf = 10.0
+
+    y0 = np.array([2.0, 4.0, 6.0, -8.0])
+
+    def eoms(t, y, m=m):
+        dy = np.zeros((6,))
+
+        dy[0] = m*y[0]
+        dy[1] = m*y[1]
+        dy[2] = m*y[2]
+        dy[3] = m*y[3]
+        dy[4] = -y[0]
+        dy[5] = -y[1]
+        return dy
+
+    tspan = [0.0, tf]
+
+    dynamics = EuclideanIVPSystem(eoms)
+
+    with pytest.raises(RuntimeError):
+        curve = solve_ivp(dynamics, tspan, y0)
 
 """
 Basic features
@@ -170,7 +197,7 @@ def test_solve_ivp_Euclidean():
     Tests solve_ivp against a classical problem with known solution.
     """
 
-    from lielab.integrate import EuclideanIVPSystem, solve_ivp
+    from lielab.integrate import EuclideanIVPSystem, solve_ivp, IVPStatus
     import numpy as np
 
     m = -0.5
@@ -193,6 +220,9 @@ def test_solve_ivp_Euclidean():
 
     curve = solve_ivp(dynamics, tspan, y0)
 
+    assert (curve.status == IVPStatus.SUCCESS)
+    assert (curve.success == True)
+
     assert (np.abs(curve.t[0] - 0.0) < 1e-15)
     assert (curve.ybar[0, 0] == y0[0])
     assert (curve.ybar[0, 1] == y0[1])
@@ -211,7 +241,7 @@ def test_solve_ivp_Euclidean_tol():
     Tests solve_ivp for reporting tolerance issues when the step cannot adapt properly.
     """
 
-    from lielab.integrate import EuclideanIVPSystem, solve_ivp, IVPOptions
+    from lielab.integrate import EuclideanIVPSystem, solve_ivp, IVPOptions, IVPStatus
     import numpy as np
 
     m = -0.5
@@ -237,7 +267,7 @@ def test_solve_ivp_Euclidean_tol():
 
     curve = solve_ivp(dynamics, tspan, y0, options)
 
-    assert (curve.status == 4)
+    assert (curve.status == IVPStatus.SUCCESS_BUT_TOL)
     assert (curve.success == True)
 
     assert (curve.t.size == 3)
@@ -253,7 +283,7 @@ def test_solve_ivp_Euclidean_event():
     Tests solve_ivp handling of events with a classical problem with known solution.
     """
 
-    from lielab.integrate import EuclideanIVPSystem, solve_ivp
+    from lielab.integrate import EuclideanIVPSystem, solve_ivp, IVPOptions, IVPStatus
     import numpy as np
 
     m = -0.5
@@ -277,8 +307,12 @@ def test_solve_ivp_Euclidean_event():
     tspan = [0.0, tf]
 
     dynamics = EuclideanIVPSystem(eoms, event=event)
+    options = IVPOptions()
 
     curve = solve_ivp(dynamics, tspan, y0)
+
+    assert (curve.status == IVPStatus.SUCCESS_EVENT)
+    assert (curve.success == True)
 
     assert (np.abs(curve.t[0] - 0.0) < 1e-15)
     assert (curve.ybar[0, 0] == y0[0])
@@ -288,18 +322,18 @@ def test_solve_ivp_Euclidean_event():
 
     tcross = np.log(y2cross/y0[2])/m
 
-    assert (np.abs(curve.t[-1] - tcross) < 1e-8)
-    assert (np.abs(curve.ybar[-1, 0] - np.exp(m*tcross)*y0[0]) < 1e-5)
-    assert (np.abs(curve.ybar[-1, 1] - np.exp(m*tcross)*y0[1]) < 1e-5)
-    assert (np.abs(curve.ybar[-1, 2] - np.exp(m*tcross)*y0[2]) < 1e-5)
-    assert (np.abs(curve.ybar[-1, 3] - np.exp(m*tcross)*y0[3]) < 1e-5)
+    assert (np.abs(curve.t[-1] - tcross) < options.reltol*10.0)
+    assert (np.abs(curve.ybar[-1, 0] - np.exp(m*tcross)*y0[0]) < options.reltol*10.0)
+    assert (np.abs(curve.ybar[-1, 1] - np.exp(m*tcross)*y0[1]) < options.reltol*10.0)
+    assert (np.abs(curve.ybar[-1, 2] - np.exp(m*tcross)*y0[2]) < options.reltol*10.0)
+    assert (np.abs(curve.ybar[-1, 3] - np.exp(m*tcross)*y0[3]) < options.reltol*10.0)
 
 def test_solve_ivp_Euclidean_event_tol():
     """
     Tests solve_ivp handling of events and tolerance issues with a classical problem with known solution.
     """
 
-    from lielab.integrate import EuclideanIVPSystem, solve_ivp, IVPOptions
+    from lielab.integrate import EuclideanIVPSystem, solve_ivp, IVPOptions, IVPStatus
     import numpy as np
 
     m = -0.5
@@ -329,7 +363,7 @@ def test_solve_ivp_Euclidean_event_tol():
 
     curve = solve_ivp(dynamics, tspan, y0, options)
 
-    assert (curve.status == 5)
+    assert (curve.status == IVPStatus.SUCCESS_EVENT_BUT_TOL)
     assert (curve.success == True)
 
     assert (curve.t.size == 3)
@@ -345,7 +379,7 @@ def test_solve_ivp_Euclidean_segmented():
     Tests solve_ivp exactly reporting elements in tspan on a classical problem with known solution.
     """
 
-    from lielab.integrate import EuclideanIVPSystem, solve_ivp
+    from lielab.integrate import EuclideanIVPSystem, solve_ivp, IVPStatus
     import numpy as np
 
     m = -0.5
@@ -365,6 +399,9 @@ def test_solve_ivp_Euclidean_segmented():
     dynamics = EuclideanIVPSystem(eoms)
 
     curve = solve_ivp(dynamics, tspan, y0)
+
+    assert (curve.status == IVPStatus.SUCCESS)
+    assert (curve.success == True)
 
     for ii in range(len(tspan)):
         assert tspan[ii] in curve.t

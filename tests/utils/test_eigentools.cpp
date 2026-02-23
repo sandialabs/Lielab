@@ -446,6 +446,8 @@ TEST_CASE("linspace", "[utils]")
     CHECK(t6(4) == 5.0);
 }
 
+// TODO: Test logspace
+
 TEST_CASE("column_stack", "[utils]")
 {
     using namespace Lielab::utils;
@@ -581,4 +583,228 @@ TEST_CASE("column_stack", "[utils]")
     CHECK(t12(1, 1) == 5.5);
     CHECK(t12(0, 2) == 1.5);
     CHECK(t12(1, 2) == 2.5);
+}
+
+TEST_CASE("horizontal_stack", "[utils]")
+{
+    using Lielab::utils::horizontal_stack;
+
+    Eigen::MatrixXd d22(2,2);
+    d22 << 1.0, 2.0, 3.0, 4.0;
+    Eigen::MatrixXd d32(3, 2);
+    d32 << 1.1, 2.1, 3.1, 4.1, 5.1, 6.1;
+    Eigen::MatrixXd d23 = Eigen::MatrixXd::Random(2, 3);
+    d23 << 1.2, 2.2, 3.2, 4.2, 5.2, 6.2;
+
+    std::vector<Eigen::MatrixXd> vlist;
+
+    const Eigen::MatrixXd t0 = horizontal_stack<double>(vlist);
+    REQUIRE(t0.rows() == 0);
+    REQUIRE(t0.cols() == 0);
+
+    vlist.push_back(d32);
+
+    const Eigen::MatrixXd t1 = horizontal_stack<double>(vlist);
+    REQUIRE(t1.rows() == 3);
+    REQUIRE(t1.cols() == 2);
+    CHECK(t1(0,0) == 1.1);
+    CHECK(t1(0,1) == 2.1);
+    CHECK(t1(1,0) == 3.1);
+    CHECK(t1(1,1) == 4.1);
+    CHECK(t1(2,0) == 5.1);
+    CHECK(t1(2,1) == 6.1);
+
+    vlist.push_back(d23);
+
+    const Eigen::MatrixXd t2 = horizontal_stack<double>(vlist);
+    REQUIRE(t2.rows() == 2);
+    REQUIRE(t2.cols() == 5);
+    CHECK(t2(0,0) == 1.1);
+    CHECK(t2(0,1) == 2.1);
+    CHECK(t2(0,2) == 1.2);
+    CHECK(t2(0,3) == 2.2);
+    CHECK(t2(0,4) == 3.2);
+    CHECK(t2(1,0) == 3.1);
+    CHECK(t2(1,1) == 4.1);
+    CHECK(t2(1,2) == 4.2);
+    CHECK(t2(1,3) == 5.2);
+    CHECK(t2(1,4) == 6.2);
+
+    vlist.push_back(d22);
+
+    const Eigen::MatrixXd t3 = horizontal_stack<double>(vlist);
+    REQUIRE(t3.rows() == 2);
+    REQUIRE(t3.cols() == 7);
+    CHECK(t3(0,0) == 1.1);
+    CHECK(t3(0,1) == 2.1);
+    CHECK(t3(0,2) == 1.2);
+    CHECK(t3(0,3) == 2.2);
+    CHECK(t3(0,4) == 3.2);
+    CHECK(t3(0,5) == 1.0);
+    CHECK(t3(0,6) == 2.0);
+    CHECK(t3(1,0) == 3.1);
+    CHECK(t3(1,1) == 4.1);
+    CHECK(t3(1,2) == 4.2);
+    CHECK(t3(1,3) == 5.2);
+    CHECK(t3(1,4) == 6.2);
+    CHECK(t3(1,5) == 3.0);
+    CHECK(t3(1,6) == 4.0);
+
+    const Eigen::MatrixXd t4 = horizontal_stack<double>({});
+    REQUIRE(t4.rows() == 0);
+    REQUIRE(t4.cols() == 0);
+
+    const Eigen::MatrixXd t5 = horizontal_stack<double>({d32});
+    REQUIRE(t5.rows() == 3);
+    REQUIRE(t5.cols() == 2);
+    CHECK(t5(0,0) == 1.1);
+    CHECK(t5(0,1) == 2.1);
+    CHECK(t5(1,0) == 3.1);
+    CHECK(t5(1,1) == 4.1);
+    CHECK(t5(2,0) == 5.1);
+    CHECK(t5(2,1) == 6.1);
+
+    const Eigen::MatrixXd t6 = horizontal_stack<double>({d32, d23});
+    REQUIRE(t6.rows() == 2);
+    REQUIRE(t6.cols() == 5);
+    CHECK(t6(0,0) == 1.1);
+    CHECK(t6(0,1) == 2.1);
+    CHECK(t6(0,2) == 1.2);
+    CHECK(t6(0,3) == 2.2);
+    CHECK(t6(0,4) == 3.2);
+    CHECK(t6(1,0) == 3.1);
+    CHECK(t6(1,1) == 4.1);
+    CHECK(t6(1,2) == 4.2);
+    CHECK(t6(1,3) == 5.2);
+    CHECK(t6(1,4) == 6.2);
+
+    const Eigen::MatrixXd t7 = horizontal_stack<double>({d32, d23, d22});
+    REQUIRE(t7.rows() == 2);
+    REQUIRE(t7.cols() == 7);
+    CHECK(t7(0,0) == 1.1);
+    CHECK(t7(0,1) == 2.1);
+    CHECK(t7(0,2) == 1.2);
+    CHECK(t7(0,3) == 2.2);
+    CHECK(t7(0,4) == 3.2);
+    CHECK(t7(0,5) == 1.0);
+    CHECK(t7(0,6) == 2.0);
+    CHECK(t7(1,0) == 3.1);
+    CHECK(t7(1,1) == 4.1);
+    CHECK(t7(1,2) == 4.2);
+    CHECK(t7(1,3) == 5.2);
+    CHECK(t7(1,4) == 6.2);
+    CHECK(t7(1,5) == 3.0);
+    CHECK(t7(1,6) == 4.0);
+}
+
+TEST_CASE("vertical_stack", "[utils]")
+{
+    using Lielab::utils::vertical_stack;
+
+    Eigen::MatrixXd d22(2,2);
+    d22 << 1.0, 2.0, 3.0, 4.0;
+    Eigen::MatrixXd d23(2,3);
+    d23 << 1.1, 2.1, 3.1, 4.1, 5.1, 6.1;
+    Eigen::MatrixXd d32 = Eigen::MatrixXd::Random(3, 2);
+    d32 << 1.2, 2.2, 3.2, 4.2, 5.2, 6.2;
+
+    std::vector<Eigen::MatrixXd> vlist;
+
+    const Eigen::MatrixXd t0 = vertical_stack<double>(vlist);
+    REQUIRE(t0.rows() == 0);
+    REQUIRE(t0.cols() == 0);
+
+    vlist.push_back(d23);
+
+    const Eigen::MatrixXd t1 = vertical_stack<double>(vlist);
+    REQUIRE(t1.rows() == 2);
+    REQUIRE(t1.cols() == 3);
+    CHECK(t1(0,0) == 1.1);
+    CHECK(t1(0,1) == 2.1);
+    CHECK(t1(0,2) == 3.1);
+    CHECK(t1(1,0) == 4.1);
+    CHECK(t1(1,1) == 5.1);
+    CHECK(t1(1,2) == 6.1);
+
+    vlist.push_back(d32);
+
+    const Eigen::MatrixXd t2 = vertical_stack<double>(vlist);
+    REQUIRE(t2.rows() == 5);
+    REQUIRE(t2.cols() == 2);
+    CHECK(t2(0,0) == 1.1);
+    CHECK(t2(0,1) == 2.1);
+    CHECK(t2(1,0) == 4.1);
+    CHECK(t2(1,1) == 5.1);
+    CHECK(t2(2,0) == 1.2);
+    CHECK(t2(2,1) == 2.2);
+    CHECK(t2(3,0) == 3.2);
+    CHECK(t2(3,1) == 4.2);
+    CHECK(t2(4,0) == 5.2);
+    CHECK(t2(4,1) == 6.2);
+
+    vlist.push_back(d22);
+
+    const Eigen::MatrixXd t3 = vertical_stack<double>(vlist);
+    REQUIRE(t3.rows() == 7);
+    REQUIRE(t3.cols() == 2);
+    CHECK(t3(0,0) == 1.1);
+    CHECK(t3(0,1) == 2.1);
+    CHECK(t3(1,0) == 4.1);
+    CHECK(t3(1,1) == 5.1);
+    CHECK(t3(2,0) == 1.2);
+    CHECK(t3(2,1) == 2.2);
+    CHECK(t3(3,0) == 3.2);
+    CHECK(t3(3,1) == 4.2);
+    CHECK(t3(4,0) == 5.2);
+    CHECK(t3(4,1) == 6.2);
+    CHECK(t3(5,0) == 1.0);
+    CHECK(t3(5,1) == 2.0);
+    CHECK(t3(6,0) == 3.0);
+    CHECK(t3(6,1) == 4.0);
+
+    const Eigen::MatrixXd t4 = vertical_stack<double>({});
+    REQUIRE(t4.rows() == 0);
+    REQUIRE(t4.cols() == 0);
+
+    const Eigen::MatrixXd t5 = vertical_stack<double>({d23});
+    REQUIRE(t5.rows() == 2);
+    REQUIRE(t5.cols() == 3);
+    CHECK(t5(0,0) == 1.1);
+    CHECK(t5(0,1) == 2.1);
+    CHECK(t5(0,2) == 3.1);
+    CHECK(t5(1,0) == 4.1);
+    CHECK(t5(1,1) == 5.1);
+    CHECK(t5(1,2) == 6.1);
+
+    const Eigen::MatrixXd t6 = vertical_stack<double>({d23, d32});
+    REQUIRE(t6.rows() == 5);
+    REQUIRE(t6.cols() == 2);
+    CHECK(t6(0,0) == 1.1);
+    CHECK(t6(0,1) == 2.1);
+    CHECK(t6(1,0) == 4.1);
+    CHECK(t6(1,1) == 5.1);
+    CHECK(t6(2,0) == 1.2);
+    CHECK(t6(2,1) == 2.2);
+    CHECK(t6(3,0) == 3.2);
+    CHECK(t6(3,1) == 4.2);
+    CHECK(t6(4,0) == 5.2);
+    CHECK(t6(4,1) == 6.2);
+
+    const Eigen::MatrixXd t7 = vertical_stack<double>({d23, d32, d22});
+    REQUIRE(t7.rows() == 7);
+    REQUIRE(t7.cols() == 2);
+    CHECK(t7(0,0) == 1.1);
+    CHECK(t7(0,1) == 2.1);
+    CHECK(t7(1,0) == 4.1);
+    CHECK(t7(1,1) == 5.1);
+    CHECK(t7(2,0) == 1.2);
+    CHECK(t7(2,1) == 2.2);
+    CHECK(t7(3,0) == 3.2);
+    CHECK(t7(3,1) == 4.2);
+    CHECK(t7(4,0) == 5.2);
+    CHECK(t7(4,1) == 6.2);
+    CHECK(t7(5,0) == 1.0);
+    CHECK(t7(5,1) == 2.0);
+    CHECK(t7(6,0) == 3.0);
+    CHECK(t7(6,1) == 4.0);
 }

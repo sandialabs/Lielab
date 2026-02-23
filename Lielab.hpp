@@ -5,11 +5,14 @@
 
 // Package metadata
 #include "Lielab/__release__.hpp"
+#include "Lielab/meta.hpp"
 
 // Submodules
 #include "Lielab/domain.hpp"
 #include "Lielab/functions.hpp"
 #include "Lielab/integrate.hpp"
+#include "Lielab/optimize.hpp"
+#include "Lielab/testing.hpp"
 #include "Lielab/utils.hpp"
 
 #endif

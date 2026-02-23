@@ -108,22 +108,22 @@ def test_su_basis_initializer():
     assert (x03bar[6] == 0.0)
     assert (x03bar[7] == 0.0)
 
-def test_su_from_shape_initializer():
+def test_su_zero_initializer():
     from lielab.domain import su
 
-    x0 = su.from_shape(0)
+    x0 = su.zero(0)
     assert (x0.get_dimension() == 0)
     x0hat = x0.get_matrix()
     assert (x0hat.shape[0] == 0)
     assert (x0hat.shape[1] == 0)
 
-    x1 = su.from_shape(1)
+    x1 = su.zero(1)
     assert (x1.get_dimension() == 0)
     x1hat = x1.get_matrix()
     assert (x1hat.shape[0] == 1)
     assert (x1hat.shape[1] == 1)
 
-    x2 = su.from_shape(2)
+    x2 = su.zero(2)
     assert (x2.get_dimension() == 3)
     x2hat = x2.get_matrix()
     assert (x2hat.shape[0] == 2)
@@ -399,23 +399,6 @@ def test_su_math_ops_double():
     assert (x1(2) == 7.5)
 
     x1.set_vector([1.25, 2.5, 3.75])
-    # TODO: Imaginary ops move elements out of the algebra. Dunno how this should be handled.
-    x1_lm_2j = (2.0*1.0j)*x1
-    assert (x1_lm_2j(0) == 0.0)
-    assert (x1_lm_2j(1) == 0.0)
-    assert (x1_lm_2j(2) == 0.0)
-
-    x1_rm_2j = x1*(2.0*1.0j)
-    assert (x1_rm_2j(0) == 0.0)
-    assert (x1_rm_2j(1) == 0.0)
-    assert (x1_rm_2j(2) == 0.0)
-
-    x1 *= 2.0*1.0j
-    assert (x1(0) == 0.0)
-    assert (x1(1) == 0.0)
-    assert (x1(2) == 0.0)
-
-    x1.set_vector([1.25, 2.5, 3.75])
 
     x1_d_2 = x1/2.0
     assert (x1_d_2(0) == 0.625)
@@ -426,18 +409,6 @@ def test_su_math_ops_double():
     assert (x1(0) == 0.625)
     assert (x1(1) == 1.25)
     assert (x1(2) == 1.875)
-
-    x1.set_vector([1.25, 2.5, 3.75])
-
-    x1_d_2j = x1/(2.0*1.0j)
-    assert (x1_d_2j(0) == 0.0)
-    assert (x1_d_2j(1) == 0.0)
-    assert (x1_d_2j(2) == 0.0)
-
-    x1 /= 2.0*1.0j
-    assert (x1(0) == 0.0)
-    assert (x1(1) == 0.0)
-    assert (x1(2) == 0.0)
 
 def test_su_math_ops_cn():
     from lielab.domain import su
@@ -516,7 +487,51 @@ def test_su_from_vector():
     assert (x3bar[1] == 2.0)
     assert (x3bar[2] == 3.0)
 
-# TODO: Project
+def test_su_project():
+    from lielab.domain import su
+    from lielab.testing import check_almost_equal_nulp
+
+    uhat = su.basis(0, 2).get_matrix()
+    vhat = su.basis(1, 2).get_matrix()
+    what = su.basis(2, 2).get_matrix()
+
+    proju = su.project(uhat).get_matrix()
+
+    assert (proju.shape[0] == 2)
+    assert (proju.shape[1] == 2)
+    assert (proju[0, 0] == uhat[0, 0])
+    assert (proju[0, 1] == uhat[0, 1])
+    assert (proju[1, 0] == uhat[1, 0])
+    assert (proju[1, 1] == uhat[1, 1])
+
+    projv = su.project(vhat).get_matrix()
+
+    assert (projv.shape[0] == 2)
+    assert (projv.shape[1] == 2)
+    assert (projv[0, 0] == vhat[0, 0])
+    assert (projv[0, 1] == vhat[0, 1])
+    assert (projv[1, 0] == vhat[1, 0])
+    assert (projv[1, 1] == vhat[1, 1])
+
+    projw = su.project(what).get_matrix()
+
+    assert (projw.shape[0] == 2)
+    assert (projw.shape[1] == 2)
+    assert (projw[0, 0] == what[0, 0])
+    assert (projw[0, 1] == what[0, 1])
+    assert (projw[1, 0] == what[1, 0])
+    assert (projw[1, 1] == what[1, 1])
+
+    rand_2_2 = np.random.uniform(size=(2,2)) + 1j*np.random.uniform(size=(2,2))
+    proj_2_2 = su.project(rand_2_2).get_matrix()
+
+    assert (proj_2_2.shape[0] == 2)
+    assert (proj_2_2.shape[1] == 2)
+    trr = np.real(proj_2_2.trace())
+    tri = np.imag(proj_2_2.trace())
+    assert (check_almost_equal_nulp(trr, 0.0, 1, True))
+    assert (check_almost_equal_nulp(tri, 0.0, 1, True))
+    assert (check_almost_equal_nulp(proj_2_2, -proj_2_2.conj().transpose(), 1, True))
 
 def test_su2():
     """
@@ -525,6 +540,7 @@ def test_su2():
 
     from lielab.domain import su
     from lielab.functions import commutator
+    from lielab.testing import check_almost_equal_nulp
 
     D = su.basis(0, 2).get_dimension()
 
@@ -534,12 +550,12 @@ def test_su2():
         basis.append(su.basis(ii, 2))
 
     # su2 specific identities
-    assert_domain(commutator(basis[0], basis[1]),  2*basis[2])
-    assert_domain(commutator(basis[1], basis[2]),  2*basis[0])
-    assert_domain(commutator(basis[2], basis[0]),  2*basis[1])
-    assert_domain(commutator(basis[1], basis[0]), -2*basis[2])
-    assert_domain(commutator(basis[2], basis[1]), -2*basis[0])
-    assert_domain(commutator(basis[0], basis[2]), -2*basis[1])
+    assert check_almost_equal_nulp(commutator(basis[0], basis[1]).get_matrix(),  (2.0*basis[2]).get_matrix(), 1, True)
+    assert check_almost_equal_nulp(commutator(basis[1], basis[2]).get_matrix(),  (2.0*basis[0]).get_matrix(), 1, True)
+    assert check_almost_equal_nulp(commutator(basis[2], basis[0]).get_matrix(),  (2.0*basis[1]).get_matrix(), 1, True)
+    assert check_almost_equal_nulp(commutator(basis[1], basis[0]).get_matrix(),  (-2.0*basis[2]).get_matrix(), 1, True)
+    assert check_almost_equal_nulp(commutator(basis[2], basis[1]).get_matrix(),  (-2.0*basis[0]).get_matrix(), 1, True)
+    assert check_almost_equal_nulp(commutator(basis[0], basis[2]).get_matrix(),  (-2.0*basis[1]).get_matrix(), 1, True)
 
     # Hamilton's identities
     # Note that i^2 = j^2 = k^2 = -1^2 isn't checked since this isn't true for the algebra

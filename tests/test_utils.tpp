@@ -6,133 +6,88 @@
 #include <Eigen/Core>
 #include <Lielab.hpp>
 
-template<typename L>
-void assert_domain(L mat1, L mat2)
-{
-    assert_matrix(mat1.get_matrix(), mat2.get_matrix());
-}
-
 template <typename T>
-void is_algebra(const std::vector<T> & basis)
-{
-    /*!
-    * Asserts whether or not a given basis forms an algebra.
-    */
-    
-    const double a = 2.0;
-    const double b = 3.0;
-
-    for (auto & x : basis)
-    {
-        const auto xhat = x.get_matrix();
-
-        for (auto & y : basis)
-        {
-            const auto yhat = y.get_matrix();
-
-            // Scalar multiplication
-            assert_domain<T>((a * xhat) * (b * yhat), (a * b) * (xhat * yhat));
-
-            // Scalar division
-            assert_domain<T>((xhat / a) * (yhat / b), (1.0 / (a * b)) * (xhat * yhat));
-
-            // Vector addition
-            assert_domain<T>(x + y, y + x);
-
-            // Vector subtraction
-            assert_domain<T>(x - y, -(y - x));
-
-            for (auto & z : basis)
-            {
-                const auto zhat = z.get_matrix();
-
-                // Right distributive
-                assert_domain<T>((xhat + yhat) * zhat, xhat * zhat + yhat * zhat);
-
-                // Left distributive
-                assert_domain<T>(xhat * (yhat + zhat), xhat * yhat + xhat * zhat);
-            }
-        }
-    }
-}
-
-template <typename T>
-void is_liealgebra(const std::vector<T> & basis)
+void is_liealgebra(const std::vector<T>& basis)
 {
     /*!
     * Asserts whether or not a given basis forms a Lie algebra.
     */
+
+    using Lielab::functions::commutator;
+    using Lielab::testing::check_almost_equal_nulp;
 
     const double a = 2.0;
     const double b = 3.0;
     
     const T zero = (basis.size() > 0) ? 0.0*basis[0] : T(0);
 
-    for (auto & x : basis)
+    for (auto& x : basis)
     {
         const auto xhat = x.get_matrix();
 
         // Alternating
-        assert_domain<T>(Lielab::functions::commutator(x, x), zero);
+        CHECK(check_almost_equal_nulp(commutator(x, x).get_matrix(), zero.get_matrix(), 1, true));
 
-        for (auto & y : basis)
+        for (auto& y : basis)
         {
             const auto yhat = y.get_matrix();
 
             // Anticommutivity
-            assert_domain<T>(Lielab::functions::commutator(x, y), -Lielab::functions::commutator(y, x));
+            CHECK(check_almost_equal_nulp(commutator(x, y).get_matrix(), (-commutator(y, x)).get_matrix(), 1, true));
 
             // Abelian check
             if (x.abelian)
             {
                 // Don't use commutator() since it will shortcut by returning 0.
-                assert_domain<T>(xhat*yhat, yhat*xhat);
+                CHECK(check_almost_equal_nulp((xhat*yhat).get_matrix(), (yhat*xhat).get_matrix(), 1, true));
             }
 
-            for (auto & z : basis)
+            for (auto& z : basis)
             {
                 // Bilinearity
-                assert_domain<T>(Lielab::functions::commutator(a * x + b * y, z), a * Lielab::functions::commutator(x, z) + b * Lielab::functions::commutator(y, z));
-                assert_domain<T>(Lielab::functions::commutator(z, a * x + b * y), a * Lielab::functions::commutator(z, x) + b * Lielab::functions::commutator(z, y));
+                CHECK(check_almost_equal_nulp(commutator(a * x + b * y, z).get_matrix(), (a * commutator(x, z) + b * commutator(y, z)).get_matrix(), 1, true));
+                CHECK(check_almost_equal_nulp(commutator(z, a * x + b * y).get_matrix(), (a * commutator(z, x) + b * commutator(z, y)).get_matrix(), 1, true));
 
                 // Jacobi Identity
-                assert_domain<T>(Lielab::functions::commutator(x, Lielab::functions::commutator(y, z)) + Lielab::functions::commutator(y, Lielab::functions::commutator(z, x)) + Lielab::functions::commutator(z, Lielab::functions::commutator(x, y)), zero);
+                CHECK(check_almost_equal_nulp((commutator(x, commutator(y, z)) + commutator(y, commutator(z, x)) + commutator(z, commutator(x, y))).get_matrix(), zero.get_matrix(), 1, true));
             }
         }
     }
 }
 
 template <typename T>
-void is_group(const std::vector<T> & elements, const T & identity)
+void is_group(const std::vector<T>& elements, const T& identity)
 {
     /*!
     * Asserts whether or not a given set of elements are in a group.
     */
 
-    for (auto & x : elements)
+    using Lielab::testing::check_almost_equal_nulp;
+
+    for (auto& x : elements)
     {
         // Identity
-        assert_domain<T>(x * identity, x);
-        assert_domain<T>(identity * x, x);
+        CHECK(check_almost_equal_nulp((x * identity).get_matrix(), x.get_matrix(), 1, true));
+        CHECK(check_almost_equal_nulp((identity * x).get_matrix(), x.get_matrix(), 1, true));
 
         // Inverse
-        assert_domain<T>(x * x.inverse(), identity);
+        CHECK(check_almost_equal_nulp((x * x.inverse()).get_matrix(), identity.get_matrix(), 1, true));
 
-        for (auto & y : elements)
+        for (auto& y : elements)
         {
             // Inverse
-            assert_domain<T>(x*y, (y.inverse() * x.inverse()).inverse());
+            CHECK(check_almost_equal_nulp((x*y).get_matrix(), (y.inverse() * x.inverse()).inverse().get_matrix(), 1, true));
 
             // Abelian check
-            if (x.abelian)
+            if (x.is_abelian())
             {
-                assert_domain<T>(x*y, y*x);
+                CHECK(check_almost_equal_nulp((x*y).get_matrix(), (y*x).get_matrix(), 1, true));
             }
             
-            for (auto & z : elements)
+            for (auto& z : elements)
             {
                 // Associative
-                assert_domain<T>((x * y) * z, x * (y * z));
+                CHECK(check_almost_equal_nulp(((x * y) * z).get_matrix(), (x * (y * z)).get_matrix(), 1, true));
             }
         }
     }

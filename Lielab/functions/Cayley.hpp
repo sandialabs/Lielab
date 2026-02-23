@@ -5,27 +5,29 @@
 
 namespace Lielab::functions
 {
-template <typename LA>
-Lielab::domain::LieIII<LA> Cayley(const LA& g);
 
-template <>
-Lielab::domain::CN Cayley(const Lielab::domain::cn& a);
+// cay
+template <typename LA> Lielab::domain::LieIII<LA> cay(const LA& x);
 
-template <>
-Lielab::domain::GLC Cayley(const Lielab::domain::glc& a);
+// cayinv
+template <typename LG> Lielab::domain::LieIII<LG> cayinv(const LG& g);
 
-template <>
-Lielab::domain::SU Cayley(const Lielab::domain::su& a);
+// dcay
+// template <typename LA> Lielab::domain::glr dcay(const LA& x);
+template <typename LA> LA dcay(const LA& x, const LA& y);
 
-Lielab::domain::CompositeGroup Cayley(const Lielab::domain::CompositeAlgebra& la);
+// dcayinv
+// template <typename LA> Lielab::domain::glr dcayinv(const LA& x);
+template <typename LA> LA dcayinv(const LA& x, const LA& y);
 
-template <typename LA>
-Lielab::domain::LieIII<LA> Cayley2(const LA& g);
+// cay2
+template <typename LA> Lielab::domain::LieIII<LA> cay2(const LA& x);
 
-template <typename LA>
-LA dCayleyinv(const LA& u, const LA& v);
-
-Lielab::domain::CompositeAlgebra dCayleyinv(const Lielab::domain::CompositeAlgebra& a, const Lielab::domain::CompositeAlgebra& b);
+// Composite overloads
+template <> Lielab::domain::CompositeGroup cay(const Lielab::domain::CompositeAlgebra& x);
+template <> Lielab::domain::CompositeAlgebra cayinv(const Lielab::domain::CompositeGroup& g);
+template <> Lielab::domain::CompositeAlgebra dcay(const Lielab::domain::CompositeAlgebra& x, const Lielab::domain::CompositeAlgebra& y);
+template <> Lielab::domain::CompositeAlgebra dcayinv(const Lielab::domain::CompositeAlgebra& x, const Lielab::domain::CompositeAlgebra& y);
 
 }
 

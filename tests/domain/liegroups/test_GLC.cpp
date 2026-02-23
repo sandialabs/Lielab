@@ -1,11 +1,11 @@
-#include <Lielab.hpp>
+#include <Lielab/domain/liegroups/GLC.hpp>
 #include <iostream>
 
 #include <catch2/catch_all.hpp>
 
 TEST_CASE("GLC to_string", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::GLC;
 
     const GLC x0 = GLC(0);
     CHECK(x0.to_string() == "GL(0, C)");
@@ -17,7 +17,7 @@ TEST_CASE("GLC to_string", "[domain]")
 
 TEST_CASE("GLC main_initializer", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::GLC;
 
     const GLC xblank = GLC();
     CHECK(xblank.get_dimension() == 0);
@@ -32,7 +32,7 @@ TEST_CASE("GLC main_initializer", "[domain]")
 
 TEST_CASE("GLC matrix_initializer", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::GLC;
 
     const GLC x0 = GLC(Eigen::MatrixXcd::Random(0, 0));
     CHECK(x0.get_shape() == 0);
@@ -47,23 +47,23 @@ TEST_CASE("GLC matrix_initializer", "[domain]")
     CHECK_THROWS(GLC(Eigen::MatrixXcd::Random(3, 2)));
 }
 
-TEST_CASE("GLC from_shape_initializer", "[domain]")
+TEST_CASE("GLC identity_initializer", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::GLC;
 
-    const GLC x0 = GLC::from_shape(0);
+    const GLC x0 = GLC::identity(0);
     CHECK(x0.get_dimension() == 0);
     const Eigen::MatrixXcd x0hat = x0.get_matrix();
     CHECK(x0hat.rows() == 0);
     CHECK(x0hat.cols() == 0);
 
-    const GLC x1 = GLC::from_shape(1);
+    const GLC x1 = GLC::identity(1);
     CHECK(x1.get_dimension() == 2);
     const Eigen::MatrixXcd x1hat = x1.get_matrix();
     CHECK(x1hat.rows() == 1);
     CHECK(x1hat.cols() == 1);
 
-    const GLC x2 = GLC::from_shape(2);
+    const GLC x2 = GLC::identity(2);
     CHECK(x2.get_dimension() == 8);
     const Eigen::MatrixXcd x2hat = x2.get_matrix();
     CHECK(x2hat.rows() == 2);
@@ -72,7 +72,7 @@ TEST_CASE("GLC from_shape_initializer", "[domain]")
 
 TEST_CASE("GLC get_dimension", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::GLC;
 
     GLC zero(0), one(1), two(2), three(3), four(4), five(5), six(6), seven(7), eight(8);
 
@@ -93,7 +93,7 @@ TEST_CASE("GLC serialize/unserialize", "[domain]")
     * Tests the serialize/unserialize operation.
     */
 
-    using namespace Lielab::domain;
+    using Lielab::domain::GLC;
 
     GLC x0 = GLC(0);
     x0.unserialize({});
@@ -170,7 +170,7 @@ TEST_CASE("GLC get_matrix", "[domain]")
     * Tests the get_matrix operation.
     */
 
-    using namespace Lielab::domain;
+    using Lielab::domain::GLC;
 
     GLC x0 = GLC(0);
     x0.unserialize({});
@@ -232,9 +232,9 @@ TEST_CASE("GLC get_matrix", "[domain]")
 
 TEST_CASE("GLC operator()", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::GLC;
 
-    GLC x0 = GLC::from_shape(0);
+    GLC x0 = GLC::identity(0);
     x0.unserialize({});
 
     // Out of bounds
@@ -331,7 +331,7 @@ TEST_CASE("GLC operator()", "[domain]")
 
 TEST_CASE("GLC math_ops_GLC", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::GLC;
 
     GLC x1(2), x2(2);
     x1.unserialize({1.0, 2.0, 3.0, 4.0, 1.0, 1.0, 1.0, 1.0});
@@ -378,10 +378,10 @@ TEST_CASE("GLC math_ops_GLC", "[domain]")
 
 TEST_CASE("GLC project", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::GLC;
 
     const Eigen::MatrixXcd rand_2_2 = Eigen::MatrixXcd::Random(2, 2);
-    const Eigen::MatrixXcd proj_2_2 = GLC::project(rand_2_2);
+    const Eigen::MatrixXcd proj_2_2 = GLC::project(rand_2_2).get_matrix();
 
     REQUIRE(proj_2_2.rows() == 2);
     REQUIRE(proj_2_2.cols() == 2);
@@ -391,7 +391,7 @@ TEST_CASE("GLC project", "[domain]")
     CHECK(proj_2_2(1, 1) == rand_2_2(1, 1));
 
     const Eigen::MatrixXcd rand_3_3 = Eigen::MatrixXcd::Random(3, 3);
-    const Eigen::MatrixXcd proj_3_3 = GLC::project(rand_3_3);
+    const Eigen::MatrixXcd proj_3_3 = GLC::project(rand_3_3).get_matrix();
 
     REQUIRE(proj_3_3.rows() == 3);
     REQUIRE(proj_3_3.cols() == 3);
@@ -406,7 +406,7 @@ TEST_CASE("GLC project", "[domain]")
     CHECK(proj_3_3(2, 2) == rand_3_3(2, 2));
 
     const Eigen::MatrixXcd rand_2_3 = Eigen::MatrixXcd::Random(2, 3);
-    const Eigen::MatrixXcd proj_2_3 = GLC::project(rand_2_3);
+    const Eigen::MatrixXcd proj_2_3 = GLC::project(rand_2_3).get_matrix();
 
     REQUIRE(proj_2_3.rows() == 2);
     REQUIRE(proj_2_3.cols() == 2);
@@ -416,7 +416,7 @@ TEST_CASE("GLC project", "[domain]")
     CHECK(proj_2_3(1, 1) == rand_2_3(1, 1));
 
     const Eigen::MatrixXcd rand_3_2 = Eigen::MatrixXcd::Random(3, 2);
-    const Eigen::MatrixXcd proj_3_2 = GLC::project(rand_3_2);
+    const Eigen::MatrixXcd proj_3_2 = GLC::project(rand_3_2).get_matrix();
 
     REQUIRE(proj_3_2.rows() == 2);
     REQUIRE(proj_3_2.cols() == 2);

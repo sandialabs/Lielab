@@ -47,7 +47,8 @@ def test_from_quaternion():
     Tests quaternions against well-known identities.
     """
 
-    from lielab.domain import SU
+    from lielab.domain import CompositeGroup, SU
+    from lielab.testing import check_almost_equal_nulp
 
     qm1 = SU.from_quaternion(-1, 0, 0, 0)
     qi = SU.from_quaternion(0, 1, 0, 0)
@@ -56,18 +57,18 @@ def test_from_quaternion():
 
     # Hamilton's identities
     # i^2 = j^2 = k^2 = -1
-    assert_matrix(qi*qi, qm1)
-    assert_matrix(qj*qj, qm1)
-    assert_matrix(qk*qk, qm1)
+    assert check_almost_equal_nulp(CompositeGroup([qi*qi]), CompositeGroup([qm1]), 1, True)
+    assert check_almost_equal_nulp(CompositeGroup([qj*qj]), CompositeGroup([qm1]), 1, True)
+    assert check_almost_equal_nulp(CompositeGroup([qk*qk]), CompositeGroup([qm1]), 1, True)
 
     # ij = -ji = -k
-    assert_matrix(qi*qj, (qj*qi).inverse())
-    assert_matrix(qi*qj, qk.inverse())
+    assert check_almost_equal_nulp(CompositeGroup([qi*qj]), CompositeGroup([(qj*qi).inverse()]), 1, True)
+    assert check_almost_equal_nulp(CompositeGroup([qi*qj]), CompositeGroup([qk.inverse()]), 1, True)
 
     # jk = -kj = -i
-    assert_matrix(qj*qk, (qk*qj).inverse())
-    assert_matrix(qj*qk, qi.inverse())
+    assert check_almost_equal_nulp(CompositeGroup([qj*qk]), CompositeGroup([(qk*qj).inverse()]), 1, True)
+    assert check_almost_equal_nulp(CompositeGroup([qj*qk]), CompositeGroup([qi.inverse()]), 1, True)
 
     # ki = -ik = -j
-    assert_matrix(qk*qi, (qi*qk).inverse())
-    assert_matrix(qk*qi, qj.inverse())
+    assert check_almost_equal_nulp(CompositeGroup([qk*qi]), CompositeGroup([(qi*qk).inverse()]), 1, True)
+    assert check_almost_equal_nulp(CompositeGroup([qk*qi]), CompositeGroup([qj.inverse()]), 1, True)

@@ -8,6 +8,9 @@ TEST_CASE("dexpinv_numerical", "[functions]")
     /*!
     * Tests the dexpinv_numerical function.
     */
+
+    using Lielab::testing::check_almost_equal_tol;
+
     Lielab::domain::so u(3);
     Lielab::domain::so v(3);
     Lielab::domain::so ansso(3);
@@ -28,7 +31,7 @@ TEST_CASE("dexpinv_numerical", "[functions]")
                0.0, 0.0, 0.0,
               -1.0, 0.0, 0.0;
 
-    assert_matrix(ansso.get_matrix(), truthso);
+    CHECK(check_almost_equal_tol(ansso.get_matrix(), truthso));
 
     // order = 1
     ansso = Lielab::functions::dexpinv_numerical(u, v, 1);
@@ -36,7 +39,7 @@ TEST_CASE("dexpinv_numerical", "[functions]")
               -0.5, 0.0, 0.0,
               -1.0, 0.0, 0.0;
 
-    assert_matrix(ansso.get_matrix(), truthso);
+    CHECK(check_almost_equal_tol(ansso.get_matrix(), truthso));
 
     // order = 3
     ansso = Lielab::functions::dexpinv_numerical(u, v, 3);
@@ -44,7 +47,7 @@ TEST_CASE("dexpinv_numerical", "[functions]")
               -0.5, 0.0, 0.0,
               -0.916666666666667, 0.0, 0.0;
 
-    assert_matrix(ansso.get_matrix(), truthso);
+    CHECK(check_almost_equal_tol(ansso.get_matrix(), truthso));
 
     // order = 11
     ansso = Lielab::functions::dexpinv_numerical(u, v, 11);
@@ -52,7 +55,7 @@ TEST_CASE("dexpinv_numerical", "[functions]")
               -0.500000000000000, 0.0, 0.0,
               -0.915243861398375, 0.0, 0.0;
 
-    assert_matrix(ansso.get_matrix(), truthso);
+    CHECK(check_almost_equal_tol(ansso.get_matrix(), truthso));
 
     Lielab::domain::rn x(3);
     Lielab::domain::rn y(3);
@@ -68,7 +71,7 @@ TEST_CASE("dexpinv_numerical", "[functions]")
                0, 0, 0, 0,
                0, 0, 0, 0;
 
-    assert_matrix(ansrn.get_matrix(), truthrn);
+    CHECK(check_almost_equal_tol(ansrn.get_matrix(), truthrn));
 
     // ridiculous order (checks abelian speedhack)
     ansrn = Lielab::functions::dexpinv_numerical(x, y, 999999999);
@@ -77,5 +80,5 @@ TEST_CASE("dexpinv_numerical", "[functions]")
                0, 0, 0, 0,
                0, 0, 0, 0;
 
-    assert_matrix(ansrn.get_matrix(), truthrn);
+    CHECK(check_almost_equal_tol(ansrn.get_matrix(), truthrn));
 }

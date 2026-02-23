@@ -8,43 +8,38 @@ TEST_CASE("Ad", "[functions]")
     /*!
     * Tests the Ad function.
     */
-    Lielab::domain::so u(3);
-    Lielab::domain::so v(3);
-    Lielab::domain::so w(3);
-    Lielab::domain::so ansso(3);
-    Lielab::domain::SO Gso(3);
 
-    Eigen::VectorXd xx(3);
-    xx << 1.0, 0.0, 0.0;
-    Eigen::VectorXd yy(3);
-    yy << 0.0, 1.0, 0.0;
-    Eigen::VectorXd zz(3);
-    zz << 0.0, 0.0, 1.0;
-    Eigen::MatrixXd truthso(3,3);
+    using Lielab::domain::so;
+    using Lielab::domain::SO;
+    using Lielab::functions::Ad;
+    using Lielab::functions::exp;
+    using Lielab::testing::check_almost_equal_tol;
 
-    u.set_vector(xx);
-    v.set_vector(yy);
-    w.set_vector(zz);
-    Gso = Lielab::functions::exp(v);
+    const so u = so::from_vector({1.0, 0.0, 0.0});
+    const so v = so::from_vector({0.0, 1.0, 0.0});
+    const so w = so::from_vector({0.0, 0.0, 1.0});
+
+    const SO Gso = exp(v);
 
     // GuG^-1
-    ansso = Lielab::functions::Ad(Gso, u);
+    so ansso = Ad(Gso, u);
+    Eigen::MatrixXd truthso(3,3);
     truthso << 0, 0.841470984807896, 0,
               -0.841470984807897, 0, -0.540302305868140,
                0, 0.540302305868140, 0;
     
-    assert_matrix(ansso.get_matrix(), truthso);
+    CHECK(check_almost_equal_tol(ansso.get_matrix(), truthso));
 
     // GvG^-1 = v when G = exp(v)
-    ansso = Lielab::functions::Ad(Gso, v);
+    ansso = Ad(Gso, v);
     
-    assert_matrix(ansso.get_matrix(), v.get_matrix());
+    CHECK(check_almost_equal_tol(ansso.get_matrix(), v.get_matrix()));
 
     // GwG^-1
-    ansso = Lielab::functions::Ad(Gso, w);
+    ansso = Ad(Gso, w);
     truthso << 0, -0.540302305868140, 0,
                0.540302305868140, 0, -0.841470984807897,
                0, 0.841470984807897, 0;
     
-    assert_matrix(ansso.get_matrix(), truthso);
+    CHECK(check_almost_equal_tol(ansso.get_matrix(), truthso));
 }

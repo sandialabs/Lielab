@@ -49,9 +49,9 @@ TEST_CASE("solve_ivp_Euclidean_nan", "[integrate]")
 
     EuclideanIVPSystem dynamics(eoms);
 
-    ODESolution curve = solve_ivp(dynamics, tspan, y0);
+    IVPSolution curve = solve_ivp(dynamics, tspan, y0);
 
-    CHECK(curve.status == -1);
+    CHECK(curve.status == IVPStatus::ERROR_NANS_IN_VF);
     CHECK(curve.success == false);
 }
 
@@ -89,9 +89,9 @@ TEST_CASE("solve_ivp_Euclidean_inf", "[integrate]")
 
     EuclideanIVPSystem dynamics(eoms);
 
-    ODESolution curve = solve_ivp(dynamics, tspan, y0);
+    IVPSolution curve = solve_ivp(dynamics, tspan, y0);
 
-    CHECK(curve.status == -2);
+    CHECK(curve.status == IVPStatus::ERROR_INFS_IN_VF);
     CHECK(curve.success == false);
 }
 
@@ -127,10 +127,7 @@ TEST_CASE("solve_ivp_Euclidean_tspan_short", "[integrate]")
 
     EuclideanIVPSystem dynamics(eoms);
 
-    ODESolution curve = solve_ivp(dynamics, tspan, y0);
-
-    CHECK(curve.status == -3);
-    CHECK(curve.success == false);
+    CHECK_THROWS(solve_ivp(dynamics, tspan, y0));
 }
 
 TEST_CASE("solve_ivp_Euclidean_tspan_repeat", "[integrate]")
@@ -166,10 +163,7 @@ TEST_CASE("solve_ivp_Euclidean_tspan_repeat", "[integrate]")
 
     EuclideanIVPSystem dynamics(eoms);
 
-    ODESolution curve = solve_ivp(dynamics, tspan, y0);
-
-    CHECK(curve.status == -20);
-    CHECK(curve.success == false);
+    CHECK_THROWS(solve_ivp(dynamics, tspan, y0));
 }
 
 TEST_CASE("solve_ivp_Euclidean_tspan_descending", "[integrate]")
@@ -206,10 +200,46 @@ TEST_CASE("solve_ivp_Euclidean_tspan_descending", "[integrate]")
 
     EuclideanIVPSystem dynamics(eoms);
 
-    ODESolution curve = solve_ivp(dynamics, tspan, y0);
+    CHECK_THROWS(solve_ivp(dynamics, tspan, y0));
+}
 
-    CHECK(curve.status == -20);
-    CHECK(curve.success == false);
+TEST_CASE("solve_ivp_Euclidean_topos", "[integrate]")
+{
+    /*
+    Tests solve_ivp for error handling when the differential eqs are the wrong size.
+    */
+    
+    using namespace Lielab::integrate;
+
+    const double m = -0.5;
+    const double tf = 10.0;
+
+    Eigen::VectorXd y0(4);
+    y0(0) = 2.0;
+    y0(1) = 4.0;
+    y0(2) = 6.0;
+    y0(3) = -8.0;
+
+    const auto eoms = [m](const double t, const Eigen::VectorXd& y) -> Eigen::VectorXd
+    {
+        Eigen::VectorXd dy(6);
+
+        dy(0) = m*y(0);
+        dy(1) = m*y(1);
+        dy(2) = m*y(2);
+        dy(3) = m*y(3);
+        dy(4) = -y(0);
+        dy(5) = -y(1);
+        return dy;
+    };
+
+    Eigen::VectorXd tspan(2);
+    tspan(0) = 0.0;
+    tspan(1) = -tf;
+
+    EuclideanIVPSystem dynamics(eoms);
+
+    CHECK_THROWS(solve_ivp(dynamics, tspan, y0));
 }
 
 /*
@@ -251,7 +281,10 @@ TEST_CASE("solve_ivp_Euclidean", "[integrate]")
 
     EuclideanIVPSystem dynamics(eoms);
 
-    ODESolution curve = solve_ivp(dynamics, tspan, y0);
+    IVPSolution curve = solve_ivp(dynamics, tspan, y0);
+
+    CHECK(curve.status == IVPStatus::SUCCESS);
+    CHECK(curve.success == true);
 
     CHECK(std::abs(curve.t(0) - 0.0) <1e-15);
     CHECK(curve.ybar(0, 0) == y0(0));
@@ -303,9 +336,9 @@ TEST_CASE("solve_ivp_Euclidean_tol", "[integrate]")
     IVPOptions options;
     options.dt_min = 5.0;
 
-    ODESolution curve = solve_ivp(dynamics, tspan, y0, options);
+    IVPSolution curve = solve_ivp(dynamics, tspan, y0, options);
 
-    CHECK(curve.status == 4);
+    CHECK(curve.status == IVPStatus::SUCCESS_BUT_TOL);
     CHECK(curve.success == true);
 
     CHECK(curve.t.size() == 3);
@@ -361,7 +394,12 @@ TEST_CASE("solve_ivp_Euclidean_event", "[integrate]")
     EuclideanIVPSystem dynamics(eoms);
     dynamics.event = event;
 
-    ODESolution curve = solve_ivp(dynamics, tspan, y0);
+    IVPOptions options;
+
+    IVPSolution curve = solve_ivp(dynamics, tspan, y0, options);
+
+    CHECK(curve.status == IVPStatus::SUCCESS_EVENT);
+    CHECK(curve.success == true);
 
     CHECK(std::abs(curve.t(0) - 0.0) < 1e-15);
     CHECK(curve.ybar(0, 0) == y0(0));
@@ -371,11 +409,11 @@ TEST_CASE("solve_ivp_Euclidean_event", "[integrate]")
 
     const double tcross = std::log(y2cross/y0(2))/m;
 
-    CHECK(std::abs(curve.t(last) - tcross) < 1e-8);
-    CHECK(std::abs(curve.ybar(last, 0) - std::exp(m*tcross)*y0(0)) < 1e-5);
-    CHECK(std::abs(curve.ybar(last, 1) - std::exp(m*tcross)*y0(1)) < 1e-5);
-    CHECK(std::abs(curve.ybar(last, 2) - std::exp(m*tcross)*y0(2)) < 1e-5);
-    CHECK(std::abs(curve.ybar(last, 3) - std::exp(m*tcross)*y0(3)) < 1e-5);
+    CHECK(std::abs(curve.t(last) - tcross) < options.reltol*10.0);
+    CHECK(std::abs(curve.ybar(last, 0) - std::exp(m*tcross)*y0(0)) < options.reltol*10.0);
+    CHECK(std::abs(curve.ybar(last, 1) - std::exp(m*tcross)*y0(1)) < options.reltol*10.0);
+    CHECK(std::abs(curve.ybar(last, 2) - std::exp(m*tcross)*y0(2)) < options.reltol*10.0);
+    CHECK(std::abs(curve.ybar(last, 3) - std::exp(m*tcross)*y0(3)) < options.reltol*10.0);
 }
 
 TEST_CASE("solve_ivp_Euclidean_event_tol", "[integrate]")
@@ -422,9 +460,9 @@ TEST_CASE("solve_ivp_Euclidean_event_tol", "[integrate]")
     IVPOptions options;
     options.dt_min = 5.0;
 
-    ODESolution curve = solve_ivp(dynamics, tspan, y0, options);
+    IVPSolution curve = solve_ivp(dynamics, tspan, y0, options);
 
-    CHECK(curve.status == 5);
+    CHECK(curve.status == IVPStatus::SUCCESS_EVENT_BUT_TOL);
     CHECK(curve.success == true);
 
     CHECK(curve.t.size() == 3);
@@ -467,7 +505,7 @@ TEST_CASE("solve_ivp_Euclidean_segmented", "[integrate]")
 
     EuclideanIVPSystem dynamics(eoms);
 
-    ODESolution curve = solve_ivp(dynamics, tspan, y0);
+    IVPSolution curve = solve_ivp(dynamics, tspan, y0);
 
     for (ptrdiff_t ii = 0; ii < tspan.size(); ii++)
     {

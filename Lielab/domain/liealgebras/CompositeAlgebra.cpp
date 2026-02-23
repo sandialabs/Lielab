@@ -1,75 +1,17 @@
 #include "CompositeAlgebra.hpp"
 
-#include "cn.hpp"
-#include "glr.hpp"
-#include "glc.hpp"
-#include "rn.hpp"
-#include "se.hpp"
-#include "so.hpp"
-#include "sp.hpp"
-#include "su.hpp"
+#include "Lielab/domain/liealgebras.hpp"
+
+#include "Lielab/testing.hpp"
 
 #include <Eigen/Core>
 
-#include <cassert>
 #include <initializer_list>
 #include <numeric>
+#include <variant>
 
 namespace Lielab::domain
 {
-
-std::string CompositeAlgebra::to_string() const
-{
-    std::string out = "";
-    const size_t sz = this->space.size();
-    std::vector<size_t> shapes = this->get_shapes();
-
-    for (size_t ii = 0; ii < sz; ii++)
-    {
-        const size_t ind = this->space[ii].index();
-        if (ind == CompositeAlgebra::INDEX_cn)
-        {
-            out += std::get<cn>(this->space[ii]).to_string();
-        }
-        else if (ind == CompositeAlgebra::INDEX_glr)
-        {
-            out += std::get<glr>(this->space[ii]).to_string();
-        }
-        else if (ind == CompositeAlgebra::INDEX_glc)
-        {
-            out += std::get<glc>(this->space[ii]).to_string();
-        }
-        else if (ind == CompositeAlgebra::INDEX_rn)
-        {
-            out += std::get<rn>(this->space[ii]).to_string();
-        }
-        else if (ind == CompositeAlgebra::INDEX_se)
-        {
-            out += std::get<se>(this->space[ii]).to_string();
-        }
-        else if (ind == CompositeAlgebra::INDEX_so)
-        {
-            out += std::get<so>(this->space[ii]).to_string();
-        }
-        else if (ind == CompositeAlgebra::INDEX_sp)
-        {
-            out += std::get<sp>(this->space[ii]).to_string();
-        }
-        else if (ind == CompositeAlgebra::INDEX_su)
-        {
-            out += std::get<su>(this->space[ii]).to_string();
-        }
-
-        if (ii < sz-1)
-        {
-            out += " ";
-            out += "⊕";
-            out += " ";
-        }
-    }
-
-    return out;
-}
 
 CompositeAlgebra::CompositeAlgebra()
 {
@@ -82,39 +24,26 @@ CompositeAlgebra::CompositeAlgebra()
     */
 }
 
-CompositeAlgebra::CompositeAlgebra(const size_t n)
+CompositeAlgebra::CompositeAlgebra(const CompositeAlgebra::matrix_t& matrix)
 {
-    /*! \f{equation*}{(\mathbb{Z}) \rightarrow \mathfrak{CompositeAlgebra} \f}
-    *
-    * Constructor instantiating a \f$\mathfrak{CompositeAlgebra}\f$ as a single glc object.
-    * 
-    * Enables instantiation like:
-    * 
-    *     Lielab::domain::CompositeAlgebra x(3), y(4), z(5);
-    * 
-    * @param[in] n The shape of the data matrix.
-    */
-
-    this->space.push_back(glc(n));
+    this->point.push_back(glc(matrix));
 }
 
-CompositeAlgebra CompositeAlgebra::basis(const ptrdiff_t i, const size_t n)
+CompositeAlgebra CompositeAlgebra::basis(const int index, const int shape)
 {
     /*! \f{equation*}{ (\mathbb{Z}, \mathbb{Z}) \rightarrow \mathfrak{CompositeAlgebra} \f}
     *
     * Returns the i'th basis element of the CompositeAlgebra algebra.
     * 
-    * @param[in] i The basis vector.
-    * @param[in] n The shape of the algebra.
+    * @param[in] index The basis vector.
+    * @param[in] shape The shape of the algebra.
     * @param[out] out The CompositeAlgebra element.
     */
 
-    CompositeAlgebra out;
-    out.space.push_back(glc::basis(i, n));
-    return out;
+    return CompositeAlgebra({glc::basis(index, shape)});
 }
 
-CompositeAlgebra CompositeAlgebra::from_shape(const size_t shape)
+CompositeAlgebra CompositeAlgebra::zero(const int shape)
 {
     /*! \f{equation*}{ (\mathbb{Z}) \rightarrow \mathfrak{CompositeAlgebra} \f}
     *
@@ -124,10 +53,35 @@ CompositeAlgebra CompositeAlgebra::from_shape(const size_t shape)
     * @param[out] out The CompositeAlgebra element. 
     */
 
-    CompositeAlgebra out;
-    out.space.push_back(glc::from_shape(shape));
-    return out;
+    return CompositeAlgebra({glc::zero(shape)});
 }
+
+CompositeAlgebra CompositeAlgebra::project(const CompositeAlgebra::matrix_t& matrix)
+{
+    return CompositeAlgebra({glc::project(matrix)});
+}
+
+CompositeAlgebra::CompositeAlgebra(const int n)
+{
+    /*! \f{equation*}{(\mathbb{Z}) \rightarrow \mathfrak{CompositeAlgebra} \f}
+    *
+    * Constructor instantiating a \f$\mathfrak{CompositeAlgebra}\f$ as multiple empty glc objects.
+    * 
+    * Enables instantiation like:
+    * 
+    *     Lielab::domain::CompositeAlgebra x(3), y(4), z(5);
+    * 
+    * @param[in] n
+    */
+
+    this->point.reserve(n);
+    for (int ii = 0; ii < n; ii++)
+    {
+        this->point.push_back(glc(0));
+    }
+}
+
+
 
 CompositeAlgebra::CompositeAlgebra(std::initializer_list<CompositeAlgebra::TYPES> others)
 {
@@ -140,7 +94,7 @@ CompositeAlgebra::CompositeAlgebra(std::initializer_list<CompositeAlgebra::TYPES
     *     Lielab::domain::CompositeAlgebra M{R, O};
     */
 
-    this->space = std::vector<CompositeAlgebra::TYPES>{std::move(others)};
+    this->point = std::vector<CompositeAlgebra::TYPES>{std::move(others)};
 }
 
 CompositeAlgebra::CompositeAlgebra(const std::vector<CompositeAlgebra::TYPES>& others)
@@ -154,86 +108,149 @@ CompositeAlgebra::CompositeAlgebra(const std::vector<CompositeAlgebra::TYPES>& o
     *     M = lielab.domain.CompositeAlgebra([R, O])
     */
 
-    this->space = others;
+    this->point = others;
 }
 
-size_t CompositeAlgebra::get_dimension() const
+std::string CompositeAlgebra::to_string() const
 {
-    const std::vector<size_t> dims = this->get_dimensions();
-    return std::accumulate(dims.begin(), dims.end(), size_t(0));
-}
+    std::string out = "";
+    const int sz = static_cast<int>(this->point.size());
 
-Eigen::VectorXd CompositeAlgebra::get_vector() const
-{
-    return Lielab::utils::concatenate(this->get_vectors());
-}
-
-void CompositeAlgebra::set_vector(const Eigen::VectorXd& vec)
-{
-    size_t jj = 0;
-
-    for (size_t ii = 0; ii < this->space.size(); ii++)
+    int ii = 0;
+    for (const auto& element : this->point)
     {
-        const size_t ind = this->space[ii].index();
-        if (ind == CompositeAlgebra::INDEX_cn)
+        std::visit([&](const auto& _element)
         {
-            const size_t dim = std::get<cn>(this->space[ii]).get_dimension();
-            std::get<cn>(this->space[ii]).set_vector(vec(Eigen::seqN(jj, dim)));
-            jj += dim;
-        }
-        else if (ind == CompositeAlgebra::INDEX_glr)
-        {
-            const size_t dim = std::get<glr>(this->space[ii]).get_dimension();
-            std::get<glr>(this->space[ii]).set_vector(vec(Eigen::seqN(jj, dim)));
-            jj += dim;
-        }
-        else if (ind == CompositeAlgebra::INDEX_glc)
-        {
-            const size_t dim = std::get<glc>(this->space[ii]).get_dimension();
-            std::get<glc>(this->space[ii]).set_vector(vec(Eigen::seqN(jj, dim)));
-            jj += dim;
-        }
-        else if (ind == CompositeAlgebra::INDEX_rn)
-        {
-            const size_t dim = std::get<rn>(this->space[ii]).get_dimension();
-            std::get<rn>(this->space[ii]).set_vector(vec(Eigen::seqN(jj, dim)));
-            jj += dim;
-        }
-        else if (ind == CompositeAlgebra::INDEX_se)
-        {
-            const size_t dim = std::get<se>(this->space[ii]).get_dimension();
-            std::get<se>(this->space[ii]).set_vector(vec(Eigen::seqN(jj, dim)));
-            jj += dim;
-        }
-        else if (ind == CompositeAlgebra::INDEX_so)
-        {
-            const size_t dim = std::get<so>(this->space[ii]).get_dimension();
-            std::get<so>(this->space[ii]).set_vector(vec(Eigen::seqN(jj, dim)));
-            jj += dim;
-        }
-        else if (ind == CompositeAlgebra::INDEX_sp)
-        {
-            const size_t dim = std::get<sp>(this->space[ii]).get_dimension();
-            std::get<sp>(this->space[ii]).set_vector(vec(Eigen::seqN(jj, dim)));
-            jj += dim;
-        }
-        else if (ind == CompositeAlgebra::INDEX_su)
-        {
-            const size_t dim = std::get<su>(this->space[ii]).get_dimension();
-            std::get<su>(this->space[ii]).set_vector(vec(Eigen::seqN(jj, dim)));
-            jj += dim;
-        }
+            out += _element.to_string();
+        }, element);
+
+        if (ii < sz - 1) out += " ⊕ ";
+        ii++;
     }
+
+    return out;
 }
 
-void CompositeAlgebra::set_vector(std::initializer_list<double> vector)
+int CompositeAlgebra::get_dimension() const
 {
-    /*!
-    *
-    * @param[in] vector
-    */
-   
-    this->set_vector(Eigen::VectorXd{std::move(vector)});
+    const std::vector<int> dims = this->get_dimensions();
+    return std::accumulate(dims.begin(), dims.end(), 0);
+}
+
+int CompositeAlgebra::get_size() const
+{
+    const std::vector<int> sizes = this->get_sizes();
+    return std::accumulate(sizes.begin(), sizes.end(), 0);
+}
+
+bool CompositeAlgebra::is_abelian() const
+{
+    bool abelian = true;
+    for (auto& element : this->point)
+    {
+        std::visit([&](auto& _element)
+        {
+            if (!_element.is_abelian()) abelian = false;
+        }, element);
+    }
+    return abelian;
+}
+
+int CompositeAlgebra::get_shape() const
+{
+    const std::vector<int> shapes = this->get_shapes();
+    return std::accumulate(shapes.begin(), shapes.end(), 0);
+}
+
+std::vector<CompositeAlgebra::TYPES>::iterator CompositeAlgebra::begin()
+{
+    return this->point.begin();
+}
+
+std::vector<CompositeAlgebra::TYPES>::iterator CompositeAlgebra::end()
+{
+    return this->point.end();
+}
+
+std::vector<CompositeAlgebra::TYPES>::const_iterator CompositeAlgebra::begin() const
+{
+    return this->point.begin();
+}
+
+std::vector<CompositeAlgebra::TYPES>::const_iterator CompositeAlgebra::end() const
+{
+    return this->point.end();
+}
+
+std::vector<int> CompositeAlgebra::get_dimensions() const
+{
+    std::vector<int> dimensions(this->point.size());
+
+    int ii = 0;
+    for (const auto& element : this->point)
+    {
+        std::visit([&](const auto& _element)
+        {
+            dimensions[ii] = _element.get_dimension();
+        }, element);
+        ii++;
+    }
+
+    return dimensions;
+}
+
+std::vector<int> CompositeAlgebra::get_sizes() const
+{
+    std::vector<int> sizes(this->point.size());
+
+    int ii = 0;
+    for (const auto& element : this->point)
+    {
+        std::visit([&](const auto& _element)
+        {
+            sizes[ii] = _element.get_size();
+        }, element);
+        ii++;
+    }
+
+    return sizes;
+}
+
+std::vector<int> CompositeAlgebra::get_shapes() const
+{
+    std::vector<int> shapes(this->point.size());
+
+    int ii = 0;
+    for (const auto& element : this->point)
+    {
+        std::visit([&](const auto& _element)
+        {
+            shapes[ii] = _element.get_shape();
+        }, element);
+        ii++;
+    }
+
+    return shapes;
+}
+
+CompositeAlgebra::point_t CompositeAlgebra::get_point() const
+{
+    return this->point;
+}
+
+Eigen::VectorXd CompositeAlgebra::serialize() const
+{
+    return this->get_vector();
+}
+
+void CompositeAlgebra::unserialize(const Eigen::VectorXd& serialized)
+{
+    this->set_vector(serialized);
+}
+
+void CompositeAlgebra::unserialize(std::initializer_list<double> serialized)
+{
+    this->unserialize(Eigen::VectorXd{std::move(serialized)});
 }
 
 CompositeAlgebra::matrix_t CompositeAlgebra::get_matrix() const
@@ -252,192 +269,55 @@ CompositeAlgebra::matrix_t CompositeAlgebra::get_matrix() const
     *               Matematicheskikh Nauk 2.6 (1947): 159-173.
     */
     
-    const size_t shape = this->get_shape();
-    const std::vector<size_t> shapes = this->get_shapes();
-
+    const int shape = this->get_shape();
     Eigen::MatrixXcd out = Eigen::MatrixXcd::Zero(shape, shape);
-    ptrdiff_t kk = 0;
-
-    for (size_t ii = 0; ii < this->space.size(); ii++)
+    
+    int start = 0;
+    for (const auto& element : this->point)
     {
-        const size_t ind = this->space[ii].index();
-        if (ind == CompositeAlgebra::INDEX_cn)
+        std::visit([&](const auto& _element)
         {
-            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<cn>(this->space[ii]).get_matrix();
-        }
-        else if (ind == CompositeAlgebra::INDEX_glr)
-        {
-            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<glr>(this->space[ii]).get_matrix();
-        }
-        else if (ind == CompositeAlgebra::INDEX_glc)
-        {
-            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<glc>(this->space[ii]).get_matrix();
-        }
-        else if (ind == CompositeAlgebra::INDEX_rn)
-        {
-            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<rn>(this->space[ii]).get_matrix();
-        }
-        else if (ind == CompositeAlgebra::INDEX_se)
-        {
-            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<se>(this->space[ii]).get_matrix();
-        }
-        else if (ind == CompositeAlgebra::INDEX_so)
-        {
-            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<so>(this->space[ii]).get_matrix();
-        }
-        else if (ind == CompositeAlgebra::INDEX_sp)
-        {
-            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<sp>(this->space[ii]).get_matrix();
-        }
-        else if (ind == CompositeAlgebra::INDEX_su)
-        {
-            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<su>(this->space[ii]).get_matrix();
-        }
-        kk += shapes[ii];
+            const int _shape = _element.get_shape();
+            out(Eigen::seqN(start, _shape), Eigen::seqN(start, _shape)) = _element.get_matrix();
+            start += _shape;
+        }, element);
     }
 
     return out;
 }
 
-size_t CompositeAlgebra::get_shape() const
+Eigen::VectorXd CompositeAlgebra::get_vector() const
 {
-    const std::vector<size_t> shapes = this->get_shapes();
-    return std::accumulate(shapes.begin(), shapes.end(), size_t(0));
+    return Lielab::utils::concatenate(this->get_vectors());
 }
 
-std::vector<size_t> CompositeAlgebra::get_dimensions() const
+void CompositeAlgebra::set_vector(const Eigen::VectorXd& vector)
 {
-    std::vector<size_t> dims(this->space.size());
+    // TODO: Error check for lengths here?
 
-    for (size_t ii = 0; ii < this->space.size(); ii++)
+    int start = 0;
+    for (auto& element : this->point)
     {
-        const size_t ind = this->space[ii].index();
-        if (ind == CompositeAlgebra::INDEX_cn)
+        std::visit([&](auto& _element)
         {
-            dims[ii] = std::get<cn>(this->space[ii]).get_dimension();
-        }
-        else if (ind == CompositeAlgebra::INDEX_glr)
-        {
-            dims[ii] = std::get<glr>(this->space[ii]).get_dimension();
-        }
-        else if (ind == CompositeAlgebra::INDEX_glc)
-        {
-            dims[ii] = std::get<glc>(this->space[ii]).get_dimension();
-        }
-        else if (ind == CompositeAlgebra::INDEX_rn)
-        {
-            dims[ii] = std::get<rn>(this->space[ii]).get_dimension();
-        }
-        else if (ind == CompositeAlgebra::INDEX_se)
-        {
-            dims[ii] = std::get<se>(this->space[ii]).get_dimension();
-        }
-        else if (ind == CompositeAlgebra::INDEX_so)
-        {
-            dims[ii] = std::get<so>(this->space[ii]).get_dimension();
-        }
-        else if (ind == CompositeAlgebra::INDEX_sp)
-        {
-            dims[ii] = std::get<sp>(this->space[ii]).get_dimension();
-        }
-        else if (ind == CompositeAlgebra::INDEX_su)
-        {
-            dims[ii] = std::get<su>(this->space[ii]).get_dimension();
-        }
+            const int dim = _element.get_dimension();
+            _element.set_vector(vector(Eigen::seqN(start, dim)));
+            start += dim;
+        }, element);
     }
-
-    return dims;
 }
 
-std::vector<Eigen::VectorXd> CompositeAlgebra::get_vectors() const
+void CompositeAlgebra::set_vector(std::initializer_list<double> vector)
 {
-    std::vector<Eigen::VectorXd> vectors = std::vector<Eigen::VectorXd>(this->space.size());
-
-    for (size_t ii = 0; ii < this->space.size(); ii++)
-    {
-        const size_t ind = this->space[ii].index();
-        if (ind == CompositeAlgebra::INDEX_cn)
-        {
-            vectors[ii] = std::get<cn>(this->space[ii]).get_vector();
-        }
-        else if (ind == CompositeAlgebra::INDEX_glr)
-        {
-            vectors[ii] = std::get<glr>(this->space[ii]).get_vector();
-        }
-        else if (ind == CompositeAlgebra::INDEX_glc)
-        {
-            vectors[ii] = std::get<glc>(this->space[ii]).get_vector();
-        }
-        else if (ind == CompositeAlgebra::INDEX_rn)
-        {
-            vectors[ii] = std::get<rn>(this->space[ii]).get_vector();
-        }
-        else if (ind == CompositeAlgebra::INDEX_se)
-        {
-            vectors[ii] = std::get<se>(this->space[ii]).get_vector();
-        }
-        else if (ind == CompositeAlgebra::INDEX_so)
-        {
-            vectors[ii] = std::get<so>(this->space[ii]).get_vector();
-        }
-        else if (ind == CompositeAlgebra::INDEX_sp)
-        {
-            vectors[ii] = std::get<sp>(this->space[ii]).get_vector();
-        }
-        else if (ind == CompositeAlgebra::INDEX_su)
-        {
-            vectors[ii] = std::get<su>(this->space[ii]).get_vector();
-        }
-    }
-
-    return vectors;
+    /*!
+    *
+    * @param[in] vector
+    */
+   
+    this->set_vector(Eigen::VectorXd{std::move(vector)});
 }
 
-std::vector<size_t> CompositeAlgebra::get_shapes() const
-{
-    std::vector<size_t> out(this->space.size());
-
-    for (size_t ii = 0; ii < this->space.size(); ii++)
-    {
-        const size_t ind = this->space[ii].index();
-        if (ind == INDEX_cn)
-        {
-            out[ii] = static_cast<int>(std::get<cn>(this->space[ii]).get_shape());
-        }
-        else if (ind == INDEX_glr)
-        {
-            out[ii] = static_cast<int>(std::get<glr>(this->space[ii]).get_shape());
-        }
-        else if (ind == INDEX_glc)
-        {
-            out[ii] = static_cast<int>(std::get<glc>(this->space[ii]).get_shape());
-        }
-        else if (ind == INDEX_rn)
-        {
-            out[ii] = static_cast<int>(std::get<rn>(this->space[ii]).get_shape());
-        }
-        else if (ind == INDEX_se)
-        {
-            out[ii] = static_cast<int>(std::get<se>(this->space[ii]).get_shape());
-        }
-        else if (ind == INDEX_so)
-        {
-            out[ii] = static_cast<int>(std::get<so>(this->space[ii]).get_shape());
-        }
-        else if (ind == INDEX_sp)
-        {
-            out[ii] = static_cast<int>(std::get<sp>(this->space[ii]).get_shape());
-        }
-        else if (ind == INDEX_su)
-        {
-            out[ii] = static_cast<int>(std::get<su>(this->space[ii]).get_shape());
-        }
-    }
-
-    return out;
-}
-
-double CompositeAlgebra::operator()(const ptrdiff_t index) const
+double CompositeAlgebra::operator()(const int index) const
 {
     /*! \f{equation*}{ (\mathbb{Z}, \mathbb{Z}) \rightarrow \mathbb{R} \f}
     *
@@ -445,71 +325,40 @@ double CompositeAlgebra::operator()(const ptrdiff_t index) const
     */
     
     const double nan = std::numeric_limits<double>::quiet_NaN();
-    const size_t dim = this->get_dimension();
+    const int length = static_cast<int>(this->point.size());
 
-    if (index >= static_cast<ptrdiff_t>(dim)) return nan;
-    if (std::abs(index) > static_cast<ptrdiff_t>(dim)) return nan;
+    if (length == 0) return nan;
 
-    size_t _index;
-    if (index < 0)
-    {
-        _index = static_cast<size_t>(static_cast<ptrdiff_t>(dim) + index);
-    }
-    else
-    {
-        _index = static_cast<size_t>(index);
-    }
+    const int dimension = this->get_dimension();
+
+    // If input index is negative, index from the back of the array
+    const int _index = (index < 0) ? dimension + index : index;
+
+    // Error check for out of bounds
+    if (_index < 0) return nan;
+    if (_index >= dimension) return nan;
     
-    const std::vector<size_t> dims = this->get_dimensions();
+    const std::vector<int> dimensions = this->get_dimensions();
 
-    size_t base_index = 0;
-    for (size_t ii = 0; ii < dims.size(); ii++)
+    int base_index = 0;
+    for (int ii = 0; ii < length; ii++)
     {
-        if ((_index - base_index) < dims[ii])
+        if ((_index - base_index) < dimensions[ii])
         {
-            const size_t ind = this->space[ii].index();
-            const size_t relind = _index - base_index;
-            if (ind == CompositeAlgebra::INDEX_cn)
+            return std::visit([&](const auto& _element)
             {
-                return std::get<cn>(this->space[ii]).operator()(relind);
-            }
-            else if (ind == CompositeAlgebra::INDEX_glr)
-            {
-                return std::get<glr>(this->space[ii]).operator()(relind);
-            }
-            else if (ind == CompositeAlgebra::INDEX_glc)
-            {
-                return std::get<glc>(this->space[ii]).operator()(relind);
-            }
-            else if (ind == CompositeAlgebra::INDEX_rn)
-            {
-                return std::get<rn>(this->space[ii]).operator()(relind);
-            }
-            else if (ind == CompositeAlgebra::INDEX_se)
-            {
-                return std::get<se>(this->space[ii]).operator()(relind);
-            }
-            else if (ind == CompositeAlgebra::INDEX_so)
-            {
-                return std::get<so>(this->space[ii]).operator()(relind);
-            }
-            else if (ind == CompositeAlgebra::INDEX_sp)
-            {
-                return std::get<sp>(this->space[ii]).operator()(relind);
-            }
-            else if (ind == CompositeAlgebra::INDEX_su)
-            {
-                return std::get<su>(this->space[ii]).operator()(relind);
-            }
+                return _element(_index - base_index);
+            }, this->point[ii]);
         }
-        base_index += dims[ii];
+
+        base_index += dimensions[ii];
     }
 
     // This should never be returned.
     return nan;
 }
 
-std::complex<double> CompositeAlgebra::operator()(const ptrdiff_t index1, const ptrdiff_t index2) const
+CompositeAlgebra::field_t CompositeAlgebra::operator()(const int index1, const int index2) const
 {
     /*! \f{equation*}{ (\mathbb{Z}, \mathbb{Z}) \rightarrow \mathbb{C} \f}
     *
@@ -517,122 +366,106 @@ std::complex<double> CompositeAlgebra::operator()(const ptrdiff_t index1, const 
     */
 
     const double nan = std::numeric_limits<double>::quiet_NaN();
-    const size_t shape = this->get_shape();
+    const int shape = this->get_shape();
     if (shape == 0) return std::complex<double>(nan, nan);
 
-    if (index1 >= static_cast<ptrdiff_t>(shape)) return std::complex<double>(nan, nan);
-    if (index2 >= static_cast<ptrdiff_t>(shape)) return std::complex<double>(nan, nan);
-    if (std::abs(index1) > static_cast<ptrdiff_t>(shape)) return std::complex<double>(nan, nan);
-    if (std::abs(index2) > static_cast<ptrdiff_t>(shape)) return std::complex<double>(nan, nan);
+    // If input index is negative, index from the back of the array
+    const int _index1 = (index1 < 0) ? shape + index1 : index1;
+    const int _index2 = (index2 < 0) ? shape + index2 : index2;
 
-    size_t _index1;
-    if (index1 < 0)
-    {
-        _index1 = static_cast<size_t>(static_cast<ptrdiff_t>(shape) + index1);
-    }
-    else
-    {
-        _index1 = static_cast<size_t>(index1);
-    }
-
-    size_t _index2;
-    if (index2 < 0)
-    {
-        _index2 = static_cast<size_t>(static_cast<ptrdiff_t>(shape) + index2);
-    }
-    else
-    {
-        _index2 = static_cast<size_t>(index2);
-    }
+    // Error check for out of bounds
+    if (_index1 < 0) return std::complex<double>(nan, nan);
+    if (_index1 >= shape) return std::complex<double>(nan, nan);
+    if (_index2 < 0) return std::complex<double>(nan, nan);
+    if (_index2 >= shape) return std::complex<double>(nan, nan);
     
-    const std::vector<size_t> shapes = this->get_shapes();
+    const std::vector<int> shapes = this->get_shapes();
 
-    size_t relind = 0;
-    for (size_t ii = 0; ii < shapes.size(); ii++)
+    int relind = 0;
+    for (int ii = 0; ii < static_cast<int>(shapes.size()); ii++)
     {
+        // Sparse components
+        if ((_index1 - relind) < 0 || (_index2 - relind) < 0)
+        {
+            return std::complex<double>(0.0, 0.0);
+        }
+
         if ((_index1 - relind) < shapes[ii] && (_index2 - relind) < shapes[ii])
         {
-            const size_t ind = this->space[ii].index();
-            if (ind == CompositeAlgebra::INDEX_cn)
+            return std::visit([&](const auto& _element)
             {
-                return std::get<cn>(this->space[ii]).operator()(_index1 - relind, _index2 - relind);
-            }
-            else if (ind == CompositeAlgebra::INDEX_glr)
-            {
-                return std::get<glr>(this->space[ii]).operator()(_index1 - relind, _index2 - relind);
-            }
-            else if (ind == CompositeAlgebra::INDEX_glc)
-            {
-                return std::get<glc>(this->space[ii]).operator()(_index1 - relind, _index2 - relind);
-            }
-            else if (ind == CompositeAlgebra::INDEX_rn)
-            {
-                return std::get<rn>(this->space[ii]).operator()(_index1 - relind, _index2 - relind);
-            }
-            else if (ind == CompositeAlgebra::INDEX_se)
-            {
-                return std::get<se>(this->space[ii]).operator()(_index1 - relind, _index2 - relind);
-            }
-            else if (ind == CompositeAlgebra::INDEX_so)
-            {
-                return std::get<so>(this->space[ii]).operator()(_index1 - relind, _index2 - relind);
-            }
-            else if (ind == CompositeAlgebra::INDEX_sp)
-            {
-                return std::get<sp>(this->space[ii]).operator()(_index1 - relind, _index2 - relind);
-            }
-            else if (ind == CompositeAlgebra::INDEX_su)
-            {
-                return std::get<su>(this->space[ii]).operator()(_index1 - relind, _index2 - relind);
-            }
+                return static_cast<std::complex<double>>(_element(_index1 - relind, _index2 - relind));
+            }, this->point[ii]);
         }
+
         relind += shapes[ii];
     }
 
-    return std::complex<double>(0.0, 0.0);
+    // This should never be called.
+    return std::complex<double>(nan, nan);
+}
+
+std::vector<Eigen::VectorXd> CompositeAlgebra::get_vectors() const
+{
+    std::vector<Eigen::VectorXd> vectors = std::vector<Eigen::VectorXd>(this->point.size());
+
+    int ii = 0;
+    for (const auto& element : this->point)
+    {
+        std::visit([&](const auto& _element)
+        {
+            vectors[ii] = _element.get_vector();
+        }, element);
+        ii++;
+    }
+
+    return vectors;
+}
+
+const CompositeAlgebra::dataproxy CompositeAlgebra::operator[](const int index) const
+{
+    const int len = static_cast<int>(this->point.size());
+
+    // If input index is negative, index from the back of the array
+    const int _index = (index < 0) ? len + index : index;
+
+    // Error check for out of bounds
+    lielab_assert((_index >= 0) && (_index < len), "Index " + std::to_string(index) + " is out of bounds for CompositeAlgebra of length " + std::to_string(len));
+
+    return CompositeAlgebra::dataproxy{const_cast<CompositeAlgebra::TYPES&>(this->point[_index])};
+}
+
+CompositeAlgebra::dataproxy CompositeAlgebra::operator[](const int index)
+{
+    const int len = static_cast<int>(this->point.size());
+
+    // If input index is negative, index from the back of the array
+    const int _index = (index < 0) ? len + index : index;
+
+    // Error check for out of bounds
+    lielab_assert((_index >= 0) && (_index < len), "Index " + std::to_string(index) + " is out of bounds for CompositeAlgebra of length " + std::to_string(len));
+
+    return CompositeAlgebra::dataproxy{this->point[_index]};
 }
 
 CompositeAlgebra CompositeAlgebra::operator+(const CompositeAlgebra& other) const
 {
-    assert(this->space.size() == other.space.size());
+    using Lielab::testing::check_topology;
+
+    lielab_assert(check_topology(*this, other), "Unable to add topologically inconsistent algebras: (" + this->to_string() + ") !≅ (" + other.to_string() + ").");
+
+    // const int length = this->point.size();
 
     CompositeAlgebra out;
-
-    for (size_t ii = 0; ii < this->space.size(); ii++)
+    int index = 0;
+    for (const auto& element : this->point)
     {
-        const size_t ind = this->space[ii].index();
-        if (ind == CompositeAlgebra::INDEX_cn)
+        std::visit([&](const auto& _element)
         {
-            out.space.push_back(std::get<cn>(this->space[ii]) + std::get<cn>(other.space[ii]));
-        }
-        else if (ind == CompositeAlgebra::INDEX_glr)
-        {
-            out.space.push_back(std::get<glr>(this->space[ii]) + std::get<glr>(other.space[ii]));
-        }
-        else if (ind == CompositeAlgebra::INDEX_glc)
-        {
-            out.space.push_back(std::get<glc>(this->space[ii]) + std::get<glc>(other.space[ii]));
-        }
-        else if (ind == CompositeAlgebra::INDEX_rn)
-        {
-            out.space.push_back(std::get<rn>(this->space[ii]) + std::get<rn>(other.space[ii]));
-        }
-        else if (ind == CompositeAlgebra::INDEX_se)
-        {
-            out.space.push_back(std::get<se>(this->space[ii]) + std::get<se>(other.space[ii]));
-        }
-        else if (ind == CompositeAlgebra::INDEX_so)
-        {
-            out.space.push_back(std::get<so>(this->space[ii]) + std::get<so>(other.space[ii]));
-        }
-        else if (ind == CompositeAlgebra::INDEX_sp)
-        {
-            out.space.push_back(std::get<sp>(this->space[ii]) + std::get<sp>(other.space[ii]));
-        }
-        else if (ind == CompositeAlgebra::INDEX_su)
-        {
-            out.space.push_back(std::get<su>(this->space[ii]) + std::get<su>(other.space[ii]));
-        }
+            using other_t = std::decay_t<decltype(_element)>;
+            out.point.emplace_back(_element + std::get<other_t>(other.point[index]));
+        }, element);
+        index++;
     }
 
     return out;
@@ -640,43 +473,19 @@ CompositeAlgebra CompositeAlgebra::operator+(const CompositeAlgebra& other) cons
 
 CompositeAlgebra& CompositeAlgebra::operator+=(const CompositeAlgebra& other)
 {
-    assert(this->space.size() == other.space.size());
+    using Lielab::testing::check_topology;
 
-    for (size_t ii = 0; ii < this->space.size(); ii++)
+    lielab_assert(check_topology(*this, other), "Unable to add topologically inconsistent algebras: (" + this->to_string() + ") !≅ (" + other.to_string() + ").");
+
+    int index = 0;
+    for (auto& element : this->point)
     {
-        const size_t ind = this->space[ii].index();
-        if (ind == CompositeAlgebra::INDEX_cn)
+        std::visit([&](auto& _element)
         {
-            std::get<cn>(this->space[ii]) += std::get<cn>(other.space[ii]);
-        }
-        else if (ind == CompositeAlgebra::INDEX_glr)
-        {
-            std::get<glr>(this->space[ii]) += std::get<glr>(other.space[ii]);
-        }
-        else if (ind == CompositeAlgebra::INDEX_glc)
-        {
-            std::get<glc>(this->space[ii]) += std::get<glc>(other.space[ii]);
-        }
-        else if (ind == CompositeAlgebra::INDEX_rn)
-        {
-            std::get<rn>(this->space[ii]) += std::get<rn>(other.space[ii]);
-        }
-        else if (ind == CompositeAlgebra::INDEX_se)
-        {
-            std::get<se>(this->space[ii]) += std::get<se>(other.space[ii]);
-        }
-        else if (ind == CompositeAlgebra::INDEX_so)
-        {
-            std::get<so>(this->space[ii]) += std::get<so>(other.space[ii]);
-        }
-        else if (ind == CompositeAlgebra::INDEX_sp)
-        {
-            std::get<sp>(this->space[ii]) += std::get<sp>(other.space[ii]);
-        }
-        else if (ind == CompositeAlgebra::INDEX_su)
-        {
-            std::get<su>(this->space[ii]) += std::get<su>(other.space[ii]);
-        }
+            using other_t = std::decay_t<decltype(_element)>;
+            _element += std::get<other_t>(other.point[index]);
+        }, element);
+        index++;
     }
 
     return *this;
@@ -684,43 +493,20 @@ CompositeAlgebra& CompositeAlgebra::operator+=(const CompositeAlgebra& other)
 
 CompositeAlgebra CompositeAlgebra::operator-(const CompositeAlgebra& other) const
 {
-    CompositeAlgebra out;
+    using Lielab::testing::check_topology;
 
-    for (size_t ii = 0; ii < this->space.size(); ii++)
+    lielab_assert(check_topology(*this, other), "Unable to subtract topologically inconsistent algebras: (" + this->to_string() + ") !≅ (" + other.to_string() + ").");
+
+    CompositeAlgebra out;
+    int index = 0;
+    for (const auto& element : this->point)
     {
-        const size_t ind = this->space[ii].index();
-        if (ind == CompositeAlgebra::INDEX_cn)
+        std::visit([&](const auto& _element)
         {
-            out.space.push_back(std::get<cn>(this->space[ii]) - std::get<cn>(other.space[ii]));
-        }
-        else if (ind == CompositeAlgebra::INDEX_glr)
-        {
-            out.space.push_back(std::get<glr>(this->space[ii]) - std::get<glr>(other.space[ii]));
-        }
-        else if (ind == CompositeAlgebra::INDEX_glc)
-        {
-            out.space.push_back(std::get<glc>(this->space[ii]) - std::get<glc>(other.space[ii]));
-        }
-        else if (ind == CompositeAlgebra::INDEX_rn)
-        {
-            out.space.push_back(std::get<rn>(this->space[ii]) - std::get<rn>(other.space[ii]));
-        }
-        else if (ind == CompositeAlgebra::INDEX_se)
-        {
-            out.space.push_back(std::get<se>(this->space[ii]) - std::get<se>(other.space[ii]));
-        }
-        else if (ind == CompositeAlgebra::INDEX_so)
-        {
-            out.space.push_back(std::get<so>(this->space[ii]) - std::get<so>(other.space[ii]));
-        }
-        else if (ind == CompositeAlgebra::INDEX_sp)
-        {
-            out.space.push_back(std::get<sp>(this->space[ii]) - std::get<sp>(other.space[ii]));
-        }
-        else if (ind == CompositeAlgebra::INDEX_su)
-        {
-            out.space.push_back(std::get<su>(this->space[ii]) - std::get<su>(other.space[ii]));
-        }
+            using other_t = std::decay_t<decltype(_element)>;
+            out.point.push_back(_element - std::get<other_t>(other.point[index]));
+        }, element);
+        index++;
     }
 
     return out;
@@ -728,43 +514,19 @@ CompositeAlgebra CompositeAlgebra::operator-(const CompositeAlgebra& other) cons
 
 CompositeAlgebra& CompositeAlgebra::operator-=(const CompositeAlgebra& other)
 {
-    assert(this->space.size() == other.space.size());
+    using Lielab::testing::check_topology;
 
-    for (size_t ii = 0; ii < this->space.size(); ii++)
+    lielab_assert(check_topology(*this, other), "Unable to subtract topologically inconsistent algebras: (" + this->to_string() + ") !≅ (" + other.to_string() + ").");
+
+    int index = 0;
+    for (auto& element : this->point)
     {
-        const size_t ind = this->space[ii].index();
-        if (ind == CompositeAlgebra::INDEX_cn)
+        std::visit([&](auto& _element)
         {
-            std::get<cn>(this->space[ii]) -= std::get<cn>(other.space[ii]);
-        }
-        else if (ind == CompositeAlgebra::INDEX_glr)
-        {
-            std::get<glr>(this->space[ii]) -= std::get<glr>(other.space[ii]);
-        }
-        else if (ind == CompositeAlgebra::INDEX_glc)
-        {
-            std::get<glc>(this->space[ii]) -= std::get<glc>(other.space[ii]);
-        }
-        else if (ind == CompositeAlgebra::INDEX_rn)
-        {
-            std::get<rn>(this->space[ii]) -= std::get<rn>(other.space[ii]);
-        }
-        else if (ind == CompositeAlgebra::INDEX_se)
-        {
-            std::get<se>(this->space[ii]) -= std::get<se>(other.space[ii]);
-        }
-        else if (ind == CompositeAlgebra::INDEX_so)
-        {
-            std::get<so>(this->space[ii]) -= std::get<so>(other.space[ii]);
-        }
-        else if (ind == CompositeAlgebra::INDEX_sp)
-        {
-            std::get<sp>(this->space[ii]) -= std::get<sp>(other.space[ii]);
-        }
-        else if (ind == CompositeAlgebra::INDEX_su)
-        {
-            std::get<su>(this->space[ii]) -= std::get<su>(other.space[ii]);
-        }
+            using other_t = std::decay_t<decltype(_element)>;
+            _element -= std::get<other_t>(other.point[index]);
+        }, element);
+        index++;
     }
 
     return *this;
@@ -774,41 +536,12 @@ CompositeAlgebra CompositeAlgebra::operator-() const
 {
     CompositeAlgebra out;
 
-    for (size_t ii = 0; ii < this->space.size(); ii++)
+    for (const auto& element : this->point)
     {
-        const size_t ind = this->space[ii].index();
-        if (ind == CompositeAlgebra::INDEX_cn)
+        std::visit([&](const auto& _element)
         {
-            out.space.push_back(-std::get<cn>(this->space[ii]));
-        }
-        else if (ind == CompositeAlgebra::INDEX_glr)
-        {
-            out.space.push_back(-std::get<glr>(this->space[ii]));
-        }
-        else if (ind == CompositeAlgebra::INDEX_glc)
-        {
-            out.space.push_back(-std::get<glc>(this->space[ii]));
-        }
-        else if (ind == CompositeAlgebra::INDEX_rn)
-        {
-            out.space.push_back(-std::get<rn>(this->space[ii]));
-        }
-        else if (ind == CompositeAlgebra::INDEX_se)
-        {
-            out.space.push_back(-std::get<se>(this->space[ii]));
-        }
-        else if (ind == CompositeAlgebra::INDEX_so)
-        {
-            out.space.push_back(-std::get<so>(this->space[ii]));
-        }
-        else if (ind == CompositeAlgebra::INDEX_sp)
-        {
-            out.space.push_back(-std::get<sp>(this->space[ii]));
-        }
-        else if (ind == CompositeAlgebra::INDEX_su)
-        {
-            out.space.push_back(-std::get<su>(this->space[ii]));
-        }
+            out.point.push_back(-_element);
+        }, element);
     }
 
     return out;
@@ -818,41 +551,12 @@ CompositeAlgebra CompositeAlgebra::operator*(const double other) const
 {
     CompositeAlgebra out;
 
-    for (size_t ii = 0; ii < this->space.size(); ii++)
+    for (const auto& element : this->point)
     {
-        const size_t ind = this->space[ii].index();
-        if (ind == CompositeAlgebra::INDEX_cn)
+        std::visit([&](const auto& _element)
         {
-            out.space.push_back(std::get<cn>(this->space[ii]) * other);
-        }
-        else if (ind == CompositeAlgebra::INDEX_glr)
-        {
-            out.space.push_back(std::get<glr>(this->space[ii]) * other);
-        }
-        else if (ind == CompositeAlgebra::INDEX_glc)
-        {
-            out.space.push_back(std::get<glc>(this->space[ii]) * other);
-        }
-        else if (ind == CompositeAlgebra::INDEX_rn)
-        {
-            out.space.push_back(std::get<rn>(this->space[ii]) * other);
-        }
-        else if (ind == CompositeAlgebra::INDEX_se)
-        {
-            out.space.push_back(std::get<se>(this->space[ii]) * other);
-        }
-        else if (ind == CompositeAlgebra::INDEX_so)
-        {
-            out.space.push_back(std::get<so>(this->space[ii]) * other);
-        }
-        else if (ind == CompositeAlgebra::INDEX_sp)
-        {
-            out.space.push_back(std::get<sp>(this->space[ii]) * other);
-        }
-        else if (ind == CompositeAlgebra::INDEX_su)
-        {
-            out.space.push_back(std::get<su>(this->space[ii]) * other);
-        }
+            out.point.push_back(_element*other);
+        }, element);
     }
 
     return out;
@@ -865,41 +569,12 @@ CompositeAlgebra operator*(const double other, const CompositeAlgebra& rhs)
 
 CompositeAlgebra& CompositeAlgebra::operator*=(const double other)
 {
-    for (size_t ii = 0; ii < this->space.size(); ii++)
+    for (auto& element : this->point)
     {
-        const size_t ind = this->space[ii].index();
-        if (ind == CompositeAlgebra::INDEX_cn)
+        std::visit([&](auto& _element)
         {
-            std::get<cn>(this->space[ii]) *= other;
-        }
-        else if (ind == CompositeAlgebra::INDEX_glr)
-        {
-            std::get<glr>(this->space[ii]) *= other;
-        }
-        else if (ind == CompositeAlgebra::INDEX_glc)
-        {
-            std::get<glc>(this->space[ii]) *= other;
-        }
-        else if (ind == CompositeAlgebra::INDEX_rn)
-        {
-            std::get<rn>(this->space[ii]) *= other;
-        }
-        else if (ind == CompositeAlgebra::INDEX_se)
-        {
-            std::get<se>(this->space[ii]) *= other;
-        }
-        else if (ind == CompositeAlgebra::INDEX_so)
-        {
-            std::get<so>(this->space[ii]) *= other;
-        }
-        else if (ind == CompositeAlgebra::INDEX_sp)
-        {
-            std::get<sp>(this->space[ii]) *= other;
-        }
-        else if (ind == CompositeAlgebra::INDEX_su)
-        {
-            std::get<su>(this->space[ii]) *= other;
-        }
+            _element *= other;
+        }, element);
     }
 
     return *this;
@@ -909,41 +584,12 @@ CompositeAlgebra CompositeAlgebra::operator/(const double other) const
 {
     CompositeAlgebra out;
 
-    for (size_t ii = 0; ii < this->space.size(); ii++)
+    for (const auto& element : this->point)
     {
-        const size_t ind = this->space[ii].index();
-        if (ind == INDEX_cn)
+        std::visit([&](const auto& _element)
         {
-            out.space.push_back(std::get<cn>(this->space[ii]) / other);
-        }
-        else if (ind == INDEX_glr)
-        {
-            out.space.push_back(std::get<glr>(this->space[ii]) / other);
-        }
-        else if (ind == INDEX_glc)
-        {
-            out.space.push_back(std::get<glc>(this->space[ii]) / other);
-        }
-        else if (ind == INDEX_rn)
-        {
-            out.space.push_back(std::get<rn>(this->space[ii]) / other);
-        }
-        else if (ind == INDEX_se)
-        {
-            out.space.push_back(std::get<se>(this->space[ii]) / other);
-        }
-        else if (ind == INDEX_so)
-        {
-            out.space.push_back(std::get<so>(this->space[ii]) / other);
-        }
-        else if (ind == INDEX_sp)
-        {
-            out.space.push_back(std::get<sp>(this->space[ii]) / other);
-        }
-        else if (ind == INDEX_su)
-        {
-            out.space.push_back(std::get<su>(this->space[ii]) / other);
-        }
+            out.point.push_back(_element / other);
+        }, element);
     }
 
     return out;
@@ -951,110 +597,15 @@ CompositeAlgebra CompositeAlgebra::operator/(const double other) const
 
 CompositeAlgebra& CompositeAlgebra::operator/=(const double other)
 {
-    for (size_t ii = 0; ii < this->space.size(); ii++)
+    for (auto& element : this->point)
     {
-        const size_t ind = this->space[ii].index();
-        if (ind == INDEX_cn)
+        std::visit([&](auto& _element)
         {
-            std::get<cn>(this->space[ii]) /= other;
-        }
-        else if (ind == INDEX_glr)
-        {
-            std::get<glr>(this->space[ii]) /= other;
-        }
-        else if (ind == INDEX_glc)
-        {
-            std::get<glc>(this->space[ii]) /= other;
-        }
-        else if (ind == INDEX_rn)
-        {
-            std::get<rn>(this->space[ii]) /= other;
-        }
-        else if (ind == INDEX_se)
-        {
-            std::get<se>(this->space[ii]) /= other;
-        }
-        else if (ind == INDEX_so)
-        {
-            std::get<so>(this->space[ii]) /= other;
-        }
-        else if (ind == INDEX_sp)
-        {
-            std::get<sp>(this->space[ii]) /= other;
-        }
-        else if (ind == INDEX_su)
-        {
-            std::get<su>(this->space[ii]) /= other;
-        }
+            _element /= other;
+        }, element);
     }
 
     return *this;
-}
-
-CompositeAlgebra::TYPES CompositeAlgebra::operator[](const ptrdiff_t index) const
-{
-    const size_t sz = this->space.size();
-    if (index >= static_cast<ptrdiff_t>(sz)) return glc();
-
-    if (index >= static_cast<ptrdiff_t>(sz)) return glc();
-    if (std::abs(index) > static_cast<ptrdiff_t>(sz)) return glc();
-
-    size_t _index;
-    if (index < 0)
-    {
-        _index = static_cast<size_t>(static_cast<ptrdiff_t>(sz) + index);
-    }
-    else
-    {
-        _index = static_cast<size_t>(index);
-    }
-
-    const size_t ind = this->space[_index].index();
-    if (ind == CompositeAlgebra::INDEX_cn)
-    {
-        return std::get<cn>(this->space[_index]);
-    }
-    else if (ind == CompositeAlgebra::INDEX_glr)
-    {
-        return std::get<glr>(this->space[_index]);
-    }
-    else if (ind == CompositeAlgebra::INDEX_glc)
-    {
-        return std::get<glc>(this->space[_index]);
-    }
-    else if (ind == CompositeAlgebra::INDEX_rn)
-    {
-        return std::get<rn>(this->space[_index]);
-    }
-    else if (ind == CompositeAlgebra::INDEX_se)
-    {
-        return std::get<se>(this->space[_index]);
-    }
-    else if (ind == CompositeAlgebra::INDEX_so)
-    {
-        return std::get<so>(this->space[_index]);
-    }
-    else if (ind == CompositeAlgebra::INDEX_sp)
-    {
-        return std::get<sp>(this->space[_index]);
-    }
-    else if (ind == CompositeAlgebra::INDEX_su)
-    {
-        return std::get<su>(this->space[_index]);
-    }
-
-    // This should never be called
-    return glc();
-}
-
-std::ostream& operator<<(std::ostream& os, const CompositeAlgebra& other)
-{
-    /*!
-    * Overloads the "<<" stream insertion operator.
-    */
-
-    os << other.to_string();
-    return os;
 }
 
 }

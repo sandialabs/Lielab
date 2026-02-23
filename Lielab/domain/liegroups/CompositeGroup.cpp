@@ -1,22 +1,15 @@
 #include "CompositeGroup.hpp"
 
-#include "CN.hpp"
-#include "GLR.hpp"
-#include "GLC.hpp"
-#include "RN.hpp"
-#include "SE.hpp"
-#include "SO.hpp"
-#include "SP.hpp"
-#include "SU.hpp"
+#include "Lielab/domain/liealgebras.hpp" // TODO: Why do we need the algebras? Remove this
+#include "Lielab/domain/liegroups.hpp"
 
-#include "Lielab/domain/liealgebras.hpp"
+#include "Lielab/testing.hpp"
 #include "Lielab/utils.hpp"
 
 #include <Eigen/Core>
 #include <Eigen/Dense>
 
 #include <array>
-#include <cassert>
 #include <cmath>
 #include <complex>
 #include <exception>
@@ -28,81 +21,19 @@
 namespace Lielab::domain
 {
 
-std::string CompositeGroup::to_string() const
-{
-    std::string out = "";
-    const size_t sz = this->space.size();
-    std::vector<size_t> shapes = this->get_shapes();
-
-    for (size_t ii = 0; ii < sz; ii++)
-    {
-        const size_t ind = this->space[ii].index();
-        if (ind == CompositeGroup::INDEX_CN)
-        {
-            out += std::get<CN>(this->space[ii]).to_string();
-        }
-        else if (ind == CompositeGroup::INDEX_GLR)
-        {
-            out += std::get<GLR>(this->space[ii]).to_string();
-        }
-        else if (ind == CompositeGroup::INDEX_GLC)
-        {
-            out += std::get<GLC>(this->space[ii]).to_string();
-        }
-        else if (ind == CompositeGroup::INDEX_RN)
-        {
-            out += std::get<RN>(this->space[ii]).to_string();
-        }
-        else if (ind == CompositeGroup::INDEX_SE)
-        {
-            out += std::get<SE>(this->space[ii]).to_string();
-        }
-        else if (ind == CompositeGroup::INDEX_SO)
-        {
-            out += std::get<SO>(this->space[ii]).to_string();
-        }
-        else if (ind == CompositeGroup::INDEX_SP)
-        {
-            out += std::get<SP>(this->space[ii]).to_string();
-        }
-        else if (ind == CompositeGroup::INDEX_SU)
-        {
-            out += std::get<SU>(this->space[ii]).to_string();
-        }
-
-        if (ii < sz-1)
-        {
-            out += " ";
-            out += "x";
-            out += " ";
-        }
-    }
-
-    return out;
-}
-
 CompositeGroup::CompositeGroup()
 {
     
 }
 
-CompositeGroup::CompositeGroup(const size_t n)
-{
-    /*! \f{equation*}{(\mathbb{Z}) \rightarrow \mathfrak{CompositeGroup} \f}
-    *
-    * Constructor instantiating a \f$\mathfrak{CompositeGroup}\f$ as a single GLC object.
-    * 
-    * Enables instantiation like:
-    * 
-    *     Lielab::domain::CompositeGroup x(3), y(4), z(5);
-    * 
-    * @param[in] n The shape of the data matrix.
-    */
+// CompositeGroup::~CompositeGroup();
 
-    this->space.push_back(GLC(n));
+CompositeGroup::CompositeGroup(const CompositeGroup::matrix_t& matrix)
+{
+    this->point.push_back(GLC(matrix));
 }
 
-CompositeGroup CompositeGroup::from_shape(const size_t shape)
+CompositeGroup CompositeGroup::identity(const int shape)
 {
     /*! \f{equation*}{ (\mathbb{Z}) \rightarrow \mathfrak{CompositeGroup} \f}
     *
@@ -112,9 +43,32 @@ CompositeGroup CompositeGroup::from_shape(const size_t shape)
     * @param[out] out The CompositeGroup element. 
     */
 
-    CompositeGroup out;
-    out.space.push_back(GLC::from_shape(shape));
-    return out;
+    return CompositeGroup({GLC::identity(shape)});
+}
+
+CompositeGroup CompositeGroup::project(const CompositeGroup::matrix_t& matrix)
+{
+    return CompositeGroup({GLC::project(matrix)});
+}
+
+CompositeGroup::CompositeGroup(const int n)
+{
+    /*! \f{equation*}{(\mathbb{Z}) \rightarrow \mathfrak{CompositeGroup} \f}
+    *
+    * Constructor instantiating a \f$\mathfrak{CompositeGroup}\f$ as multiple empty GLC objects.
+    * 
+    * Enables instantiation like:
+    * 
+    *     Lielab::domain::CompositeGroup x(3), y(4), z(5);
+    * 
+    * @param[in] n
+    */
+
+    this->point.reserve(n);
+    for (int ii = 0; ii < n; ii++)
+    {
+        this->point.push_back(GLC(0));
+    }
 }
 
 CompositeGroup::CompositeGroup(std::initializer_list<TYPES> others)
@@ -128,7 +82,7 @@ CompositeGroup::CompositeGroup(std::initializer_list<TYPES> others)
     *     Lielab::domain::CompositeGroup M{R, O};
     */
 
-    this->space = std::vector<TYPES>{std::move(others)};
+    this->point = std::vector<TYPES>{std::move(others)};
 }
 
 CompositeGroup::CompositeGroup(const std::vector<TYPES>& others)
@@ -142,402 +96,202 @@ CompositeGroup::CompositeGroup(const std::vector<TYPES>& others)
     *     M = lielab.domain.CompositeGroup([R, O])
     */
 
-    this->space = others;
+    this->point = others;
 }
 
-size_t CompositeGroup::get_dimension() const
+std::string CompositeGroup::to_string() const
 {
-    const std::vector<size_t> dims = this->get_dimensions();
-    return std::accumulate(dims.begin(), dims.end(), size_t(0));
-}
+    std::string out = "";
+    const int sz = static_cast<int>(this->point.size());
 
-std::vector<size_t> CompositeGroup::get_dimensions() const
-{
-    std::vector<size_t> dims(this->space.size());
-
-    for (size_t ii = 0; ii < this->space.size(); ii++)
+    int ii = 0;
+    for (const auto& element : this->point)
     {
-        const size_t ind = this->space[ii].index();
-        if (ind == CompositeGroup::INDEX_CN)
+        std::visit([&](const auto& _element)
         {
-            dims[ii] = std::get<CN>(this->space[ii]).get_dimension();
-        }
-        else if (ind == CompositeGroup::INDEX_GLR)
-        {
-            dims[ii] = std::get<GLR>(this->space[ii]).get_dimension();
-        }
-        else if (ind == CompositeGroup::INDEX_GLC)
-        {
-            dims[ii] = std::get<GLC>(this->space[ii]).get_dimension();
-        }
-        else if (ind == CompositeGroup::INDEX_RN)
-        {
-            dims[ii] = std::get<RN>(this->space[ii]).get_dimension();
-        }
-        else if (ind == CompositeGroup::INDEX_SE)
-        {
-            dims[ii] = std::get<SE>(this->space[ii]).get_dimension();
-        }
-        else if (ind == CompositeGroup::INDEX_SO)
-        {
-            dims[ii] = std::get<SO>(this->space[ii]).get_dimension();
-        }
-        else if (ind == CompositeGroup::INDEX_SP)
-        {
-            dims[ii] = std::get<SP>(this->space[ii]).get_dimension();
-        }
-        else if (ind == CompositeGroup::INDEX_SU)
-        {
-            dims[ii] = std::get<SU>(this->space[ii]).get_dimension();
-        }
+            out += _element.to_string();
+        }, element);
+
+        if (ii < sz - 1) out += " x ";
+        ii++;
     }
 
-    return dims;
+    return out;
 }
 
-size_t CompositeGroup::get_size() const
+int CompositeGroup::get_dimension() const
 {
-    const std::vector<size_t> sizes = this->get_sizes();
-    return std::accumulate(sizes.begin(), sizes.end(), size_t(0));
+    const std::vector<int> dims = this->get_dimensions();
+    return std::accumulate(dims.begin(), dims.end(), 0);
 }
 
-std::vector<size_t> CompositeGroup::get_sizes() const
+int CompositeGroup::get_size() const
 {
-    std::vector<size_t> sizes(this->space.size());
+    const std::vector<int> sizes = this->get_sizes();
+    return std::accumulate(sizes.begin(), sizes.end(), 0);
+}
 
-    for (size_t ii = 0; ii < this->space.size(); ii++)
+bool CompositeGroup::is_abelian() const
+{
+    bool abelian = true;
+    for (auto& element : this->point)
     {
-        const size_t ind = this->space[ii].index();
-        if (ind == CompositeGroup::INDEX_CN)
+        std::visit([&](auto& _element)
         {
-            sizes[ii] = std::get<CN>(this->space[ii]).get_size();
-        }
-        else if (ind == CompositeGroup::INDEX_GLR)
-        {
-            sizes[ii] = std::get<GLR>(this->space[ii]).get_size();
-        }
-        else if (ind == CompositeGroup::INDEX_GLC)
-        {
-            sizes[ii] = std::get<GLC>(this->space[ii]).get_size();
-        }
-        else if (ind == CompositeGroup::INDEX_RN)
-        {
-            sizes[ii] = std::get<RN>(this->space[ii]).get_size();
-        }
-        else if (ind == CompositeGroup::INDEX_SE)
-        {
-            sizes[ii] = std::get<SE>(this->space[ii]).get_size();
-        }
-        else if (ind == CompositeGroup::INDEX_SO)
-        {
-            sizes[ii] = std::get<SO>(this->space[ii]).get_size();
-        }
-        else if (ind == CompositeGroup::INDEX_SP)
-        {
-            sizes[ii] = std::get<SP>(this->space[ii]).get_size();
-        }
-        else if (ind == CompositeGroup::INDEX_SU)
-        {
-            sizes[ii] = std::get<SU>(this->space[ii]).get_size();
-        }
+            if (!_element.is_abelian()) abelian = false;
+        }, element);
     }
-
-    return sizes;
+    return abelian;
 }
 
-size_t CompositeGroup::get_shape() const
+int CompositeGroup::get_shape() const
 {
     /*! \f{equation*}{ () \rightarrow \mathbb{Z} \f}
     * 
     * Gets the shape of the group.
     */
 
-    const std::vector<size_t> shapes = this->get_shapes();
-    return std::accumulate(shapes.begin(), shapes.end(), size_t(0));
+    const std::vector<int> shapes = this->get_shapes();
+    return std::accumulate(shapes.begin(), shapes.end(), 0);
 }
 
-std::vector<size_t> CompositeGroup::get_shapes() const
+std::vector<CompositeGroup::TYPES>::iterator CompositeGroup::begin()
 {
-    std::vector<size_t> out(space.size());
+    return this->point.begin();
+}
 
-    for (size_t ii = 0; ii < space.size(); ii++)
+std::vector<CompositeGroup::TYPES>::iterator CompositeGroup::end()
+{
+    return this->point.end();
+}
+
+std::vector<CompositeGroup::TYPES>::const_iterator CompositeGroup::begin() const
+{
+    return this->point.begin();
+}
+
+std::vector<CompositeGroup::TYPES>::const_iterator CompositeGroup::end() const
+{
+    return this->point.end();
+}
+
+std::vector<int> CompositeGroup::get_dimensions() const
+{
+    std::vector<int> dimensions(this->point.size());
+
+    int ii = 0;
+    for (const auto& element : this->point)
     {
-        const size_t ind = space[ii].index();
-        if (ind == INDEX_CN)
+        std::visit([&](const auto& _element)
         {
-            out[ii] = static_cast<int>(std::get<CN>(space[ii]).get_shape());
-        }
-        else if (ind == INDEX_GLR)
-        {
-            out[ii] = static_cast<int>(std::get<GLR>(space[ii]).get_shape());
-        }
-        else if (ind == INDEX_GLC)
-        {
-            out[ii] = static_cast<int>(std::get<GLC>(space[ii]).get_shape());
-        }
-        else if (ind == INDEX_RN)
-        {
-            out[ii] = static_cast<int>(std::get<RN>(space[ii]).get_shape());
-        }
-        else if (ind == INDEX_SE)
-        {
-            out[ii] = static_cast<int>(std::get<SE>(space[ii]).get_shape());
-        }
-        else if (ind == INDEX_SO)
-        {
-            out[ii] = static_cast<int>(std::get<SO>(space[ii]).get_shape());
-        }
-        else if (ind == INDEX_SP)
-        {
-            out[ii] = static_cast<int>(std::get<SP>(space[ii]).get_shape());
-        }
-        else if (ind == INDEX_SU)
-        {
-            out[ii] = static_cast<int>(std::get<SU>(space[ii]).get_shape());
-        }
+            dimensions[ii] = _element.get_dimension();
+        }, element);
+        ii++;
     }
 
-    return out;
+    return dimensions;
+}
+
+std::vector<int> CompositeGroup::get_sizes() const
+{
+    std::vector<int> sizes(this->point.size());
+
+    int ii = 0;
+    for (const auto& element : this->point)
+    {
+        std::visit([&](const auto& _element)
+        {
+            sizes[ii] = _element.get_size();
+        }, element);
+        ii++;
+    }
+
+    return sizes;
+}
+
+std::vector<int> CompositeGroup::get_shapes() const
+{
+    std::vector<int> shapes(this->point.size());
+
+    int ii = 0;
+    for (const auto& element : this->point)
+    {
+        std::visit([&](const auto& _element)
+        {
+            shapes[ii] = _element.get_shape();
+        }, element);
+        ii++;
+    }
+
+    return shapes;
+}
+
+CompositeGroup::point_t CompositeGroup::get_point() const
+{
+    return this->point;
 }
 
 Eigen::VectorXd CompositeGroup::serialize() const
 {
+    const int length = static_cast<int>(this->point.size());
 
-    if (space.size() == 0)
+    if (length == 0) return Eigen::VectorXd(0);
+    
+    std::vector<Eigen::VectorXd> serials(length);
+    
+    int index = 0;
+    for (const auto& element : this->point)
     {
-        return Eigen::VectorXd(0);
+        std::visit([&](const auto& _element)
+        {
+            serials[index] = _element.serialize();
+        }, element);
+        index++;
     }
     
-    std::vector<Eigen::VectorXd> serials;
-    const size_t sz = this->space.size();
-
-    for (size_t ii = 0; ii < sz; ii++)
-    {
-        const size_t ind = space[ii].index();
-
-        if (ind == INDEX_CN)
-        {
-            serials.push_back(std::get<CN>(space[ii]).serialize());
-        }
-        else if (ind == INDEX_GLR)
-        {
-            serials.push_back(std::get<GLR>(space[ii]).serialize());
-        }
-        else if (ind == INDEX_GLC)
-        {
-            serials.push_back(std::get<GLC>(space[ii]).serialize());
-        }
-        else if (ind == INDEX_RN)
-        {
-            serials.push_back(std::get<RN>(space[ii]).serialize());
-        }
-        else if (ind == INDEX_SE)
-        {
-            serials.push_back(std::get<SE>(space[ii]).serialize());
-        }
-        else if (ind == INDEX_SO)
-        {
-            serials.push_back(std::get<SO>(space[ii]).serialize());
-        }
-        else if (ind == INDEX_SP)
-        {
-            serials.push_back(std::get<SP>(space[ii]).serialize());
-        }
-        else if (ind == INDEX_SU)
-        {
-            serials.push_back(std::get<SU>(space[ii]).serialize());
-        }
-    }
-    
-    Eigen::VectorXd out = Lielab::utils::concatenate(serials);
+    Eigen::VectorXd out = Lielab::utils::concatenate(serials);// TODO: Remove this
     return out;
 }
 
-void CompositeGroup::unserialize(const Eigen::VectorXd& vec)
+void CompositeGroup::unserialize(const Eigen::VectorXd& serialized)
 {
-    size_t jj = 0;
-    size_t sz = 0;
-
-    for (auto& M : this->space)
+    int start = 0;
+    for (auto& element : this->point)
     {
-        const size_t ind = M.index();
-        jj += sz;
-
-        if (ind == INDEX_CN)
+        std::visit([&](auto& _element)
         {
-            sz = std::get<CN>(M).get_size();
-            std::get<CN>(M).unserialize(vec(Eigen::seqN(jj, sz)));
-        }
-        else if (ind == INDEX_GLR)
-        {
-            sz = std::get<GLR>(M).get_size();
-            std::get<GLR>(M).unserialize(vec(Eigen::seqN(jj, sz)));
-        }
-        else if (ind == INDEX_GLC)
-        {
-            sz = std::get<GLC>(M).get_size();
-            std::get<GLC>(M).unserialize(vec(Eigen::seqN(jj, sz)));
-        }
-        else if (ind == INDEX_RN)
-        {
-            sz = std::get<RN>(M).get_size();
-            std::get<RN>(M).unserialize(vec(Eigen::seqN(jj, sz)));
-        }
-        else if (ind == INDEX_SE)
-        {
-            sz = std::get<SE>(M).get_size();
-            std::get<SE>(M).unserialize(vec(Eigen::seqN(jj, sz)));
-        }
-        else if (ind == INDEX_SO)
-        {
-            sz = std::get<SO>(M).get_size();
-            std::get<SO>(M).unserialize(vec(Eigen::seqN(jj, sz)));
-        }
-        else if (ind == INDEX_SP)
-        {
-            sz = std::get<SP>(M).get_size();
-            std::get<SP>(M).unserialize(vec(Eigen::seqN(jj, sz)));
-        }
-        else if (ind == INDEX_SU)
-        {
-            sz = std::get<SU>(M).get_size();
-            std::get<SU>(M).unserialize(vec(Eigen::seqN(jj, sz)));
-        }
+            const int size = _element.get_size();
+            _element.unserialize(serialized(Eigen::seqN(start, size)));
+            start += size;
+        }, element);
     }
 }
 
-void CompositeGroup::unserialize(std::initializer_list<double> vector)
+void CompositeGroup::unserialize(std::initializer_list<double> serialized)
 {
-    /*!
-    *
-    * @param[in] vector
-    */
-   
-    this->unserialize(Eigen::VectorXd{std::move(vector)});
+    this->unserialize(Eigen::VectorXd{std::move(serialized)});
 }
 
 CompositeGroup::matrix_t CompositeGroup::get_matrix() const
 {
-    const std::vector<size_t> shapes = this->get_shapes();
-    const size_t shape = this->get_shape();
-
+    const int shape = this->get_shape();
     Eigen::MatrixXcd out = Eigen::MatrixXcd::Zero(shape, shape);
-    ptrdiff_t kk = 0;
-
-    for (size_t ii = 0; ii < this->space.size(); ii++)
+    
+    int start = 0;
+    for (const auto& element : this->point)
     {
-        const size_t ind = this->space[ii].index();
-        if (ind == INDEX_CN)
+        std::visit([&](const auto& _element)
         {
-            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<CN>(this->space[ii]).get_matrix();
-        }
-        else if (ind == INDEX_GLR)
-        {
-            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<GLR>(this->space[ii]).get_matrix();
-        }
-        else if (ind == INDEX_GLC)
-        {
-            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<GLC>(this->space[ii]).get_matrix();
-        }
-        else if (ind == INDEX_RN)
-        {
-            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<RN>(this->space[ii]).get_matrix();
-        }
-        else if (ind == INDEX_SE)
-        {
-            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<SE>(this->space[ii]).get_matrix();
-        }
-        else if (ind == INDEX_SO)
-        {
-            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<SO>(this->space[ii]).get_matrix();
-        }
-        else if (ind == INDEX_SP)
-        {
-            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<SP>(this->space[ii]).get_matrix();
-        }
-        else if (ind == INDEX_SU)
-        {
-            out(Eigen::seqN(kk, shapes[ii]), Eigen::seqN(kk, shapes[ii])) = std::get<SU>(this->space[ii]).get_matrix();
-        }
-        kk += shapes[ii];
+            const int _shape = _element.get_shape();
+            out(Eigen::seqN(start, _shape), Eigen::seqN(start, _shape)) = _element.get_matrix();
+            start += _shape;
+        }, element);
     }
 
     return out;
 }
 
-// double CompositeGroup::operator()(const ptrdiff_t index) const
-// {
-//     /*! \f{equation*}{ (\mathbb{Z}, \mathbb{Z}) \rightarrow \mathbb{R} \f}
-//     *
-//     * Gets a value in the vector representation.
-//     */
-    
-//     const double nan = std::numeric_limits<double>::quiet_NaN();
-//     const size_t dim = this->get_dimension();
-
-//     if (index >= static_cast<ptrdiff_t>(dim)) return nan;
-//     if (std::abs(index) > static_cast<ptrdiff_t>(dim)) return nan;
-
-//     size_t _index;
-//     if (index < 0)
-//     {
-//         _index = static_cast<size_t>(static_cast<ptrdiff_t>(dim) + index);
-//     }
-//     else
-//     {
-//         _index = static_cast<size_t>(index);
-//     }
-    
-//     const std::vector<size_t> sizes = this->get_sizes();
-
-//     size_t base_index = 0;
-//     for (size_t ii = 0; ii < sizes.size(); ii++)
-//     {
-//         if ((_index - base_index) < sizes[ii])
-//         {
-//             const size_t ind = this->space[ii].index();
-//             const size_t relind = _index - base_index;
-//             if (ind == CompositeGroup::INDEX_CN)
-//             {
-//                 return std::get<CN>(this->space[ii]).operator()(relind);
-//             }
-//             else if (ind == CompositeGroup::INDEX_GLR)
-//             {
-//                 return std::get<GLR>(this->space[ii]).operator()(relind);
-//             }
-//             else if (ind == CompositeGroup::INDEX_GLC)
-//             {
-//                 return std::get<GLC>(this->space[ii]).operator()(relind);
-//             }
-//             else if (ind == CompositeGroup::INDEX_RN)
-//             {
-//                 return std::get<RN>(this->space[ii]).operator()(relind);
-//             }
-//             else if (ind == CompositeGroup::INDEX_SE)
-//             {
-//                 return std::get<SE>(this->space[ii]).operator()(relind);
-//             }
-//             else if (ind == CompositeGroup::INDEX_SO)
-//             {
-//                 return std::get<SO>(this->space[ii]).operator()(relind);
-//             }
-//             else if (ind == CompositeGroup::INDEX_SP)
-//             {
-//                 return std::get<SP>(this->space[ii]).operator()(relind);
-//             }
-//             else if (ind == CompositeGroup::INDEX_SU)
-//             {
-//                 return std::get<SU>(this->space[ii]).operator()(relind);
-//             }
-//         }
-//         base_index += sizes[ii];
-//     }
-
-//     // This should never be returned.
-//     return nan;
-// }
-
-std::complex<double> CompositeGroup::operator()(const ptrdiff_t index1, const ptrdiff_t index2) const
+CompositeGroup::field_t CompositeGroup::operator()(const int index1, const int index2) const
 {
     /*! \f{equation*}{ (\mathbb{Z}, \mathbb{Z}) \rightarrow \mathbb{C} \f}
     *
@@ -545,120 +299,86 @@ std::complex<double> CompositeGroup::operator()(const ptrdiff_t index1, const pt
     */
 
     const double nan = std::numeric_limits<double>::quiet_NaN();
-    const size_t shape = this->get_shape();
+    const int shape = this->get_shape();
     if (shape == 0) return std::complex<double>(nan, nan);
 
-    if (index1 >= static_cast<ptrdiff_t>(shape)) return std::complex<double>(nan, nan);
-    if (index2 >= static_cast<ptrdiff_t>(shape)) return std::complex<double>(nan, nan);
-    if (std::abs(index1) > static_cast<ptrdiff_t>(shape)) return std::complex<double>(nan, nan);
-    if (std::abs(index2) > static_cast<ptrdiff_t>(shape)) return std::complex<double>(nan, nan);
+    // If input index is negative, index from the back of the array
+    const int _index1 = (index1 < 0) ? shape + index1 : index1;
+    const int _index2 = (index2 < 0) ? shape + index2 : index2;
 
-    size_t _index1;
-    if (index1 < 0)
-    {
-        _index1 = static_cast<size_t>(static_cast<ptrdiff_t>(shape) + index1);
-    }
-    else
-    {
-        _index1 = static_cast<size_t>(index1);
-    }
-
-    size_t _index2;
-    if (index2 < 0)
-    {
-        _index2 = static_cast<size_t>(static_cast<ptrdiff_t>(shape) + index2);
-    }
-    else
-    {
-        _index2 = static_cast<size_t>(index2);
-    }
+    // Error check for out of bounds
+    if (_index1 < 0) return std::complex<double>(nan, nan);
+    if (_index1 >= shape) return std::complex<double>(nan, nan);
+    if (_index2 < 0) return std::complex<double>(nan, nan);
+    if (_index2 >= shape) return std::complex<double>(nan, nan);
     
-    const std::vector<size_t> shapes = this->get_shapes();
+    const std::vector<int> shapes = this->get_shapes();
 
-    size_t relind = 0;
-    for (size_t ii = 0; ii < shapes.size(); ii++)
+    int relind = 0;
+    for (int ii = 0; ii < static_cast<int>(shapes.size()); ii++)
     {
+        // Sparse components
+        if ((_index1 - relind) < 0 || (_index2 - relind) < 0)
+        {
+            return std::complex<double>(0.0, 0.0);
+        }
+
         if ((_index1 - relind) < shapes[ii] && (_index2 - relind) < shapes[ii])
         {
-            const size_t ind = this->space[ii].index();
-            if (ind == CompositeGroup::INDEX_CN)
+            return std::visit([&](const auto& _element)
             {
-                return std::get<CN>(this->space[ii]).operator()(_index1 - relind, _index2 - relind);
-            }
-            else if (ind == CompositeGroup::INDEX_GLR)
-            {
-                return std::get<GLR>(this->space[ii]).operator()(_index1 - relind, _index2 - relind);
-            }
-            else if (ind == CompositeGroup::INDEX_GLC)
-            {
-                return std::get<GLC>(this->space[ii]).operator()(_index1 - relind, _index2 - relind);
-            }
-            else if (ind == CompositeGroup::INDEX_RN)
-            {
-                return std::get<RN>(this->space[ii]).operator()(_index1 - relind, _index2 - relind);
-            }
-            else if (ind == CompositeGroup::INDEX_SE)
-            {
-                return std::get<SE>(this->space[ii]).operator()(_index1 - relind, _index2 - relind);
-            }
-            else if (ind == CompositeGroup::INDEX_SO)
-            {
-                return std::get<SO>(this->space[ii]).operator()(_index1 - relind, _index2 - relind);
-            }
-            else if (ind == CompositeGroup::INDEX_SP)
-            {
-                return std::get<SP>(this->space[ii]).operator()(_index1 - relind, _index2 - relind);
-            }
-            else if (ind == CompositeGroup::INDEX_SU)
-            {
-                return std::get<SU>(this->space[ii]).operator()(_index1 - relind, _index2 - relind);
-            }
+                return static_cast<std::complex<double>>(_element(_index1 - relind, _index2 - relind));
+            }, this->point[ii]);
         }
+
         relind += shapes[ii];
     }
 
-    return std::complex<double>(0.0, 0.0);
+    return std::complex<double>(nan, nan);
+}
+
+const CompositeGroup::dataproxy CompositeGroup::operator[](const int index) const
+{
+    const int len = static_cast<int>(this->point.size());
+
+    // If input index is negative, index from the back of the array
+    const int _index = (index < 0) ? len + index : index;
+
+    // Error check for out of bounds
+    lielab_assert((_index >= 0) && (_index < len), "Index " + std::to_string(index) + " is out of bounds for CompositeGroup of length " + std::to_string(len));
+
+    return CompositeGroup::dataproxy{const_cast<CompositeGroup::TYPES&>(this->point[_index])};
+}
+
+CompositeGroup::dataproxy CompositeGroup::operator[](const int index)
+{
+    const int len = static_cast<int>(this->point.size());
+
+    // If input index is negative, index from the back of the array
+    const int _index = (index < 0) ? len + index : index;
+
+    // Error check for out of bounds
+    lielab_assert((_index >= 0) && (_index < len), "Index " + std::to_string(index) + " is out of bounds for CompositeGroup of length " + std::to_string(len));
+
+    return CompositeGroup::dataproxy{this->point[_index]};
 }
 
 CompositeGroup CompositeGroup::operator*(const CompositeGroup& other) const
 {
-    CompositeGroup out;
+    using Lielab::testing::check_topology;
 
-    for (size_t ii = 0; ii < this->space.size(); ii++)
+    lielab_assert(check_topology(*this, other), "Unable to take product of topologically inconsistent groups: (" + this->to_string() + ") !≅ (" + other.to_string() + ").");
+
+    CompositeGroup out;
+    int index = 0;
+    for (const auto& element : this->point)
     {
-        const size_t ind = this->space[ii].index();
-        if (ind == INDEX_CN)
+        std::visit([&](const auto& _element)
         {
-            out.space.push_back(std::get<CN>(this->space[ii]) * std::get<CN>(other.space[ii]));
-        }
-        else if (ind == INDEX_GLR)
-        {
-            out.space.push_back(std::get<GLR>(this->space[ii]) * std::get<GLR>(other.space[ii]));
-        }
-        else if (ind == INDEX_GLC)
-        {
-            out.space.push_back(std::get<GLC>(this->space[ii]) * std::get<GLC>(other.space[ii]));
-        }
-        else if (ind == INDEX_RN)
-        {
-            out.space.push_back(std::get<RN>(this->space[ii]) * std::get<RN>(other.space[ii]));
-        }
-        else if (ind == INDEX_SE)
-        {
-            out.space.push_back(std::get<SE>(this->space[ii]) * std::get<SE>(other.space[ii]));
-        }
-        else if (ind == INDEX_SO)
-        {
-            out.space.push_back(std::get<SO>(this->space[ii]) * std::get<SO>(other.space[ii]));
-        }
-        else if (ind == INDEX_SP)
-        {
-            out.space.push_back(std::get<SP>(this->space[ii]) * std::get<SP>(other.space[ii]));
-        }
-        else if (ind == INDEX_SU)
-        {
-            out.space.push_back(std::get<SU>(this->space[ii]) * std::get<SU>(other.space[ii]));
-        }
+            using other_t = std::decay_t<decltype(_element)>;
+            out.point.push_back(_element*std::get<other_t>(other.point[index]));
+        }, element);
+        index++;
     }
 
     return out;
@@ -666,43 +386,19 @@ CompositeGroup CompositeGroup::operator*(const CompositeGroup& other) const
 
 CompositeGroup& CompositeGroup::operator*=(const CompositeGroup& other)
 {
-    assert(this->space.size() == other.space.size());
+    using Lielab::testing::check_topology;
 
-    for (size_t ii = 0; ii < this->space.size(); ii++)
+    lielab_assert(check_topology(*this, other), "Unable to take product of topologically inconsistent groups: (" + this->to_string() + ") !≅ (" + other.to_string() + ").");
+
+    int index = 0;
+    for (auto& element : this->point)
     {
-        const size_t ind = this->space[ii].index();
-        if (ind == INDEX_CN)
+        std::visit([&](auto& _element)
         {
-            std::get<CN>(this->space[ii]) *= std::get<CN>(other.space[ii]);
-        }
-        else if (ind == INDEX_GLR)
-        {
-            std::get<GLR>(this->space[ii]) *= std::get<GLR>(other.space[ii]);
-        }
-        else if (ind == INDEX_GLC)
-        {
-            std::get<GLC>(this->space[ii]) *= std::get<GLC>(other.space[ii]);
-        }
-        else if (ind == INDEX_RN)
-        {
-            std::get<RN>(this->space[ii]) *= std::get<RN>(other.space[ii]);
-        }
-        else if (ind == INDEX_SE)
-        {
-            std::get<SE>(this->space[ii]) *= std::get<SE>(other.space[ii]);
-        }
-        else if (ind == INDEX_SO)
-        {
-            std::get<SO>(this->space[ii]) *= std::get<SO>(other.space[ii]);
-        }
-        else if (ind == INDEX_SP)
-        {
-            std::get<SP>(this->space[ii]) *= std::get<SP>(other.space[ii]);
-        }
-        else if (ind == INDEX_SU)
-        {
-            std::get<SU>(this->space[ii]) *= std::get<SU>(other.space[ii]);
-        }
+            using other_t = std::decay_t<decltype(_element)>;
+            _element *= std::get<other_t>(other.point[index]);
+        }, element);
+        index++;
     }
 
     return *this;
@@ -712,109 +408,15 @@ CompositeGroup CompositeGroup::inverse() const
 {
     CompositeGroup out;
 
-    for (size_t ii = 0; ii < this->space.size(); ii++)
+    for (const auto& element : this->point)
     {
-        const size_t ind = this->space[ii].index();
-        if (ind == INDEX_CN)
+        std::visit([&](const auto& _element)
         {
-            out.space.push_back(std::get<CN>(this->space[ii]).inverse());
-        }
-        if (ind == INDEX_GLR)
-        {
-            out.space.push_back(std::get<GLR>(this->space[ii]).inverse());
-        }
-        if (ind == INDEX_GLC)
-        {
-            out.space.push_back(std::get<GLC>(this->space[ii]).inverse());
-        }
-        else if (ind == INDEX_RN)
-        {
-            out.space.push_back(std::get<RN>(this->space[ii]).inverse());
-        }
-        else if (ind == INDEX_SE)
-        {
-            out.space.push_back(std::get<SE>(this->space[ii]).inverse());
-        }
-        else if (ind == INDEX_SO)
-        {
-            out.space.push_back(std::get<SO>(this->space[ii]).inverse());
-        }
-        else if (ind == INDEX_SP)
-        {
-            out.space.push_back(std::get<SP>(this->space[ii]).inverse());
-        }
-        else if (ind == INDEX_SU)
-        {
-            out.space.push_back(std::get<SU>(this->space[ii]).inverse());
-        }
+            out.point.push_back(_element.inverse());
+        }, element);
     }
 
     return out;
-}
-
-CompositeGroup::TYPES CompositeGroup::operator[](const ptrdiff_t index) const
-{
-    const size_t sz = this->space.size();
-    if (index >= static_cast<ptrdiff_t>(sz)) return GLC();
-
-    if (std::abs(index) > static_cast<ptrdiff_t>(sz)) return GLC();
-
-    size_t _index;
-    if (index < 0)
-    {
-        _index = static_cast<size_t>(static_cast<ptrdiff_t>(sz) + index);
-    }
-    else
-    {
-        _index = static_cast<size_t>(index);
-    }
-
-    const size_t ind = space[_index].index();
-    if (ind == INDEX_CN)
-    {
-        return std::get<CN>(space[_index]);
-    }
-    else if (ind == INDEX_GLR)
-    {
-        return std::get<GLR>(space[_index]);
-    }
-    else if (ind == INDEX_GLC)
-    {
-        return std::get<GLC>(space[_index]);
-    }
-    else if (ind == INDEX_RN)
-    {
-        return std::get<RN>(space[_index]);
-    }
-    else if (ind == INDEX_SE)
-    {
-        return std::get<SE>(space[_index]);
-    }
-    else if (ind == INDEX_SO)
-    {
-        return std::get<SO>(space[_index]);
-    }
-    else if (ind == INDEX_SP)
-    {
-        return std::get<SP>(space[_index]);
-    }
-    else if (ind == INDEX_SU)
-    {
-        return std::get<SU>(space[_index]);
-    }
-
-    // This should never be called.
-    return GLC();
-}
-
-std::ostream& operator<<(std::ostream& os, const CompositeGroup& other)
-{
-    /*!
-    * Overloads the "<<" stream insertion operator.
-    */
-    
-    os << other.to_string();
-    return os;
 }
 
 }

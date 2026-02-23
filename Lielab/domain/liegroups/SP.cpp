@@ -1,19 +1,12 @@
 #include "SP.hpp"
 
-#include "Lielab/utils/Error.hpp"
+#include "Lielab/testing.hpp"
 
 #include <Eigen/Core>
 #include <unsupported/Eigen/MatrixFunctions>
 
-#include <cassert>
-
 namespace Lielab::domain
 {
-
-std::string SP::to_string() const
-{
-    return "SP(" + std::to_string(this->_shape) + ", R)";
-}
 
 SP::SP() : SP(0)
 {
@@ -27,7 +20,39 @@ SP::SP() : SP(0)
 
 }
 
-SP::SP(const size_t shape)
+// SP::~SP();
+
+SP::SP(const SP::matrix_t& matrix)
+{
+    /*! \f{equation}{(\mathbb{R}^{n \times n}) \rightarrow SP \f}
+    *
+    * Constructor instantiating an \f$SP\f$ object from an
+    * \f$n \times n\f$ real matrix.
+    *
+    */
+
+    lielab_assert(matrix.rows() % 2 == 0, "Input matrix shape must be even.");
+    lielab_assert(matrix.rows() == matrix.cols(), "Input matrix must be square.");
+
+    this->point.noalias() = matrix;
+}
+
+SP SP::identity(const int shape)
+{
+    /*! \f{equation*}{ (\mathbb{Z}) \rightarrow SP \f}
+    *
+    * Returns an identity group with given shape.
+    * 
+    * @param[in] shape The shape of the group.
+    * @param[out] out The SP element. 
+    */
+
+    return SP(shape);
+}
+
+// TODO: Projection
+
+SP::SP(const int shape)
 {
     /*! \f{equation*}{ (\mathbb{Z}) \rightarrow SP \f}
     *
@@ -40,56 +65,87 @@ SP::SP(const size_t shape)
     * @param[in] shape The shape of the data matrix.
     */
 
-    if (shape % 2 != 0)
-    {
-        throw Lielab::utils::Error("Shape of sp must be even dimensional.");
-    }
+    lielab_assert(shape % 2 == 0, "Shape of SP must be even.");
 
-    this->data = Eigen::MatrixXd::Identity(shape, shape);
-    this->_shape = shape;
+    this->point.noalias() = Eigen::MatrixXd::Identity(shape, shape);
 }
 
-SP SP::from_shape(const size_t shape)
+std::string SP::to_string() const
 {
-    /*! \f{equation*}{ (\mathbb{Z}) \rightarrow SP \f}
-    *
-    * Returns a zero algebra with given shape.
-    * 
-    * @param[in] shape The shape of the algebra.
-    * @param[out] out The SP element. 
-    */
-
-    return SP(shape);
+    return "SP(" + std::to_string(this->get_shape()) + ", R)";
 }
 
-size_t SP::get_dimension() const
+int SP::get_dimension() const
 {
     /*! \f{equation*}{ () \rightarrow \mathbb{Z} \f}
     * 
     * Gets the dimension of the group.
     */
 
-    return this->_shape * (this->_shape + 1) / 2;
+    return this->get_shape() * (this->get_shape() + 1) / 2;
 }
 
-size_t SP::get_shape() const
-{
-    /*! \f{equation*}{ () \rightarrow \mathbb{Z} \f}
-    * 
-    * Gets the shape of the group.
-    */
-
-    return this->_shape;
-}
-
-size_t SP::get_size() const
+int SP::get_size() const
 {
     /*! \f{quation*}{ () \rightarrow \mathbb{Z} \f}
         *
         * Gets the size of the data representation.
         */
 
-    return static_cast<size_t>(std::pow(this->_shape, 2));
+    return static_cast<int>(std::pow(this->get_shape(), 2));
+}
+
+bool SP::is_abelian() const
+{
+    return false;
+}
+
+int SP::get_shape() const
+{
+    /*! \f{equation*}{ () \rightarrow \mathbb{Z} \f}
+    * 
+    * Gets the shape of the group.
+    */
+
+    return static_cast<int>(this->point.rows());
+}
+
+SP::point_t SP::get_point() const
+{
+    return this->point;
+}
+
+Eigen::VectorXd SP::serialize() const
+{
+    /*! \f{equation*}{ () \rightarrow \mathbb{R}^{n \times 1} \f}
+    * 
+    * Returns a serialized representation.
+    */
+
+    return this->point.reshaped<Eigen::RowMajor>();
+}
+
+void SP::unserialize(const Eigen::VectorXd& serialized)
+{
+    /*! \f{equation*}{ (\mathbb{R}^{n \times 1}) \rightarrow () \f}
+    * 
+    * Sets the SP object from a serialized vector.
+    */
+
+    const int vdim = static_cast<int>(serialized.size());
+    const int max_ind = std::min(this->get_size(), vdim);
+
+    for (int vind = 0; vind < max_ind; vind++)
+    {
+        const int row = vind / this->get_shape();
+        const int col = vind % this->get_shape();
+        this->point(row, col) = serialized(vind);
+    }
+}
+
+void SP::unserialize(std::initializer_list<double> serialized)
+{
+    this->unserialize(Eigen::VectorXd{std::move(serialized)});
 }
 
 SP::matrix_t SP::get_matrix() const
@@ -108,53 +164,10 @@ SP::matrix_t SP::get_matrix() const
     *               Matematicheskikh Nauk 2.6 (1947): 159-173.
     */
 
-    return this->data;
+    return this->point;
 }
 
-SP SP::inverse() const
-{
-    /*! \f{equation*}{ (SP) \rightarrow SP \f}
-    * 
-    * Returns the inverse.
-    */
-
-    return this->data.inverse();
-}
-
-Eigen::VectorXd SP::serialize() const
-{
-    /*! \f{equation*}{ () \rightarrow \mathbb{R}^{n \times 1} \f}
-    * 
-    * Returns a serialized representation.
-    */
-
-    return this->data.reshaped<Eigen::RowMajor>();
-}
-
-void SP::unserialize(const Eigen::VectorXd& vec)
-{
-    /*! \f{equation*}{ (\mathbb{R}^{n \times 1}) \rightarrow () \f}
-    * 
-    * Sets the SP object from a serialized vector.
-    */
-
-    const size_t vdim = vec.size();
-    const size_t max_ind = std::min(this->get_size(), vdim);
-
-    for (size_t vind = 0; vind < max_ind; vind++)
-    {
-        const size_t row = static_cast<size_t>(std::floor(vind / this->_shape));
-        const size_t col = vind % this->_shape;
-        this->data(row, col) = vec(vind);
-    }
-}
-
-void SP::unserialize(std::initializer_list<double> vec)
-{
-    this->unserialize(Eigen::VectorXd{std::move(vec)});
-}
-
-double SP::operator()(const ptrdiff_t index1, const ptrdiff_t index2) const
+SP::field_t SP::operator()(const int index1, const int index2) const
 {
     /*! \f{equation*}{ (\mathbb{Z}, \mathbb{Z}) \rightarrow \mathbb{R} \f}
     *
@@ -162,35 +175,20 @@ double SP::operator()(const ptrdiff_t index1, const ptrdiff_t index2) const
     */
     
     const double nan = std::numeric_limits<double>::quiet_NaN();
-    const size_t shape = this->get_shape();
+    const int shape = this->get_shape();
     if (shape == 0) return nan;
 
-    if (index1 >= static_cast<ptrdiff_t>(shape)) return nan;
-    if (index2 >= static_cast<ptrdiff_t>(shape)) return nan;
-    if (std::abs(index1) > static_cast<ptrdiff_t>(shape)) return nan;
-    if (std::abs(index2) > static_cast<ptrdiff_t>(shape)) return nan;
+    // If input index is negative, index from the back of the array
+    const int _index1 = (index1 < 0) ? shape + index1 : index1;
+    const int _index2 = (index2 < 0) ? shape + index2 : index2;
 
-    size_t _index1;
-    if (index1 < 0)
-    {
-        _index1 = static_cast<size_t>(static_cast<ptrdiff_t>(shape) + index1);
-    }
-    else
-    {
-        _index1 = static_cast<size_t>(index1);
-    }
+    // Error check for out of bounds
+    if (_index1 < 0) return nan;
+    if (_index1 >= shape) return nan;
+    if (_index2 < 0) return nan;
+    if (_index2 >= shape) return nan;
 
-    size_t _index2;
-    if (index2 < 0)
-    {
-        _index2 = static_cast<size_t>(static_cast<ptrdiff_t>(shape) + index2);
-    }
-    else
-    {
-        _index2 = static_cast<size_t>(index2);
-    }
-
-    return this->data(_index1, _index2);
+    return this->point(_index1, _index2);
 }
 
 SP SP::operator*(const SP& other) const
@@ -200,8 +198,8 @@ SP SP::operator*(const SP& other) const
     * Group product.
     */
 
-    assert(this->_shape == other.get_shape());
-    return SP(this->data * other.data);
+    lielab_assert(this->get_shape() == other.get_shape(), "Shapes must be equal.");
+    return SP(this->point * other.point);
 }
 
 SP& SP::operator*=(const SP& other)
@@ -211,19 +209,19 @@ SP& SP::operator*=(const SP& other)
     * In place group product.
     */
 
-    assert(this->_shape == other.get_shape());
-    this->data *= other.data;
+    lielab_assert(this->get_shape() == other.get_shape(), "Shapes must be equal.");
+    this->point *= other.point;
     return *this;
 }
 
-std::ostream& operator<<(std::ostream& os, const SP& other)
+SP SP::inverse() const
 {
-    /*!
-    * Overloads the "<<" stream insertion operator.
+    /*! \f{equation*}{ (SP) \rightarrow SP \f}
+    * 
+    * Returns the inverse.
     */
 
-    os << static_cast<const Eigen::MatrixXd>(other.data);
-    return os;
+    return SP(this->point.inverse());
 }
 
 }

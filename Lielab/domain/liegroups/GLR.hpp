@@ -1,7 +1,7 @@
 #ifndef LIELAB_DOMAIN_GL_HPP
 #define LIELAB_DOMAIN_GL_HPP
 
-#include "LieGroup.hpp"
+#include "../VirtualManifolds.hpp"
 
 #include <Eigen/Core>
 #include <unsupported/Eigen/MatrixFunctions>
@@ -9,58 +9,52 @@
 namespace Lielab::domain
 {
 
-class GLR : public LieGroup<double>
+class GLR : public VirtualLieGroup<double>
 {
-    /*!
-    * The GLR class.
-    */
     public:
-    static constexpr bool abelian = false;
-    size_t _shape = 0;
+    // Manifold typing
+    using point_t = Eigen::MatrixXd;
 
-    std::string to_string() const override;
+    // Manifold storage
+    point_t point;
 
-    // Initialization methods
-
+    // Manifold constructors
     GLR();
+    // ~GLR();
 
-    GLR(const size_t shape);
-    static GLR from_shape(const size_t shape);
+    // Lie group constructors
+    GLR(const matrix_t& matrix);
+    static GLR identity(const int shape);
+    static GLR project(const matrix_t& matrix);
 
-    template<typename OtherDerived>
-    GLR(const Eigen::MatrixBase<OtherDerived>& other);
+    // GLR constructors
+    GLR(const int shape);
 
-    template<typename OtherDerived>
-    GLR& operator=(const Eigen::MatrixBase<OtherDerived>& other);
+    // Manifold information
+    std::string to_string() const override;
+    int get_dimension() const override;
+    int get_size() const override;
 
-    static Eigen::MatrixXd project(const Eigen::MatrixXd& other);
+    // Lie group information
+    bool is_abelian() const override;
+    int get_shape() const override;
 
-    size_t get_dimension() const override;
-    size_t get_shape() const override;
-    size_t get_size() const override;
-
-    GLR::matrix_t get_matrix() const;
-
-    GLR inverse() const;
-
-    // Data representation
-
+    // Manifold IO
+    point_t get_point() const;
     Eigen::VectorXd serialize() const override;
+    void unserialize(const Eigen::VectorXd& serialized) override;
+    void unserialize(std::initializer_list<double> serialized) override;
 
-    void unserialize(const Eigen::VectorXd& vec) override;
-    void unserialize(std::initializer_list<double> vec);
+    // Lie group IO
+    matrix_t get_matrix() const;
+    field_t operator()(const int index1, const int index2) const;
 
-    double operator()(const ptrdiff_t index1, const ptrdiff_t index2) const;
-
+    // Lie group math
     GLR operator*(const GLR& other) const;
-
     GLR& operator*=(const GLR& other);
-
-    friend std::ostream& operator<<(std::ostream& os, const GLR& other);
+    GLR inverse() const;
 };
 
 }
-
-#include "GLR.tpp"
 
 #endif

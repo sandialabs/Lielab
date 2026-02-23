@@ -1,7 +1,6 @@
 #ifndef LIELAB_FUNCTIONS_KILLING_TPP
 #define LIELAB_FUNCTIONS_KILLING_TPP
 
-#include "commutator.hpp"
 #include "Killing.hpp"
 
 #include "Lielab/domain.hpp"
@@ -19,24 +18,24 @@ double Killing(const LA& a, const LA& b)
     * @param[out] k Killing coefficient between a and b.
     */
 
-    const size_t shape = a.get_shape();
+    const int shape = a.get_shape();
 
     if (shape != b.get_shape())
     {
         throw Lielab::utils::InputError("Killing: Shapes of a and b must be equal.");
     }
 
-    const size_t dim = a.get_dimension();
+    const int dim = a.get_dimension();
 
     std::vector<LA> basis = std::vector<LA>(dim);
 
-    for (size_t ii = 0; ii < dim; ii++)
+    for (int ii = 0; ii < dim; ii++)
     {
         basis[ii] = LA::basis(ii, shape);
     }
 
     double k = 0.0;
-    for (size_t ii = 0; ii < dim; ii++)
+    for (int ii = 0; ii < dim; ii++)
     {
         k += commutator(a, commutator(b, basis[ii])).get_vector()[ii];
     }
@@ -55,20 +54,20 @@ Eigen::MatrixXd Killingform(const LA& g)
     * TODO: Return as glr type?
     */
 
-    const size_t dim = g.get_dimension();
-    const size_t shape = g.get_shape();
+    const int dim = g.get_dimension();
+    const int shape = g.get_shape();
     std::vector<LA> basis = std::vector<LA>(dim);
 
-    for (size_t ii = 0; ii < dim; ii++)
+    for (int ii = 0; ii < dim; ii++)
     {
         basis[ii] = LA::basis(ii, shape);
     }
 
     Eigen::MatrixXd K = Eigen::MatrixXd::Zero(dim, dim);
 
-    for (size_t ii = 0; ii < dim; ii++)
+    for (int ii = 0; ii < dim; ii++)
     {
-        for (size_t jj = 0; jj < dim; jj++)
+        for (int jj = 0; jj < dim; jj++)
         {
             K(ii, jj) = Killing(basis[ii], basis[jj]);
         }

@@ -1,7 +1,7 @@
 #ifndef LIELAB_DOMAIN_GLC_HPP
 #define LIELAB_DOMAIN_GLC_HPP
 
-#include "LieGroup.hpp"
+#include "../VirtualManifolds.hpp"
 
 #include <Eigen/Core>
 #include <unsupported/Eigen/MatrixFunctions>
@@ -9,58 +9,52 @@
 namespace Lielab::domain
 {
 
-class GLC : public LieGroup<std::complex<double>>
+class GLC : public VirtualLieGroup<std::complex<double>>
 {
-    /*!
-    * The GLC class.
-    */
     public:
-    static constexpr bool abelian = false;
-    size_t _shape = 0;
+    // Manifold typing
+    using point_t = Eigen::MatrixXcd;
 
-    std::string to_string() const override;
+    // Manifold storage
+    point_t point;
 
-    // Initialization methods
-
+    // Manifold constructors
     GLC();
+    // ~GLC();
 
-    GLC(const size_t shape);
-    static GLC from_shape(const size_t shape);
+    // Lie group constructors
+    GLC(const matrix_t& matrix);
+    static GLC identity(const int shape);
+    static GLC project(const matrix_t& matrix);
 
-    template<typename OtherDerived>
-    GLC(const Eigen::MatrixBase<OtherDerived>& other);
+    // GLC constructors
+    GLC(const int shape);
 
-    template<typename OtherDerived>
-    GLC& operator=(const Eigen::MatrixBase<OtherDerived>& other);
+    // Manifold information
+    std::string to_string() const override;
+    int get_dimension() const override;
+    int get_size() const override;
 
-    static Eigen::MatrixXcd project(const Eigen::MatrixXcd& other);
+    // Lie group information
+    bool is_abelian() const override;
+    int get_shape() const override;
 
-    size_t get_dimension() const override;
-    size_t get_shape() const override;
-    size_t get_size() const override;
-
-    GLC::matrix_t get_matrix() const;
-
-    GLC inverse() const;
-
-    // Data representation
-
+    // Manifold IO
+    point_t get_point() const;
     Eigen::VectorXd serialize() const override;
+    void unserialize(const Eigen::VectorXd& serialized) override;
+    void unserialize(std::initializer_list<double> serialized) override;
 
-    void unserialize(const Eigen::VectorXd& vector) override;
-    void unserialize(std::initializer_list<double> vector);
+    // Lie group IO
+    matrix_t get_matrix() const;
+    field_t operator()(const int index1, const int index2) const;
 
-    std::complex<double> operator()(const ptrdiff_t index1, const ptrdiff_t index2) const;
-
+    // Lie group math
     GLC operator*(const GLC& other) const;
-
     GLC& operator*=(const GLC& other);
-
-    friend std::ostream& operator<<(std::ostream& os, const GLC& other);
+    GLC inverse() const;
 };
 
 }
-
-#include "GLC.tpp"
 
 #endif

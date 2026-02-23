@@ -1,11 +1,13 @@
+#include <Lielab/domain/liegroups/SO.hpp>
+
+#include <catch2/catch_all.hpp>
+
 #include <cmath>
 #include <numbers>
-#include <Lielab.hpp>
-#include <catch2/catch_all.hpp>
 
 TEST_CASE("SO to_string", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::SO;
 
     const SO x0 = SO(0);
     CHECK(x0.to_string() == "SO(0)");
@@ -17,7 +19,7 @@ TEST_CASE("SO to_string", "[domain]")
 
 TEST_CASE("SO main_initializer", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::SO;
 
     const SO xblank = SO();
     CHECK(xblank.get_dimension() == 0);
@@ -32,7 +34,7 @@ TEST_CASE("SO main_initializer", "[domain]")
 
 TEST_CASE("SO matrix_initializer", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::SO;
 
     const SO x0 = SO(Eigen::MatrixXd::Random(0, 0));
     CHECK(x0.get_shape() == 0);
@@ -47,23 +49,23 @@ TEST_CASE("SO matrix_initializer", "[domain]")
     CHECK_THROWS(SO(Eigen::MatrixXd::Random(3, 2)));
 }
 
-TEST_CASE("SO from_shape_initializer", "[domain]")
+TEST_CASE("SO identity_initializer", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::SO;
 
-    const SO x0 = SO::from_shape(0);
+    const SO x0 = SO::identity(0);
     CHECK(x0.get_dimension() == 0);
     const Eigen::MatrixXd x0hat = x0.get_matrix();
     CHECK(x0hat.rows() == 0);
     CHECK(x0hat.cols() == 0);
 
-    const SO x1 = SO::from_shape(1);
+    const SO x1 = SO::identity(1);
     CHECK(x1.get_dimension() == 0);
     const Eigen::MatrixXd x1hat = x1.get_matrix();
     CHECK(x1hat.rows() == 1);
     CHECK(x1hat.cols() == 1);
 
-    const SO x2 = SO::from_shape(2);
+    const SO x2 = SO::identity(2);
     CHECK(x2.get_dimension() == 1);
     const Eigen::MatrixXd x2hat = x2.get_matrix();
     CHECK(x2hat.rows() == 2);
@@ -72,7 +74,7 @@ TEST_CASE("SO from_shape_initializer", "[domain]")
 
 TEST_CASE("SO get_dimension", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::SO;
 
     SO zero(0), one(1), two(2), three(3), four(4), five(5), six(6), seven(7), eight(8);
 
@@ -93,7 +95,7 @@ TEST_CASE("SO serialize/unserialize", "[domain]")
     * Tests the serialize/unserialize operation.
     */
 
-    using namespace Lielab::domain;
+    using Lielab::domain::SO;
 
     SO x0 = SO(0);
     x0.unserialize({});
@@ -105,20 +107,7 @@ TEST_CASE("SO serialize/unserialize", "[domain]")
     x1.unserialize({1.0, 2.0});
     Eigen::VectorXd x1bar = x1.serialize();
 
-    REQUIRE(x1bar.size() == 1);
-    CHECK(x1bar(0) == 1.0);
-
-    x1.unserialize({3.0});
-    x1bar = x1.serialize();
-
-    REQUIRE(x1bar.size() == 1);
-    CHECK(x1bar(0) == 3.0);
-
-    x1.unserialize({});
-    x1bar = x1.serialize();
-
-    REQUIRE(x1bar.size() == 1);
-    CHECK(x1bar(0) == 3.0);
+    REQUIRE(x1bar.size() == 0);
 
     SO x2 = SO(2);
     x2.unserialize({1.0, 2.0, 3.0});
@@ -155,7 +144,7 @@ TEST_CASE("SO get_matrix", "[domain]")
     * Tests the get_matrix operation.
     */
 
-    using namespace Lielab::domain;
+    using Lielab::domain::SO;
 
     SO x0 = SO(0);
     x0.unserialize({});
@@ -184,7 +173,7 @@ TEST_CASE("SO get_matrix", "[domain]")
 
     REQUIRE(x1hat.rows() == 1);
     REQUIRE(x1hat.cols() == 1);
-    CHECK(x1hat(0, 0) == 2.0);
+    CHECK(x1hat(0, 0) == 1.0);
 
     SO x2 = SO(2);
     x2.unserialize({1.0, 2.0, 3.0});
@@ -217,9 +206,9 @@ TEST_CASE("SO get_matrix", "[domain]")
 
 TEST_CASE("SO operator()", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::SO;
 
-    SO x0 = SO::from_shape(0);
+    SO x0 = SO::identity(0);
     x0.unserialize({});
 
     // Out of bounds
@@ -292,7 +281,7 @@ TEST_CASE("SO operator()", "[domain]")
 
 TEST_CASE("SO math_ops_SO", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::SO;
 
     SO x1(2), x2(2);
     x1.unserialize({1.0, 2.0, 3.0, 4.0});
@@ -327,31 +316,31 @@ TEST_CASE("SO math_ops_SO", "[domain]")
 
 TEST_CASE("SO project", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::SO;
 
     const Eigen::MatrixXd rand_2_2 = Eigen::MatrixXd::Random(2, 2);
-    const Eigen::MatrixXd proj_2_2 = SO::project(rand_2_2);
+    const Eigen::MatrixXd proj_2_2 = SO::project(rand_2_2).get_matrix();
 
     REQUIRE(proj_2_2.rows() == 2);
     REQUIRE(proj_2_2.cols() == 2);
     CHECK_THAT(std::abs(proj_2_2.determinant()), Catch::Matchers::WithinAbs(1.0, 1e-14));
 
     const Eigen::MatrixXd rand_3_3 = Eigen::MatrixXd::Random(3, 3);
-    const Eigen::MatrixXd proj_3_3 = SO::project(rand_3_3);
+    const Eigen::MatrixXd proj_3_3 = SO::project(rand_3_3).get_matrix();
 
     REQUIRE(proj_3_3.rows() == 3);
     REQUIRE(proj_3_3.cols() == 3);
     CHECK_THAT(std::abs(proj_3_3.determinant()), Catch::Matchers::WithinAbs(1.0, 1e-14));
 
     const Eigen::MatrixXd rand_2_3 = Eigen::MatrixXd::Random(2, 3);
-    const Eigen::MatrixXd proj_2_3 = SO::project(rand_2_3);
+    const Eigen::MatrixXd proj_2_3 = SO::project(rand_2_3).get_matrix();
 
     REQUIRE(proj_2_3.rows() == 2);
     REQUIRE(proj_2_3.cols() == 2);
     CHECK_THAT(std::abs(proj_2_3.determinant()), Catch::Matchers::WithinAbs(1.0, 1e-14));
 
     const Eigen::MatrixXd rand_3_2 = Eigen::MatrixXd::Random(3, 2);
-    const Eigen::MatrixXd proj_3_2 = SO::project(rand_3_2);
+    const Eigen::MatrixXd proj_3_2 = SO::project(rand_3_2).get_matrix();
 
     REQUIRE(proj_3_2.rows() == 2);
     REQUIRE(proj_3_2.cols() == 2);

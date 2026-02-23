@@ -1,7 +1,7 @@
 #ifndef LIELAB_DOMAIN_LIEALGEBRAS_glr_HPP
 #define LIELAB_DOMAIN_LIEALGEBRAS_glr_HPP
 
-#include "LieAlgebra.hpp"
+#include "../VirtualManifolds.hpp"
 
 #include <Eigen/Core>
 #include <unsupported/Eigen/MatrixFunctions>
@@ -9,33 +9,54 @@
 namespace Lielab::domain
 {
 
-class glr : public LieAlgebra<double>
+class glr : public VirtualLieAlgebra<double>
 {
     public:
+    // Manifold typing
+    using point_t = Eigen::MatrixXd;
+    
+    // Manifold storage
+    point_t point;
 
-    static constexpr bool abelian = false;
-
-    size_t _shape = 0;
-
-    std::string to_string() const override;
+    // Manifold constructors
     glr();
-    glr(const size_t n);
-    template<typename OtherDerived> glr(const Eigen::MatrixBase<OtherDerived>& other);
-    static glr basis(const ptrdiff_t i, const size_t n);
-    static glr from_shape(const size_t shape);
+    // ~glr();
 
-    static Eigen::MatrixXd project(const Eigen::MatrixXd& other);
+    // Lie algebra constructors
+    glr(const matrix_t& matrix);
+    static glr basis(const int index, const int shape);
+    static glr zero(const int shape);
+    static glr from_vector(const Eigen::VectorXd& other);
+    static glr from_vector(std::initializer_list<double> other);
+    static glr project(const matrix_t& matrix);
 
-    size_t get_dimension() const override;
-    size_t get_shape() const override;
+    // glr constructors
+    glr(const int n);
+
+    // Manifold information
+    std::string to_string() const override;
+    int get_dimension() const override;
+    int get_size() const override;
+
+    // Lie algebra information
+    bool is_abelian() const override;
+    int get_shape() const override;
+    
+    // Manifold IO
+    point_t get_point() const;
+    Eigen::VectorXd serialize() const override;
+    void unserialize(const Eigen::VectorXd& serialized) override;
+    void unserialize(std::initializer_list<double> serialized) override;
+
+    // Lie algebra IO
+    matrix_t get_matrix() const;
     Eigen::VectorXd get_vector() const override;
     void set_vector(const Eigen::VectorXd& vector) override;
-    void set_vector(std::initializer_list<double> vector);
-    glr::matrix_t get_matrix() const override;
+    void set_vector(std::initializer_list<double> vector) override;
+    double operator()(const int index) const;
+    field_t operator()(const int index1, const int index2) const;
 
-    double operator()(const ptrdiff_t index) const;
-    double operator()(const ptrdiff_t index1, const ptrdiff_t index2) const;
-
+    // Lie algebra math
     glr operator+(const glr& other) const;
     glr& operator+=(const glr& other);
     glr operator-(const glr& other) const;
@@ -46,15 +67,8 @@ class glr : public LieAlgebra<double>
     glr& operator*=(const double other);
     glr operator/(const double other) const;
     glr& operator/=(const double other);
-
-    static glr from_vector(const Eigen::VectorXd& other);
-    static glr from_vector(std::initializer_list<double> other);
-
-    friend std::ostream& operator<<(std::ostream& os, const glr& other);
 };
 
 }
-
-#include "glr.tpp"
 
 #endif

@@ -11,6 +11,12 @@
 namespace Lielab::domain
 {
 
+template <typename... T>
+struct TypeList {};
+
+using LieAlgebras = TypeList<cn, glc, glr, rn, se, so, sp, su, CompositeAlgebra>;
+using LieGroups = TypeList<CN, GLC, GLR, RN, SE, SO, SP, SU, CompositeGroup>;
+
 template <typename T>
 struct _LieIII;
 
@@ -19,13 +25,13 @@ struct _LieIII<cn>{using type = CN;};
 template <>
 struct _LieIII<CN>{using type = cn;};
 template <>
-struct _LieIII<glr>{using type = GLR;};
-template <>
-struct _LieIII<GLR>{using type = glr;};
-template <>
 struct _LieIII<glc>{using type = GLC;};
 template <>
 struct _LieIII<GLC>{using type = glc;};
+template <>
+struct _LieIII<glr>{using type = GLR;};
+template <>
+struct _LieIII<GLR>{using type = glr;};
 template <>
 struct _LieIII<rn>{using type = RN;};
 template <>

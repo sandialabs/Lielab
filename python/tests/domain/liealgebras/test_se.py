@@ -4,7 +4,7 @@ import pytest
 def test_se_to_string():
     from lielab.domain import se
 
-    xzero = se.from_shape(0)
+    xzero = se.zero(0)
     assert (xzero.to_string() == "se(nan)")
     x0 = se(0)
     assert (x0.to_string() == "se(0)")
@@ -86,22 +86,22 @@ def test_se_basis_initializer():
     assert (x02bar[1] == 0.0)
     assert (x02bar[2] == 0.0)
 
-def test_se_from_shape_initializer():
+def test_se_zero_initializer():
     from lielab.domain import se
 
-    x0 = se.from_shape(0)
+    x0 = se.zero(0)
     assert (x0.get_dimension() == 0)
     x0hat = x0.get_matrix()
     assert (x0hat.shape[0] == 0)
     assert (x0hat.shape[1] == 0)
 
-    x1 = se.from_shape(1)
+    x1 = se.zero(1)
     assert (x1.get_dimension() == 0)
     x1hat = x1.get_matrix()
     assert (x1hat.shape[0] == 1)
     assert (x1hat.shape[1] == 1)
 
-    x2 = se.from_shape(2)
+    x2 = se.zero(2)
     assert (x2.get_dimension() == 1)
     x2hat = x2.get_matrix()
     assert (x2hat.shape[0] == 2)
@@ -110,7 +110,7 @@ def test_se_from_shape_initializer():
 def test_se_get_dimension():
     from lielab.domain import se
 
-    veryzero = se.from_shape(0)
+    veryzero = se.zero(0)
     zero = se(0)
     one = se(1)
     two = se(2)
@@ -140,7 +140,7 @@ def test_se_set_get_vector():
 
     from lielab.domain import se
 
-    xzero = se.from_shape(0)
+    xzero = se.zero(0)
     xzero.set_vector([])
     xzerobar = xzero.get_vector()
 
@@ -218,7 +218,7 @@ def test_se_get_matrix():
 
     from lielab.domain import se, so
 
-    xzero = se.from_shape(0)
+    xzero = se.zero(0)
     xzero.set_vector([])
     xzerohat = xzero.get_matrix()
 
@@ -317,7 +317,7 @@ def test_se_get_matrix():
 def test_se_operator_parenthesis():
     from lielab.domain import se, so
 
-    xzero = se.from_shape(0)
+    xzero = se.zero(0)
     xzero.set_vector([])
 
     # Out of bounds
@@ -479,56 +479,54 @@ def test_se_math_ops_se():
     assert (x1_unary_sub(1) == -2.0)
     assert (x1_unary_sub(2) == -3.0)
 
-# TODO: Test projection once it uses so projection
-# def test_project():
-# [
-#     from lielab.domain import se
+def test_se_project():
+    from lielab.domain import se
 
-#     rand_2_2 = Eigen::MatrixXd::Random(2, 2)
-#     proj_2_2 = rn::project(rand_2_2)
+    rand_2_2 = np.random.rand(2, 2)
+    proj_2_2 = se.project(rand_2_2).get_matrix()
 
-#     assert (proj_2_2.shape[0] == 2)
-#     assert (proj_2_2.shape[1] == 2)
-#     assert (proj_2_2(0, 0) == 0.0)
-#     assert (proj_2_2(0, 1) == rand_2_2(0, 1))
-#     assert (proj_2_2(1, 0) == 0.0)
-#     assert (proj_2_2(1, 1) == 0.0)
+    assert (proj_2_2.shape[0] == 2)
+    assert (proj_2_2.shape[1] == 2)
+    assert (proj_2_2[0, 0] == 0.0)
+    assert (proj_2_2[0, 1] == rand_2_2[0, 1])
+    assert (proj_2_2[1, 0] == 0.0)
+    assert (proj_2_2[1, 1] == 0.0)
 
-#     rand_3_3 = Eigen::MatrixXd::Random(3, 3)
-#     proj_3_3 = rn::project(rand_3_3)
+    rand_3_3 = np.random.rand(3, 3)
+    proj_3_3 = se.project(rand_3_3).get_matrix()
 
-#     assert (proj_3_3.shape[0] == 3)
-#     assert (proj_3_3.shape[1] == 3)
-#     assert (proj_3_3(0, 0) == 0.0)
-#     assert (proj_3_3(0, 1) == 0.0)
-#     assert (proj_3_3(0, 2) == rand_3_3(0, 2))
-#     assert (proj_3_3(1, 0) == 0.0)
-#     assert (proj_3_3(1, 1) == 0.0)
-#     assert (proj_3_3(1, 2) == rand_3_3(1, 2))
-#     assert (proj_3_3(2, 0) == 0.0)
-#     assert (proj_3_3(2, 1) == 0.0)
-#     assert (proj_3_3(2, 2) == 0.0)
+    assert (proj_3_3.shape[0] == 3)
+    assert (proj_3_3.shape[1] == 3)
+    assert (proj_3_3[0, 0] == 0.0)
+    assert (proj_3_3[0, 1] == -proj_3_3[1, 0])
+    assert (proj_3_3[0, 2] == rand_3_3[0, 2])
+    assert (proj_3_3[1, 0] == -proj_3_3[0, 1])
+    assert (proj_3_3[1, 1] == 0.0)
+    assert (proj_3_3[1, 2] == rand_3_3[1, 2])
+    assert (proj_3_3[2, 0] == 0.0)
+    assert (proj_3_3[2, 1] == 0.0)
+    assert (proj_3_3[2, 2] == 0.0)
 
-#     rand_2_3 = Eigen::MatrixXd::Random(2, 3)
-#     proj_2_3 = rn::project(rand_2_3)
+    rand_2_3 = np.random.rand(2, 3)
+    proj_2_3 = se.project(rand_2_3).get_matrix()
 
-#     assert (proj_2_3.shape[0] == 2)
-#     assert (proj_2_3.shape[1] == 2)
-#     assert (proj_2_3(0, 0) == 0.0)
-#     assert (proj_2_3(0, 1) == rand_2_3(0, 1))
-#     assert (proj_2_3(1, 0) == 0.0)
-#     assert (proj_2_3(1, 1) == 0.0)
+    assert (proj_2_3.shape[0] == 2)
+    assert (proj_2_3.shape[1] == 2)
+    assert (proj_2_3[0, 0] == 0.0)
+    assert (proj_2_3[0, 1] == rand_2_3[0, 1])
+    assert (proj_2_3[1, 0] == 0.0)
+    assert (proj_2_3[1, 1] == 0.0)
 
-#     rand_3_2 = Eigen::MatrixXd::Random(3, 2)
-#     proj_3_2 = rn::project(rand_3_2)
+    rand_3_2 = np.random.rand(3, 2)
+    proj_3_2 = se.project(rand_3_2).get_matrix()
 
-#     assert (proj_3_2.shape[0] == 2)
-#     assert (proj_3_2.shape[1] == 2)
-#     assert (proj_3_2(0, 0) == 0.0)
-#     assert (proj_3_2(0, 1) == rand_3_2(0, 1))
-#     assert (proj_3_2(1, 0) == 0.0)
-#     assert (proj_3_2(1, 1) == 0.0)
-# ]
+    assert (proj_3_2.shape[0] == 2)
+    assert (proj_3_2.shape[1] == 2)
+    assert (proj_3_2[0, 0] == 0.0)
+    assert (proj_3_2[0, 1] == rand_3_2[0, 1])
+    assert (proj_3_2[1, 0] == 0.0)
+    assert (proj_3_2[1, 1] == 0.0)
+
 
 def test_se_get_from_vector():
     """

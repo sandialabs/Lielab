@@ -42,22 +42,22 @@ def test_GLR_matrix_initializer():
     with pytest.raises(RuntimeError):
         GLR(np.random.rand(3, 2))
 
-def test_GLR_from_shape_initializer():
+def test_GLR_identity_initializer():
     from lielab.domain import GLR
 
-    x0 = GLR.from_shape(0)
+    x0 = GLR.identity(0)
     assert (x0.get_dimension() == 0)
     x0hat = x0.get_matrix()
     assert (x0hat.shape[0] == 0)
     assert (x0hat.shape[1] == 0)
 
-    x1 = GLR.from_shape(1)
+    x1 = GLR.identity(1)
     assert (x1.get_dimension() == 1)
     x1hat = x1.get_matrix()
     assert (x1hat.shape[0] == 1)
     assert (x1hat.shape[1] == 1)
 
-    x2 = GLR.from_shape(2)
+    x2 = GLR.identity(2)
     assert (x2.get_dimension() == 4)
     x2hat = x2.get_matrix()
     assert (x2hat.shape[0] == 2)
@@ -213,7 +213,7 @@ def test_GLR_get_matrix():
 def test_GLR_operator_parenthesis():
     from lielab.domain import GLR
 
-    x0 = GLR.from_shape(0)
+    x0 = GLR.identity(0)
     x0.unserialize([])
 
     # Out of bounds
@@ -321,7 +321,7 @@ def test_GLR_project():
     from lielab.domain import GLR
 
     rand_2_2 = np.random.rand(2, 2)
-    proj_2_2 = GLR.project(rand_2_2)
+    proj_2_2 = GLR.project(rand_2_2).get_matrix()
 
     assert (proj_2_2.shape[0] == 2)
     assert (proj_2_2.shape[1] == 2)
@@ -331,7 +331,7 @@ def test_GLR_project():
     assert (proj_2_2[1, 1] == rand_2_2[1, 1])
 
     rand_3_3 = np.random.rand(3, 3)
-    proj_3_3 = GLR.project(rand_3_3)
+    proj_3_3 = GLR.project(rand_3_3).get_matrix()
 
     assert (proj_3_3.shape[0] == 3)
     assert (proj_3_3.shape[1] == 3)
@@ -346,7 +346,7 @@ def test_GLR_project():
     assert (proj_3_3[2, 2] == rand_3_3[2, 2])
 
     rand_2_3 = np.random.rand(2, 3)
-    proj_2_3 = GLR.project(rand_2_3)
+    proj_2_3 = GLR.project(rand_2_3).get_matrix()
 
     assert (proj_2_3.shape[0] == 2)
     assert (proj_2_3.shape[1] == 2)
@@ -356,7 +356,7 @@ def test_GLR_project():
     assert (proj_2_3[1, 1] == rand_2_3[1, 1])
 
     rand_3_2 = np.random.rand(3, 2)
-    proj_3_2 = GLR.project(rand_3_2)
+    proj_3_2 = GLR.project(rand_3_2).get_matrix()
 
     assert (proj_3_2.shape[0] == 2)
     assert (proj_3_2.shape[1] == 2)

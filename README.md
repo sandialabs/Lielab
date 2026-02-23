@@ -5,6 +5,7 @@ Software for the geometric modeling and numerical analysis of systems, especiall
   - Domain: Lie algebras, Lie groups, and smooth manifolds.
   - Functions: Various transformations and operations on domains, exponential coordinates, Cayley transform, etc.
   - Integrate: Computation of Initial Value Problems (IVPs).
+  - Optimize: Optimization and root finding algorithms.
   - Utils: Miscellanious tools and functions not entirely related. Likely to be removed.
 
 This project is not complete.
@@ -15,10 +16,11 @@ This project is not complete.
 
 Easiest way to install is via a package manager
 
-| Manager | Install                                  | Latest version |
-|---------|------------------------------------------|----------------|
-| pip     | `pip install lielab`                     | [![PyPI - Version](https://img.shields.io/pypi/v/lielab)](https://pypi.org/project/lielab/) |
-| Conan   | `conan install --requires=lielab/[*]`    | [![Conan Center](https://img.shields.io/conan/v/lielab)](https://conan.io/center/recipes/lielab) |
+| Manager | Language | Install Command                          | Latest version |
+|---------|----------|------------------------------------------|----------------|
+| pip     | Python   | `pip install lielab`                     | [![PyPI - Version](https://img.shields.io/pypi/v/lielab)](https://pypi.org/project/lielab/) |
+| Conan   | C++      | `conan install --requires=lielab/[*]`    | [![Conan Center](https://img.shields.io/conan/v/lielab)](https://conan.io/center/recipes/lielab) |
+| Spack   | C++      | `spack install lielab`                   | ![Spack](https://img.shields.io/spack/v/lielab) |
 
 Then import into a project with
 
@@ -36,9 +38,9 @@ from lielab.domain import su, CN, CompositeAlgebra, CompositeManifold
 from lielab.integrate import solve_ivp, IVPOptions, HomogeneousIVPSystem
 import numpy as np
 
-sigma_x = -1j*su.basis(0, 2)
-sigma_y =  1j*su.basis(1, 2)
-sigma_z = -1j*su.basis(2, 2)
+sigma_x = -1j*su.basis(0, 2).get_matrix()
+sigma_y =  1j*su.basis(1, 2).get_matrix()
+sigma_z = -1j*su.basis(2, 2).get_matrix()
 ```
 
 Create a helper function to generate the expectation values of $\ket{\psi}$
@@ -46,9 +48,9 @@ Create a helper function to generate the expectation values of $\ket{\psi}$
 ```python
 def expectation(y):
     psibar = y[0].to_complex_vector()
-    ex = np.real(np.dot(np.dot(psibar.conj(), sigma_x.get_matrix()), psibar))
-    ey = np.real(np.dot(np.dot(psibar.conj(), sigma_y.get_matrix()), psibar))
-    ez = np.real(np.dot(np.dot(psibar.conj(), sigma_z.get_matrix()), psibar))
+    ex = np.real(np.dot(np.dot(psibar.conj(), sigma_x), psibar))
+    ey = np.real(np.dot(np.dot(psibar.conj(), sigma_y), psibar))
+    ez = np.real(np.dot(np.dot(psibar.conj(), sigma_z), psibar))
     return [ex, ey, ez]
 ```
 
@@ -60,7 +62,7 @@ def Schrodinger_generator(t, y):
     const_drift = sigma_x
     nonconst_drift = 1*np.cos(4*np.pi*t)*np.abs(ex[1])*sigma_z
     hamiltonian = const_drift + nonconst_drift
-    return CompositeAlgebra([-1j*hamiltonian])
+    return CompositeAlgebra([su(-1j*hamiltonian)])
 
 def Schrodinger_action(g, y):
     next_psibar = np.dot(g[0].get_matrix(), y[0].to_complex_vector())

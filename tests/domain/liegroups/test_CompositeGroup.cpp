@@ -17,7 +17,7 @@ Lielab::domain::CompositeGroup _make_cgroup()
     Lielab::domain::RN yRN1 = Lielab::domain::RN(2);
     yRN1.unserialize({17.0, 18.0});
     Lielab::domain::SE ySE1 = Lielab::domain::SE(2);
-    ySE1.unserialize({19.0, 20.0, 21.0, 22.0, 23.0, 24.0, 25.0, 26.0, 27.0});
+    ySE1.unserialize({19.0, 20.0, 21.0, 22.0, 23.0, 24.0});
     Lielab::domain::SO ySO1 = Lielab::domain::SO(2);
     ySO1.unserialize({28.0, 29.0, 30.0, 31.0});
     Lielab::domain::SP ySP1 = Lielab::domain::SP(2);
@@ -45,30 +45,30 @@ TEST_CASE("CompositeGroup main_initializer", "[domain]")
     CHECK(xblank.get_dimension() == 0);
 
     const CompositeGroup x0 = CompositeGroup(0);
-    CHECK(x0.get_dimension() == 0);
+    CHECK(x0.point.size() == 0);
     const CompositeGroup x1 = CompositeGroup(1);
-    CHECK(x1.get_dimension() == 2);
+    CHECK(x1.point.size() == 1);
     const CompositeGroup x10 = CompositeGroup(10);
-    CHECK(x10.get_dimension() == 200);
+    CHECK(x10.point.size() == 10);
 }
 
-TEST_CASE("CompositeGroup from_shape_initializer", "[domain]")
+TEST_CASE("CompositeGroup identity_initializer", "[domain]")
 {
     using namespace Lielab::domain;
 
-    const CompositeGroup x0 = CompositeGroup::from_shape(0);
+    const CompositeGroup x0 = CompositeGroup::identity(0);
     CHECK(x0.get_dimension() == 0);
     const Eigen::MatrixXcd x0hat = x0.get_matrix();
     CHECK(x0hat.rows() == 0);
     CHECK(x0hat.cols() == 0);
 
-    const CompositeGroup x1 = CompositeGroup::from_shape(1);
+    const CompositeGroup x1 = CompositeGroup::identity(1);
     CHECK(x1.get_dimension() == 2);
     const Eigen::MatrixXcd x1hat = x1.get_matrix();
     CHECK(x1hat.rows() == 1);
     CHECK(x1hat.cols() == 1);
 
-    const CompositeGroup x2 = CompositeGroup::from_shape(2);
+    const CompositeGroup x2 = CompositeGroup::identity(2);
     CHECK(x2.get_dimension() == 8);
     const Eigen::MatrixXcd x2hat = x2.get_matrix();
     CHECK(x2hat.rows() == 2);
@@ -79,7 +79,15 @@ TEST_CASE("CompositeGroup get_dimension", "[domain]")
 {
     using namespace Lielab::domain;
 
-    CompositeGroup zero(0), one(1), two(2), three(3), four(4), five(5), six(6), seven(7), eight(8);
+    CompositeGroup zero = CompositeGroup::identity(0);
+    CompositeGroup one = CompositeGroup::identity(1);
+    CompositeGroup two = CompositeGroup::identity(2);
+    CompositeGroup three = CompositeGroup::identity(3);
+    CompositeGroup four = CompositeGroup::identity(4);
+    CompositeGroup five = CompositeGroup::identity(5);
+    CompositeGroup six = CompositeGroup::identity(6);
+    CompositeGroup seven = CompositeGroup::identity(7);
+    CompositeGroup eight = CompositeGroup::identity(8);
 
     // Dimensions
     CHECK(zero.get_dimension() == 0);
@@ -94,7 +102,7 @@ TEST_CASE("CompositeGroup get_dimension", "[domain]")
 
     CompositeGroup y1 = _make_cgroup();
     
-    const std::vector<size_t> dims = y1.get_dimensions();
+    const std::vector<int> dims = y1.get_dimensions();
     REQUIRE(dims.size() == 8);
     CHECK(dims[0] == 4);
     CHECK(dims[1] == 8);
@@ -112,7 +120,15 @@ TEST_CASE("CompositeGroup get_size", "[domain]")
 {
     using namespace Lielab::domain;
 
-    CompositeGroup zero(0), one(1), two(2), three(3), four(4), five(5), six(6), seven(7), eight(8);
+    CompositeGroup zero = CompositeGroup::identity(0);
+    CompositeGroup one = CompositeGroup::identity(1);
+    CompositeGroup two = CompositeGroup::identity(2);
+    CompositeGroup three = CompositeGroup::identity(3);
+    CompositeGroup four = CompositeGroup::identity(4);
+    CompositeGroup five = CompositeGroup::identity(5);
+    CompositeGroup six = CompositeGroup::identity(6);
+    CompositeGroup seven = CompositeGroup::identity(7);
+    CompositeGroup eight = CompositeGroup::identity(8);
 
     // Dimensions
     CHECK(zero.get_size() == 0);
@@ -127,18 +143,18 @@ TEST_CASE("CompositeGroup get_size", "[domain]")
 
     CompositeGroup y1 = _make_cgroup();
     
-    const std::vector<size_t> sizes = y1.get_sizes();
+    const std::vector<int> sizes = y1.get_sizes();
     REQUIRE(sizes.size() == 8);
     CHECK(sizes[0] == 4);
     CHECK(sizes[1] == 8);
     CHECK(sizes[2] == 4);
     CHECK(sizes[3] == 2);
-    CHECK(sizes[4] == 9);
+    CHECK(sizes[4] == 6);
     CHECK(sizes[5] == 4);
     CHECK(sizes[6] == 4);
     CHECK(sizes[7] == 8);
 
-    CHECK(y1.get_size() == 43);
+    CHECK(y1.get_size() == 40);
 }
 
 TEST_CASE("CompositeGroup serialize/unserialize", "[domain]")
@@ -152,10 +168,10 @@ TEST_CASE("CompositeGroup serialize/unserialize", "[domain]")
     CompositeGroup y1 = _make_cgroup();
     y1.unserialize({43.0, 42.0, 41.0, 40.0, 39.0, 38.0, 37.0, 36.0, 35.0, 34.0, 33.0, 32.0, 31.0, 30.0,
                     29.0, 28.0, 27.0, 26.0, 25.0, 24.0, 23.0, 22.0, 21.0, 20.0, 19.0, 18.0, 17.0, 16.0,
-                    15.0, 14.0, 13.0, 12.0, 11.0, 10.0, 9.0, 8.0, 7.0, 6.0, 5.0, 4.0, 3.0, 2.0, 1.0});
+                    15.0, 14.0, 13.0, 12.0, 11.0, 10.0, 9.0, 8.0, 7.0, 6.0, 5.0, 4.0});
     
     const Eigen::VectorXd y1bar = y1.serialize();
-    REQUIRE(y1bar.size() == 43);
+    REQUIRE(y1bar.size() == 40);
     CHECK(y1bar(0) == 43.0);
     CHECK(y1bar(1) == 42.0);
     CHECK(y1bar(2) == 41.0);
@@ -196,9 +212,6 @@ TEST_CASE("CompositeGroup serialize/unserialize", "[domain]")
     CHECK(y1bar(37) == 6.0);
     CHECK(y1bar(38) == 5.0);
     CHECK(y1bar(39) == 4.0);
-    CHECK(y1bar(40) == 3.0);
-    CHECK(y1bar(41) == 2.0);
-    CHECK(y1bar(42) == 1.0);
 }
 
 TEST_CASE("CompositeGroup get_matrix", "[domain]")
@@ -288,24 +301,24 @@ TEST_CASE("CompositeGroup operator()", "[domain]")
     CHECK(y1(-10, -10) == std::complex<double>(1.0, 0.0));
 
     // In bounds SE component
-    CHECK(y1(10, 10) == std::complex<double>(19.0, 0.0));
-    CHECK(y1(10, 11) == std::complex<double>(20.0, 0.0));
-    CHECK(y1(10, 12) == std::complex<double>(21.0, 0.0));
-    CHECK(y1(11, 10) == std::complex<double>(22.0, 0.0));
-    CHECK(y1(11, 11) == std::complex<double>(23.0, 0.0));
-    CHECK(y1(11, 12) == std::complex<double>(24.0, 0.0));
-    CHECK(y1(12, 10) == std::complex<double>(25.0, 0.0));
-    CHECK(y1(12, 11) == std::complex<double>(26.0, 0.0));
-    CHECK(y1(12, 12) == std::complex<double>(27.0, 0.0));
-    CHECK(y1(-9, -9) == std::complex<double>(19.0, 0.0));
-    CHECK(y1(-9, -8) == std::complex<double>(20.0, 0.0));
-    CHECK(y1(-9, -7) == std::complex<double>(21.0, 0.0));
-    CHECK(y1(-8, -9) == std::complex<double>(22.0, 0.0));
-    CHECK(y1(-8, -8) == std::complex<double>(23.0, 0.0));
-    CHECK(y1(-8, -7) == std::complex<double>(24.0, 0.0));
-    CHECK(y1(-7, -9) == std::complex<double>(25.0, 0.0));
-    CHECK(y1(-7, -8) == std::complex<double>(26.0, 0.0));
-    CHECK(y1(-7, -7) == std::complex<double>(27.0, 0.0));
+    CHECK(y1(10, 10) == std::complex<double>(21.0, 0.0));
+    CHECK(y1(10, 11) == std::complex<double>(22.0, 0.0));
+    CHECK(y1(10, 12) == std::complex<double>(19.0, 0.0));
+    CHECK(y1(11, 10) == std::complex<double>(23.0, 0.0));
+    CHECK(y1(11, 11) == std::complex<double>(24.0, 0.0));
+    CHECK(y1(11, 12) == std::complex<double>(20.0, 0.0));
+    CHECK(y1(12, 10) == std::complex<double>(0.0, 0.0));
+    CHECK(y1(12, 11) == std::complex<double>(0.0, 0.0));
+    CHECK(y1(12, 12) == std::complex<double>(1.0, 0.0));
+    CHECK(y1(-9, -9) == std::complex<double>(21.0, 0.0));
+    CHECK(y1(-9, -8) == std::complex<double>(22.0, 0.0));
+    CHECK(y1(-9, -7) == std::complex<double>(19.0, 0.0));
+    CHECK(y1(-8, -9) == std::complex<double>(23.0, 0.0));
+    CHECK(y1(-8, -8) == std::complex<double>(24.0, 0.0));
+    CHECK(y1(-8, -7) == std::complex<double>(20.0, 0.0));
+    CHECK(y1(-7, -9) == std::complex<double>(0.0, 0.0));
+    CHECK(y1(-7, -8) == std::complex<double>(0.0, 0.0));
+    CHECK(y1(-7, -7) == std::complex<double>(1.0, 0.0));
 
     // In bounds SO component
     CHECK(y1(13, 13) == std::complex<double>(28.0, 0.0));
@@ -375,16 +388,16 @@ TEST_CASE("CompositeGroup math_ops_CompositeGroup", "[domain]")
     CompositeGroup y2 = _make_cgroup();
 
     const CompositeGroup y1_prod_y2 = y1*y2;
-    REQUIRE(y1_prod_y2.space.size() == y1.space.size());
+    REQUIRE(y1_prod_y2.point.size() == y1.point.size());
 
-    const Eigen::VectorXd y1_prod_y2_0bar = std::get<CN>(y1_prod_y2.space[0]).serialize();
+    const Eigen::VectorXd y1_prod_y2_0bar = std::get<CN>(y1_prod_y2.point[0]).serialize();
     REQUIRE(y1_prod_y2_0bar.size() == 4);
     CHECK(y1_prod_y2_0bar(0) == 2.0);
     CHECK(y1_prod_y2_0bar(1) == 4.0);
     CHECK(y1_prod_y2_0bar(2) == 6.0);
     CHECK(y1_prod_y2_0bar(3) == 8.0);
 
-    const Eigen::VectorXd y1_prod_y2_1bar = std::get<GLC>(y1_prod_y2.space[1]).serialize();
+    const Eigen::VectorXd y1_prod_y2_1bar = std::get<GLC>(y1_prod_y2.point[1]).serialize();
     REQUIRE(y1_prod_y2_1bar.size() == 8);
     CHECK(y1_prod_y2_1bar(0) == -28.0);
     CHECK(y1_prod_y2_1bar(1) == 202.0);
@@ -395,45 +408,42 @@ TEST_CASE("CompositeGroup math_ops_CompositeGroup", "[domain]")
     CHECK(y1_prod_y2_1bar(6) == -40.0);
     CHECK(y1_prod_y2_1bar(7) == 406.0);
 
-    const Eigen::VectorXd y1_prod_y2_2bar = std::get<GLR>(y1_prod_y2.space[2]).serialize();
+    const Eigen::VectorXd y1_prod_y2_2bar = std::get<GLR>(y1_prod_y2.point[2]).serialize();
     REQUIRE(y1_prod_y2_2bar.size() == 4);
     CHECK(y1_prod_y2_2bar(0) == 379.0);
     CHECK(y1_prod_y2_2bar(1) == 406.0);
     CHECK(y1_prod_y2_2bar(2) == 435.0);
     CHECK(y1_prod_y2_2bar(3) == 466.0);
 
-    const Eigen::VectorXd y1_prod_y2_3bar = std::get<RN>(y1_prod_y2.space[3]).serialize();
+    const Eigen::VectorXd y1_prod_y2_3bar = std::get<RN>(y1_prod_y2.point[3]).serialize();
     REQUIRE(y1_prod_y2_3bar.size() == 2);
     CHECK(y1_prod_y2_3bar(0) == 34.0);
     CHECK(y1_prod_y2_3bar(1) == 36.0);
 
-    const Eigen::VectorXd y1_prod_y2_4bar = std::get<SE>(y1_prod_y2.space[4]).serialize();
-    REQUIRE(y1_prod_y2_4bar.size() == 9);
-    CHECK(y1_prod_y2_4bar(0) == 1326.0);
-    CHECK(y1_prod_y2_4bar(1) == 1386.0);
-    CHECK(y1_prod_y2_4bar(2) == 1446.0);
-    CHECK(y1_prod_y2_4bar(3) == 1524.0);
-    CHECK(y1_prod_y2_4bar(4) == 1593.0);
-    CHECK(y1_prod_y2_4bar(5) == 1662.0);
-    CHECK(y1_prod_y2_4bar(6) == 1722.0);
-    CHECK(y1_prod_y2_4bar(7) == 1800.0);
-    CHECK(y1_prod_y2_4bar(8) == 1878.0);
+    const Eigen::VectorXd y1_prod_y2_4bar = std::get<SE>(y1_prod_y2.point[4]).serialize();
+    REQUIRE(y1_prod_y2_4bar.size() == 6);
+    CHECK(y1_prod_y2_4bar(0) == 858.0);
+    CHECK(y1_prod_y2_4bar(1) == 937.0);
+    CHECK(y1_prod_y2_4bar(2) == 947.0);
+    CHECK(y1_prod_y2_4bar(3) == 990.0);
+    CHECK(y1_prod_y2_4bar(4) == 1035.0);
+    CHECK(y1_prod_y2_4bar(5) == 1082.0);
 
-    const Eigen::VectorXd y1_prod_y2_5bar = std::get<SO>(y1_prod_y2.space[5]).serialize();
+    const Eigen::VectorXd y1_prod_y2_5bar = std::get<SO>(y1_prod_y2.point[5]).serialize();
     REQUIRE(y1_prod_y2_5bar.size() == 4);
     CHECK(y1_prod_y2_5bar(0) == 1654.0);
     CHECK(y1_prod_y2_5bar(1) == 1711.0);
     CHECK(y1_prod_y2_5bar(2) == 1770.0);
     CHECK(y1_prod_y2_5bar(3) == 1831.0);
 
-    const Eigen::VectorXd y1_prod_y2_6bar = std::get<SP>(y1_prod_y2.space[6]).serialize();
+    const Eigen::VectorXd y1_prod_y2_6bar = std::get<SP>(y1_prod_y2.point[6]).serialize();
     REQUIRE(y1_prod_y2_6bar.size() == 4);
     CHECK(y1_prod_y2_6bar(0) == 2146.0);
     CHECK(y1_prod_y2_6bar(1) == 2211.0);
     CHECK(y1_prod_y2_6bar(2) == 2278.0);
     CHECK(y1_prod_y2_6bar(3) == 2347.0);
 
-    const Eigen::VectorXd y1_prod_y2_7bar = std::get<SU>(y1_prod_y2.space[7]).serialize();
+    const Eigen::VectorXd y1_prod_y2_7bar = std::get<SU>(y1_prod_y2.point[7]).serialize();
     REQUIRE(y1_prod_y2_7bar.size() == 8);
     CHECK(y1_prod_y2_7bar(0) == -152.0);
     CHECK(y1_prod_y2_7bar(1) == 5782.0);
@@ -445,16 +455,16 @@ TEST_CASE("CompositeGroup math_ops_CompositeGroup", "[domain]")
     CHECK(y1_prod_y2_7bar(7) == 6730.0);
 
     y1 *= y2;
-    REQUIRE(y1.space.size() == y2.space.size());
+    REQUIRE(y1.point.size() == y2.point.size());
 
-    const Eigen::VectorXd y1_iprod_y2_0bar = std::get<CN>(y1.space[0]).serialize();
+    const Eigen::VectorXd y1_iprod_y2_0bar = std::get<CN>(y1.point[0]).serialize();
     REQUIRE(y1_iprod_y2_0bar.size() == 4);
     CHECK(y1_iprod_y2_0bar(0) == 2.0);
     CHECK(y1_iprod_y2_0bar(1) == 4.0);
     CHECK(y1_iprod_y2_0bar(2) == 6.0);
     CHECK(y1_iprod_y2_0bar(3) == 8.0);
 
-    const Eigen::VectorXd y1_iprod_y2_1bar = std::get<GLC>(y1.space[1]).serialize();
+    const Eigen::VectorXd y1_iprod_y2_1bar = std::get<GLC>(y1.point[1]).serialize();
     REQUIRE(y1_iprod_y2_1bar.size() == 8);
     CHECK(y1_iprod_y2_1bar(0) == -28.0);
     CHECK(y1_iprod_y2_1bar(1) == 202.0);
@@ -465,45 +475,42 @@ TEST_CASE("CompositeGroup math_ops_CompositeGroup", "[domain]")
     CHECK(y1_iprod_y2_1bar(6) == -40.0);
     CHECK(y1_iprod_y2_1bar(7) == 406.0);
 
-    const Eigen::VectorXd y1_iprod_y2_2bar = std::get<GLR>(y1.space[2]).serialize();
+    const Eigen::VectorXd y1_iprod_y2_2bar = std::get<GLR>(y1.point[2]).serialize();
     REQUIRE(y1_iprod_y2_2bar.size() == 4);
     CHECK(y1_iprod_y2_2bar(0) == 379.0);
     CHECK(y1_iprod_y2_2bar(1) == 406.0);
     CHECK(y1_iprod_y2_2bar(2) == 435.0);
     CHECK(y1_iprod_y2_2bar(3) == 466.0);
 
-    const Eigen::VectorXd y1_iprod_y2_3bar = std::get<RN>(y1.space[3]).serialize();
+    const Eigen::VectorXd y1_iprod_y2_3bar = std::get<RN>(y1.point[3]).serialize();
     REQUIRE(y1_iprod_y2_3bar.size() == 2);
     CHECK(y1_iprod_y2_3bar(0) == 34.0);
     CHECK(y1_iprod_y2_3bar(1) == 36.0);
 
-    const Eigen::VectorXd y1_iprod_y2_4bar = std::get<SE>(y1.space[4]).serialize();
-    REQUIRE(y1_iprod_y2_4bar.size() == 9);
-    CHECK(y1_iprod_y2_4bar(0) == 1326.0);
-    CHECK(y1_iprod_y2_4bar(1) == 1386.0);
-    CHECK(y1_iprod_y2_4bar(2) == 1446.0);
-    CHECK(y1_iprod_y2_4bar(3) == 1524.0);
-    CHECK(y1_iprod_y2_4bar(4) == 1593.0);
-    CHECK(y1_iprod_y2_4bar(5) == 1662.0);
-    CHECK(y1_iprod_y2_4bar(6) == 1722.0);
-    CHECK(y1_iprod_y2_4bar(7) == 1800.0);
-    CHECK(y1_iprod_y2_4bar(8) == 1878.0);
+    const Eigen::VectorXd y1_iprod_y2_4bar = std::get<SE>(y1.point[4]).serialize();
+    REQUIRE(y1_iprod_y2_4bar.size() == 6);
+    CHECK(y1_iprod_y2_4bar(0) == 858.0);
+    CHECK(y1_iprod_y2_4bar(1) == 937.0);
+    CHECK(y1_iprod_y2_4bar(2) == 947.0);
+    CHECK(y1_iprod_y2_4bar(3) == 990.0);
+    CHECK(y1_iprod_y2_4bar(4) == 1035.0);
+    CHECK(y1_iprod_y2_4bar(5) == 1082.0);
 
-    const Eigen::VectorXd y1_iprod_y2_5bar = std::get<SO>(y1.space[5]).serialize();
+    const Eigen::VectorXd y1_iprod_y2_5bar = std::get<SO>(y1.point[5]).serialize();
     REQUIRE(y1_iprod_y2_5bar.size() == 4);
     CHECK(y1_iprod_y2_5bar(0) == 1654.0);
     CHECK(y1_iprod_y2_5bar(1) == 1711.0);
     CHECK(y1_iprod_y2_5bar(2) == 1770.0);
     CHECK(y1_iprod_y2_5bar(3) == 1831.0);
 
-    const Eigen::VectorXd y1_iprod_y2_6bar = std::get<SP>(y1.space[6]).serialize();
+    const Eigen::VectorXd y1_iprod_y2_6bar = std::get<SP>(y1.point[6]).serialize();
     REQUIRE(y1_iprod_y2_6bar.size() == 4);
     CHECK(y1_iprod_y2_6bar(0) == 2146.0);
     CHECK(y1_iprod_y2_6bar(1) == 2211.0);
     CHECK(y1_iprod_y2_6bar(2) == 2278.0);
     CHECK(y1_iprod_y2_6bar(3) == 2347.0);
 
-    const Eigen::VectorXd y1_iprod_y2_7bar = std::get<SU>(y1.space[7]).serialize();
+    const Eigen::VectorXd y1_iprod_y2_7bar = std::get<SU>(y1.point[7]).serialize();
     REQUIRE(y1_iprod_y2_7bar.size() == 8);
     CHECK(y1_iprod_y2_7bar(0) == -152.0);
     CHECK(y1_iprod_y2_7bar(1) == 5782.0);
@@ -517,16 +524,16 @@ TEST_CASE("CompositeGroup math_ops_CompositeGroup", "[domain]")
     y1 = _make_cgroup();
 
     const CompositeGroup y1_inv = y1.inverse();
-    REQUIRE(y1_inv.space.size() == y1.space.size());
+    REQUIRE(y1_inv.point.size() == y1.point.size());
 
-    const Eigen::VectorXd y1_inv_0bar = std::get<CN>(y1_inv.space[0]).serialize();
+    const Eigen::VectorXd y1_inv_0bar = std::get<CN>(y1_inv.point[0]).serialize();
     REQUIRE(y1_inv_0bar.size() == 4);
     CHECK(y1_inv_0bar(0) == -1.0);
     CHECK(y1_inv_0bar(1) == -2.0);
     CHECK(y1_inv_0bar(2) == -3.0);
     CHECK(y1_inv_0bar(3) == -4.0);
 
-    const Eigen::VectorXd y1_inv_1bar = std::get<GLC>(y1_inv.space[1]).serialize();
+    const Eigen::VectorXd y1_inv_1bar = std::get<GLC>(y1_inv.point[1]).serialize();
     REQUIRE(y1_inv_1bar.size() == 8);
     CHECK_THAT(y1_inv_1bar(0), Catch::Matchers::WithinAbs(-0.75, 1e-14));
     CHECK_THAT(y1_inv_1bar(1), Catch::Matchers::WithinAbs(0.6875, 1e-14));
@@ -537,46 +544,42 @@ TEST_CASE("CompositeGroup math_ops_CompositeGroup", "[domain]")
     CHECK_THAT(y1_inv_1bar(6), Catch::Matchers::WithinAbs(-0.375, 1e-14));
     CHECK_THAT(y1_inv_1bar(7), Catch::Matchers::WithinAbs(0.3125, 1e-14));
 
-    const Eigen::VectorXd y1_inv_2bar = std::get<GLR>(y1_inv.space[2]).serialize();
+    const Eigen::VectorXd y1_inv_2bar = std::get<GLR>(y1_inv.point[2]).serialize();
     REQUIRE(y1_inv_2bar.size() == 4);
     CHECK_THAT(y1_inv_2bar(0), Catch::Matchers::WithinAbs(-8.0, 1e-13));
     CHECK_THAT(y1_inv_2bar(1), Catch::Matchers::WithinAbs(7.0, 1e-13));
     CHECK_THAT(y1_inv_2bar(2), Catch::Matchers::WithinAbs(7.5, 1e-13));
     CHECK_THAT(y1_inv_2bar(3), Catch::Matchers::WithinAbs(-6.5, 1e-13));
 
-    const Eigen::VectorXd y1_inv_3bar = std::get<RN>(y1_inv.space[3]).serialize();
+    const Eigen::VectorXd y1_inv_3bar = std::get<RN>(y1_inv.point[3]).serialize();
     REQUIRE(y1_inv_3bar.size() == 2);
     CHECK(y1_inv_3bar(0) == -17.0);
     CHECK(y1_inv_3bar(1) == -18.0);
 
-    const Eigen::VectorXd y1_inv_4bar = std::get<SE>(y1_inv.space[4]).serialize();
-    REQUIRE(y1_inv_4bar.size() == 9);
-    // TODO: Change default values to something more reasonable
-    // CHECK(y1_inv_4bar(0) == 1326.0);
-    // CHECK(y1_inv_4bar(1) == 1386.0);
-    // CHECK(y1_inv_4bar(2) == 1446.0);
-    // CHECK(y1_inv_4bar(3) == 1524.0);
-    // CHECK(y1_inv_4bar(4) == 1593.0);
-    // CHECK(y1_inv_4bar(5) == 1662.0);
-    // CHECK(y1_inv_4bar(6) == 1722.0);
-    // CHECK(y1_inv_4bar(7) == 1800.0);
-    // CHECK(y1_inv_4bar(8) == 1878.0);
+    const Eigen::VectorXd y1_inv_4bar = std::get<SE>(y1_inv.point[4]).serialize();
+    REQUIRE(y1_inv_4bar.size() == 6);
+    CHECK(y1_inv_4bar(0) == -859.0);
+    CHECK(y1_inv_4bar(1) == -898.0);
+    CHECK(y1_inv_4bar(2) == 21.0);
+    CHECK(y1_inv_4bar(3) == 23.0);
+    CHECK(y1_inv_4bar(4) == 22.0);
+    CHECK(y1_inv_4bar(5) == 24.0);
 
-    const Eigen::VectorXd y1_inv_5bar = std::get<SO>(y1_inv.space[5]).serialize();
+    const Eigen::VectorXd y1_inv_5bar = std::get<SO>(y1_inv.point[5]).serialize();
     REQUIRE(y1_inv_5bar.size() == 4);
     CHECK(y1_inv_5bar(0) == 28.0);
     CHECK(y1_inv_5bar(1) == 30.0);
     CHECK(y1_inv_5bar(2) == 29.0);
     CHECK(y1_inv_5bar(3) == 31.0);
     
-    const Eigen::VectorXd y1_inv_6bar = std::get<SP>(y1_inv.space[6]).serialize();
+    const Eigen::VectorXd y1_inv_6bar = std::get<SP>(y1_inv.point[6]).serialize();
     REQUIRE(y1_inv_6bar.size() == 4);
     CHECK_THAT(y1_inv_6bar(0), Catch::Matchers::WithinAbs(-17.5, 1e-12));
     CHECK_THAT(y1_inv_6bar(1), Catch::Matchers::WithinAbs(16.5, 1e-12));
     CHECK_THAT(y1_inv_6bar(2), Catch::Matchers::WithinAbs(17.0, 1e-12));
     CHECK_THAT(y1_inv_6bar(3), Catch::Matchers::WithinAbs(-16.0, 1e-12));
 
-    const Eigen::VectorXd y1_inv_7bar = std::get<SU>(y1_inv.space[7]).serialize();
+    const Eigen::VectorXd y1_inv_7bar = std::get<SU>(y1_inv.point[7]).serialize();
     REQUIRE(y1_inv_7bar.size() == 8);
     CHECK_THAT(y1_inv_7bar(0), Catch::Matchers::WithinAbs(-2.6875, 1e-13));
     CHECK_THAT(y1_inv_7bar(1), Catch::Matchers::WithinAbs(2.625, 1e-13));
@@ -596,22 +599,22 @@ TEST_CASE("CompositeGroup operator[]", "[domain]")
     
     // It would be nice if these could be called without std::get<> like:
     // const CN x10 = x1[0];
-    const CN x10 = std::get<CN>(x1[0]);
-    const GLC x11 = std::get<GLC>(x1[1]);
-    const GLR x12 = std::get<GLR>(x1[2]);
-    const RN x13 = std::get<RN>(x1[3]);
-    const SE x14 = std::get<SE>(x1[4]);
-    const SO x15 = std::get<SO>(x1[5]);
-    const SP x16 = std::get<SP>(x1[6]);
-    const SU x17 = std::get<SU>(x1[7]);
-    const CN x1m8 = std::get<CN>(x1[-8]);
-    const GLC x1m7 = std::get<GLC>(x1[-7]);
-    const GLR x1m6 = std::get<GLR>(x1[-6]);
-    const RN x1m5 = std::get<RN>(x1[-5]);
-    const SE x1m4 = std::get<SE>(x1[-4]);
-    const SO x1m3 = std::get<SO>(x1[-3]);
-    const SP x1m2 = std::get<SP>(x1[-2]);
-    const SU x1m1 = std::get<SU>(x1[-1]);
+    const CN x10 = x1[0];
+    const GLC x11 = x1[1];
+    const GLR x12 = x1[2];
+    const RN x13 = x1[3];
+    const SE x14 = x1[4];
+    const SO x15 = x1[5];
+    const SP x16 = x1[6];
+    const SU x17 = x1[7];
+    const CN x1m8 = x1[-8];
+    const GLC x1m7 = x1[-7];
+    const GLR x1m6 = x1[-6];
+    const RN x1m5 = x1[-5];
+    const SE x1m4 = x1[-4];
+    const SO x1m3 = x1[-3];
+    const SP x1m2 = x1[-2];
+    const SU x1m1 = x1[-1];
 
     CHECK(x10.to_string() == "C^2");
     CHECK(x11.to_string() == "GL(2, C)");
@@ -631,9 +634,6 @@ TEST_CASE("CompositeGroup operator[]", "[domain]")
     CHECK(x1m1.to_string() == "SU(2)");
 
     // Out of bounds
-    const GLC x18 = std::get<GLC>(x1[8]);
-    const GLC x1m9 = std::get<GLC>(x1[-9]);
-
-    CHECK(x18.to_string() == "GL(0, C)");
-    CHECK(x1m9.to_string() == "GL(0, C)");
+    CHECK_THROWS(x1[8]);
+    CHECK_THROWS(x1[-9]);
 }

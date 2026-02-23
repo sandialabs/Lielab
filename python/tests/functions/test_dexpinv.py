@@ -9,6 +9,7 @@ def test_dexpinv_numerical():
 
     from lielab.domain import so, rn
     from lielab.functions import dexpinv_numerical
+    from lielab.testing import check_almost_equal_tol
 
     u = so(3)
     v = so(3)
@@ -27,7 +28,7 @@ def test_dexpinv_numerical():
                         [0.0, 0.0, 0.0],
                         [-1.0, 0.0, 0.0]])
     
-    assert_matrix(ansso.get_matrix(), truthso)
+    assert check_almost_equal_tol(ansso.get_matrix(), truthso)
 
     # order = 1
     ansso = dexpinv_numerical(u, v, 1)
@@ -35,7 +36,7 @@ def test_dexpinv_numerical():
                         [-0.5, 0.0, 0.0],
                         [-1.0, 0.0, 0.0]])
 
-    assert_matrix(ansso.get_matrix(), truthso)
+    assert check_almost_equal_tol(ansso.get_matrix(), truthso)
 
     # order = 3
     ansso = dexpinv_numerical(u, v, 3)
@@ -43,7 +44,7 @@ def test_dexpinv_numerical():
                         [-0.5, 0.0, 0.0],
                         [-0.916666666666667, 0.0, 0.0]])
 
-    assert_matrix(ansso.get_matrix(), truthso)
+    assert check_almost_equal_tol(ansso.get_matrix(), truthso)
 
     # order = 11
     ansso = dexpinv_numerical(u, v, 11)
@@ -51,7 +52,7 @@ def test_dexpinv_numerical():
                         [-0.500000000000000, 0.0, 0.0],
                         [-0.915243861398375, 0.0, 0.0]])
 
-    assert_matrix(ansso.get_matrix(), truthso)
+    assert check_almost_equal_tol(ansso.get_matrix(), truthso)
 
     x = rn(3)
     y = rn(3)
@@ -67,7 +68,7 @@ def test_dexpinv_numerical():
                         [0, 0, 0, 0],
                         [0, 0, 0, 0]])
 
-    assert_matrix(ansrn.get_matrix(), truthrn)
+    assert check_almost_equal_tol(ansrn.get_matrix(), truthrn)
 
     # ridiculous order (checks abelian speedhack)
     ansrn = dexpinv_numerical(x, y, 999999999)
@@ -76,4 +77,4 @@ def test_dexpinv_numerical():
                         [0, 0, 0, 0],
                         [0, 0, 0, 0]])
 
-    assert_matrix(ansrn.get_matrix(), truthrn)
+    assert check_almost_equal_tol(ansrn.get_matrix(), truthrn)

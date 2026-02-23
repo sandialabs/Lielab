@@ -46,19 +46,19 @@ def test_SP_matrix_initializer():
     with pytest.raises(RuntimeError):
         SP(np.random.rand(3, 2))
 
-def test_SP_from_shape_initializer():
+def test_SP_identity_initializer():
     from lielab.domain import SP
 
-    x0 = SP.from_shape(0)
+    x0 = SP.identity(0)
     assert (x0.get_dimension() == 0)
     x0hat = x0.get_matrix()
     assert (x0hat.shape[0] == 0)
     assert (x0hat.shape[1] == 0)
 
     with pytest.raises(RuntimeError):
-        SP.from_shape(1)
+        SP.identity(1)
 
-    x2 = SP.from_shape(2)
+    x2 = SP.identity(2)
     assert (x2.get_dimension() == 3)
     x2hat = x2.get_matrix()
     assert (x2hat.shape[0] == 2)
@@ -193,7 +193,7 @@ def test_SP_get_matrix():
 def test_SP_operator_parenthesis():
     from lielab.domain import SP
 
-    x0 = SP.from_shape(0)
+    x0 = SP.identity(0)
     x0.unserialize([])
 
     # Out of bounds
@@ -279,28 +279,28 @@ def test_SP_math_ops_SP():
 #     from lielab.domain import SP
 
 #     rand_2_2 = np.random.rand(2, 2)
-#     proj_2_2 = SP.project(rand_2_2)
+#     proj_2_2 = SP.project(rand_2_2).get_matrix()
 
 #     assert (proj_2_2.shape[0] == 2)
 #     assert (proj_2_2.shape[1] == 2)
 #     assert (std::abs(proj_2_2.determinant()), Catch::Matchers::WithinAbs(1.0, 1e-14))
 
 #     rand_3_3 = np.random.rand(3, 3)
-#     proj_3_3 = SP.project(rand_3_3)
+#     proj_3_3 = SP.project(rand_3_3).get_matrix()
 
 #     assert (proj_3_3.shape[0] == 3)
 #     assert (proj_3_3.shape[1] == 3)
 #     assert (std::abs(proj_3_3.determinant()), Catch::Matchers::WithinAbs(1.0, 1e-14))
 
 #     rand_2_3 = np.random.rand(2, 3)
-#     proj_2_3 = SP.project(rand_2_3)
+#     proj_2_3 = SP.project(rand_2_3).get_matrix()
 
 #     assert (proj_2_3.shape[0] == 2)
 #     assert (proj_2_3.shape[1] == 2)
 #     assert (std::abs(proj_2_3.determinant()), Catch::Matchers::WithinAbs(1.0, 1e-14))
 
 #     rand_3_2 = np.random.rand(3, 2)
-#     proj_3_2 = SP.project(rand_3_2)
+#     proj_3_2 = SP.project(rand_3_2).get_matrix()
 
 #     assert (proj_3_2.shape[0] == 2)
 #     assert (proj_3_2.shape[1] == 2)

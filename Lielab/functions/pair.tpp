@@ -3,7 +3,7 @@
 
 #include "pair.hpp"
 
-#include <cassert>
+//Z#include "Lielab/testing.hpp"
 
 namespace Lielab::functions
 {
@@ -18,11 +18,8 @@ double pair(const LA& a, const LA& b)
     * TODO: Check shapes or dimension?
     */
 
-    if (a.get_dimension() != b.get_dimension())
-    {
-        throw Lielab::utils::InputError("pair: Dimensions of a and b must be equal.");
-    }
 
+    //Zlielab_assert(a.get_shape() == b.get_shape(), "Shapes must be equal.");
     return a.get_vector().dot(b.get_vector());
 }
 

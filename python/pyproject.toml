@@ -1,6 +1,6 @@
 [project]
 name = "lielab"
-version = "0.5.1"
+version = "0.5.2"
 description = "Software for the geometric modeling and numerical analysis of systems, especially those in relation to Lie theory."
 authors = [{name="Michael J. Sparapany", email="mjspara@sandia.gov"}]
 requires-python = ">=3.8"
@@ -15,9 +15,10 @@ requires = ["scikit-build-core"]
 build-backend = "scikit_build_core.build"
 
 [tool.scikit-build]
-wheel.cmake = false # CMake run as a separate process
+wheel.cmake = false # CMake runs as a separate process
 wheel.platlib = true # Always specify platform and cpython tag
-wheel.license-files = ["../LICENSE"]
+wheel.license-files = ["LICENSE", "vendor/Eigen/LICENSE", "vendor/Pybind11/LICENSE"]
+wheel.exclude = ["*.hpp", "*.cpp"]
 
 [project.optional-dependencies]
 test = ["pytest", "scipy"]

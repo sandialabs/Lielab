@@ -1,5 +1,6 @@
 import lielab
 import numpy as np
+import pytest
 
 def complex(a,b):
     return a + b*1j
@@ -35,11 +36,11 @@ def test_CompositeAlgebra_main_initializer():
     assert (xblank.get_dimension() == 0)
 
     x0 = CompositeAlgebra(0)
-    assert (x0.get_dimension() == 0)
+    assert (len(x0) == 0)
     x1 = CompositeAlgebra(1)
-    assert (x1.get_dimension() == 2)
+    assert (len(x1) == 1)
     x10 = CompositeAlgebra(10)
-    assert (x10.get_dimension() == 200)
+    assert (len(x10) == 10)
 
 def CompositeAlgebra_list_initializer():
     from lielab.domain import CompositeAlgebra
@@ -108,22 +109,22 @@ def test_CompositeAlgebra_basis_initializer():
     assert (x02bar[6] == 0.0)
     assert (x02bar[7] == 0.0)
 
-def test_CompositeAlgebra_from_shape_initializer():
+def test_CompositeAlgebra_zero_initializer():
     from lielab.domain import CompositeAlgebra
 
-    x0 = CompositeAlgebra.from_shape(0)
+    x0 = CompositeAlgebra.zero(0)
     assert (x0.get_dimension() == 0)
     x0hat = x0.get_matrix()
     assert (x0hat.shape[0] == 0)
     assert (x0hat.shape[1] == 0)
 
-    x1 = CompositeAlgebra.from_shape(1)
+    x1 = CompositeAlgebra.zero(1)
     assert (x1.get_dimension() == 2)
     x1hat = x1.get_matrix()
     assert (x1hat.shape[0] == 1)
     assert (x1hat.shape[1] == 1)
 
-    x2 = CompositeAlgebra.from_shape(2)
+    x2 = CompositeAlgebra.zero(2)
     assert (x2.get_dimension() == 8)
     x2hat = x2.get_matrix()
     assert (x2hat.shape[0] == 2)
@@ -132,15 +133,15 @@ def test_CompositeAlgebra_from_shape_initializer():
 def test_CompositeAlgebra_get_dimension():
     from lielab.domain import CompositeAlgebra
 
-    zero = CompositeAlgebra(0)
-    one = CompositeAlgebra(1)
-    two = CompositeAlgebra(2)
-    three = CompositeAlgebra(3)
-    four = CompositeAlgebra(4)
-    five = CompositeAlgebra(5)
-    six = CompositeAlgebra(6)
-    seven = CompositeAlgebra(7)
-    eight = CompositeAlgebra(8)
+    zero = CompositeAlgebra.zero(0)
+    one = CompositeAlgebra.zero(1)
+    two = CompositeAlgebra.zero(2)
+    three = CompositeAlgebra.zero(3)
+    four = CompositeAlgebra.zero(4)
+    five = CompositeAlgebra.zero(5)
+    six = CompositeAlgebra.zero(6)
+    seven = CompositeAlgebra.zero(7)
+    eight = CompositeAlgebra.zero(8)
 
     # Dimensions
     assert (zero.get_dimension() == 0)
@@ -852,8 +853,8 @@ def test_CompositeAlgebra_operator_bracket():
     assert (x1m1.to_string() == "su(2)")
 
     # Out of bounds
-    x18 = x1[8]
-    x1m9 = x1[-9]
-
-    assert (x18.to_string() == "gl(0, C)")
-    assert (x1m9.to_string() == "gl(0, C)")
+    with pytest.raises(RuntimeError):
+        x18 = x1[8]
+    
+    with pytest.raises(RuntimeError):
+        x1m9 = x1[-9]

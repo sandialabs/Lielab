@@ -42,22 +42,22 @@ def test_SO_matrix_initializer():
     with pytest.raises(RuntimeError):
         SO(np.random.rand(3, 2))
 
-def test_SO_from_shape_initializer():
+def test_SO_identity_initializer():
     from lielab.domain import SO
 
-    x0 = SO.from_shape(0)
+    x0 = SO.identity(0)
     assert (x0.get_dimension() == 0)
     x0hat = x0.get_matrix()
     assert (x0hat.shape[0] == 0)
     assert (x0hat.shape[1] == 0)
 
-    x1 = SO.from_shape(1)
+    x1 = SO.identity(1)
     assert (x1.get_dimension() == 0)
     x1hat = x1.get_matrix()
     assert (x1hat.shape[0] == 1)
     assert (x1hat.shape[1] == 1)
 
-    x2 = SO.from_shape(2)
+    x2 = SO.identity(2)
     assert (x2.get_dimension() == 1)
     x2hat = x2.get_matrix()
     assert (x2hat.shape[0] == 2)
@@ -103,20 +103,7 @@ def test_SO_serialize_unserialize():
     x1.unserialize([1.0, 2.0])
     x1bar = x1.serialize()
 
-    assert (x1bar.size == 1)
-    assert (x1bar[0] == 1.0)
-
-    x1.unserialize([3.0])
-    x1bar = x1.serialize()
-
-    assert (x1bar.size == 1)
-    assert (x1bar[0] == 3.0)
-
-    x1.unserialize([])
-    x1bar = x1.serialize()
-
-    assert (x1bar.size == 1)
-    assert (x1bar[0] == 3.0)
+    assert (x1bar.size == 0)
 
     x2 = SO(2)
     x2.unserialize([1.0, 2.0, 3.0])
@@ -180,7 +167,7 @@ def test_SO_get_matrix():
 
     assert (x1hat.shape[0] == 1)
     assert (x1hat.shape[1] == 1)
-    assert (x1hat[0, 0] == 2.0)
+    assert (x1hat[0, 0] == 1.0)
 
     x2 = SO(2)
     x2.unserialize([1.0, 2.0, 3.0])
@@ -213,7 +200,7 @@ def test_SO_get_matrix():
 def test_SO_operator_parenthesis():
     from lielab.domain import SO
 
-    x0 = SO.from_shape(0)
+    x0 = SO.identity(0)
     x0.unserialize([])
 
     # Out of bounds
@@ -321,28 +308,28 @@ def test_SO_project():
     from lielab.domain import SO
 
     rand_2_2 = np.random.rand(2, 2)
-    proj_2_2 = SO.project(rand_2_2)
+    proj_2_2 = SO.project(rand_2_2).get_matrix()
 
     assert (proj_2_2.shape[0] == 2)
     assert (proj_2_2.shape[1] == 2)
     assert ((np.abs(np.linalg.det(proj_2_2)) - 1.0) <= 1e-14)
 
     rand_3_3 = np.random.rand(3, 3)
-    proj_3_3 = SO.project(rand_3_3)
+    proj_3_3 = SO.project(rand_3_3).get_matrix()
 
     assert (proj_3_3.shape[0] == 3)
     assert (proj_3_3.shape[1] == 3)
     assert ((np.abs(np.linalg.det(proj_3_3)) - 1.0) <= 1e-14)
 
     rand_2_3 = np.random.rand(2, 3)
-    proj_2_3 = SO.project(rand_2_3)
+    proj_2_3 = SO.project(rand_2_3).get_matrix()
 
     assert (proj_2_3.shape[0] == 2)
     assert (proj_2_3.shape[1] == 2)
     assert ((np.abs(np.linalg.det(proj_2_3)) - 1.0) <= 1e-14)
 
     rand_3_2 = np.random.rand(3, 2)
-    proj_3_2 = SO.project(rand_3_2)
+    proj_3_2 = SO.project(rand_3_2).get_matrix()
 
     assert (proj_3_2.shape[0] == 2)
     assert (proj_3_2.shape[1] == 2)

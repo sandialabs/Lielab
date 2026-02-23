@@ -1,6 +1,9 @@
 #ifndef LIELAB_DOMAIN_HPP
 #define LIELAB_DOMAIN_HPP
 
+// Abstract base classes
+#include "domain/VirtualManifolds.hpp"
+
 // Submodules
 #include "domain/liealgebras.hpp"
 #include "domain/liegroups.hpp"

@@ -41,11 +41,11 @@ TEST_CASE("CompositeAlgebra main_initializer", "[domain]")
     CHECK(xblank.get_dimension() == 0);
 
     const CompositeAlgebra x0 = CompositeAlgebra(0);
-    CHECK(x0.get_dimension() == 0);
+    CHECK(x0.point.size() == 0);
     const CompositeAlgebra x1 = CompositeAlgebra(1);
-    CHECK(x1.get_dimension() == 2);
+    CHECK(x1.point.size() == 1);
     const CompositeAlgebra x10 = CompositeAlgebra(10);
-    CHECK(x10.get_dimension() == 200);
+    CHECK(x10.point.size() == 10);
 }
 
 TEST_CASE("CompositeAlgebra list_initializer", "[domain]")
@@ -119,23 +119,23 @@ TEST_CASE("CompositeAlgebra basis_initializer", "[domain]")
     CHECK(x02bar(7) == 0.0);
 }
 
-TEST_CASE("CompositeAlgebra from_shape_initializer", "[domain]")
+TEST_CASE("CompositeAlgebra zero_initializer", "[domain]")
 {
     using namespace Lielab::domain;
 
-    const CompositeAlgebra x0 = CompositeAlgebra::from_shape(0);
+    const CompositeAlgebra x0 = CompositeAlgebra::zero(0);
     CHECK(x0.get_dimension() == 0);
     const Eigen::MatrixXcd x0hat = x0.get_matrix();
     CHECK(x0hat.rows() == 0);
     CHECK(x0hat.cols() == 0);
 
-    const CompositeAlgebra x1 = CompositeAlgebra::from_shape(1);
+    const CompositeAlgebra x1 = CompositeAlgebra::zero(1);
     CHECK(x1.get_dimension() == 2);
     const Eigen::MatrixXcd x1hat = x1.get_matrix();
     CHECK(x1hat.rows() == 1);
     CHECK(x1hat.cols() == 1);
 
-    const CompositeAlgebra x2 = CompositeAlgebra::from_shape(2);
+    const CompositeAlgebra x2 = CompositeAlgebra::zero(2);
     CHECK(x2.get_dimension() == 8);
     const Eigen::MatrixXcd x2hat = x2.get_matrix();
     CHECK(x2hat.rows() == 2);
@@ -146,7 +146,15 @@ TEST_CASE("CompositeAlgebra get_dimension", "[domain]")
 {
     using namespace Lielab::domain;
 
-    CompositeAlgebra zero(0), one(1), two(2), three(3), four(4), five(5), six(6), seven(7), eight(8);
+    CompositeAlgebra zero = CompositeAlgebra::zero(0);
+    CompositeAlgebra one = CompositeAlgebra::zero(1);
+    CompositeAlgebra two = CompositeAlgebra::zero(2);
+    CompositeAlgebra three = CompositeAlgebra::zero(3);
+    CompositeAlgebra four = CompositeAlgebra::zero(4);
+    CompositeAlgebra five = CompositeAlgebra::zero(5);
+    CompositeAlgebra six = CompositeAlgebra::zero(6);
+    CompositeAlgebra seven = CompositeAlgebra::zero(7);
+    CompositeAlgebra eight = CompositeAlgebra::zero(8);
 
     // Dimensions
     CHECK(zero.get_dimension() == 0);
@@ -835,24 +843,22 @@ TEST_CASE("CompositeAlgebra operator[]", "[domain]")
 
     const CompositeAlgebra x1 = CompositeAlgebra({ycn1, yglc1, yglr1, yrn1, yse1, yso1, ysp1, ysu1});
     
-    // It would be nice if these could be called without std::get<> like:
-    // const cn x10 = x1[0];
-    const cn x10 = std::get<cn>(x1[0]);
-    const glc x11 = std::get<glc>(x1[1]);
-    const glr x12 = std::get<glr>(x1[2]);
-    const rn x13 = std::get<rn>(x1[3]);
-    const se x14 = std::get<se>(x1[4]);
-    const so x15 = std::get<so>(x1[5]);
-    const sp x16 = std::get<sp>(x1[6]);
-    const su x17 = std::get<su>(x1[7]);
-    const cn x1m8 = std::get<cn>(x1[-8]);
-    const glc x1m7 = std::get<glc>(x1[-7]);
-    const glr x1m6 = std::get<glr>(x1[-6]);
-    const rn x1m5 = std::get<rn>(x1[-5]);
-    const se x1m4 = std::get<se>(x1[-4]);
-    const so x1m3 = std::get<so>(x1[-3]);
-    const sp x1m2 = std::get<sp>(x1[-2]);
-    const su x1m1 = std::get<su>(x1[-1]);
+    const cn x10 = x1[0];
+    const glc x11 = x1[1];
+    const glr x12 = x1[2];
+    const rn x13 = x1[3];
+    const se x14 = x1[4];
+    const so x15 = x1[5];
+    const sp x16 = x1[6];
+    const su x17 = x1[7];
+    const cn x1m8 = x1[-8];
+    const glc x1m7 = x1[-7];
+    const glr x1m6 = x1[-6];
+    const rn x1m5 = x1[-5];
+    const se x1m4 = x1[-4];
+    const so x1m3 = x1[-3];
+    const sp x1m2 = x1[-2];
+    const su x1m1 = x1[-1];
 
     CHECK(x10.to_string() == "c^2");
     CHECK(x11.to_string() == "gl(2, C)");
@@ -872,9 +878,6 @@ TEST_CASE("CompositeAlgebra operator[]", "[domain]")
     CHECK(x1m1.to_string() == "su(2)");
 
     // Out of bounds
-    const glc x18 = std::get<glc>(x1[8]);
-    const glc x1m9 = std::get<glc>(x1[-9]);
-
-    CHECK(x18.to_string() == "gl(0, C)");
-    CHECK(x1m9.to_string() == "gl(0, C)");
+    CHECK_THROWS(x1[8]);
+    CHECK_THROWS(x1[-9]);
 }

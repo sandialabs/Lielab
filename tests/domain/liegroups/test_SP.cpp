@@ -1,11 +1,11 @@
-#include <Lielab.hpp>
+#include <Lielab/domain/liegroups/SP.hpp>
 #include <iostream>
 
 #include <catch2/catch_all.hpp>
 
 TEST_CASE("SP to_string", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::SP;
 
     const SP x0 = SP(0);
     CHECK(x0.to_string() == "SP(0, R)");
@@ -16,7 +16,7 @@ TEST_CASE("SP to_string", "[domain]")
 
 TEST_CASE("SP main_initializer", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::SP;
 
     const SP xblank = SP();
     CHECK(xblank.get_dimension() == 0);
@@ -30,7 +30,7 @@ TEST_CASE("SP main_initializer", "[domain]")
 
 TEST_CASE("SP matrix_initializer", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::SP;
 
     const SP x0 = SP(Eigen::MatrixXd::Random(0, 0));
     CHECK(x0.get_shape() == 0);
@@ -44,19 +44,19 @@ TEST_CASE("SP matrix_initializer", "[domain]")
     CHECK_THROWS(SP(Eigen::MatrixXd::Random(3, 2)));
 }
 
-TEST_CASE("SP from_shape_initializer", "[domain]")
+TEST_CASE("SP identity_initializer", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::SP;
 
-    const SP x0 = SP::from_shape(0);
+    const SP x0 = SP::identity(0);
     CHECK(x0.get_dimension() == 0);
     const Eigen::MatrixXd x0hat = x0.get_matrix();
     CHECK(x0hat.rows() == 0);
     CHECK(x0hat.cols() == 0);
 
-    CHECK_THROWS(SP::from_shape(1));
+    CHECK_THROWS(SP::identity(1));
 
-    const SP x2 = SP::from_shape(2);
+    const SP x2 = SP::identity(2);
     CHECK(x2.get_dimension() == 3);
     const Eigen::MatrixXd x2hat = x2.get_matrix();
     CHECK(x2hat.rows() == 2);
@@ -65,7 +65,7 @@ TEST_CASE("SP from_shape_initializer", "[domain]")
 
 TEST_CASE("SP get_dimension", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::SP;
 
     SP zero(0), two(2), four(4), six(6), eight(8);
 
@@ -82,7 +82,7 @@ TEST_CASE("SP serialize/unserialize", "[domain]")
     * Tests the serialize/unserialize operation.
     */
 
-    using namespace Lielab::domain;
+    using Lielab::domain::SP;
 
     SP x0 = SP(0);
     x0.unserialize({});
@@ -153,7 +153,7 @@ TEST_CASE("SP get_matrix", "[domain]")
     * Tests the get_matrix operation.
     */
 
-    using namespace Lielab::domain;
+    using Lielab::domain::SP;
 
     SP x0 = SP(0);
     x0.unserialize({});
@@ -193,9 +193,9 @@ TEST_CASE("SP get_matrix", "[domain]")
 
 TEST_CASE("SP operator()", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::SP;
 
-    SP x0 = SP::from_shape(0);
+    SP x0 = SP::identity(0);
     x0.unserialize({});
 
     // Out of bounds
@@ -246,7 +246,7 @@ TEST_CASE("SP operator()", "[domain]")
 
 TEST_CASE("SP math_ops_SP", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::SP;
 
     SP x1(2), x2(2);
     x1.unserialize({1.0, 2.0, 3.0, 4.0});
@@ -281,31 +281,31 @@ TEST_CASE("SP math_ops_SP", "[domain]")
 
 // TEST_CASE("SP project", "[domain]")
 // {
-//     using namespace Lielab::domain;
+//     using Lielab::domain::SP;
 
 //     const Eigen::MatrixXd rand_2_2 = Eigen::MatrixXd::Random(2, 2);
-//     const Eigen::MatrixXd proj_2_2 = SP::project(rand_2_2);
+//     const Eigen::MatrixXd proj_2_2 = SP::project(rand_2_2).get_matrix();
 
 //     REQUIRE(proj_2_2.rows() == 2);
 //     REQUIRE(proj_2_2.cols() == 2);
 //     CHECK_THAT(std::abs(proj_2_2.determinant()), Catch::Matchers::WithinAbs(1.0, 1e-14));
 
 //     const Eigen::MatrixXd rand_3_3 = Eigen::MatrixXd::Random(3, 3);
-//     const Eigen::MatrixXd proj_3_3 = SP::project(rand_3_3);
+//     const Eigen::MatrixXd proj_3_3 = SP::project(rand_3_3).get_matrix();
 
 //     REQUIRE(proj_3_3.rows() == 3);
 //     REQUIRE(proj_3_3.cols() == 3);
 //     CHECK_THAT(std::abs(proj_3_3.determinant()), Catch::Matchers::WithinAbs(1.0, 1e-14));
 
 //     const Eigen::MatrixXd rand_2_3 = Eigen::MatrixXd::Random(2, 3);
-//     const Eigen::MatrixXd proj_2_3 = SP::project(rand_2_3);
+//     const Eigen::MatrixXd proj_2_3 = SP::project(rand_2_3).get_matrix();
 
 //     REQUIRE(proj_2_3.rows() == 2);
 //     REQUIRE(proj_2_3.cols() == 2);
 //     CHECK_THAT(std::abs(proj_2_3.determinant()), Catch::Matchers::WithinAbs(1.0, 1e-14));
 
 //     const Eigen::MatrixXd rand_3_2 = Eigen::MatrixXd::Random(3, 2);
-//     const Eigen::MatrixXd proj_3_2 = SP::project(rand_3_2);
+//     const Eigen::MatrixXd proj_3_2 = SP::project(rand_3_2).get_matrix();
 
 //     REQUIRE(proj_3_2.rows() == 2);
 //     REQUIRE(proj_3_2.cols() == 2);

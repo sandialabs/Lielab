@@ -1,22 +1,13 @@
 #include "rn.hpp"
 
-#include "LieAlgebra.hpp"
-
-#include "Lielab/utils/Error.hpp"
+#include "Lielab/testing.hpp"
 
 #include <Eigen/Core>
 #include <unsupported/Eigen/MatrixFunctions>
 
-#include <cassert>
 
 namespace Lielab::domain
 {
-
-std::string rn::to_string() const
-{
-    if (this->_shape == 0) return "r^nan";
-    return "r^" + std::to_string(this->_shape-1);
-}
 
 rn::rn() : rn(0)
 {
@@ -30,48 +21,58 @@ rn::rn() : rn(0)
 
 }
 
-rn::rn(const size_t n)
+// rn::~rn();
+
+rn::rn(const rn::matrix_t& matrix)
 {
-    /*! \f{equation*}{(\mathbb{Z}) \rightarrow \mathfrak{rn} \f}
+    /*! \f{eqnarray*}{(\mathbb{R}^{n \times n}) &\rightarrow& \mathfrak{rn} \f}
     *
-    * Constructor instantiating an \f$\mathfrak{rn}\f$ object.
-    * 
-    * Enables instantiation like:
-    * 
-    *     Lielab::domain::rn x(3), y(4), z(5);
-    * 
-    * @param[in] shape The shape of the data matrix.
+    * Constructor instantiating an \f$\mathfrak{rn}\f$ object from an
+    * \f$n \times n\f$ real matrix.
+    *
+    * @param[in] matrix The object to instantiate from as a real matrix.
     */
 
-    this->_shape = n + 1;
-    this->data = Eigen::VectorXd::Zero(n);
+    lielab_assert(matrix.rows() == matrix.cols(), "Input matrix must be square.");
+
+    this->_shape = static_cast<int>(matrix.rows());
+
+    if (this->_shape == 0)
+    {
+        this->point.noalias() = Eigen::VectorXd::Zero(0);
+        return;
+    }
+
+    this->point.noalias() = Eigen::VectorXd(this->_shape - 1);
+    for (int ii = 0; ii < this->_shape - 1; ii++)
+    {
+        this->point(ii) = matrix(ii, this->_shape - 1);
+    }
 }
 
-rn rn::basis(const ptrdiff_t i, const size_t n)
+rn rn::basis(const int index, const int shape)
 {
     /*! \f{equation*}{ (\mathbb{Z}, \mathbb{Z}) \rightarrow \mathfrak{rn} \f}
     *
     * Returns the i'th basis element of the rn algebra.
     * 
-    * @param[in] i The basis vector.
-    * @param[in] n The size of the algebra.
+    * @param[in] index The basis vector.
+    * @param[in] shape The shape of the algebra.
     * @param[out] out The rn element. 
     */
 
-    rn out(n);
-    if (i < 0) return out;
+    rn out(shape);
+    if (index < 0) return out;
 
-    const size_t ind = static_cast<size_t>(i);
+    const int dim = out.get_dimension();
+    if (index >= dim) return out;
 
-    const size_t dim = out.get_dimension();
-    if (ind >= dim) return out;
-
-    out.data(ind) = 1.0;
+    out.point(index) = 1.0;
 
     return out;
 }
 
-rn rn::from_shape(const size_t shape)
+rn rn::zero(const int shape)
 {
     /*! \f{equation*}{ (\mathbb{Z}) \rightarrow \mathfrak{rn} \f}
     *
@@ -91,7 +92,70 @@ rn rn::from_shape(const size_t shape)
     return rn(shape - 1);
 }
 
-size_t rn::get_dimension() const
+rn rn::from_vector(const Eigen::VectorXd& vector)
+{
+    /*! \f{equation}{(\mathbb{R}^{n \times 1}) \rightarrow \mathfrak{rn} \f}
+    *
+    * Constructor instantiating an \f$\mathfrak{rn}\f$ object from either a
+    * \f$n \times 1\f$ imaginary vector.
+    *
+    * @param[in] other The object to instantiate from as an imaginary vector.
+    */
+
+    const int shape = static_cast<int>(vector.size()) + 1;
+    rn out = rn::zero(shape);
+    out.set_vector(vector);
+
+    return out;
+}
+
+rn rn::from_vector(std::initializer_list<double> other)
+{
+    /*! \f{equation}{(\mathbb{R}^{n \times 1}) \rightarrow \mathfrak{rn} \f}
+    *
+    * Constructor instantiating an \f$\mathfrak{rn}\f$ object from a
+    * \f$n \times 1\f$ vector.
+    *
+    * @param[in] other The object to instantiate from as a vector.
+    */
+
+    return rn::from_vector(Eigen::VectorXd{std::move(other)});
+}
+
+rn rn::project(const rn::matrix_t& matrix)
+{
+    /*! \f{equation*}{ (\mathbb{R}^{n \times n}) \rightarrow \mathbb{R}^{n \times n} \in \mathfrak{rn} \f}
+    *
+    */
+
+    const size_t shape = std::min(matrix.rows(), matrix.cols());
+    return rn(matrix(Eigen::seqN(0, shape), Eigen::seqN(0, shape)));
+}
+
+rn::rn(const int n)
+{
+    /*! \f{equation*}{(\mathbb{Z}) \rightarrow \mathfrak{rn} \f}
+    *
+    * Constructor instantiating an \f$\mathfrak{rn}\f$ object.
+    * 
+    * Enables instantiation like:
+    * 
+    *     Lielab::domain::rn x(3), y(4), z(5);
+    * 
+    * @param[in] shape The shape of the data matrix.
+    */
+
+    this->_shape = n + 1;
+    this->point.noalias() = Eigen::VectorXd::Zero(n);
+}
+
+std::string rn::to_string() const
+{
+    if (this->_shape == 0) return "r^nan";
+    return "r^" + std::to_string(this->_shape-1);
+}
+
+int rn::get_dimension() const
 {
     /*! \f{equation*}{ () \rightarrow \mathbb{Z} \f}
     * 
@@ -103,40 +167,42 @@ size_t rn::get_dimension() const
     return this->_shape - 1;
 }
 
-Eigen::VectorXd rn::get_vector() const
+int rn::get_size() const
 {
-    /*! \f{equation*}{ () \rightarrow \mathbb{R}^{n \times 1} \f}
-    * 
-    * Returns the vector representation.
-    */
-
-    return this->data;
+    return this->get_dimension();
 }
 
-void rn::set_vector(const Eigen::VectorXd& vector)
+bool rn::is_abelian() const
 {
-    /*! \f{equation*}{ \mathfrak{rn} := \mathbb{R}^{n \times 1} \f}
-    * 
-    * @param[in] vector An Eigen::VectorXd to assign.
-    */
-
-    const size_t vdim = vector.size();
-    const size_t max_ind = std::min(this->get_dimension(), vdim);
-
-    for (size_t vind = 0; vind < max_ind; vind++)
-    {
-        this->data(vind) = vector(vind);
-    }
+    return true;
 }
 
-void rn::set_vector(std::initializer_list<double> vector)
+int rn::get_shape() const
+{
+    return this->_shape;
+}
+
+rn::point_t rn::get_point() const
 {
     /*!
-    *
-    * @param[in] vector
     */
-   
-    this->set_vector(Eigen::VectorXd{std::move(vector)});
+
+    return this->point;
+}
+
+Eigen::VectorXd rn::serialize() const
+{
+    return this->get_vector();
+}
+
+void rn::unserialize(const Eigen::VectorXd& serialized)
+{
+    this->set_vector(serialized);
+}
+
+void rn::unserialize(std::initializer_list<double> serialized)
+{
+    this->unserialize(Eigen::VectorXd{std::move(serialized)});
 }
 
 rn::matrix_t rn::get_matrix() const
@@ -159,15 +225,51 @@ rn::matrix_t rn::get_matrix() const
 
     if (this->_shape == 0) return out;
 
-    for (size_t ii = 0; ii < this->_shape-1; ii++)
+    for (int ii = 0; ii < this->_shape-1; ii++)
     {
-        out(ii, this->_shape - 1) = data(ii);
+        out(ii, this->_shape - 1) = this->point(ii);
     }
 
     return out;
 }
 
-double rn::operator()(const ptrdiff_t index) const
+Eigen::VectorXd rn::get_vector() const
+{
+    /*! \f{equation*}{ () \rightarrow \mathbb{R}^{n \times 1} \f}
+    * 
+    * Returns the vector representation.
+    */
+
+    return this->point;
+}
+
+void rn::set_vector(const Eigen::VectorXd& vector)
+{
+    /*! \f{equation*}{ \mathfrak{rn} := \mathbb{R}^{n \times 1} \f}
+    * 
+    * @param[in] vector An Eigen::VectorXd to assign.
+    */
+
+    const int vdim = static_cast<int>(vector.size());
+    const int max_ind = std::min(this->get_dimension(), vdim);
+
+    for (int vind = 0; vind < max_ind; vind++)
+    {
+        this->point(vind) = vector(vind);
+    }
+}
+
+void rn::set_vector(std::initializer_list<double> vector)
+{
+    /*!
+    *
+    * @param[in] vector
+    */
+   
+    this->set_vector(Eigen::VectorXd{std::move(vector)});
+}
+
+double rn::operator()(const int index) const
 {
     /*! \f{equation*}{ (\mathbb{Z}) \rightarrow \mathbb{R} \f}
     *
@@ -175,25 +277,19 @@ double rn::operator()(const ptrdiff_t index) const
     */
 
     const double nan = std::numeric_limits<double>::quiet_NaN();
-    const size_t dim = this->get_dimension();
+    const int dim = this->get_dimension();
 
-    if (index >= static_cast<ptrdiff_t>(dim)) return nan;
-    if (std::abs(index) > static_cast<ptrdiff_t>(dim)) return nan;
+    // If input index is negative, index from the back of the array
+    const int _index = (index < 0) ? dim + index : index;
 
-    size_t _index;
-    if (index < 0)
-    {
-        _index = static_cast<size_t>(static_cast<ptrdiff_t>(dim) + index);
-    }
-    else
-    {
-        _index = static_cast<size_t>(index);
-    }
+    // Error check for out of bounds
+    if (_index < 0) return nan;
+    if (_index >= dim) return nan;
 
-    return this->data(_index);
+    return this->point(_index);
 }
 
-double rn::operator()(const ptrdiff_t index1, const ptrdiff_t index2) const
+rn::field_t rn::operator()(const int index1, const int index2) const
 {
     /*! \f{equation*}{ (\mathbb{Z}, \mathbb{Z}) \rightarrow \mathbb{R} \f}
     *
@@ -201,38 +297,57 @@ double rn::operator()(const ptrdiff_t index1, const ptrdiff_t index2) const
     */
     
     const double nan = std::numeric_limits<double>::quiet_NaN();
-    const size_t shape = this->get_shape();
+    const int shape = this->get_shape();
     if (shape == 0) return nan;
 
-    if (index1 >= static_cast<ptrdiff_t>(shape)) return nan;
-    if (index2 >= static_cast<ptrdiff_t>(shape)) return nan;
-    if (std::abs(index1) > static_cast<ptrdiff_t>(shape)) return nan;
-    if (std::abs(index2) > static_cast<ptrdiff_t>(shape)) return nan;
+    // If input index is negative, index from the back of the array
+    const int _index1 = (index1 < 0) ? shape + index1 : index1;
+    const int _index2 = (index2 < 0) ? shape + index2 : index2;
 
-    size_t _index1;
-    if (index1 < 0)
-    {
-        _index1 = static_cast<size_t>(static_cast<ptrdiff_t>(shape) + index1);
-    }
-    else
-    {
-        _index1 = static_cast<size_t>(index1);
-    }
-
-    size_t _index2;
-    if (index2 < 0)
-    {
-        _index2 = static_cast<size_t>(static_cast<ptrdiff_t>(shape) + index2);
-    }
-    else
-    {
-        _index2 = static_cast<size_t>(index2);
-    }
+    // Error check for out of bounds
+    if (_index1 < 0) return nan;
+    if (_index1 >= shape) return nan;
+    if (_index2 < 0) return nan;
+    if (_index2 >= shape) return nan;
 
     if (_index1 == shape - 1) return 0.0;
     if (_index2 != shape - 1) return 0.0;
 
-    return this->data(_index1);
+    return this->point(_index1);
+}
+
+const rn::field_t& rn::operator[](const int index) const
+{
+    /*! \f{equation*}{ (\mathbb{Z}) \rightarrow \mathbb{R} \f}
+    *
+    */
+
+    const int dim = this->get_dimension();
+
+    // If input index is negative, index from the back of the array
+    const int _index = (index < 0) ? dim + index : index;
+
+    // Error check for out of bounds
+    lielab_assert((_index >= 0) && (_index < dim), "Index " + std::to_string(index) + " is out of bounds for rn of length " + std::to_string(dim));
+
+    return this->point(_index);
+}
+
+rn::field_t& rn::operator[](const int index)
+{
+    /*! \f{equation*}{ (\mathbb{Z}) \rightarrow \mathbb{R} \f}
+    *
+    */
+
+    const int dim = this->get_dimension();
+
+    // If input index is negative, index from the back of the array
+    const int _index = (index < 0) ? dim + index : index;
+
+    // Error check for out of bounds
+    lielab_assert((_index >= 0) && (_index < dim), "Index " + std::to_string(index) + " is out of bounds for rn of length " + std::to_string(dim));
+
+    return this->point(_index);
 }
 
 rn rn::operator+(const rn& other) const
@@ -242,10 +357,8 @@ rn rn::operator+(const rn& other) const
     * Addition of two vectors in the algebra.
     */
 
-    const size_t new_shape = std::min(this->_shape, other.get_shape());
-    const Eigen::ArithmeticSequence slice = Eigen::seqN(0, new_shape - 1);
-    const Eigen::VectorXd new_vector = this->data(slice) + other.data(slice);
-    return rn::from_vector(new_vector);
+    lielab_assert(this->get_shape() == other.get_shape(), "Shapes must be equal.");
+    return rn::from_vector(this->point + other.point);
 }
 
 rn& rn::operator+=(const rn& other)
@@ -255,8 +368,8 @@ rn& rn::operator+=(const rn& other)
     * In place addition of two vectors in the algebra.
     */
 
-    assert(this->_shape == other.get_shape());
-    this->data += other.data;
+    lielab_assert(this->get_shape() == other.get_shape(), "Shapes must be equal.");
+    this->point += other.point;
     return *this;
 }
 
@@ -267,10 +380,8 @@ rn rn::operator-(const rn& other) const
     * Subtraction of two vectors in the algebra.
     */
 
-    const size_t new_shape = std::min(this->_shape, other.get_shape());
-    const Eigen::ArithmeticSequence slice = Eigen::seqN(0, new_shape - 1);
-    const Eigen::VectorXd new_vector = this->data(slice) - other.data(slice);
-    return rn::from_vector(new_vector);
+    lielab_assert(this->get_shape() == other.get_shape(), "Shapes must be equal.");
+    return rn::from_vector(this->point - other.point);
 }
 
 rn& rn::operator-=(const rn& other)
@@ -280,8 +391,8 @@ rn& rn::operator-=(const rn& other)
     * In place subtraction of two vectors in the algebra.
     */
 
-    assert(this->_shape == other.get_shape());
-    this->data -= other.data;
+    lielab_assert(this->get_shape() == other.get_shape(), "Shapes must be equal.");
+    this->point -= other.point;
     return *this;
 }
 
@@ -292,7 +403,7 @@ rn rn::operator-() const
     * Unary negative of the vector.
     */
 
-    return rn::from_vector(-this->data);
+    return rn::from_vector(-this->point);
 }
 
 rn rn::operator*(const double other) const
@@ -302,7 +413,7 @@ rn rn::operator*(const double other) const
     * Scalar product.
     */
 
-    return rn::from_vector(this->data * other);
+    return rn::from_vector(this->point * other);
 }
 
 rn operator*(const double other, const rn& rhs)
@@ -312,7 +423,7 @@ rn operator*(const double other, const rn& rhs)
     * Scalar product.
     */
 
-    return rn::from_vector(rhs.data * other);
+    return rn::from_vector(rhs.point * other);
 }
 
 rn& rn::operator*=(const double other)
@@ -322,7 +433,7 @@ rn& rn::operator*=(const double other)
     * In place scalar product.
     */
 
-    this->data *= other;
+    this->point *= other;
     return *this;
 }
 
@@ -333,7 +444,7 @@ rn rn::operator/(const double other) const
     * Scalar division.
     */
 
-    return rn::from_vector(this->data / other);
+    return rn::from_vector(this->point / other);
 }
 
 rn& rn::operator/=(const double other)
@@ -343,67 +454,8 @@ rn& rn::operator/=(const double other)
     * In place scalar division.
     */
 
-    this->data /= other;
+    this->point /= other;
     return *this;
-}
-
-rn rn::from_vector(const Eigen::VectorXd& vector)
-{
-    /*! \f{equation}{(\mathbb{R}^{n \times 1}) \rightarrow \mathfrak{rn} \f}
-    *
-    * Constructor instantiating an \f$\mathfrak{rn}\f$ object from either a
-    * \f$n \times 1\f$ imaginary vector.
-    *
-    * @param[in] other The object to instantiate from as an imaginary vector.
-    */
-
-    const size_t shape = vector.size() + 1;
-    rn out = rn::from_shape(shape);
-    out.set_vector(vector);
-
-    return out;
-}
-
-rn rn::from_vector(std::initializer_list<double> other)
-{
-    /*! \f{equation}{(\mathbb{R}^{n \times 1}) \rightarrow \mathfrak{rn} \f}
-    *
-    * Constructor instantiating an \f$\mathfrak{rn}\f$ object from a
-    * \f$n \times 1\f$ vector.
-    *
-    * @param[in] other The object to instantiate from as a vector.
-    */
-
-    return rn::from_vector(Eigen::VectorXd{std::move(other)});
-}
-
-Eigen::MatrixXd rn::project(const Eigen::MatrixXd& other)
-{
-    /*! \f{equation*}{ (\mathbb{R}^{n \times n}) \rightarrow \mathbb{R}^{n \times n} \in \mathfrak{rn} \f}
-    *
-    * Projects a matrix suitable for data.
-    */
-
-    const size_t shape = std::min(other.rows(), other.cols());
-
-    Eigen::MatrixXd out = Eigen::MatrixXd::Zero(shape, shape);
-
-    for (size_t ii = 0; ii < shape - 1; ii++)
-    {
-        out(ii, shape-1) = other(ii, shape-1);
-    }
-
-    return out;
-}
-
-std::ostream& operator<<(std::ostream& os, const rn& other)
-{
-    /*!
-    * Overloads the "<<" stream insertion operator.
-    */
-    
-    os << static_cast<const Eigen::VectorXd>(other.data);
-    return os;
 }
 
 }

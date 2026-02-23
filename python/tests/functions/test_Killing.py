@@ -31,6 +31,7 @@ def test_Killingform():
 
     from lielab.domain import so
     from lielab.functions import Killingform
+    from lielab.testing import check_almost_equal_tol
 
     rx = so.from_vector([1.0, 0.0, 0.0])
 
@@ -38,7 +39,7 @@ def test_Killingform():
     Id = np.identity(rx.get_dimension())
 
     assert abs(K.trace() + 6) <= TOL_FINE
-    assert_matrix(K @ np.linalg.inv(K), Id)
+    assert check_almost_equal_tol(K @ np.linalg.inv(K), Id)
 
     so6 = so.basis(0,6)
 
@@ -46,4 +47,4 @@ def test_Killingform():
     Id = np.identity(so6.get_dimension())
 
     assert abs(K.trace() + 120) <= TOL_FINE
-    assert_matrix(K @ np.linalg.inv(K), Id)
+    assert check_almost_equal_tol(K @ np.linalg.inv(K), Id)

@@ -45,22 +45,22 @@ def test_GLC_matrix_initializer():
     with pytest.raises(RuntimeError):
         GLC(np.random.rand(3, 2))
 
-def test_GLC_from_shape_initializer():
+def test_GLC_identity_initializer():
     from lielab.domain import GLC
 
-    x0 = GLC.from_shape(0)
+    x0 = GLC.identity(0)
     assert (x0.get_dimension() == 0)
     x0hat = x0.get_matrix()
     assert (x0hat.shape[0] == 0)
     assert (x0hat.shape[1] == 0)
 
-    x1 = GLC.from_shape(1)
+    x1 = GLC.identity(1)
     assert (x1.get_dimension() == 2)
     x1hat = x1.get_matrix()
     assert (x1hat.shape[0] == 1)
     assert (x1hat.shape[1] == 1)
 
-    x2 = GLC.from_shape(2)
+    x2 = GLC.identity(2)
     assert (x2.get_dimension() == 8)
     x2hat = x2.get_matrix()
     assert (x2hat.shape[0] == 2)
@@ -231,7 +231,7 @@ def test_GLC_get_matrix():
 def test_GLC_operator_parenthesis():
     from lielab.domain import GLC
 
-    x0 = GLC.from_shape(0)
+    x0 = GLC.identity(0)
     x0.unserialize([])
 
     # Out of bounds
@@ -375,7 +375,7 @@ def test_GLC_project():
     from lielab.domain import GLC
 
     rand_2_2 = np.random.rand(2, 2) + 1j*np.random.rand(2, 2)
-    proj_2_2 = GLC.project(rand_2_2)
+    proj_2_2 = GLC.project(rand_2_2).get_matrix()
 
     assert (proj_2_2.shape[0] == 2)
     assert (proj_2_2.shape[1] == 2)
@@ -385,7 +385,7 @@ def test_GLC_project():
     assert (proj_2_2[1, 1] == rand_2_2[1, 1])
 
     rand_3_3 = np.random.rand(3, 3) + 1j*np.random.rand(3, 3)
-    proj_3_3 = GLC.project(rand_3_3)
+    proj_3_3 = GLC.project(rand_3_3).get_matrix()
 
     assert (proj_3_3.shape[0] == 3)
     assert (proj_3_3.shape[1] == 3)
@@ -400,7 +400,7 @@ def test_GLC_project():
     assert (proj_3_3[2, 2] == rand_3_3[2, 2])
 
     rand_2_3 = np.random.rand(2, 3) + 1j*np.random.rand(2, 3)
-    proj_2_3 = GLC.project(rand_2_3)
+    proj_2_3 = GLC.project(rand_2_3).get_matrix()
 
     assert (proj_2_3.shape[0] == 2)
     assert (proj_2_3.shape[1] == 2)
@@ -410,7 +410,7 @@ def test_GLC_project():
     assert (proj_2_3[1, 1] == rand_2_3[1, 1])
 
     rand_3_2 = np.random.rand(3, 2) + 1j*np.random.rand(3, 2)
-    proj_3_2 = GLC.project(rand_3_2)
+    proj_3_2 = GLC.project(rand_3_2).get_matrix()
 
     assert (proj_3_2.shape[0] == 2)
     assert (proj_3_2.shape[1] == 2)

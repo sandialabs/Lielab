@@ -1,4 +1,4 @@
-#include <Lielab.hpp>
+#include <Lielab/domain/liegroups/SU.hpp>
 #include <iostream>
 #include <numbers>
 
@@ -55,6 +55,10 @@ TEST_CASE("from_quaternion", "[domain]")
     * Tests quaternions against well-known identities.
     */
 
+    using Lielab::domain::SU;
+    using Lielab::domain::CompositeGroup;
+    using Lielab::testing::check_almost_equal_nulp;
+
     // Lielab::domain::SU q1 = Lielab::domain::SU::from_quaternion();
     Lielab::domain::SU qm1 = Lielab::domain::SU::from_quaternion(-1.0, 0.0, 0.0, 0.0);
     Lielab::domain::SU qi = Lielab::domain::SU::from_quaternion(0.0, 1.0, 0.0, 0.0);
@@ -70,19 +74,19 @@ TEST_CASE("from_quaternion", "[domain]")
 
     // Hamilton's identities
     // i^2 = j^2 = k^2 = -1
-    assert_domain(qi*qi, qm1);
-    assert_domain(qj*qj, qm1);
-    assert_domain(qk*qk, qm1);
+    CHECK(check_almost_equal_nulp(CompositeGroup{qi*qi}, CompositeGroup{qm1}, 1, true));
+    CHECK(check_almost_equal_nulp(CompositeGroup{qj*qj}, CompositeGroup{qm1}, 1, true));
+    CHECK(check_almost_equal_nulp(CompositeGroup{qk*qk}, CompositeGroup{qm1}, 1, true));
 
     // ij = -ji = -k
-    assert_domain(qi*qj, (qj*qi).inverse());
-    assert_domain(qi*qj, qk.inverse());
+    CHECK(check_almost_equal_nulp(CompositeGroup{qi*qj}, CompositeGroup{(qj*qi).inverse()}, 1, true));
+    CHECK(check_almost_equal_nulp(CompositeGroup{qi*qj}, CompositeGroup{qk.inverse()}, 1, true));
 
     // jk = -kj = -i
-    assert_domain(qj*qk, (qk*qj).inverse());
-    assert_domain(qj*qk, qi.inverse());
+    CHECK(check_almost_equal_nulp(CompositeGroup{qj*qk}, CompositeGroup{(qk*qj).inverse()}, 1, true));
+    CHECK(check_almost_equal_nulp(CompositeGroup{qj*qk}, CompositeGroup{qi.inverse()}, 1, true));
 
     // ki = -ik = -j
-    assert_domain(qk*qi, (qi*qk).inverse());
-    assert_domain(qk*qi, qj.inverse());
+    CHECK(check_almost_equal_nulp(CompositeGroup{qk*qi}, CompositeGroup{(qi*qk).inverse()}, 1, true));
+    CHECK(check_almost_equal_nulp(CompositeGroup{qk*qi}, CompositeGroup{qj.inverse()}, 1, true));
 }

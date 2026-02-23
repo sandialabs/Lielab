@@ -7,7 +7,7 @@ def complex(a,b):
 def test_cn_to_string():
     from lielab.domain import cn
 
-    xzero = cn.from_shape(0)
+    xzero = cn.zero(0)
     assert (xzero.to_string() == "c^nan")
     x0 = cn(0)
     assert (x0.to_string() == "c^0")
@@ -66,28 +66,28 @@ def test_cn_basis_initializer():
     x10bar = x10.get_vector()
     assert (x10bar.size == 0)
 
-    x01 = cn.basis(0, 1)
+    x01 = cn.basis(0, 2)
     assert (x01.get_dimension() == 2)
     x01bar = x01.get_vector()
     assert (x01bar.size == 2)
     assert (x01bar[0] == 1.0)
     assert (x01bar[1] == 0.0)
 
-    x11 = cn.basis(1, 1)
+    x11 = cn.basis(1, 2)
     assert (x11.get_dimension() == 2)
     x11bar = x11.get_vector()
     assert (x11bar.size == 2)
     assert (x11bar[0] == 0.0)
     assert (x11bar[1] == 1.0)
 
-    x21 = cn.basis(2, 1)
+    x21 = cn.basis(2, 2)
     assert (x21.get_dimension() == 2)
     x21bar = x21.get_vector()
     assert (x21bar.size == 2)
     assert (x21bar[0] == 0.0)
     assert (x21bar[1] == 0.0)
 
-    x02 = cn.basis(0, 2)
+    x02 = cn.basis(0, 3)
     assert (x02.get_dimension() == 4)
     x02bar = x02.get_vector()
     assert (x02bar.size == 4)
@@ -97,23 +97,23 @@ def test_cn_basis_initializer():
     assert (x02bar[3] == 0.0)
 
 
-def test_cn_from_shape_initializer():
+def test_cn_zero_initializer():
 
     from lielab.domain import cn
 
-    x0 = cn.from_shape(0)
+    x0 = cn.zero(0)
     assert (x0.get_dimension() == 0)
     x0hat = x0.get_matrix()
     assert (x0hat.shape[0] == 0)
     assert (x0hat.shape[1] == 0)
 
-    x1 = cn.from_shape(1)
+    x1 = cn.zero(1)
     assert (x1.get_dimension() == 0)
     x1hat = x1.get_matrix()
     assert (x1hat.shape[0] == 1)
     assert (x1hat.shape[1] == 1)
 
-    x2 = cn.from_shape(2)
+    x2 = cn.zero(2)
     assert (x2.get_dimension() == 2)
     x2hat = x2.get_matrix()
     assert (x2hat.shape[0] == 2)
@@ -124,7 +124,7 @@ def test_cn_get_dimension():
 
     from lielab.domain import cn
 
-    veryzero = cn.from_shape(0)
+    veryzero = cn.zero(0)
     zero = cn(0)
     one = cn(1)
     two = cn(2)
@@ -154,7 +154,7 @@ def test_cn_set_get_vector():
 
     from lielab.domain import cn
 
-    xzero = cn.from_shape(0)
+    xzero = cn.zero(0)
     xzero.set_vector([])
     xzerobar = xzero.get_vector()
 
@@ -224,7 +224,7 @@ def test_cn_get_matrix():
 
     from lielab.domain import cn
 
-    xzero = cn.from_shape(0)
+    xzero = cn.zero(0)
     xzero.set_vector([])
     xzerohat = xzero.get_matrix()
 
@@ -323,7 +323,7 @@ def test_cn_get_matrix():
 def test_cn_operator_parenthesis():
     from lielab.domain import cn
 
-    xzero = cn.from_shape(0)
+    xzero = cn.zero(0)
     xzero.set_vector([])
 
     # Out of bounds
@@ -439,16 +439,16 @@ def test_cn_operator_parenthesis():
 def test_cn_operator_bracket():
     from lielab.domain import cn
 
-    xzero = cn.from_shape(0)
+    xzero = cn.zero(0)
     xzero.set_vector([])
 
     # Out of bounds
-    assert (np.isnan(np.real(xzero[-1])))
-    assert (np.isnan(np.imag(xzero[-1])))
-    assert (np.isnan(np.real(xzero[0])))
-    assert (np.isnan(np.imag(xzero[0])))
-    assert (np.isnan(np.real(xzero[1])))
-    assert (np.isnan(np.imag(xzero[1])))
+    with pytest.raises(RuntimeError): xzero[-1]
+    with pytest.raises(RuntimeError): xzero[-1]
+    with pytest.raises(RuntimeError): xzero[0]
+    with pytest.raises(RuntimeError): xzero[0]
+    with pytest.raises(RuntimeError): xzero[1]
+    with pytest.raises(RuntimeError): xzero[1]
 
     x1 = cn(1)
     x1.set_vector([1.0, 2.0])
@@ -458,10 +458,10 @@ def test_cn_operator_bracket():
     assert (x1[-1] == complex(1.0, 2.0))
 
     # Out of bounds
-    assert (np.isnan(np.real(x1[-2])))
-    assert (np.isnan(np.imag(x1[-2])))
-    assert (np.isnan(np.real(x1[1])))
-    assert (np.isnan(np.imag(x1[1])))
+    with pytest.raises(RuntimeError): x1[-2]
+    with pytest.raises(RuntimeError): x1[-2]
+    with pytest.raises(RuntimeError): x1[1]
+    with pytest.raises(RuntimeError): x1[1]
 
     x2 = cn(2)
     x2.set_vector([1.0, 2.0, 3.0, 4.0])
@@ -473,10 +473,10 @@ def test_cn_operator_bracket():
     assert (x2[-2] == complex(1.0, 2.0))
 
     # Out of bounds
-    assert (np.isnan(np.real(x2[-3])))
-    assert (np.isnan(np.imag(x2[-3])))
-    assert (np.isnan(np.real(x2[2])))
-    assert (np.isnan(np.imag(x2[2])))
+    with pytest.raises(RuntimeError): x2[-3]
+    with pytest.raises(RuntimeError): x2[-3]
+    with pytest.raises(RuntimeError): x2[2]
+    with pytest.raises(RuntimeError): x2[2]
 
 
 def test_cn_math_ops_int():
@@ -748,7 +748,7 @@ def test_cn_project():
     from lielab.domain import cn
 
     rand_2_2 = np.random.rand(2, 2) + 1j*np.random.rand(2, 2)
-    proj_2_2 = cn.project(rand_2_2)
+    proj_2_2 = cn.project(rand_2_2).get_matrix()
 
     assert (proj_2_2.shape[0] == 2)
     assert (proj_2_2.shape[1] == 2)
@@ -758,7 +758,7 @@ def test_cn_project():
     assert (proj_2_2[1, 1] == complex(0.0, 0.0))
 
     rand_3_3 = np.random.rand(3, 3) + 1j*np.random.rand(3, 3)
-    proj_3_3 = cn.project(rand_3_3)
+    proj_3_3 = cn.project(rand_3_3).get_matrix()
 
     assert (proj_3_3.shape[0] == 3)
     assert (proj_3_3.shape[1] == 3)
@@ -773,7 +773,7 @@ def test_cn_project():
     assert (proj_3_3[2, 2] == complex(0.0, 0.0))
 
     rand_2_3 = np.random.rand(2, 3) + 1j*np.random.rand(2, 3)
-    proj_2_3 = cn.project(rand_2_3)
+    proj_2_3 = cn.project(rand_2_3).get_matrix()
 
     assert (proj_2_3.shape[0] == 2)
     assert (proj_2_3.shape[1] == 2)
@@ -783,7 +783,7 @@ def test_cn_project():
     assert (proj_2_3[1, 1] == complex(0.0, 0.0))
 
     rand_3_2 = np.random.rand(3, 2) + 1j*np.random.rand(3, 2)
-    proj_3_2 = cn.project(rand_3_2)
+    proj_3_2 = cn.project(rand_3_2).get_matrix()
 
     assert (proj_3_2.shape[0] == 2)
     assert (proj_3_2.shape[1] == 2)

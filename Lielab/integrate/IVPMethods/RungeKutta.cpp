@@ -1,7 +1,8 @@
 #include "RungeKutta.hpp"
 
-#include "../ODESolution.hpp"
-#include "IVPSettings.hpp"
+#include "IVPCommon.hpp"
+
+#include "Lielab/optimize.hpp"
 
 #include <Eigen/Core>
 
@@ -65,26 +66,7 @@ namespace Lielab::integrate
 
 // }
 
-RungeKutta::RungeKutta()
-{
-    /*! \f{equation*}{ () \rightarrow MuntheKaas \f}
-    * Instantiates a new MuntheKaas object.
-    */
-    
-    const auto [_A, _b, _bhat, _c, _e, _order, _stages, _variable, _implicit] = get_butcher_tableau(Coefficients::RKV87r);
-    
-    this->A = _A;
-    this->B = _b;
-    this->Bhat = _bhat;
-    this->C = _c;
-    this->e = _e;
-    this->n = _stages;
-    this->order = _order;
-    this->can_variable_step = _variable;
-    this->implicit = _implicit;
-}
-
-RungeKutta::RungeKutta(const Coefficients tableau)
+RungeKutta::RungeKutta(const RungeKuttaCoefficients tableau)
 {
     /*!
     * Instantiates a new RungeKutta object with a specific RK method.
@@ -92,32 +74,42 @@ RungeKutta::RungeKutta(const Coefficients tableau)
     
     const auto [_A, _b, _bhat, _c, _e, _order, _stages, _variable, _implicit] = get_butcher_tableau(tableau);
     
-    this->A = _A;
-    this->B = _b;
-    this->Bhat = _bhat;
-    this->C = _c;
-    this->e = _e;
+    this->A.resize(_stages, _stages);
+    this->B.resize(_stages);
+    this->Bhat.resize(_stages);
+    this->C.resize(_stages);
+    this->e.resize(_stages);
     this->n = _stages;
     this->order = _order;
     this->can_variable_step = _variable;
     this->implicit = _implicit;
+
+    for (int ii = 0; ii < this->n; ii++)
+    {
+        for (int jj = 0; jj < this->n; jj++)
+        {
+            this->A(ii,jj) = _A[ii][jj];
+        }
+        this->B(ii) = _b[ii];
+        this->Bhat(ii) = _bhat[ii];
+        this->C(ii) = _c[ii];
+        this->e(ii) = _e[ii];
+    }
 }
 
-void RungeKutta::estimate_error(const Eigen::VectorXd &y1, const Eigen::VectorXd &y2, const double dt)
+void RungeKutta::estimate_error(const Eigen::VectorXd& y1, const Eigen::VectorXd& y2, const double dt)
 {
-    const Eigen::VectorXd scale = this->abstol + this->reltol*y1.array().max(y2.array()).cwiseAbs();
-    const size_t sz = y1.size();
+    const Eigen::VectorXd scale = this->abstol + this->reltol*(y1.array().abs()).max(y2.array().abs());
+    const int sz = static_cast<int>(y1.size());
 
     Eigen::VectorXd err0 = Eigen::VectorXd::Zero(sz);
-    for (size_t ii = 0; ii < n; ii++)
+    for (int ii = 0; ii < this->n; ii++)
     {
         err0 += this->K.row(ii)*this->e[ii]*dt;
     }
 
     const Eigen::VectorXd err = err0.array()/scale.array();
     this->error_estimate = err.norm()/std::sqrt(static_cast<double>(sz));
-
-    this->status = RungeKuttaStatus::SUCCESS;
 }
 
 Eigen::VectorXd RungeKutta::operator()(const EuclideanIVP_vectorfield_t vf, const Eigen::VectorXd& y0, const double t0, const double dt)
@@ -127,16 +119,21 @@ Eigen::VectorXd RungeKutta::operator()(const EuclideanIVP_vectorfield_t vf, cons
      */
 
     const Eigen::VectorXd dy0 = vf(t0, y0);
+    this->success = false;
 
     if (dy0.array().isNaN().any())
     {
-        this->status = RungeKuttaStatus::ERROR_NAN;
+        this->status = IVPStatus::ERROR_NANS_IN_VF;
+        this->message = "RungeKutta: NaNs in vectorfield.";
+        this->success = false;
         return y0;
     }
 
     if (dy0.array().isInf().any())
     {
-        this->status = RungeKuttaStatus::ERROR_INF;
+        this->status = IVPStatus::ERROR_INFS_IN_VF;
+        this->message = "RungeKutta: Infs in vectorfield.";
+        this->success = false;
         return y0;
     }
 
@@ -144,50 +141,54 @@ Eigen::VectorXd RungeKutta::operator()(const EuclideanIVP_vectorfield_t vf, cons
 
     if (n_eoms == 0) return Eigen::VectorXd::Zero(0);
 
-    this->K = Eigen::MatrixXd::Zero(this->n, n_eoms);
+    this->K.noalias() = Eigen::MatrixXd::Zero(this->n, n_eoms);
 
     double next_t = t0;
     Eigen::VectorXd next_theta = Eigen::VectorXd::Zero(y0.size());
 
-    size_t max_iter = 50;
+    int max_iter = 50;
 
     if (!this->implicit)
     {
-        for (size_t stage = 0; stage < this->n; stage++)
+        for (int stage = 0; stage < this->n; stage++)
         {
             if (stage == 0)
             {
                 next_t = t0;
-                next_theta = y0*0.0;
+                next_theta.noalias() = y0*0.0;
             }
             else
             {
                 next_t = t0 + dt*this->C(stage);
                 next_theta *= 0.0;
-                for (size_t jj = 0; jj < stage; jj++)
+                for (int jj = 0; jj < stage; jj++)
                 {
                     next_theta += dt*this->A(stage, jj)*this->K.row(jj);
                 }
             }
 
-            this->K.row(stage) = vf(next_t, y0 + next_theta);
+            this->K.row(stage).noalias() = vf(next_t, y0 + next_theta);
         }
 
         if (this->K.array().isNaN().any())
         {
-            this->status = RungeKuttaStatus::ERROR_NAN;
+            this->status = IVPStatus::ERROR_NANS_IN_VF;
+            this->message = "RungeKutta: NaNs in vectorfield.";
+            this->success = false;
             return y0;
         }
 
         if (this->K.array().isInf().any())
         {
-            this->status = RungeKuttaStatus::ERROR_INF;
+            this->status = IVPStatus::ERROR_INFS_IN_VF;
+            this->message = "RungeKutta: Infs in vectorfield.";
+            this->success = false;
             return y0;
         }
     }
     else
     {
-        size_t iteration = 0;
+        int iteration = 0;
         double err = 9e9;
         const double tol = 1e-15;
 
@@ -199,16 +200,16 @@ Eigen::VectorXd RungeKutta::operator()(const EuclideanIVP_vectorfield_t vf, cons
         while (err > tol && iteration < max_iter)
         {
             Eigen::MatrixXd Knew = this->K*1.0;
-            for (size_t stage = 0; stage < this->n; stage++)
+            for (int stage = 0; stage < this->n; stage++)
             {
                 next_t = t0 + dt*this->C(stage);
                 next_theta *= 0.0;
-                for (size_t jj = 0; jj < this->n; jj++)
+                for (int jj = 0; jj < this->n; jj++)
                 {
                     next_theta += dt*this->A(stage, jj)*this->K.row(jj);
                 }
 
-                Knew.row(stage) = vf(next_t, y0 + next_theta);
+                Knew.row(stage).noalias() = vf(next_t, y0 + next_theta);
             }
 
             err = std::sqrt((Knew - this->K).array().square().sum());
@@ -216,26 +217,30 @@ Eigen::VectorXd RungeKutta::operator()(const EuclideanIVP_vectorfield_t vf, cons
 
             if (this->K.array().isNaN().any())
             {
-                this->status = RungeKuttaStatus::ERROR_NAN;
+                this->status = IVPStatus::ERROR_NANS_IN_VF;
+                this->message = "RungeKutta: NaNs in vectorfield.";
+                this->success = false;
                 return y0;
             }
 
             if (this->K.array().isInf().any())
             {
-                this->status = RungeKuttaStatus::ERROR_INF;
+                this->status = IVPStatus::ERROR_INFS_IN_VF;
+                this->message = "RungeKutta: Infs in vectorfield.";
+                this->success = false;
                 return y0;
             }
 
             iteration++;
         }
         
-        // TODO: Error if max iter here
+        // TODO: Error if max iter here?
     }
 
 
     next_theta *= 0.0;
     Eigen::VectorXd next_theta2 = 0.0*next_theta;
-    for (size_t ii = 0; ii < this->n; ii++)
+    for (int ii = 0; ii < this->n; ii++)
     {
         next_theta += dt*this->B(ii)*this->K.row(ii);
     }
@@ -244,19 +249,18 @@ Eigen::VectorXd RungeKutta::operator()(const EuclideanIVP_vectorfield_t vf, cons
     this->error_estimate = 0.0;
     if (this->can_variable_step == true)
     {
-        const size_t sz = next_theta.size();
+        const int sz = static_cast<int>(next_theta.size());
         next_theta2 = Eigen::VectorXd::Zero(sz);
-        for (size_t ii = 0; ii < this->n; ii++)
+        for (int ii = 0; ii < this->n; ii++)
         {
             next_theta2 += dt*this->Bhat(ii)*this->K.row(ii);
         }
-        this->status = RungeKuttaStatus::ESTIMATE_ERROR;
         this->estimate_error(y0 + next_theta, y0 + next_theta2, dt);
     }
-    else
-    {
-        this->status = RungeKuttaStatus::SUCCESS;
-    }
+
+    this->status = IVPStatus::SUCCESS;
+    this->success = true;
+    this->message = "RungeKutta: Terminated successfully.";
 
     return y0 + next_theta;
 }
@@ -265,265 +269,276 @@ Eigen::VectorXd RungeKutta::operator()(const EuclideanIVP_vectorfield_t vf, cons
 * The Flow class. Numerically calculates the integral curve of a vector field through y0 from t0 to tf.
 */
 
-RungeKuttaFlowStatus RungeKuttaFlow::init(const Eigen::VectorXd& tspan, const Eigen::VectorXd& y0)
-{
-    if (tspan.size() < 2)
-    {
-        return RungeKuttaFlowStatus::ERROR_INPUT;
-    }
-
-    if ((this->variable_time_step == true) && (this->method.can_variable_step == false))
-    {
-        this->variable_time_step = false;
-    }
-
-    if (std::isnan(this->dt))
-    {
-        this->dt = 0.01*(tspan(1) - tspan(0));
-    }
-
-    this->dt = std::max(this->dt_min, std::min(this->dt_max, this->dt));
-    this->_tspan = tspan;
-    this->tind = 1;
-    const size_t num_eoms = y0.size();
-    
-    this->_tcurrent = tspan(0);
-    this->_ycurrent = y0;
-
-    this->iterations = 0;
-
-    this->_out = ODESolution(num_eoms);
-    this->_out.add_data(tspan(0), y0, y0);
-
-    if (this->dt <= 0.0)
-    {
-        return RungeKuttaFlowStatus::ERROR_NEGATIVE_DT;
-    }
-
-    return RungeKuttaFlowStatus::DO_STEP0;
-}
-
-RungeKuttaFlowStatus RungeKuttaFlow::step0(const Eigen::VectorXd& next_low, const double next_error)
-{
-    /*
-     * Checks if we will accept the current approximation by method. If not, comes up with a new one.
-     */
-
-    const double eps = std::numeric_limits<double>::epsilon();
-
-    if (this->variable_time_step)
-    {
-        double dt_new_mult = 1.0;
-
-        if (next_error < 1.0)
-        {
-            // Step accepted
-
-            if (std::abs(next_error) < 4*eps)
-            {
-                // Prevent 0 to a power if error is 0.
-                dt_new_mult = this->large;
-            }
-            else
-            {
-                dt_new_mult = std::min(this->large, this->pessimist*std::pow(next_error, -1.0/(static_cast<double>(method.order) + 1.0)));
-            }
-
-            this->dt_recommend = dt_new_mult*this->dt;
-            
-            // Obey min and max dt amounts
-            this->dt_recommend = std::min(this->dt_recommend, this->dt_max);
-            this->dt_recommend = std::max(this->dt_recommend, this->dt_min);
-            this->_ynext = next_low;
-            return RungeKuttaFlowStatus::DO_STEP1;
-        }
-        else
-        {
-            // Step rejected
-
-            if (std::abs(this->dt - this->dt_min) < 4.0*eps)
-            {
-                // Accept step: dt is at lower bound. Continue solution as normal but warn.
-                this->_ynext = next_low;
-                this->tolerance_not_met = true;
-                return RungeKuttaFlowStatus::DO_STEP1;
-            }
-
-            dt_new_mult = std::max(this->small, this->pessimist*std::pow(next_error, -1.0/(static_cast<double>(method.order) + 1.0)));
-            this->dt = dt_new_mult*this->dt;
-            
-            // Obey min and max dt amounts
-            this->dt = std::min(this->dt, this->dt_max);
-            this->dt = std::max(this->dt, this->dt_min);
-            return RungeKuttaFlowStatus::DO_STEP0;
-        }
-    }
-
-    this->_ynext = next_low;
-    if (next_error >= 1.0)
-    {
-        // Accept step but signal warning (despite being fixed step).
-        this->tolerance_not_met = true;
-        return RungeKuttaFlowStatus::DO_STEP1;
-    }
-
-    // Accept step.
-    return RungeKuttaFlowStatus::DO_STEP1;
-}
-
-RungeKuttaFlowStatus RungeKuttaFlow::step1()
-{
-    /*
-     * Solution was accepted. Save.
-     */
-
-    const double eps = std::numeric_limits<double>::epsilon();
-
-    this->iterations += 1;
-    this->_tcurrent += this->dt;
-    Eigen::VectorXd ydiff = this->_ynext;
-    this->_ycurrent = this->_ynext;
-    this->_out.add_data(this->_tcurrent, this->_ycurrent, ydiff);
-
-    if (!std::isnan(this->dt_save))
-    {
-        // If a saved timestep is stored, reset it.
-        this->dt = this->dt_save;
-        this->dt_save = std::numeric_limits<double>::quiet_NaN();
-    }
-    else if (!std::isnan(this->dt_recommend))
-    {
-        // If a new dt was recommended, use it.
-        this->dt = this->dt_recommend;
-        this->dt_recommend = std::numeric_limits<double>::quiet_NaN();
-    }
-
-    // Advance tind if there are more in tspan
-    if (this->_tcurrent > this->_tspan(tind) - 1e-10)
-    {
-        // If we're passed the last value in tspan, we're done.
-        if (this->_tcurrent > (this->_tspan.tail<1>()(0) - 1e-10))
-        {
-            return RungeKuttaFlowStatus::SUCCESS;
-        }
-
-        tind += 1;
-    }
-
-    // Error check. dt should be within bounds by this point.
-    // TODO: This should never get thrown, yet here we are.
-    if (this->dt < 100*eps)
-    {
-        return RungeKuttaFlowStatus::ERROR_SMALL_DT;
-    }
-
-    if (!std::isnan(this->event_next) && this->event_next <= 0)
-    {
-        return RungeKuttaFlowStatus::SUCCESS_EVENT;
-    }
-
-    // Check if the next time step will cross the next time in tspan
-    if (this->_tcurrent + this->dt > (this->_tspan(tind) - 1e-10))
-    {
-        // Save the current dt
-        this->dt_save = this->dt;
-
-        // Set the next dt to end exactly on the next tspan value
-        this->dt = this->_tspan(tind) - this->_tcurrent;
-    }
-
-    if (this->max_iterations > 0 && iterations >= this->max_iterations)
-    {
-        // Max iterations exceeded.
-        return RungeKuttaFlowStatus::ERROR_MAX_ITERATIONS;
-    }
-
-    // Nothing was caught, keep running.
-    return RungeKuttaFlowStatus::DO_STEP0;
-}
-
-void RungeKuttaFlow::postprocess()
-{
-    _out.trim_chunk(iterations);
-}
-
-ODESolution RungeKuttaFlow::operator()(const EuclideanIVPSystem& dynamics, const Eigen::VectorXd& tspan, const Eigen::VectorXd& y0, const IVPOptions& options)
+IVPSolution RungeKuttaFlow::operator()(const EuclideanIVPSystem& dynamics, const Eigen::VectorXd& tspan, const Eigen::VectorXd& y0, const IVPOptions& options)
 {
     /*!
     * The main evaluation method for the Flow class.
     */
+    
+    using namespace Lielab::optimize;
+
+    // Preprocessing
+    const ptrdiff_t n_eoms = y0.size();
+
+    IVPSolution out(n_eoms);
+    this->iterations = 0;
+    this->message = "";
+    this->success = false;
+    this->status = IVPStatus::RUNNING;
+
+    RungeKutta solver = RungeKutta(options.coefficients);
+
+    const double dt_min = std::abs(options.dt_min);
+    const double dt_max = std::abs(options.dt_max);
+
+    solver.abstol = options.abstol;
+    solver.reltol = options.reltol;
+    double dt_save = std::numeric_limits<double>::quiet_NaN();
+    double dt_recommend = std::numeric_limits<double>::quiet_NaN();
 
     // Check if the solution we're running has an event
     const double event_val = dynamics.event(tspan(0), y0);
-    this->has_event = false;
+    bool has_event = false;
     if (!std::isnan(event_val))
     {
-        this->has_event = true;
+        has_event = true;
     }
 
+    double event_current = std::numeric_limits<double>::quiet_NaN();
+    double event_next = std::numeric_limits<double>::quiet_NaN();
+
     // Initialize the Flow object
-    RungeKuttaFlowStatus status = this->init(tspan, y0);
+    int computestatus = 1;
+
+    const double tf = tspan.tail<1>()(0);
+    ptrdiff_t tind = 1;
+
+    bool variable_time_step = options.variable_time_step;
+    if (!solver.can_variable_step)
+    {
+        variable_time_step = false;
+    }
+
+    double dt = options.dt;
+    if (std::isnan(dt))
+    {
+        dt = 0.01*(tspan(1) - tspan(0));
+    }
+
+    dt = std::max(dt_min, std::min(dt_max, dt));
+    
+    double t = tspan(0);
+    Eigen::VectorXd y = y0;
+    Eigen::VectorXd ynext = y;
+
+    out.add_data(tspan(0), y);
 
     // Main loop. Run until algorithm says it's done
-    while (status == RungeKuttaFlowStatus::DO_STEP0 || status == RungeKuttaFlowStatus::DO_STEP1)
+    while (computestatus == 1 || computestatus == 2)
     {
-        if (status == RungeKuttaFlowStatus::DO_STEP0)
+        if (computestatus == 1)
         {
-            Eigen::VectorXd ynext = this->method.operator()(dynamics.vectorfield, this->_ycurrent, this->_tcurrent, this->dt);
-            if (this->method.status != RungeKuttaStatus::SUCCESS)
+            // Construct next possible step
+            ynext.noalias() = solver.operator()(dynamics.vectorfield, y, t, dt);
+            
+            if (!solver.success)
             {
-                break;
+                // Error in method. Exit immediately and report the error.
+                this->status = solver.status;
+                this->message = solver.message;
+                this->success = solver.success;
+                out.trim_chunk();
+                return out;
             }
             
-            if (this->has_event)
+            if (has_event)
             {
-                this->event_current = dynamics.event(this->_tcurrent, this->_ycurrent);
-                this->event_next = dynamics.event(this->_tcurrent + this->dt, ynext);
-                if ((this->event_current >= 0) && (this->event_next <= 0))
+                event_current = dynamics.event(t, y);
+                event_next = dynamics.event(t + dt, ynext);
+                if ((event_current >= 0) && (event_next <= 0))
                 {
-                    // Event crossed
-                    this->search.lower = std::numeric_limits<double>::epsilon();
-                    this->search.upper = this->dt;
-                    const auto fun = [&](const double _dt)
+                    // Event crossed. Root solve for 0 and exit immediately.
+                    GoldenMinimize search;
+                    ExtremizationOptions optimoptions;
+                    optimoptions.abstol = options.abstol;
+                    optimoptions.reltol = options.reltol;
+                    optimoptions.max_iterations = 50;
+
+                    const auto fun = [&](const Eigen::VectorXd& x)
                     {
-                        const Eigen::VectorXd _ynext = this->method.operator()(dynamics.vectorfield, this->_ycurrent, this->_tcurrent, _dt);
-                        return dynamics.event(this->_tcurrent + _dt, _ynext);
+                        const Eigen::VectorXd _ynext = solver.operator()(dynamics.vectorfield, y, t, x(0));
+                        return std::abs(dynamics.event(t + x(0), _ynext));
                     };
 
-                    const double xopt = this->search(fun, this->dt/2.0);
-                    this->dt = xopt;
-                    ynext = this->method.operator()(dynamics.vectorfield, this->_ycurrent, this->_tcurrent, this->dt);
-                    this->event_next = dynamics.event(this->_tcurrent + this->dt, ynext);
+                    EuclideanExtremizationSystem system(fun);
+                    system.lower_bound = Lielab::utils::to_VectorXd({std::numeric_limits<double>::epsilon()});
+                    system.upper_bound = Lielab::utils::to_VectorXd({dt});
+                    const Eigen::VectorXd xopt = search(system, optimoptions);
+                    dt = xopt(0);
+                    
+                    ynext.noalias() = solver.operator()(dynamics.vectorfield, y, t, dt);
+                    
+                    this->iterations += 1;
+                    t += dt;
+                    y.noalias() = ynext;
+                    out.add_data(t, y);
+
+                    // Exit
+                    if (!this->tolerance_not_met)
+                    {
+                        this->status = IVPStatus::SUCCESS_EVENT;
+                        this->message = "RungeKuttaFlow: Event triggered.";
+                        this->success = true;
+                        out.trim_chunk();
+                        return out;
+                    }
+                    else
+                    {
+                        this->status = IVPStatus::SUCCESS_EVENT_BUT_TOL;
+                        this->message = "RungeKuttaFlow: Event triggered, but integration tolerance was not met.";
+                        this->success = true;
+                        out.trim_chunk();
+                        return out;
+                    }
                 }
             }
 
-            status = this->step0(ynext, this->method.error_estimate);
+            const double next_error = solver.error_estimate;
+
+            if (variable_time_step)
+            {
+                double dt_new_mult = 1.0;
+
+                if (next_error < 1.0)
+                {
+                    // Step accepted
+
+                    if (std::abs(next_error) < options.abstol)
+                    {
+                        // Prevent 0 to a power if error is 0.
+                        dt_new_mult = options.large;
+                    }
+                    else
+                    {
+                        dt_new_mult = std::min(options.large, options.pessimist*std::pow(next_error, -1.0/(static_cast<double>(solver.order) + 1.0)));
+                    }
+
+                    dt_recommend = dt_new_mult*dt;
+                    
+                    // Obey min and max dt amounts
+                    dt_recommend = std::min(dt_recommend, dt_max);
+                    dt_recommend = std::max(dt_recommend, dt_min);
+                    computestatus = 2;
+                }
+                else
+                {
+                    // Step rejected
+                    if (dt - dt_min <= options.abstol)
+                    {
+                        // Accept step: dt is at lower bound. Continue solution as normal but warn.
+                        this->tolerance_not_met = true;
+                        computestatus = 2;
+                    }
+                    else
+                    {
+                        dt_new_mult = std::max(options.small, options.pessimist*std::pow(next_error, -1.0/(static_cast<double>(solver.order) + 1.0)));
+                        dt = dt_new_mult*dt;
+                        
+                        // Obey min and max dt amounts
+                        dt = std::min(dt, dt_max);
+                        dt = std::max(dt, dt_min);
+                        computestatus = 1;
+                    }
+                }
+            }
+            else
+            {
+                // Fixed time step
+                computestatus = 2;
+                if (!std::isnan(next_error) && next_error >= 1.0)
+                {
+                    // Accept step but signal warning (despite being fixed step).
+                    this->tolerance_not_met = true;
+                }
+            }
         }
-        else if (status == RungeKuttaFlowStatus::DO_STEP1)
+        else if (computestatus == 2)
         {
-            status = this->step1();
+            // Step accepted. Advance solution.
+            this->iterations += 1;
+            t += dt;
+            y.noalias() = ynext;
+            out.add_data(t, y);
+            
+            if (!std::isnan(dt_save))
+            {
+                // If a saved dt is stored, reset it.
+                dt = dt_save;
+                dt_save = std::numeric_limits<double>::quiet_NaN();
+            }
+            else if (!std::isnan(dt_recommend))
+            {
+                // If a new dt was recommended, use it.
+                dt = dt_recommend;
+                dt_recommend = std::numeric_limits<double>::quiet_NaN();
+            }
+
+            // Advance tind if there are more in tspan
+            if (t - tspan(tind) > -options.abstol)
+            {
+                tind += 1;
+            }
+
+            // Check all the termination conditions.
+            if (t - tf > -options.abstol || tind >= tspan.size())
+            {
+                // Passed the last value in tspan
+                if (!this->tolerance_not_met)
+                {
+                    this->status = IVPStatus::SUCCESS;
+                    this->message = "RungeKuttaFlow: Final time reached.";
+                    this->success = true;
+                    out.trim_chunk();
+                    return out;
+                }
+                else
+                {
+                    this->status = IVPStatus::SUCCESS_BUT_TOL;
+                    this->message = "RungeKuttaFlow: Final time reached, but integration tolerance was not met.";
+                    this->success = true;
+                    out.trim_chunk();
+                    return out;
+                }
+            }
+            else if (options.max_iterations > 0 && this->iterations >= options.max_iterations)
+            {
+                // Max iterations exceeded.
+                this->status = IVPStatus::ERROR_MAX_ITERATIONS;
+                this->message = "RungeKuttaFlow: Max iterations reached.";
+                this->success = false;
+                out.trim_chunk();
+                return out;
+            }
+            else
+            {
+                // Nothing was caught, keep running.
+                if (t + dt - tspan(tind) >= -options.abstol)
+                {
+                    // Check if the next time step will cross the next time in tspan
+                    // Save the current dt and set the next dt to end exactly on the next tspan value
+                    dt_save = dt;
+                    dt = tspan(tind) - t;
+                }
+                computestatus = 1;
+            }
         }
     }
 
-    this->postprocess();
-
-    ODESolution out = ODESolution(this->_out);
-    out.status = static_cast<int>(status);
-
-    if (this->method.status != RungeKuttaStatus::SUCCESS)
-    {
-        out.status = static_cast<int>(this->method.status);
-    }
-
-    if (out.status == static_cast<int>(RungeKuttaFlowStatus::SUCCESS) && this->tolerance_not_met)
-    {
-        out.status = static_cast<int>(RungeKuttaFlowStatus::SUCCESS_BUT_TOL_THO);
-    }
-    else if (out.status == static_cast<int>(RungeKuttaFlowStatus::SUCCESS_EVENT) && this->tolerance_not_met)
-    {
-        out.status = static_cast<int>(RungeKuttaFlowStatus::SUCCESS_EVENT_BUT_TOL_THO);
-    }
-
+    // This should never be called
+    this->status = IVPStatus::ERROR;
+    this->message = "RungeKuttaFlow: Unknown error.";
+    this->success = false;
+    out.trim_chunk();
     return out;
 }
 

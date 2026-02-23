@@ -9,6 +9,7 @@ def test_dexp_numerical():
 
     from lielab.domain import so, rn
     from lielab.functions import dexp_numerical
+    from lielab.testing import check_almost_equal_tol
 
     u = so(3)
     v = so(3)
@@ -27,7 +28,7 @@ def test_dexp_numerical():
                         [0.0, 0.0, 0.0],
                         [-1.0, 0.0, 0.0]])
     
-    assert_matrix(ansso.get_matrix(), truthso)
+    assert check_almost_equal_tol(ansso.get_matrix(), truthso)
 
     # order = 1
     ansso = dexp_numerical(u, v, 1)
@@ -35,7 +36,7 @@ def test_dexp_numerical():
                         [0.5, 0.0, 0.0],
                         [-1.0, 0.0, 0.0]])
 
-    assert_matrix(ansso.get_matrix(), truthso)
+    assert check_almost_equal_tol(ansso.get_matrix(), truthso)
 
     # order = 2
     ansso = dexp_numerical(u, v, 2)
@@ -43,7 +44,7 @@ def test_dexp_numerical():
                         [0.5, 0.0, 0.0],
                         [-0.833333333333333, 0.0, 0.0]])
 
-    assert_matrix(ansso.get_matrix(), truthso)
+    assert check_almost_equal_tol(ansso.get_matrix(), truthso)
 
     # order = 3
     ansso = dexp_numerical(u, v, 3)
@@ -57,7 +58,7 @@ def test_dexp_numerical():
                         [0.458333333333333, 0.0, 0.0],
                         [-0.841666666666667, 0.0, 0.0]])
 
-    assert_matrix(ansso.get_matrix(), truthso)
+    assert check_almost_equal_tol(ansso.get_matrix(), truthso)
 
     # order = 8
     ansso = dexp_numerical(u, v, 8)
@@ -65,7 +66,7 @@ def test_dexp_numerical():
                         [0.459697420634921, 0.0, 0.0],
                         [-0.841471009700176, 0.0, 0.0]])
 
-    assert_matrix(ansso.get_matrix(), truthso)
+    assert check_almost_equal_tol(ansso.get_matrix(), truthso)
 
     x = rn(3)
     y = rn(3)
@@ -81,7 +82,7 @@ def test_dexp_numerical():
                         [0, 0, 0, 0],
                         [0, 0, 0, 0]])
 
-    assert_matrix(ansrn.get_matrix(), truthrn)
+    assert check_almost_equal_tol(ansrn.get_matrix(), truthrn)
 
     # ridiculous order (checks abelian speedhack)
     ansrn = dexp_numerical(x, y, 999999999)
@@ -90,4 +91,4 @@ def test_dexp_numerical():
                         [0, 0, 0, 0],
                         [0, 0, 0, 0]])
 
-    assert_matrix(ansrn.get_matrix(), truthrn)
+    assert check_almost_equal_tol(ansrn.get_matrix(), truthrn)

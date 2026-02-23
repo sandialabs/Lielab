@@ -1,8 +1,7 @@
 #ifndef LIELAB_DOMAIN_CN_HPP
 #define LIELAB_DOMAIN_CN_HPP
 
-#include "LieGroup.hpp"
-#include "GLC.hpp"
+#include "../VirtualManifolds.hpp"
 
 #include <Eigen/Core>
 #include <unsupported/Eigen/MatrixFunctions>
@@ -10,72 +9,71 @@
 namespace Lielab::domain
 {
 
-class CN : public GLC
+class CN : public VirtualLieGroup<std::complex<double>>
 {
-    /*!
-    * The CN class.
-    */
     public:
-    static constexpr bool abelian = true;
+    // Manifold typing
+    using point_t = Eigen::VectorXcd;
 
-    using data_t = Eigen::VectorXcd;
-    data_t data;
+    // Manifold storage
+    point_t point;
 
-    
-    // CN class information
-    bool is_abelian() const override;
-    bool is_complex() const override;
-    std::string to_string() const override;
+    // CN storage
+    int _shape = 0;
 
-    // Initialization methods
-
+    // Manifold constructors
     CN();
-    CN(const size_t n);
-    static CN from_shape(const size_t shape);
+    // ~CN();
 
-    template<typename OtherDerived>
-    CN(const Eigen::MatrixBase<OtherDerived>& other);
+    // Lie group constructors
+    CN(const matrix_t& matrix);
+    static CN identity(const int shape);
+    static CN project(const matrix_t& matrix);
 
-    template<typename OtherDerived>
-    CN& operator=(const Eigen::MatrixBase<OtherDerived>& other);
-
-    size_t get_dimension() const override;
-    size_t get_shape() const override;
-    size_t get_size() const override;
-
-    CN::matrix_t get_matrix() const;
-
-    CN inverse() const;
-
-    // Data representation
-
-    Eigen::VectorXd serialize() const override;
-
-    void unserialize(const Eigen::VectorXd& vector) override;
-    void unserialize(const std::initializer_list<double> vector); // override;
-
-    double operator()(const ptrdiff_t index) const;
-    // std::complex<double>& operator()(const size_t index);
-    std::complex<double> operator()(const ptrdiff_t index1, const ptrdiff_t index2) const;
-
-    CN operator*(const CN& other) const;
-    CN& operator*=(const CN& other);
-
-    std::complex<double> operator[](const ptrdiff_t index) const;
-
-    static CN from_vector(const Eigen::VectorXd& other);
-    static CN from_vector(std::initializer_list<double> other);
+    // CN constructors
+    CN(const int n);
+    static CN from_vector(const Eigen::VectorXd& other); // TODO: remove?
+    static CN from_vector(std::initializer_list<double> other); // TODO: remove?
     static CN from_complex_vector(const Eigen::VectorXcd& other);
     static CN from_complex_vector(const std::initializer_list<std::complex<double>> other);
+
+    // Manifold information
+    std::string to_string() const override;
+    int get_dimension() const override;
+    int get_size() const override;
+
+    // Lie group information
+    bool is_abelian() const override;
+    int get_shape() const override;
+
+    // Manifold IO
+    point_t get_point() const;
+    Eigen::VectorXd serialize() const override;
+    void unserialize(const Eigen::VectorXd& serialized) override;
+    void unserialize(std::initializer_list<double> serialized) override;
+    
+    // Lie group IO
+    matrix_t get_matrix() const;
+    field_t operator()(const int index1, const int index2) const;
+
+    // CN IO
     Eigen::VectorXcd to_complex_vector() const;
+    const field_t& operator[](const int index) const;
+    field_t& operator[](const int index);
 
-    static Eigen::MatrixXcd project(const Eigen::MatrixXcd& other);
+    // Lie group math
+    CN operator*(const CN& other) const;
+    CN& operator*=(const CN& other);
+    CN inverse() const;
 
-    friend std::ostream& operator<<(std::ostream& os, const CN& other);
+    // CN math
+    // CN operator+(const CN& other) const;
+    // CN& operator+=(const CN& other);
+    // CN operator-(const CN& other) const;
+    // CN& operator-=(const CN& other);
+    // and doubles, std::complex, etc...
 };
 
 }
-
-#include "CN.tpp"
 
 #endif

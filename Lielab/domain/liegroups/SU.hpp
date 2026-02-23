@@ -1,76 +1,70 @@
 #ifndef LIELAB_DOMAIN_SU_HPP
 #define LIELAB_DOMAIN_SU_HPP
 
-#include "LieGroup.hpp"
-#include "GLC.hpp"
+#include "../VirtualManifolds.hpp"
 #include "SO.hpp"
 
 #include <Eigen/Core>
 #include <unsupported/Eigen/MatrixFunctions>
+
+#include <complex>
 
 namespace Lielab::domain
 {
 
 class SO;
 
-class SU : public GLC
+class SU : public VirtualLieGroup<std::complex<double>>
 {
-    /*!
-    * The SU class.
-    */
     public:
-    static constexpr bool abelian = false;
+    // Manifold typing
+    using point_t = Eigen::MatrixXcd;
     
-    std::string to_string() const override;
+    // Manifold storage
+    point_t point;
 
-    // Initialization methods
-
+    // Manifold constructors
     SU();
-    SU(const size_t shape);
-    static SU from_shape(const size_t shape);
+    // ~SU();
 
-    template<typename OtherDerived>
-    SU(const Eigen::MatrixBase<OtherDerived>& other);
-
-    template<typename OtherDerived>
-    SU& operator=(const Eigen::MatrixBase<OtherDerived>& other);
-
+    // Lie group constructors
+    SU(const matrix_t& other);
+    static SU identity(const int shape);
     // TODO: Project
 
-    size_t get_dimension() const override;
-    size_t get_shape() const override;
-    size_t get_size() const override;
-
-    SU::matrix_t get_matrix() const;
-
-    SU inverse() const;
-
-    Eigen::VectorXd serialize() const override;
-
-    void unserialize(const Eigen::VectorXd& vec) override;
-    void unserialize(std::initializer_list<double> vec);
-
-    std::complex<double> operator()(const ptrdiff_t index1, const ptrdiff_t index2) const;
-
-    SU operator*(const SU& other) const;
-
-    SU& operator*=(const SU& other);
-
-    friend std::ostream& operator<<(std::ostream& os, const SU& other);
-
-    /*
-     * Additional static initializers. Not a part of the core Lie group, but are convenient.
-     */
-    template <typename T>
-    static SU from_quaternion(const T e0, const T e1, const T e2, const T e3);
-
+    // SU constructors
+    SU(const int shape);
+    static SU from_quaternion(const double e0, const double e1, const double e2, const double e3);
     static SU from_SO3(const SO& dcm);
+    
+    // Manifold information
+    std::string to_string() const override;
+    int get_dimension() const override;
+    int get_size() const override;
 
+    // Lie group information
+    bool is_abelian() const override;
+    int get_shape() const override;
+
+    // Manifold IO
+    point_t get_point() const;
+    Eigen::VectorXd serialize() const override;
+    void unserialize(const Eigen::VectorXd& serialized) override;
+    void unserialize(std::initializer_list<double> serialized) override;
+
+    // Lie group IO
+    matrix_t get_matrix() const;
+    field_t operator()(const int index1, const int index2) const;
+
+    // SU IO
     std::array<double, 4> to_quaternion() const;
+
+    // Lie group math
+    SU operator*(const SU& other) const;
+    SU& operator*=(const SU& other);
+    SU inverse() const;
 };
 
 }
-
-#include "SU.tpp"
 
 #endif

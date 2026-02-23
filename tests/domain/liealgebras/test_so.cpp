@@ -1,4 +1,4 @@
-#include <Lielab.hpp>
+#include <Lielab/domain/liealgebras/so.hpp>
 
 #include <catch2/catch_all.hpp>
 
@@ -8,7 +8,7 @@
 
 TEST_CASE("so to_string", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::so;
 
     const so x0 = so(0);
     CHECK(x0.to_string() == "so(0)");
@@ -20,7 +20,7 @@ TEST_CASE("so to_string", "[domain]")
 
 TEST_CASE("so main_initializer", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::so;
 
     const so xblank = so();
     CHECK(xblank.get_dimension() == 0);
@@ -35,7 +35,7 @@ TEST_CASE("so main_initializer", "[domain]")
 
 TEST_CASE("so matrix_initializer", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::so;
 
     const so x0 = so(Eigen::MatrixXd::Random(0, 0));
     CHECK(x0.get_shape() == 0);
@@ -52,7 +52,7 @@ TEST_CASE("so matrix_initializer", "[domain]")
 
 TEST_CASE("so basis_initializer", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::so;
 
     const so xm10 = so::basis(-1, 0);
     CHECK(xm10.get_dimension() == 0);
@@ -96,23 +96,23 @@ TEST_CASE("so basis_initializer", "[domain]")
     CHECK(x02bar(2) == 0.0);
 }
 
-TEST_CASE("so from_shape_initializer", "[domain]")
+TEST_CASE("so zero_initializer", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::so;
 
-    const so x0 = so::from_shape(0);
+    const so x0 = so::zero(0);
     CHECK(x0.get_dimension() == 0);
     const Eigen::MatrixXd x0hat = x0.get_matrix();
     CHECK(x0hat.rows() == 0);
     CHECK(x0hat.cols() == 0);
 
-    const so x1 = so::from_shape(1);
+    const so x1 = so::zero(1);
     CHECK(x1.get_dimension() == 0);
     const Eigen::MatrixXd x1hat = x1.get_matrix();
     CHECK(x1hat.rows() == 1);
     CHECK(x1hat.cols() == 1);
 
-    const so x2 = so::from_shape(2);
+    const so x2 = so::zero(2);
     CHECK(x2.get_dimension() == 1);
     const Eigen::MatrixXd x2hat = x2.get_matrix();
     CHECK(x2hat.rows() == 2);
@@ -121,7 +121,7 @@ TEST_CASE("so from_shape_initializer", "[domain]")
 
 TEST_CASE("so get_dimension", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::so;
 
     so zero(0), one(1), two(2), three(3), four(4), five(5), six(6), seven(7), eight(8);
 
@@ -143,7 +143,7 @@ TEST_CASE("so set/get_vector", "[domain]")
     * Tests the set/get_vector operation.
     */
 
-    using namespace Lielab::domain;
+    using Lielab::domain::so;
 
     so x0 = so(0);
     x0.set_vector({});
@@ -217,7 +217,7 @@ TEST_CASE("so get_matrix", "[domain]")
     * Tests the get_matrix operation.
     */
 
-    using namespace Lielab::domain;
+    using Lielab::domain::so;
 
     so x0 = so(0);
     x0.set_vector({});
@@ -311,7 +311,7 @@ TEST_CASE("so get_matrix", "[domain]")
 
 TEST_CASE("so operator()", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::so;
 
     so x0 = so(0);
     x0.set_vector({});
@@ -398,7 +398,7 @@ TEST_CASE("so operator()", "[domain]")
 
 TEST_CASE("so math_ops_double", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::so;
 
     so x1(3);
     x1.set_vector({1.25, 2.5, 3.75});
@@ -433,7 +433,7 @@ TEST_CASE("so math_ops_double", "[domain]")
 
 TEST_CASE("so math_ops_so", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::so;
 
     so x1(3), x2(3);
     x1.set_vector({1.0, 2.0, 3.0});
@@ -475,7 +475,7 @@ TEST_CASE("so from_vector", "[domain]")
     * Tests the from_vector operation.
     */
 
-    using namespace Lielab::domain;
+    using Lielab::domain::so;
 
     const so x0 = so::from_vector({});
     const Eigen::VectorXd x0bar = x0.get_vector();
@@ -511,10 +511,10 @@ TEST_CASE("so from_vector", "[domain]")
 
 TEST_CASE("so project", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::so;
 
     const Eigen::MatrixXd rand_2_2 = Eigen::MatrixXd::Random(2, 2);
-    const Eigen::MatrixXd proj_2_2 = so::project(rand_2_2);
+    const Eigen::MatrixXd proj_2_2 = so::project(rand_2_2).get_matrix();
 
     REQUIRE(proj_2_2.rows() == 2);
     REQUIRE(proj_2_2.cols() == 2);
@@ -524,7 +524,7 @@ TEST_CASE("so project", "[domain]")
     CHECK(proj_2_2(1, 1) == 0.0);
 
     const Eigen::MatrixXd rand_3_3 = Eigen::MatrixXd::Random(3, 3);
-    const Eigen::MatrixXd proj_3_3 = so::project(rand_3_3);
+    const Eigen::MatrixXd proj_3_3 = so::project(rand_3_3).get_matrix();
 
     REQUIRE(proj_3_3.rows() == 3);
     REQUIRE(proj_3_3.cols() == 3);
@@ -539,7 +539,7 @@ TEST_CASE("so project", "[domain]")
     CHECK(proj_3_3(2, 2) == 0.0);
 
     const Eigen::MatrixXd rand_2_3 = Eigen::MatrixXd::Random(2, 3);
-    const Eigen::MatrixXd proj_2_3 = so::project(rand_2_3);
+    const Eigen::MatrixXd proj_2_3 = so::project(rand_2_3).get_matrix();
 
     REQUIRE(proj_2_3.rows() == 2);
     REQUIRE(proj_2_3.cols() == 2);
@@ -549,7 +549,7 @@ TEST_CASE("so project", "[domain]")
     CHECK(proj_2_3(1, 1) == 0.0);
 
     const Eigen::MatrixXd rand_3_2 = Eigen::MatrixXd::Random(3, 2);
-    const Eigen::MatrixXd proj_3_2 = so::project(rand_3_2);
+    const Eigen::MatrixXd proj_3_2 = so::project(rand_3_2).get_matrix();
 
     REQUIRE(proj_3_2.rows() == 2);
     REQUIRE(proj_3_2.cols() == 2);
@@ -567,13 +567,14 @@ TEST_CASE("so2", "[domain]")
     Note that some of these test cases are trivial since so(2) is 1-dimensional.
     */
     
-    using namespace Lielab::domain;
-    using namespace Lielab::functions;
+    using Lielab::domain::so;
+    using Lielab::functions::commutator;
+    using Lielab::testing::check_almost_equal_nulp;
 
     so x = so::basis(0,2);
     so zero = x*0;
 
-    assert_domain(commutator(x, x), zero);
+    CHECK(check_almost_equal_nulp(commutator(x, x).get_matrix(), zero.get_matrix(), 1, true));
 }
 
 TEST_CASE("so3", "[domain]")
@@ -582,18 +583,19 @@ TEST_CASE("so3", "[domain]")
     * Tests the so algebra with so(3).
     */
 
-    using namespace Lielab::domain;
-    using namespace Lielab::functions;
+    using Lielab::domain::so;
+    using Lielab::functions::commutator;
+    using Lielab::testing::check_almost_equal_nulp;
 
     so x = so::basis(0,3);
     so y = so::basis(1,3);
     so z = so::basis(2,3);
     so zero = x*0;
 
-    assert_domain(commutator(x, y), z);
-    assert_domain(commutator(y, z), x);
-    assert_domain(commutator(z, x), y);
-    assert_domain(commutator(y, x), -z);
-    assert_domain(commutator(z, y), -x);
-    assert_domain(commutator(x, z), -y);
+    CHECK(check_almost_equal_nulp(commutator(x, y).get_matrix(), (z).get_matrix(), 1, true));
+    CHECK(check_almost_equal_nulp(commutator(y, z).get_matrix(), (x).get_matrix(), 1, true));
+    CHECK(check_almost_equal_nulp(commutator(z, x).get_matrix(), (y).get_matrix(), 1, true));
+    CHECK(check_almost_equal_nulp(commutator(y, x).get_matrix(), (-z).get_matrix(), 1, true));
+    CHECK(check_almost_equal_nulp(commutator(z, y).get_matrix(), (-x).get_matrix(), 1, true));
+    CHECK(check_almost_equal_nulp(commutator(x, z).get_matrix(), (-y).get_matrix(), 1, true));
 }

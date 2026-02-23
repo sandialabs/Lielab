@@ -1,8 +1,6 @@
 #include "cn.hpp"
 
-#include "LieAlgebra.hpp"
-
-#include "Lielab/utils/Error.hpp"
+#include "Lielab/testing.hpp"
 
 #include <Eigen/Core>
 #include <unsupported/Eigen/MatrixFunctions>
@@ -11,18 +9,6 @@
 
 namespace Lielab::domain
 {
-
-bool cn::is_abelian() const
-{
-    return true;
-}
-
-std::string cn::to_string() const
-{
-    const size_t shape = this->get_shape();
-    if (shape == 0) return "c^nan";
-    return "c^" + std::to_string(shape-1);
-}
 
 cn::cn() : cn(0)
 {
@@ -36,51 +22,62 @@ cn::cn() : cn(0)
 
 }
 
-cn::cn(const size_t n)
+// cn::~cn()
+
+cn::cn(const cn::matrix_t& matrix)
 {
-    /*! \f{equation*}{(\mathbb{Z}) \rightarrow \mathfrak{cn} \f}
+    /*! \f{eqnarray*}{(\mathbb{C}^{n \times n}) &\rightarrow& \mathfrak{cn} \\ (\mathbb{C}^{n \times 1}) &\rightarrow& \mathfrak{cn} \f}
     *
-    * Constructor instantiating an \f$\mathfrak{cn}\f$ object.
-    * 
-    * Enables instantiation like:
-    * 
-    *     Lielab::domain::cn x(3), y(4), z(5);
-    * 
-    * @param[in] shape The shape of the data matrix.
+    * Constructor instantiating an \f$\mathfrak{cn}\f$ object from either an
+    * \f$n \times n\f$ imaginary matrix or \f$n \times 1\f$ imaginary vector.
+    *
+    * @param[in] other The object to instantiate from as an imaginary matrix.
     */
 
-    this->_shape = n + 1;
-    this->data = Eigen::VectorXcd::Zero(n);
+    lielab_assert(matrix.rows() == matrix.cols(), "Input matrix must be square.");
+
+    this->_shape = static_cast<int>(matrix.rows());
+
+    if (this->_shape == 0)
+    {
+        this->point = Eigen::VectorXcd::Zero(0);
+        return;
+    }
+
+    this->point = Eigen::VectorXcd::Zero(this->_shape - 1);
+    for (int ii = 0; ii < this->_shape - 1; ii++)
+    {
+        this->point(ii) = matrix(ii, this->_shape - 1);
+    }
 }
 
-cn cn::basis(const ptrdiff_t i, const size_t n)
+cn cn::basis(const int index, const int shape)
 {
     /*! \f{equation*}{ (\mathbb{Z}, \mathbb{Z}) \rightarrow \mathfrak{cn} \f}
     *
     * Returns the i'th basis element of the cn algebra.
     * 
-    * @param[in] i The basis vector.
-    * @param[in] n The size of the algebra.
+    * @param[in] index The basis vector.
+    * @param[in] shape The shape of the algebra.
     * @param[out] out The cn element.
     */
 
-    cn out(n);
-    if (i < 0) return out;
+    cn out = cn::zero(shape);
+    if (index < 0) return out;
 
-    const size_t dim = out.get_dimension();
-    const size_t ind = static_cast<size_t>(i);
+    const int dim = out.get_dimension();
 
-    if (ind >= dim) return out;
+    if (index >= dim) return out;
 
-    const size_t indz = ind/2;
-    const size_t rem = ind%2;
-    if (rem == 0) out.data(indz) = std::complex<double>(1.0, 0.0);
-    if (rem == 1) out.data(indz) = std::complex<double>(0.0, 1.0);
+    const size_t indz = index / 2;
+    const size_t rem = index % 2;
+    if (rem == 0) out.point(indz) = std::complex<double>(1.0, 0.0);
+    if (rem == 1) out.point(indz) = std::complex<double>(0.0, 1.0);
 
     return out;
 }
 
-cn cn::from_shape(const size_t shape)
+cn cn::zero(const int shape)
 {
     /*! \f{equation*}{ (\mathbb{Z}) \rightarrow \mathfrak{cn} \f}
     *
@@ -100,75 +97,145 @@ cn cn::from_shape(const size_t shape)
     return cn(shape-1);
 }
 
-size_t cn::get_dimension() const
+cn cn::from_vector(const Eigen::VectorXd& vector)
+{
+    /*! \f{equation}{(\mathbb{R}^{n \times 1}) \rightarrow \mathfrak{cn} \f}
+    *
+    * Constructor instantiating an \f$\mathfrak{cn}\f$ object from either a
+    * \f$n \times 1\f$ imaginary vector.
+    *
+    * @param[in] vector The object to instantiate from as an imaginary vector.
+    */
+
+    const int shape = static_cast<int>(std::ceil(vector.size()/2.0)) + 1;
+    cn out = cn::zero(shape);
+    out.set_vector(vector);
+
+    return out;
+}
+
+cn cn::from_vector(std::initializer_list<double> vector)
+{
+    /*! \f{equation}{(\mathbb{R}^{n \times 1}) \rightarrow \mathfrak{cn} \f}
+    *
+    * Constructor instantiating an \f$\mathfrak{cn}\f$ object from either a
+    * \f$n \times 1\f$ imaginary vector.
+    *
+    * @param[in] other The object to instantiate from as an imaginary vector.
+    */
+
+    return cn::from_vector(Eigen::VectorXd{std::move(vector)});
+}
+
+cn cn::project(const cn::matrix_t& matrix)
+{
+    /*! \f{equation*}{ (\mathbb{C}^{n \times n}) \rightarrow \mathbb{C}^{n \times n} \in \mathfrak{cn} \f}
+    *
+    */
+
+    const size_t shape = std::min(matrix.rows(), matrix.cols());
+    return cn(matrix(Eigen::seqN(0, shape), Eigen::seqN(0, shape)));
+}
+
+cn::cn(const int n)
+{
+    /*! \f{equation*}{(\mathbb{Z}) \rightarrow \mathfrak{cn} \f}
+    *
+    * Constructor instantiating an \f$\mathfrak{cn}\f$ object.
+    * 
+    * Enables instantiation like:
+    * 
+    *     Lielab::domain::cn x(3), y(4), z(5);
+    * 
+    * @param[in] shape The shape of the data matrix.
+    */
+
+    this->_shape = n + 1;
+    this->point.noalias() = Eigen::VectorXcd::Zero(n);
+}
+
+cn cn::from_complex_vector(const Eigen::VectorXcd& other)
+{
+    /*! \f{equation}{(\mathbb{C}^{n \times 1}) \rightarrow \mathfrak{cn} \f}
+    *
+    * Constructor instantiating an \f$\mathfrak{cn}\f$ object from either a
+    * \f$n \times 1\f$ imaginary vector.
+    *
+    * @param[in] other The object to instantiate from as an imaginary vector.
+    */
+
+    const int n = static_cast<int>(other.size());
+    cn out(n);
+    out.point = other;
+    return out;
+}
+
+cn cn::from_complex_vector(std::initializer_list<std::complex<double>> other)
+{
+    /*! \f{equation}{(\mathbb{C}^{n \times 1}) \rightarrow \mathfrak{cn} \f}
+    *
+    * Constructor instantiating an \f$\mathfrak{cn}\f$ object from either a
+    * \f$n \times 1\f$ imaginary vector.
+    *
+    * @param[in] other The object to instantiate from as an imaginary vector.
+    */
+
+    return cn::from_complex_vector(Eigen::VectorXcd{std::move(other)});
+}
+
+std::string cn::to_string() const
+{
+    const size_t shape = this->get_shape();
+    if (shape == 0) return "c^nan";
+    return "c^" + std::to_string(shape-1);
+}
+
+int cn::get_dimension() const
 {
     /*! \f{equation*}{ () \rightarrow \mathbb{Z} \f}
     * 
     * Gets the dimension of the algebra.
     */
 
-    if (this->_shape == 0) return 0; // Return nan??
-
-    return 2*(this->_shape - 1);
+    return 2*static_cast<int>(this->point.size());
 }
 
-Eigen::VectorXd cn::get_vector() const
+int cn::get_size() const
 {
-    /*! \f{equation*}{ () \rightarrow \mathbb{C}^{n \times 1} \f}
-    * 
-    * Returns the vector representation.
-    */
-
-    const size_t dim = this->get_dimension();
-    Eigen::VectorXd out = Eigen::VectorXd::Zero(dim);
-
-    size_t kk = 0;
-    for (size_t ii = 0; ii < dim/2; ii++)
-    {
-        out(kk) = std::real(this->data(ii));
-        kk += 1;
-        out(kk) = std::imag(this->data(ii));
-        kk += 1;
-    }
-
-    return out;
+    return this->get_dimension();
 }
 
-void cn::set_vector(const Eigen::VectorXd& vector)
+bool cn::is_abelian() const
 {
-    /*! \f{equation*}{ \mathfrak{cn} := \mathbb{C}^{n \times 1} \f}
-    * 
-    * @param[in] vector An Eigen::VectorXd to assign.
-    */
-
-    const size_t vdim = vector.size();
-    const size_t max_ind = std::min(this->get_dimension(), vdim);
-
-    size_t dind = 0;
-    for (size_t vind = 0; vind < max_ind; vind++)
-    {
-        const size_t rem = vind % 2;
-
-        if (rem == 0)
-        {
-            this->data(dind).real(vector(vind));
-        }
-        else
-        {
-            this->data(dind).imag(vector(vind));
-            dind += 1;
-        }
-    }
+    return true;
 }
 
-void cn::set_vector(std::initializer_list<double> vector)
+int cn::get_shape() const
+{
+    return this->_shape;
+}
+
+cn::point_t cn::get_point() const
 {
     /*!
-    *
-    * @param[in] vector
     */
-   
-    this->set_vector(Eigen::VectorXd{std::move(vector)});
+
+    return this->point;
+}
+
+Eigen::VectorXd cn::serialize() const
+{
+    return this->get_vector();
+}
+
+void cn::unserialize(const Eigen::VectorXd& serialized)
+{
+    this->set_vector(serialized);
+}
+
+void cn::unserialize(std::initializer_list<double> serialized)
+{
+    this->unserialize(Eigen::VectorXd{std::move(serialized)});
 }
 
 cn::matrix_t cn::get_matrix() const
@@ -191,15 +258,74 @@ cn::matrix_t cn::get_matrix() const
 
     if (this->_shape == 0) return out;
 
-    for (size_t ii = 0; ii < this->_shape - 1; ii++)
+    for (int ii = 0; ii < this->_shape - 1; ii++)
     {
-        out(ii, this->_shape - 1) = this->data(ii);
+        out(ii, this->_shape - 1) = this->point(ii);
     }
 
     return out;
 }
 
-double cn::operator()(const ptrdiff_t index) const
+Eigen::VectorXd cn::get_vector() const
+{
+    /*! \f{equation*}{ () \rightarrow \mathbb{C}^{n \times 1} \f}
+    * 
+    * Returns the vector representation.
+    */
+
+    const size_t dim = this->get_dimension();
+    Eigen::VectorXd out = Eigen::VectorXd::Zero(dim);
+
+    size_t kk = 0;
+    for (size_t ii = 0; ii < dim/2; ii++)
+    {
+        out(kk) = std::real(this->point(ii));
+        kk += 1;
+        out(kk) = std::imag(this->point(ii));
+        kk += 1;
+    }
+
+    return out;
+}
+
+void cn::set_vector(const Eigen::VectorXd& vector)
+{
+    /*! \f{equation*}{ \mathfrak{cn} := \mathbb{C}^{n \times 1} \f}
+    * 
+    * @param[in] vector An Eigen::VectorXd to assign.
+    */
+
+    const int vdim = static_cast<int>(vector.size());
+    const int max_ind = std::min(this->get_dimension(), vdim);
+
+    int dind = 0;
+    for (int vind = 0; vind < max_ind; vind++)
+    {
+        const int rem = vind % 2;
+
+        if (rem == 0)
+        {
+            this->point(dind).real(vector(vind));
+        }
+        else
+        {
+            this->point(dind).imag(vector(vind));
+            dind += 1;
+        }
+    }
+}
+
+void cn::set_vector(std::initializer_list<double> vector)
+{
+    /*!
+    *
+    * @param[in] vector
+    */
+   
+    this->set_vector(Eigen::VectorXd{std::move(vector)});
+}
+
+double cn::operator()(const int index) const
 {
     /*! \f{equation*}{ (\mathbb{Z}) \rightarrow \mathbb{R} \f}
     *
@@ -207,26 +333,20 @@ double cn::operator()(const ptrdiff_t index) const
     */
     
     const double nan = std::numeric_limits<double>::quiet_NaN();
-    const size_t dim = this->get_dimension();
+    const int dim = this->get_dimension();
 
-    if (index >= static_cast<ptrdiff_t>(dim)) return nan;
-    if (std::abs(index) > static_cast<ptrdiff_t>(dim)) return nan;
+    // If input index is negative, index from the back of the array
+    const int _index = (index < 0) ? dim + index : index;
 
-    size_t _index;
-    if (index < 0)
-    {
-        _index = static_cast<size_t>(static_cast<ptrdiff_t>(dim) + index);
-    }
-    else
-    {
-        _index = static_cast<size_t>(index);
-    }
+    // Error check for out of bounds
+    if (_index < 0) return nan;
+    if (_index >= dim) return nan;
 
-    if (_index % 2 == 0) return this->data(_index/2).real();
-    return this->data(_index/2).imag();
+    if (_index % 2 == 0) return this->point(_index/2).real();
+    return this->point(_index/2).imag();
 }
 
-std::complex<double> cn::operator()(const ptrdiff_t index1, const ptrdiff_t index2) const
+cn::field_t cn::operator()(const int index1, const int index2) const
 {
     /*! \f{equation*}{ (\mathbb{Z}, \mathbb{Z}) \rightarrow \mathbb{C} \f}
     *
@@ -234,63 +354,68 @@ std::complex<double> cn::operator()(const ptrdiff_t index1, const ptrdiff_t inde
     */
     
     const double nan = std::numeric_limits<double>::quiet_NaN();
-    const size_t shape = this->get_shape();
+    const int shape = this->get_shape();
     if (shape == 0) return std::complex<double>(nan, nan);
 
-    if (index1 >= static_cast<ptrdiff_t>(shape)) return std::complex<double>(nan, nan);
-    if (index2 >= static_cast<ptrdiff_t>(shape)) return std::complex<double>(nan, nan);
-    if (std::abs(index1) > static_cast<ptrdiff_t>(shape)) return std::complex<double>(nan, nan);
-    if (std::abs(index2) > static_cast<ptrdiff_t>(shape)) return std::complex<double>(nan, nan);
+    // If input index is negative, index from the back of the array
+    const int _index1 = (index1 < 0) ? shape + index1 : index1;
+    const int _index2 = (index2 < 0) ? shape + index2 : index2;
 
-    size_t _index1;
-    if (index1 < 0)
-    {
-        _index1 = static_cast<size_t>(static_cast<ptrdiff_t>(shape) + index1);
-    }
-    else
-    {
-        _index1 = static_cast<size_t>(index1);
-    }
-
-    size_t _index2;
-    if (index2 < 0)
-    {
-        _index2 = static_cast<size_t>(static_cast<ptrdiff_t>(shape) + index2);
-    }
-    else
-    {
-        _index2 = static_cast<size_t>(index2);
-    }
+    // Error check for out of bounds
+    if (_index1 < 0) return std::complex<double>(nan, nan);
+    if (_index1 >= shape) return std::complex<double>(nan, nan);
+    if (_index2 < 0) return std::complex<double>(nan, nan);
+    if (_index2 >= shape) return std::complex<double>(nan, nan);
 
     if (_index1 == shape - 1) return std::complex<double>(0.0, 0.0);
     if (_index2 != shape - 1) return std::complex<double>(0.0, 0.0);
 
-    return this->data(_index1);
+    return this->point(_index1);
 }
 
-std::complex<double> cn::operator[](const ptrdiff_t index) const
+Eigen::VectorXcd cn::to_complex_vector() const
+{
+    /*
+     * Returns complex vector.
+     */
+    
+    return this->point;
+}
+
+const cn::field_t& cn::operator[](const int index) const
 {
     /*! \f{equation*}{ (\mathbb{Z}) \rightarrow \mathbb{C} \f}
     *
     */
 
     const double nan = std::numeric_limits<double>::quiet_NaN();
-    const size_t dim = this->get_dimension();
+    const int dim = this->get_dimension();
 
-    if (index >= static_cast<ptrdiff_t>(dim/2)) return std::complex<double>(nan, nan);
-    if (std::abs(index) > static_cast<ptrdiff_t>(dim/2)) return std::complex<double>(nan, nan);
+    // If input index is negative, index from the back of the array
+    const int _index = (index < 0) ? dim/2 + index : index;
 
-    size_t _index;
-    if (index < 0)
-    {
-        _index = static_cast<size_t>(static_cast<ptrdiff_t>(dim/2) + index);
-    }
-    else
-    {
-        _index = static_cast<size_t>(index);
-    }
+    // Error check for out of bounds
+    lielab_assert((_index >= 0) && (_index < dim/2), "Index " + std::to_string(index) + " is out of bounds for cn of length " + std::to_string(dim/2));
 
-    return this->data(_index);
+    return this->point(_index);
+}
+
+cn::field_t& cn::operator[](const int index)
+{
+    /*! \f{equation*}{ (\mathbb{Z}) \rightarrow \mathbb{C} \f}
+    *
+    */
+
+    const double nan = std::numeric_limits<double>::quiet_NaN();
+    const int dim = this->get_dimension();
+
+    // If input index is negative, index from the back of the array
+    const int _index = (index < 0) ? dim/2 + index : index;
+
+    // Error check for out of bounds
+    lielab_assert((_index >= 0) && (_index < dim/2), "Index " + std::to_string(index) + " is out of bounds for cn of length " + std::to_string(dim/2));
+
+    return this->point(_index);
 }
 
 cn cn::operator+(const cn& other) const
@@ -300,10 +425,8 @@ cn cn::operator+(const cn& other) const
     * Addition of two vectors in the algebra.
     */
 
-    const size_t new_shape = std::min(this->_shape, other.get_shape());
-    const Eigen::ArithmeticSequence slice = Eigen::seqN(0, new_shape - 1);
-    const Eigen::VectorXcd new_vector = this->data(slice) + other.data(slice);
-    return cn::from_complex_vector(new_vector);
+    lielab_assert(this->get_shape() == other.get_shape(), "Shapes must be equal.");
+    return cn::from_complex_vector(this->point + other.point);
 }
 
 cn& cn::operator+=(const cn& other)
@@ -313,7 +436,8 @@ cn& cn::operator+=(const cn& other)
     * In place addition of two vectors in the algebra.
     */
 
-    this->data += other.data;
+    lielab_assert(this->get_shape() == other.get_shape(), "Shapes must be equal.");
+    this->point += other.point;
     return *this;
 }
 
@@ -324,10 +448,8 @@ cn cn::operator-(const cn& other) const
     * Subtraction of two vectors in the algebra.
     */
 
-    const size_t new_shape = std::min(this->_shape, other.get_shape());
-    const Eigen::ArithmeticSequence slice = Eigen::seqN(0, new_shape - 1);
-    const Eigen::VectorXcd new_vector = this->data(slice) - other.data(slice);
-    return cn::from_complex_vector(new_vector);
+    lielab_assert(this->get_shape() == other.get_shape(), "Shapes must be equal.");
+    return cn::from_complex_vector(this->point - other.point);
 }
 
 cn& cn::operator-=(const cn& other)
@@ -337,7 +459,8 @@ cn& cn::operator-=(const cn& other)
     * In place subtraction of two vectors in the algebra.
     */
 
-    this->data -= other.data;
+    lielab_assert(this->get_shape() == other.get_shape(), "Shapes must be equal.");
+    this->point -= other.point;
     return *this;
 }
 
@@ -348,7 +471,7 @@ cn cn::operator-() const
     * Unary negative of the vector.
     */
 
-    return cn::from_complex_vector(-this->data);
+    return cn::from_complex_vector(-this->point);
 }
 
 cn cn::operator*(const double other) const
@@ -358,7 +481,7 @@ cn cn::operator*(const double other) const
     * Scalar product.
     */
 
-    return cn::from_complex_vector(this->data*other);
+    return cn::from_complex_vector(this->point*other);
 }
 
 cn operator*(const double other, const cn& rhs)
@@ -368,7 +491,39 @@ cn operator*(const double other, const cn& rhs)
     * Scalar product.
     */
 
-    return cn::from_complex_vector(other*rhs.data);
+    return cn::from_complex_vector(other*rhs.point);
+}
+
+cn& cn::operator*=(const double other)
+{
+    /*! \f{equation*}{ (\mathfrak{cn}, \mathbb{R}) \rightarrow \mathfrak{cn} \f}
+    *
+    * In place scalar product.
+    */
+
+    this->point *= other;
+    return *this;
+}
+
+cn cn::operator/(const double other) const
+{
+    /*! \f{equation*}{ (\mathfrak{cn}, \mathbb{R}) \rightarrow \mathfrak{cn} \f}
+    *
+    * Scalar division.
+    */
+
+    return cn::from_complex_vector(this->point/other);
+}
+
+cn& cn::operator/=(const double other)
+{
+    /*! \f{equation*}{ (\mathfrak{cn}, \mathbb{R}) \rightarrow \mathfrak{cn} \f}
+    *
+    * In place scalar division.
+    */
+
+    this->point /= other;
+    return *this;
 }
 
 cn cn::operator*(const std::complex<int> other) const
@@ -380,7 +535,7 @@ cn cn::operator*(const std::complex<int> other) const
     
     const std::complex<double> otherd = std::complex<double>(static_cast<double>(other.real()),
                                                              static_cast<double>(other.imag()));
-    return cn::from_complex_vector(this->data*otherd);
+    return cn::from_complex_vector(this->point*otherd);
 }
 
 cn cn::operator*(const std::complex<double> other) const
@@ -390,7 +545,7 @@ cn cn::operator*(const std::complex<double> other) const
     * Scalar product.
     */
 
-    return cn::from_complex_vector(this->data*other);
+    return cn::from_complex_vector(this->point*other);
 }
 
 cn operator*(const std::complex<int> other, const cn& rhs)
@@ -402,7 +557,7 @@ cn operator*(const std::complex<int> other, const cn& rhs)
     
     const std::complex<double> otherd = std::complex<double>(static_cast<double>(other.real()),
                                                              static_cast<double>(other.imag()));
-    return cn::from_complex_vector(otherd*rhs.data);
+    return cn::from_complex_vector(otherd*rhs.point);
 }
 
 cn operator*(const std::complex<double> other, const cn& rhs)
@@ -412,18 +567,7 @@ cn operator*(const std::complex<double> other, const cn& rhs)
     * Scalar product.
     */
 
-    return cn::from_complex_vector(other*rhs.data);
-}
-
-cn& cn::operator*=(const double other)
-{
-    /*! \f{equation*}{ (\mathfrak{cn}, \mathbb{R}) \rightarrow \mathfrak{cn} \f}
-    *
-    * In place scalar product.
-    */
-
-    this->data *= other;
-    return *this;
+    return cn::from_complex_vector(other*rhs.point);
 }
 
 cn& cn::operator*=(const std::complex<int> other)
@@ -435,7 +579,7 @@ cn& cn::operator*=(const std::complex<int> other)
     
     const std::complex<double> otherd = std::complex<double>(static_cast<double>(other.real()),
                                                              static_cast<double>(other.imag()));
-    this->data *= otherd;
+    this->point *= otherd;
     return *this;
 }
 
@@ -446,18 +590,8 @@ cn& cn::operator*=(const std::complex<double> other)
     * In place scalar product.
     */
 
-    this->data *= other;
+    this->point *= other;
     return *this;
-}
-
-cn cn::operator/(const double other) const
-{
-    /*! \f{equation*}{ (\mathfrak{cn}, \mathbb{R}) \rightarrow \mathfrak{cn} \f}
-    *
-    * Scalar division.
-    */
-
-    return cn::from_complex_vector(this->data/other);
 }
 
 cn cn::operator/(const std::complex<int> other) const
@@ -469,7 +603,7 @@ cn cn::operator/(const std::complex<int> other) const
 
     const std::complex<double> otherd = std::complex<double>(static_cast<double>(other.real()),
                                                              static_cast<double>(other.imag()));
-    return cn::from_complex_vector(this->data/otherd);
+    return cn::from_complex_vector(this->point/otherd);
 }
 
 cn cn::operator/(const std::complex<double> other) const
@@ -479,18 +613,7 @@ cn cn::operator/(const std::complex<double> other) const
     * Scalar division.
     */
 
-    return cn::from_complex_vector(this->data/other);
-}
-
-cn& cn::operator/=(const double other)
-{
-    /*! \f{equation*}{ (\mathfrak{cn}, \mathbb{R}) \rightarrow \mathfrak{cn} \f}
-    *
-    * In place scalar division.
-    */
-
-    this->data /= other;
-    return *this;
+    return cn::from_complex_vector(this->point/other);
 }
 
 cn& cn::operator/=(const std::complex<int> other)
@@ -502,7 +625,7 @@ cn& cn::operator/=(const std::complex<int> other)
 
     const std::complex<double> otherd = std::complex<double>(static_cast<double>(other.real()),
                                                              static_cast<double>(other.imag()));
-    this->data /= otherd;
+    this->point /= otherd;
     return *this;
 }
 
@@ -513,105 +636,8 @@ cn& cn::operator/=(const std::complex<double> other)
     * In place scalar division.
     */
 
-    this->data /= other;
+    this->point /= other;
     return *this;
-}
-
-cn cn::from_vector(const Eigen::VectorXd& vector)
-{
-    /*! \f{equation}{(\mathbb{R}^{n \times 1}) \rightarrow \mathfrak{cn} \f}
-    *
-    * Constructor instantiating an \f$\mathfrak{cn}\f$ object from either a
-    * \f$n \times 1\f$ imaginary vector.
-    *
-    * @param[in] vector The object to instantiate from as an imaginary vector.
-    */
-
-    const size_t shape = static_cast<size_t>(std::ceil(vector.size()/2.0)) + 1;
-    cn out = cn::from_shape(shape);
-    out.set_vector(vector);
-
-    return out;
-}
-
-cn cn::from_vector(std::initializer_list<double> vector)
-{
-    /*! \f{equation}{(\mathbb{R}^{n \times 1}) \rightarrow \mathfrak{cn} \f}
-    *
-    * Constructor instantiating an \f$\mathfrak{cn}\f$ object from either a
-    * \f$n \times 1\f$ imaginary vector.
-    *
-    * @param[in] other The object to instantiate from as an imaginary vector.
-    */
-
-    return cn::from_vector(Eigen::VectorXd{std::move(vector)});
-}
-
-cn cn::from_complex_vector(const Eigen::VectorXcd& other)
-{
-    /*! \f{equation}{(\mathbb{C}^{n \times 1}) \rightarrow \mathfrak{cn} \f}
-    *
-    * Constructor instantiating an \f$\mathfrak{cn}\f$ object from either a
-    * \f$n \times 1\f$ imaginary vector.
-    *
-    * @param[in] other The object to instantiate from as an imaginary vector.
-    */
-
-    const size_t n = other.size();
-    cn out(n);
-    out.data = other;
-    return out;
-}
-
-cn cn::from_complex_vector(std::initializer_list<std::complex<double>> other)
-{
-    /*! \f{equation}{(\mathbb{C}^{n \times 1}) \rightarrow \mathfrak{cn} \f}
-    *
-    * Constructor instantiating an \f$\mathfrak{cn}\f$ object from either a
-    * \f$n \times 1\f$ imaginary vector.
-    *
-    * @param[in] other The object to instantiate from as an imaginary vector.
-    */
-
-    return cn::from_complex_vector(Eigen::VectorXcd{std::move(other)});
-}
-
-Eigen::VectorXcd cn::to_complex_vector() const
-{
-    /*
-     * Returns complex vector.
-     */
-    
-    return this->data;
-}
-
-Eigen::MatrixXcd cn::project(const Eigen::MatrixXcd& other)
-{
-    /*! \f{equation*}{ (\mathbb{C}^{n \times n}) \rightarrow \mathbb{C}^{n \times n} \in \mathfrak{cn} \f}
-    *
-    * Projects a matrix suitable for data.
-    */
-
-    const size_t shape = std::min(other.rows(), other.cols());
-
-    Eigen::MatrixXcd out = Eigen::MatrixXcd::Zero(shape, shape);
-
-    for (size_t ii = 0; ii < shape - 1; ii++)
-    {
-        out(ii, shape-1) = other(ii, shape-1);
-    }
-
-    return out;
-}
-
-std::ostream& operator<<(std::ostream& os, const cn& other)
-{
-    /*!
-    * Overloads the "<<" stream insertion operator.
-    */
-    
-    os << static_cast<const Eigen::VectorXcd>(other.data);
-    return os;
 }
 
 }

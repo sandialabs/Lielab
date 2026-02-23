@@ -1,9 +1,11 @@
 #ifndef LIELAB_DOMAIN_LIEALGEBRAS_COMPOSITEALGEBRA_HPP
 #define LIELAB_DOMAIN_LIEALGEBRAS_COMPOSITEALGEBRA_HPP
 
+#include "../VirtualManifolds.hpp"
+
 #include "cn.hpp"
-#include "glr.hpp"
 #include "glc.hpp"
+#include "glr.hpp"
 #include "rn.hpp"
 #include "se.hpp"
 #include "so.hpp"
@@ -16,71 +18,113 @@
 #include <Eigen/Dense>
 
 #include <array>
-#include <cassert>
 #include <cmath>
 #include <complex>
 #include <exception>
 #include <stdexcept>
 #include <iostream>
+#include <memory>
 #include <variant>
 
 namespace Lielab::domain
 {
 
-class CompositeAlgebra : public LieAlgebra<std::complex<double>>
+typedef std::variant<cn, glc, glr, rn, se, so, sp, su> CompositeAlgebraTYPES;
+
+class CompositeAlgebra : public VirtualLieAlgebra<std::complex<double>>, virtual public VirtualComposite<CompositeAlgebraTYPES>
 {
     public:
+    // Manifold typing
+    using point_t = std::vector<CompositeAlgebraTYPES>;
 
-    // Storage and typing
+    // CompositeAlgebra typing
+    using TYPES = CompositeAlgebraTYPES;
     static constexpr size_t INDEX_cn  = 0;
-    static constexpr size_t INDEX_glr = 1;
-    static constexpr size_t INDEX_glc = 2;
+    static constexpr size_t INDEX_glc = 1;
+    static constexpr size_t INDEX_glr = 2;
     static constexpr size_t INDEX_rn  = 3;
     static constexpr size_t INDEX_se  = 4;
     static constexpr size_t INDEX_so  = 5;
     static constexpr size_t INDEX_sp  = 6;
     static constexpr size_t INDEX_su  = 7;
 
-    typedef std::variant<cn,
-                         glr,
-                         glc,
-                         rn,
-                         se,
-                         so,
-                         sp,
-                         su> TYPES;
+    struct dataproxy
+    {
+        TYPES& var;
 
-    std::vector<TYPES> space;
+        template <class T>
+        operator T() const
+        {
+            return std::get<T>(var);
+        }
 
-    // Lie Algebra class information
-    std::string to_string() const override;
+        template <class T>
+        dataproxy& operator=(const T& other)
+        {
+            var = other;
+            return *this;
+        }
+    };
+    
+    // Manifold storage
+    point_t point;
 
-    // Constructors and destructors
+    // Manifold constructors
     CompositeAlgebra();
-    CompositeAlgebra(const size_t n);
-    static CompositeAlgebra basis(const ptrdiff_t i, const size_t n);
-    static CompositeAlgebra from_shape(const size_t shape);
+
+    // Lie algebra constructors
+    CompositeAlgebra(const matrix_t& other);
+    static CompositeAlgebra basis(const int index, const int shape);
+    static CompositeAlgebra zero(const int shape);
+    // from_vector() TODO:
+    // from_vector() TODO:
+    static CompositeAlgebra project(const matrix_t& matrix);
+
+    // CompositeAlgebra constructors
+    CompositeAlgebra(const int n);
     CompositeAlgebra(std::initializer_list<TYPES> others);
     CompositeAlgebra(const std::vector<TYPES>& others);
 
-    // Object information
-    size_t get_dimension() const override;
-    std::vector<size_t> get_dimensions() const;
-    size_t get_shape() const override;
-    std::vector<size_t> get_shapes() const;
+    // Manifold information
+    std::string to_string() const override;
+    int get_dimension() const override;
+    int get_size() const override;
 
-    // Object IO and data manipulation
-    CompositeAlgebra::matrix_t get_matrix() const override;
-    // TODO: std::vector<Eigen::MatrixBase> get_matrices() (plural)
+    // Lie algebra information
+    bool is_abelian() const override;
+    int get_shape() const override;
+
+    // Composite information
+    std::vector<TYPES>::iterator begin() override;
+    std::vector<TYPES>::iterator end() override;
+    std::vector<TYPES>::const_iterator begin() const override;
+    std::vector<TYPES>::const_iterator end() const override;
+
+    // CompositeAlgebra information
+    std::vector<int> get_dimensions() const;
+    std::vector<int> get_sizes() const;
+    std::vector<int> get_shapes() const;
+    
+    // Manifold IO
+    point_t get_point() const;
+    Eigen::VectorXd serialize() const override;
+    void unserialize(const Eigen::VectorXd& serialized) override;
+    void unserialize(std::initializer_list<double> serialized) override;
+
+    // Lie algebra IO
+    matrix_t get_matrix() const;
     Eigen::VectorXd get_vector() const override;
-    std::vector<Eigen::VectorXd> get_vectors() const;
     void set_vector(const Eigen::VectorXd& vec) override;
-    void set_vector(std::initializer_list<double> vec);
-    // TODO: set_vectors() (plural)
+    void set_vector(std::initializer_list<double> vec) override;
+    double operator()(const int index) const;
+    field_t operator()(const int index1, const int index2) const;
 
-    double operator()(const ptrdiff_t index) const;
-    std::complex<double> operator()(const ptrdiff_t index1, const ptrdiff_t index2) const;
-    TYPES operator[](const ptrdiff_t index) const;
+    // CompositeAlgebra IO
+    // TODO: std::vector<Eigen::MatrixBase> get_matrices() (plural)
+    std::vector<Eigen::VectorXd> get_vectors() const;
+    // TODO: set_vectors() (plural)
+    const dataproxy operator[](const int index) const;
+    dataproxy operator[](const int index);
 
     // Lie Algebra math ops
     CompositeAlgebra operator+(const CompositeAlgebra& other) const;
@@ -93,25 +137,7 @@ class CompositeAlgebra : public LieAlgebra<std::complex<double>>
     CompositeAlgebra& operator*=(const double other);
     CompositeAlgebra operator/(const double other) const;
     CompositeAlgebra& operator/=(const double other);
-
-    friend std::ostream& operator<<(std::ostream& os, const CompositeAlgebra& other);
 };
-
-// inline std::ostream& operator<<(std::ostream& os, const CompositeAlgebra& other)
-// {
-//     /*!
-//     * Overloads the "<<" stream insertion operator.
-//     */
-//     // TODO: Get rid of inline
-//     os << other.to_string();
-//     return os;
-// }
-
-// inline CompositeAlgebra operator*(const double other, const CompositeAlgebra& rhs)
-// {
-//     // TODO: Get rid of inline
-//     return rhs*other;
-// }
 
 }
 

@@ -1,25 +1,12 @@
 #include "so.hpp"
 
-#include "LieAlgebra.hpp"
-
-#include "Lielab/utils/Error.hpp"
+#include "Lielab/testing.hpp"
 
 #include <Eigen/Core>
 #include <unsupported/Eigen/MatrixFunctions>
 
-#include <cassert>
-
 namespace Lielab::domain
 {
-
-std::string so::to_string() const
-{
-    return "so(" + std::to_string(this->_shape) + ")";
-}
-
-/*!
-* The special orthonormal (so) algebra class.
-*/
 
 so::so() : so(0)
 {
@@ -33,49 +20,45 @@ so::so() : so(0)
 
 }
 
-so::so(const size_t n)
+// so::~so();
+
+so::so(const so::matrix_t& matrix)
 {
-    /*! \f{equation*}{(\mathbb{Z}) \rightarrow \mathfrak{so} \f}
+    /*! \f{eqnarray*}{(\mathbb{R}^{n \times n}) &\rightarrow& \mathfrak{so} \\ (\mathbb{R}^{n \times 1}) &\rightarrow& \mathfrak{so} \f}
     *
-    * Constructor instantiating an \f$\mathfrak{so}\f$ object.
-    * 
-    * Enables instantiation like:
-    * 
-    *     Lielab::domain::so x(3), y(4), z(5);
-    * 
-    * @param[in] shape The shape of the data matrix.
+    * Constructor instantiating an \f$\mathfrak{so}\f$ object from either an
+    * \f$n \times n\f$ real matrix or \f$n \times 1\f$ real vector.
     */
+
+    lielab_assert(matrix.rows() == matrix.cols(), "Input matrix must be square.");
     
-    this->_shape = n;
-    this->data = Eigen::MatrixXd::Zero(n, n);
+    this->point.noalias() = matrix;
 }
 
-so so::basis(const ptrdiff_t i, const size_t n)
+so so::basis(const int index, const int shape)
 {
     /*! \f{equation*}{ (\mathbb{Z}, \mathbb{Z}) \rightarrow \mathfrak{so} \f}
     *
     * Returns the i'th basis element of the so algebra.
     * 
-    * @param[in] i The basis vector.
-    * @param[in] n The size of the algebra.
+    * @param[in] index The basis vector.
+    * @param[in] shape The size of the algebra.
     * @param[out] out The so element.
     */
 
-    so out(n);
-    if (i < 0) return out;
+    so out(shape);
+    if (index < 0) return out;
 
-    const size_t ind = static_cast<size_t>(i);
-
-    const size_t dim = out.get_dimension();
-    if (ind >= dim) return out;
+    const int dim = out.get_dimension();
+    if (index >= dim) return out;
 
     Eigen::VectorXd v = Eigen::VectorXd::Zero(dim);
-    v(ind) = 1.0;
+    v(index) = 1.0;
     out.set_vector(v);
     return out;
 }
 
-so so::from_shape(const size_t shape)
+so so::zero(const int shape)
 {
     /*! \f{equation*}{ (\mathbb{Z}) \rightarrow \mathfrak{so} \f}
     *
@@ -88,75 +71,120 @@ so so::from_shape(const size_t shape)
     return so(shape);
 }
 
-size_t so::get_dimension() const
+so so::from_vector(const Eigen::VectorXd& other)
+{
+    /*! \f{equation}{(\mathbb{R}^{n \times 1}) \rightarrow \mathfrak{so} \f}
+    *
+    * Constructor instantiating an \f$\mathfrak{so}\f$ object from either a
+    * \f$n \times 1\f$ real vector.
+    *
+    * @param[in] other The object to instantiate from as a real vector.
+    */
+
+    const int len = static_cast<int>(other.size());
+    const int shape = static_cast<int>(std::ceil(std::sqrt(2.0*len + 0.25) + 0.5));
+
+    so out = so::zero(shape);
+    out.set_vector(other);
+    return out;
+}
+
+so so::from_vector(std::initializer_list<double> other)
+{
+    /*! \f{equation}{(\mathbb{R}^{n \times 1}) \rightarrow \mathfrak{so} \f}
+    *
+    * Constructor instantiating an \f$\mathfrak{so}\f$ object from either a
+    * \f$n \times 1\f$ real vector.
+    *
+    * @param[in] other The object to instantiate from as a real vector.
+    */
+
+    return so::from_vector(Eigen::VectorXd{std::move(other)});
+}
+
+so so::project(const so::matrix_t& matrix)
+{
+    /*! \f{equation*}{ (\mathbb{R}^{n \times n}) \rightarrow \mathbb{R}^{n \times n} \in \mathfrak{so} \f}
+    *
+    * Projects a matrix suitable for data.
+    */
+    
+    const size_t shape = std::min(matrix.rows(), matrix.cols());
+
+    const Eigen::MatrixXd matrix_sq = matrix(Eigen::seqN(0, shape), Eigen::seqN(0, shape));
+
+    return so((matrix_sq - matrix_sq.transpose())/2.0);
+}
+
+so::so(const int n)
+{
+    /*! \f{equation*}{(\mathbb{Z}) \rightarrow \mathfrak{so} \f}
+    *
+    * Constructor instantiating an \f$\mathfrak{so}\f$ object.
+    * 
+    * Enables instantiation like:
+    * 
+    *     Lielab::domain::so x(3), y(4), z(5);
+    * 
+    * @param[in] shape The shape of the data matrix.
+    */
+    
+    this->point.noalias() = Eigen::MatrixXd::Zero(n, n);
+}
+
+std::string so::to_string() const
+{
+    return "so(" + std::to_string(this->get_shape()) + ")";
+}
+
+int so::get_dimension() const
 {
     /*! \f{equation*}{ () \rightarrow \mathbb{Z} \f}
     * 
     * Gets the dimension of the algebra.
     */
 
-    if (this->_shape == 0) return 0; // TODO: Return nan?
+    if (this->get_shape() == 0) return 0; // TODO: Return nan?
 
-    return this->_shape * (this->_shape - 1) / 2;
+    return this->get_shape() * (this->get_shape() - 1) / 2;
 }
 
-Eigen::VectorXd so::get_vector() const
+int so::get_size() const
 {
-    /*! \f{equation*}{ () \rightarrow \mathbb{R}^{n \times 1} \f}
-    * 
-    * Returns the vector representation.
-    */
-
-    const size_t dim = this->get_dimension();
-    Eigen::VectorXd out = Eigen::VectorXd::Zero(dim);
-    if (this->_shape == 0) return out;
-
-    int k = 0;
-
-    for (size_t ii = this->_shape - 1; ii > 0; ii--)
-    {
-        for (size_t jj = this->_shape; jj > ii; jj--)
-        {
-            out(k) = this->data(ii-1, jj-1)/std::pow(-1.0, ii+jj);
-            k++;
-        }
-    }
-
-    return out;
+    return this->get_dimension();
 }
 
-void so::set_vector(const Eigen::VectorXd& vector)
+bool so::is_abelian() const
 {
-    /*! \f{equation*}{ \mathfrak{so} := \mathbb{R}^{n \times 1} \f}
-    * 
-    * @param[in] vector An Eigen::VectorXd to assign.
-    */
-
-    const size_t vdim = vector.size();
-    const size_t max_ind = std::min(this->get_dimension(), vdim);
-    size_t k = 0;
-    if (k >= max_ind) return;
-
-    for (size_t ii = this->_shape - 1; ii > 0; ii--)
-    {
-        for (size_t jj = this->_shape; jj > ii; jj--)
-        {
-            this->data(ii-1, jj-1) =  std::pow(-1, (ii+jj))*vector(k);
-            this->data(jj-1, ii-1) = -std::pow(-1, (ii+jj))*vector(k);
-            k++;
-            if (k >= max_ind) return;
-        }
-    }
+    return false;
 }
 
-void so::set_vector(std::initializer_list<double> vector)
+int so::get_shape() const
+{
+    return static_cast<int>(this->point.rows());
+}
+
+so::point_t so::get_point() const
 {
     /*!
-    *
-    * @param[in] vector
     */
-   
-    this->set_vector(Eigen::VectorXd{std::move(vector)});
+
+    return this->point;
+}
+
+Eigen::VectorXd so::serialize() const
+{
+    return this->get_vector();
+}
+
+void so::unserialize(const Eigen::VectorXd& serialized)
+{
+    this->set_vector(serialized);
+}
+
+void so::unserialize(std::initializer_list<double> serialized)
+{
+    this->unserialize(Eigen::VectorXd{std::move(serialized)});
 }
 
 so::matrix_t so::get_matrix() const
@@ -175,10 +203,69 @@ so::matrix_t so::get_matrix() const
     *               Matematicheskikh Nauk 2.6 (1947): 159-173.
     */
     
-    return this->data;
+    return this->point;
 }
 
-double so::operator()(const ptrdiff_t index) const
+Eigen::VectorXd so::get_vector() const
+{
+    /*! \f{equation*}{ () \rightarrow \mathbb{R}^{n \times 1} \f}
+    * 
+    * Returns the vector representation.
+    */
+
+    const size_t dim = this->get_dimension();
+    Eigen::VectorXd out = Eigen::VectorXd::Zero(dim);
+    if (this->get_shape() == 0) return out;
+
+    int k = 0;
+
+    for (size_t ii = this->get_shape() - 1; ii > 0; ii--)
+    {
+        for (size_t jj = this->get_shape(); jj > ii; jj--)
+        {
+            out(k) = this->point(ii-1, jj-1)/std::pow(-1.0, ii+jj);
+            k++;
+        }
+    }
+
+    return out;
+}
+
+void so::set_vector(const Eigen::VectorXd& vector)
+{
+    /*! \f{equation*}{ \mathfrak{so} := \mathbb{R}^{n \times 1} \f}
+    * 
+    * @param[in] vector An Eigen::VectorXd to assign.
+    */
+
+    const int vdim = static_cast<int>(vector.size());
+    const int max_ind = std::min(this->get_dimension(), vdim);
+    int k = 0;
+    if (k >= max_ind) return;
+
+    for (int ii = this->get_shape() - 1; ii > 0; ii--)
+    {
+        for (int jj = this->get_shape(); jj > ii; jj--)
+        {
+            this->point(ii-1, jj-1) =  std::pow(-1, (ii+jj))*vector(k);
+            this->point(jj-1, ii-1) = -std::pow(-1, (ii+jj))*vector(k);
+            k++;
+            if (k >= max_ind) return;
+        }
+    }
+}
+
+void so::set_vector(std::initializer_list<double> vector)
+{
+    /*!
+    *
+    * @param[in] vector
+    */
+   
+    this->set_vector(Eigen::VectorXd{std::move(vector)});
+}
+
+double so::operator()(const int index) const
 {
     /*! \f{equation*}{ (\mathbb{Z}) \rightarrow \mathbb{R} \f}
     *
@@ -186,26 +273,20 @@ double so::operator()(const ptrdiff_t index) const
     */
 
     const double nan = std::numeric_limits<double>::quiet_NaN();
-    const size_t dim = this->get_dimension();
+    const int dim = this->get_dimension();
 
-    if (index >= static_cast<ptrdiff_t>(dim)) return nan;
-    if (std::abs(index) > static_cast<ptrdiff_t>(dim)) return nan;
+    // If input index is negative, index from the back of the array
+    const int _index = (index < 0) ? dim + index : index;
 
-    size_t _index;
-    if (index < 0)
-    {
-        _index = static_cast<size_t>(static_cast<ptrdiff_t>(dim) + index);
-    }
-    else
-    {
-        _index = static_cast<size_t>(index);
-    }
+    // Error check for out of bounds
+    if (_index < 0) return nan;
+    if (_index >= dim) return nan;
 
     const Eigen::VectorXd vector = this->get_vector();
     return vector(_index);
 }
 
-double so::operator()(const ptrdiff_t index1, const ptrdiff_t index2) const
+so::field_t so::operator()(const int index1, const int index2) const
 {
     /*! \f{equation*}{ (\mathbb{Z}, \mathbb{Z}) \rightarrow \mathbb{R} \f}
     *
@@ -213,35 +294,20 @@ double so::operator()(const ptrdiff_t index1, const ptrdiff_t index2) const
     */
 
     const double nan = std::numeric_limits<double>::quiet_NaN();
-    const size_t shape = this->get_shape();
+    const int shape = this->get_shape();
     if (shape == 0) return nan;
 
-    if (index1 >= static_cast<ptrdiff_t>(shape)) return nan;
-    if (index2 >= static_cast<ptrdiff_t>(shape)) return nan;
-    if (std::abs(index1) > static_cast<ptrdiff_t>(shape)) return nan;
-    if (std::abs(index2) > static_cast<ptrdiff_t>(shape)) return nan;
+    // If input index is negative, index from the back of the array
+    const int _index1 = (index1 < 0) ? shape + index1 : index1;
+    const int _index2 = (index2 < 0) ? shape + index2 : index2;
 
-    size_t _index1;
-    if (index1 < 0)
-    {
-        _index1 = static_cast<size_t>(static_cast<ptrdiff_t>(shape) + index1);
-    }
-    else
-    {
-        _index1 = static_cast<size_t>(index1);
-    }
+    // Error check for out of bounds
+    if (_index1 < 0) return nan;
+    if (_index1 >= shape) return nan;
+    if (_index2 < 0) return nan;
+    if (_index2 >= shape) return nan;
 
-    size_t _index2;
-    if (index2 < 0)
-    {
-        _index2 = static_cast<size_t>(static_cast<ptrdiff_t>(shape) + index2);
-    }
-    else
-    {
-        _index2 = static_cast<size_t>(index2);
-    }
-
-    return this->data(_index1, _index2);
+    return this->point(_index1, _index2);
 }
 
 so so::operator+(const so& other) const
@@ -251,13 +317,8 @@ so so::operator+(const so& other) const
     * Addition of two vectors in the algebra.
     */
 
-    const size_t new_shape = std::min(this->_shape, other.get_shape());
-    const Eigen::ArithmeticSequence slice = Eigen::seqN(0, new_shape);
-    const Eigen::MatrixXd lhs_matrix = this->get_matrix();
-    const Eigen::MatrixXd rhs_matrix = other.get_matrix();
-    const Eigen::MatrixXd new_matrix = lhs_matrix(slice, slice) + rhs_matrix(slice, slice);
-
-    return so(new_matrix);
+    lielab_assert(this->get_shape() == other.get_shape(), "Shapes must be equal.");
+    return so(this->point + other.point);
 }
 
 so& so::operator+=(const so& other)
@@ -267,8 +328,8 @@ so& so::operator+=(const so& other)
     * In place addition of two vectors in the algebra.
     */
 
-    assert(this->_shape == other.get_shape());
-    this->data += other.data;
+    lielab_assert(this->get_shape() == other.get_shape(), "Shapes must be equal.");
+    this->point += other.point;
     return *this;
 }
 
@@ -279,13 +340,8 @@ so so::operator-(const so& other) const
     * Subtraction of two vectors in the algebra.
     */
 
-    const size_t new_shape = std::min(this->_shape, other.get_shape());
-    const Eigen::ArithmeticSequence slice = Eigen::seqN(0, new_shape);
-    const Eigen::MatrixXd lhs_matrix = this->get_matrix();
-    const Eigen::MatrixXd rhs_matrix = other.get_matrix();
-    const Eigen::MatrixXd new_matrix = lhs_matrix(slice, slice) - rhs_matrix(slice, slice);
-
-    return so(new_matrix);
+    lielab_assert(this->get_shape() == other.get_shape(), "Shapes must be equal.");
+    return so(this->point - other.point);
 }
 
 so& so::operator-=(const so& other)
@@ -295,8 +351,8 @@ so& so::operator-=(const so& other)
     * In place subtraction of two vectors in the algebra.
     */
 
-    assert(this->_shape == other.get_shape());
-    this->data -= other.data;
+    lielab_assert(this->get_shape() == other.get_shape(), "Shapes must be equal.");
+    this->point -= other.point;
     return *this;
 }
 
@@ -307,7 +363,7 @@ so so::operator-() const
     * Unary negative of the vector.
     */
     
-    return -this->data;
+    return so(-this->point);
 }
 
 so so::operator*(const double other) const
@@ -317,8 +373,7 @@ so so::operator*(const double other) const
     * Scalar product.
     */
 
-    so out = this->data * other;
-    return out;
+    return Eigen::MatrixXd(this->point * other);
 }
 
 so operator*(const double other, const so& rhs)
@@ -338,7 +393,7 @@ so& so::operator*=(const double other)
     * In place scalar multiplication.
     */
 
-    this->data *= other;
+    this->point *= other;
     return *this;
 }
 
@@ -349,7 +404,7 @@ so so::operator/(const double other) const
     * Scalar division.
     */
 
-    Eigen::MatrixXd out = this->data / other;
+    Eigen::MatrixXd out = this->point / other;
     return out;
 }
 
@@ -360,62 +415,8 @@ so& so::operator/=(const double other)
     * In place scalar division.
     */
 
-    this->data /= other;
+    this->point /= other;
     return *this;
-}
-
-so so::from_vector(const Eigen::VectorXd& other)
-{
-    /*! \f{equation}{(\mathbb{R}^{n \times 1}) \rightarrow \mathfrak{so} \f}
-    *
-    * Constructor instantiating an \f$\mathfrak{so}\f$ object from either a
-    * \f$n \times 1\f$ real vector.
-    *
-    * @param[in] other The object to instantiate from as a real vector.
-    */
-
-    const size_t len = other.size();
-    const size_t shape = static_cast<size_t>(std::ceil(std::sqrt(2.0*len + 0.25) + 0.5));
-
-    so out = so::from_shape(shape);
-    out.set_vector(other);
-    return out;
-}
-
-so so::from_vector(std::initializer_list<double> other)
-{
-    /*! \f{equation}{(\mathbb{R}^{n \times 1}) \rightarrow \mathfrak{so} \f}
-    *
-    * Constructor instantiating an \f$\mathfrak{so}\f$ object from either a
-    * \f$n \times 1\f$ real vector.
-    *
-    * @param[in] other The object to instantiate from as a real vector.
-    */
-
-    return so::from_vector(Eigen::VectorXd{std::move(other)});
-}
-
-Eigen::MatrixXd so::project(const Eigen::MatrixXd& other)
-{
-    /*! \f{equation*}{ (\mathbb{R}^{n \times n}) \rightarrow \mathbb{R}^{n \times n} \in \mathfrak{so} \f}
-    *
-    * Projects a matrix suitable for data.
-    */
-    
-    const size_t shape = std::min(other.rows(), other.cols());
-    const Eigen::MatrixXd square_mat = other(Eigen::seqN(0, shape), Eigen::seqN(0, shape));
-
-    return (square_mat - square_mat.transpose())/2;
-}
-
-std::ostream& operator<<(std::ostream& os, const so& other)
-{
-    /*!
-    * Overloads the "<<" stream insertion operator.
-    */
-    
-    os << static_cast<const Eigen::MatrixXd>(other.data);
-    return os;
 }
 
 }

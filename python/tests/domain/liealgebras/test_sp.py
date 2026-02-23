@@ -6,8 +6,6 @@ def test_sp_to_string():
 
     x0 = sp(0)
     assert (x0.to_string() == "sp(0, R)")
-    x1 = sp(1)
-    assert (x1.to_string() == "sp(0, R)")
     x2 = sp(2)
     assert (x2.to_string() == "sp(2, R)")
     x10 = sp(10)
@@ -21,10 +19,10 @@ def test_sp_main_initializer():
 
     x0 = sp(0)
     assert (x0.get_dimension() == 0)
-    x1 = sp(1)
-    assert (x1.get_dimension() == 0)
-    x3 = sp(3)
-    assert (x3.get_dimension() == 3)
+    with pytest.raises(RuntimeError):
+        sp(1)
+    x3 = sp(4)
+    assert (x3.get_dimension() == 10)
 
 def test_sp_matrix_initializer():
     from lielab.domain import sp
@@ -101,22 +99,19 @@ def test_sp_basis_initializer():
     assert (x04bar[8] == 0.0)
     assert (x04bar[9] == 0.0)
 
-def test_sp_from_shape_initializer():
+def test_sp_zero_initializer():
     from lielab.domain import sp
 
-    x0 = sp.from_shape(0)
+    x0 = sp.zero(0)
     assert (x0.get_dimension() == 0)
     x0hat = x0.get_matrix()
     assert (x0hat.shape[0] == 0)
     assert (x0hat.shape[1] == 0)
 
-    x1 = sp.from_shape(1)
-    assert (x1.get_dimension() == 0)
-    x1hat = x1.get_matrix()
-    assert (x1hat.shape[0] == 0)
-    assert (x1hat.shape[1] == 0)
+    with pytest.raises(RuntimeError):
+        sp.zero(1)
 
-    x2 = sp.from_shape(2)
+    x2 = sp.zero(2)
     assert (x2.get_dimension() == 3)
     x2hat = x2.get_matrix()
     assert (x2hat.shape[0] == 2)
@@ -452,7 +447,7 @@ def test_sp_project():
     from lielab.domain import sp
 
     rand_2_2 = np.random.rand(2, 2)
-    proj_2_2 = sp.project(rand_2_2)
+    proj_2_2 = sp.project(rand_2_2).get_matrix()
 
     assert (proj_2_2.shape[0] == 2)
     assert (proj_2_2.shape[1] == 2)
@@ -461,7 +456,7 @@ def test_sp_project():
     assert (proj_2_2.trace() == 0.0)
 
     rand_2_3 = np.random.rand(2, 3)
-    proj_2_3 = sp.project(rand_2_3)
+    proj_2_3 = sp.project(rand_2_3).get_matrix()
 
     assert (proj_2_3.shape[0] == 2)
     assert (proj_2_3.shape[1] == 2)
@@ -470,7 +465,7 @@ def test_sp_project():
     assert (proj_2_3.trace() == 0.0)
 
     rand_3_2 = np.random.rand(3, 2)
-    proj_3_2 = sp.project(rand_3_2)
+    proj_3_2 = sp.project(rand_3_2).get_matrix()
 
     assert (proj_3_2.shape[0] == 2)
     assert (proj_3_2.shape[1] == 2)
@@ -479,7 +474,7 @@ def test_sp_project():
     assert (proj_3_2.trace() == 0.0)
 
     rand_3_3 = np.random.rand(3, 3)
-    proj_3_3 = sp.project(rand_3_3)
+    proj_3_3 = sp.project(rand_3_3).get_matrix()
 
     assert (proj_3_3.shape[0] == 2)
     assert (proj_3_3.shape[1] == 2)

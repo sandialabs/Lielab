@@ -86,22 +86,22 @@ def test_so_basis_initializer():
     assert (x02bar[1] == 0.0)
     assert (x02bar[2] == 0.0)
 
-def test_so_from_shape_initializer():
+def test_so_zero_initializer():
     from lielab.domain import so
 
-    x0 = so.from_shape(0)
+    x0 = so.zero(0)
     assert (x0.get_dimension() == 0)
     x0hat = x0.get_matrix()
     assert (x0hat.shape[0] == 0)
     assert (x0hat.shape[1] == 0)
 
-    x1 = so.from_shape(1)
+    x1 = so.zero(1)
     assert (x1.get_dimension() == 0)
     x1hat = x1.get_matrix()
     assert (x1hat.shape[0] == 1)
     assert (x1hat.shape[1] == 1)
 
-    x2 = so.from_shape(2)
+    x2 = so.zero(2)
     assert (x2.get_dimension() == 1)
     x2hat = x2.get_matrix()
     assert (x2hat.shape[0] == 2)
@@ -496,7 +496,7 @@ def test_so_project():
     from lielab.domain import so
 
     rand_2_2 = np.random.rand(2, 2)
-    proj_2_2 = so.project(rand_2_2)
+    proj_2_2 = so.project(rand_2_2).get_matrix()
 
     assert (proj_2_2.shape[0] == 2)
     assert (proj_2_2.shape[1] == 2)
@@ -506,7 +506,7 @@ def test_so_project():
     assert (proj_2_2[1, 1] == 0.0)
 
     rand_3_3 = np.random.rand(3, 3)
-    proj_3_3 = so.project(rand_3_3)
+    proj_3_3 = so.project(rand_3_3).get_matrix()
 
     assert (proj_3_3.shape[0] == 3)
     assert (proj_3_3.shape[1] == 3)
@@ -521,7 +521,7 @@ def test_so_project():
     assert (proj_3_3[2, 2] == 0.0)
 
     rand_2_3 = np.random.rand(2, 3)
-    proj_2_3 = so.project(rand_2_3)
+    proj_2_3 = so.project(rand_2_3).get_matrix()
 
     assert (proj_2_3.shape[0] == 2)
     assert (proj_2_3.shape[1] == 2)
@@ -531,7 +531,7 @@ def test_so_project():
     assert (proj_2_3[1, 1] == 0.0)
 
     rand_3_2 = np.random.rand(3, 2)
-    proj_3_2 = so.project(rand_3_2)
+    proj_3_2 = so.project(rand_3_2).get_matrix()
 
     assert (proj_3_2.shape[0] == 2)
     assert (proj_3_2.shape[1] == 2)
@@ -549,11 +549,12 @@ def test_so2():
 
     from lielab.domain import so
     from lielab.functions import commutator
+    from lielab.testing import check_almost_equal_nulp
 
     x = so.basis(0,2)
     zero = x*0
 
-    assert_domain(commutator(x, x), zero)
+    assert check_almost_equal_nulp(commutator(x, x).get_matrix(), zero.get_matrix(), 1, True)
 
 def test_so3():
     """
@@ -562,15 +563,16 @@ def test_so3():
 
     from lielab.domain import so
     from lielab.functions import commutator
+    from lielab.testing import check_almost_equal_nulp
 
     x = so.basis(0,3)
     y = so.basis(1,3)
     z = so.basis(2,3)
     zero = x*0
 
-    assert_domain(commutator(x, y), z)
-    assert_domain(commutator(y, z), x)
-    assert_domain(commutator(z, x), y)
-    assert_domain(commutator(y, x), -z)
-    assert_domain(commutator(z, y), -x)
-    assert_domain(commutator(x, z), -y)
+    assert check_almost_equal_nulp(commutator(x, y).get_matrix(), (z).get_matrix(), 1, True)
+    assert check_almost_equal_nulp(commutator(y, z).get_matrix(), (x).get_matrix(), 1, True)
+    assert check_almost_equal_nulp(commutator(z, x).get_matrix(), (y).get_matrix(), 1, True)
+    assert check_almost_equal_nulp(commutator(y, x).get_matrix(), (-z).get_matrix(), 1, True)
+    assert check_almost_equal_nulp(commutator(z, y).get_matrix(), (-x).get_matrix(), 1, True)
+    assert check_almost_equal_nulp(commutator(x, z).get_matrix(), (-y).get_matrix(), 1, True)

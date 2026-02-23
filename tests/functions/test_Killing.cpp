@@ -30,13 +30,15 @@ TEST_CASE("Killingform", "[functions]")
     * Tests the killing form function.
     */
 
+    using Lielab::testing::check_almost_equal_tol;
+
     const Lielab::domain::so rx = Lielab::domain::so::from_vector({1.0, 0.0, 0.0});
 
     Eigen::MatrixXd K = Lielab::functions::Killingform(rx);
     Eigen::MatrixXd Id = Eigen::MatrixXd::Identity(rx.get_dimension(), rx.get_dimension());
 
     CHECK(std::abs(K.trace() + 6) <= TOL_FINE);
-    assert_matrix(K*K.inverse(), Id);
+    CHECK(check_almost_equal_tol(K*K.inverse(), Id));
 
     Lielab::domain::so so6 = Lielab::domain::so::basis(0,6);
 
@@ -44,5 +46,5 @@ TEST_CASE("Killingform", "[functions]")
     Id = Eigen::MatrixXd::Identity(so6.get_dimension(), so6.get_dimension());
 
     CHECK(std::abs(K.trace() + 120) <= TOL_FINE);
-    assert_matrix(K*K.inverse(), Id);
+    CHECK(check_almost_equal_tol(K*K.inverse(), Id));
 }

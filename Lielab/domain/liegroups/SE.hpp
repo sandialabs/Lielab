@@ -1,58 +1,67 @@
 #ifndef LIELAB_DOMAIN_SE_HPP
 #define LIELAB_DOMAIN_SE_HPP
 
-#include "LieGroup.hpp"
-#include "GLR.hpp"
+#include "../VirtualManifolds.hpp"
+#include "RN.hpp"
+#include "SO.hpp"
 
 #include <Eigen/Core>
 #include <unsupported/Eigen/MatrixFunctions>
 
+#include "tuple"
+
 namespace Lielab::domain
 {
-class SE : public GLR
+class SE : public VirtualLieGroup<double>
 {
-    /*!
-    * The SE class.
-    */
     public:
-    static constexpr bool abelian = false;
+    // Manifold typing
+    using point_t = std::tuple<RN, SO>;
 
-    std::string to_string() const override;
+    // Manifold storage
+    point_t point;
 
+    // SE storage
+    int _shape = 0;
+
+    // Manifold constructors
     SE();
-    SE(const size_t shape);
-    static SE from_shape(const size_t shape);
+    // ~SE();
 
-    template<typename OtherDerived>
-    SE(const Eigen::MatrixBase<OtherDerived>& other);
+    // Lie group constructors
+    SE(const matrix_t& matrix);
+    static SE identity(const int shape);
+    static SE project(const matrix_t& matrix);
 
-    template<typename OtherDerived>
-    SE& operator=(const Eigen::MatrixBase<OtherDerived>& other);
+    // SE constructors
+    SE(const int shape);
+    SE(const RN& RN_c, const SO& SO_c);
 
-    size_t get_dimension() const override;
-    size_t get_shape() const override;
-    size_t get_size() const override;
-
-    SE::matrix_t get_matrix() const;
-
-    SE inverse() const;
-
+    // Manifold information
+    std::string to_string() const override;
+    int get_dimension() const override;
+    int get_size() const override;
+    
+    // Lie group information
+    bool is_abelian() const override;
+    int get_shape() const override;
+    
+    // Manifold IO
+    point_t get_point() const;
     Eigen::VectorXd serialize() const override;
+    void unserialize(const Eigen::VectorXd& serialized) override;
+    void unserialize(std::initializer_list<double> serialized) override;
 
-    void unserialize(const Eigen::VectorXd& vec) override;
-    void unserialize(std::initializer_list<double> vec);
+    // Lie group IO
+    matrix_t get_matrix() const;
+    field_t operator()(const int index1, const int index2) const;
 
-    double operator()(const ptrdiff_t index1, const ptrdiff_t index2) const;
-
+    // Lie group math
     SE operator*(const SE& other) const;
-
     SE& operator*=(const SE& other);
-
-    friend std::ostream& operator<<(std::ostream& os, const SE& other);
+    SE inverse() const;
 };
 
 }
-
-#include "SE.tpp"
 
 #endif

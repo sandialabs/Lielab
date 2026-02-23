@@ -1,62 +1,59 @@
 #ifndef LIELAB_DOMAIN_SP_HPP
 #define LIELAB_DOMAIN_SP_HPP
 
-#include "LieGroup.hpp"
-#include "GLR.hpp"
+#include "../VirtualManifolds.hpp"
 
 #include <Eigen/Core>
 #include <unsupported/Eigen/MatrixFunctions>
 
 namespace Lielab::domain
 {
-class SP : public GLR
+class SP : public VirtualLieGroup<double>
 {
-    /*!
-    * The SP class.
-    */
     public:
-    static constexpr bool abelian = false;
+    // Manifold typing
+    using point_t = Eigen::MatrixXd;
+    
+    // Manifold storage
+    point_t point;
 
-    std::string to_string() const override;
-
-    // Initialization methods
-
+    // Manifold constructors
     SP();
-    SP(const size_t shape);
-    static SP from_shape(const size_t shape);
+    // ~SP();
 
-    template<typename OtherDerived>
-    SP(const Eigen::MatrixBase<OtherDerived>& other);
-
-    template<typename OtherDerived>
-    SP& operator=(const Eigen::MatrixBase<OtherDerived>& other);
-
+    // Lie group constructors
+    SP(const matrix_t& matrix);
+    static SP identity(const int shape);
     // TODO: project
 
-    size_t get_dimension() const override;
-    size_t get_shape() const override;
-    size_t get_size() const override;
+    // SP constructors
+    SP(const int shape);
 
-    SP::matrix_t get_matrix() const;
+    // Manifold information
+    std::string to_string() const override;
+    int get_dimension() const override;
+    int get_size() const override;
 
-    SP inverse() const;
+    // Lie group informatioin
+    bool is_abelian() const override;
+    int get_shape() const override;
 
+    // Manifold IO
+    point_t get_point() const;
     Eigen::VectorXd serialize() const override;
+    void unserialize(const Eigen::VectorXd& serialized) override;
+    void unserialize(std::initializer_list<double> serialized) override;
 
-    void unserialize(const Eigen::VectorXd& vec) override;
-    void unserialize(std::initializer_list<double> vec);
+    // Lie group IO
+    matrix_t get_matrix() const;
+    field_t operator()(const int index1, const int index2) const;
 
-    double operator()(const ptrdiff_t index1, const ptrdiff_t index2) const;
-
+    // Lie group math
     SP operator*(const SP& other) const;
-
     SP& operator*=(const SP& other);
-
-    friend std::ostream& operator<<(std::ostream& os, const SP& other);
+    SP inverse() const;
 };
 
 }
-
-#include "SP.tpp"
 
 #endif

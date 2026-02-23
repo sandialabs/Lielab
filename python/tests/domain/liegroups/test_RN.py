@@ -4,7 +4,7 @@ import pytest
 def test_RN_to_string():
     from lielab.domain import RN
 
-    xzero = RN.from_shape(0)
+    xzero = RN.identity(0)
     assert (xzero.to_string() == "R^nan")
     x0 = RN(0)
     assert (x0.to_string() == "R^0")
@@ -44,22 +44,22 @@ def test_RN_matrix_initializer():
     with pytest.raises(RuntimeError):
         RN(np.random.rand(3, 2))
 
-def test_RN_from_shape_initializer():
+def test_RN_identity_initializer():
     from lielab.domain import RN
 
-    x0 = RN.from_shape(0)
+    x0 = RN.identity(0)
     assert (x0.get_dimension() == 0)
     x0hat = x0.get_matrix()
     assert (x0hat.shape[0] == 0)
     assert (x0hat.shape[1] == 0)
 
-    x1 = RN.from_shape(1)
+    x1 = RN.identity(1)
     assert (x1.get_dimension() == 0)
     x1hat = x1.get_matrix()
     assert (x1hat.shape[0] == 1)
     assert (x1hat.shape[1] == 1)
 
-    x2 = RN.from_shape(2)
+    x2 = RN.identity(2)
     assert (x2.get_dimension() == 1)
     x2hat = x2.get_matrix()
     assert (x2hat.shape[0] == 2)
@@ -68,7 +68,7 @@ def test_RN_from_shape_initializer():
 def test_RN_get_dimension():
     from lielab.domain import RN
 
-    veryzero = RN.from_shape(0)
+    veryzero = RN.identity(0)
     zero = RN(0)
     one = RN(1)
     two = RN(2)
@@ -97,7 +97,7 @@ def test_RN_serialize_unserialize():
 
     from lielab.domain import RN
 
-    xzero = RN.from_shape(0)
+    xzero = RN.identity(0)
     xzero.unserialize([])
     xzerobar = xzero.serialize()
 
@@ -163,7 +163,7 @@ def test_RN_get_matrix():
 
     from lielab.domain import RN
 
-    xzero = RN.from_shape(0)
+    xzero = RN.identity(0)
     xzero.unserialize([])
     xzerohat = xzero.get_matrix()
 
@@ -261,33 +261,11 @@ def test_RN_get_matrix():
 def test_RN_operator_parenthesis():
     from lielab.domain import RN
 
-    xzero = RN.from_shape(0)
+    xzero = RN.identity(0)
     xzero.unserialize([])
-
-    # Out of bounds
-    assert (np.isnan(xzero(-1)))
-    assert (np.isnan(xzero(0)))
-    assert (np.isnan(xzero(1)))
-
-    # Out of bounds
-    assert (np.isnan(xzero(0, -1)))
-    assert (np.isnan(xzero(-1, 0)))
-    assert (np.isnan(xzero(-1, -1)))
-    assert (np.isnan(xzero(0, 0)))
-    assert (np.isnan(xzero(0, 1)))
-    assert (np.isnan(xzero(1, 0)))
-    assert (np.isnan(xzero(1, 1)))
 
     x1 = RN(1)
     x1.unserialize([1.0])
-
-    # In bounds
-    assert (x1(0) == 1.0)
-    assert (x1(-1) == 1.0)
-
-    # Out of bounds
-    assert (np.isnan(x1(-2)))
-    assert (np.isnan(x1(1)))
 
     # In bounds
     assert (x1(0, 0) == 1.0)
@@ -309,16 +287,6 @@ def test_RN_operator_parenthesis():
 
     x2 = RN(2)
     x2.unserialize([1.0, 2.0])
-
-    # In bounds
-    assert (x2(0) == 1.0)
-    assert (x2(1) == 2.0)
-    assert (x2(-1) == 2.0)
-    assert (x2(-2) == 1.0)
-
-    # Out of bounds
-    assert (np.isnan(x2(-3)))
-    assert (np.isnan(x2(2)))
 
     # In bounds
     assert (x2(0, 0) == 1.0)
@@ -347,6 +315,48 @@ def test_RN_operator_parenthesis():
     assert (np.isnan(x2(0, 3)))
     assert (np.isnan(x2(3, 0)))
     assert (np.isnan(x2(3, 3)))
+
+def test_rn_operator_bracket():
+    from lielab.domain import RN
+
+    xzero = RN.identity(0)
+    xzero.unserialize([])
+
+    # Out of bounds
+    with pytest.raises(RuntimeError): xzero[-1]
+    with pytest.raises(RuntimeError): xzero[-1]
+    with pytest.raises(RuntimeError): xzero[0]
+    with pytest.raises(RuntimeError): xzero[0]
+    with pytest.raises(RuntimeError): xzero[1]
+    with pytest.raises(RuntimeError): xzero[1]
+
+    x1 = RN(1)
+    x1.unserialize([1.0])
+
+    # In bounds
+    assert (x1[0] == 1.0)
+    assert (x1[-1] == 1.0)
+
+    # Out of bounds
+    with pytest.raises(RuntimeError): x1[-2]
+    with pytest.raises(RuntimeError): x1[-2]
+    with pytest.raises(RuntimeError): x1[1]
+    with pytest.raises(RuntimeError): x1[1]
+
+    x2 = RN(2)
+    x2.unserialize([1.0, 2.0])
+
+    # In bounds
+    assert (x2[0] == 1.0)
+    assert (x2[1] == 2.0)
+    assert (x2[-1] == 2.0)
+    assert (x2[-2] == 1.0)
+
+    # Out of bounds
+    with pytest.raises(RuntimeError): x2[-3]
+    with pytest.raises(RuntimeError): x2[-3]
+    with pytest.raises(RuntimeError): x2[2]
+    with pytest.raises(RuntimeError): x2[2]
 
 def test_RN_math_ops_RN():
     from lielab.domain import RN
@@ -423,7 +433,7 @@ def test_RN_project():
     from lielab.domain import RN
 
     rand_2_2 = np.random.rand(2, 2)
-    proj_2_2 = RN.project(rand_2_2)
+    proj_2_2 = RN.project(rand_2_2).get_matrix()
 
     assert (proj_2_2.shape[0] == 2)
     assert (proj_2_2.shape[1] == 2)
@@ -433,7 +443,7 @@ def test_RN_project():
     assert (proj_2_2[1, 1] == 1.0)
 
     rand_3_3 = np.random.rand(3, 3)
-    proj_3_3 = RN.project(rand_3_3)
+    proj_3_3 = RN.project(rand_3_3).get_matrix()
 
     assert (proj_3_3.shape[0] == 3)
     assert (proj_3_3.shape[1] == 3)
@@ -448,7 +458,7 @@ def test_RN_project():
     assert (proj_3_3[2, 2] == 1.0)
 
     rand_2_3 = np.random.rand(2, 3)
-    proj_2_3 = RN.project(rand_2_3)
+    proj_2_3 = RN.project(rand_2_3).get_matrix()
 
     assert (proj_2_3.shape[0] == 2)
     assert (proj_2_3.shape[1] == 2)
@@ -458,7 +468,7 @@ def test_RN_project():
     assert (proj_2_3[1, 1] == 1.0)
 
     rand_3_2 = np.random.rand(3, 2)
-    proj_3_2 = RN.project(rand_3_2)
+    proj_3_2 = RN.project(rand_3_2).get_matrix()
 
     assert (proj_3_2.shape[0] == 2)
     assert (proj_3_2.shape[1] == 2)

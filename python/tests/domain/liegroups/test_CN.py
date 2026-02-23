@@ -7,7 +7,7 @@ def complex(a,b):
 def test_CN_to_string():
     from lielab.domain import CN
 
-    xzero = CN.from_shape(0)
+    xzero = CN.identity(0)
     assert (xzero.to_string() == "C^nan")
     x0 = CN(0)
     assert (x0.to_string() == "C^0")
@@ -47,22 +47,22 @@ def test_CN_matrix_initializer():
     with pytest.raises(RuntimeError):
         CN(np.random.rand(3, 2) + 1j*np.random.rand(3, 2))
 
-def test_CN_from_shape_initializer():
+def test_CN_identity_initializer():
     from lielab.domain import CN
 
-    x0 = CN.from_shape(0)
+    x0 = CN.identity(0)
     assert (x0.get_dimension() == 0)
     x0hat = x0.get_matrix()
     assert (x0hat.shape[0] == 0)
     assert (x0hat.shape[1] == 0)
 
-    x1 = CN.from_shape(1)
+    x1 = CN.identity(1)
     assert (x1.get_dimension() == 0)
     x1hat = x1.get_matrix()
     assert (x1hat.shape[0] == 1)
     assert (x1hat.shape[1] == 1)
 
-    x2 = CN.from_shape(2)
+    x2 = CN.identity(2)
     assert (x2.get_dimension() == 2)
     x2hat = x2.get_matrix()
     assert (x2hat.shape[0] == 2)
@@ -71,7 +71,7 @@ def test_CN_from_shape_initializer():
 def test_CN_get_dimension():
     from lielab.domain import CN
 
-    veryzero = CN.from_shape(0)
+    veryzero = CN.identity(0)
     zero = CN(0)
     one = CN(1)
     two = CN(2)
@@ -100,7 +100,7 @@ def test_CN_serialize_unserialize():
 
     from lielab.domain import CN
 
-    xzero = CN.from_shape(0)
+    xzero = CN.identity(0)
     xzero.unserialize([])
     xzerobar = xzero.serialize()
 
@@ -169,7 +169,7 @@ def test_CN_get_matrix():
 
     from lielab.domain import CN
 
-    xzero = CN.from_shape(0)
+    xzero = CN.identity(0)
     xzero.unserialize([])
     xzerohat = xzero.get_matrix()
 
@@ -267,13 +267,8 @@ def test_CN_get_matrix():
 def test_CN_operator_parenthesis():
     from lielab.domain import CN
 
-    xzero = CN.from_shape(0)
+    xzero = CN.identity(0)
     xzero.unserialize([])
-
-    # Out of bounds
-    assert (np.isnan(xzero(-1)))
-    assert (np.isnan(xzero(0)))
-    assert (np.isnan(xzero(1)))
 
     # Out of bounds
     assert (np.isnan(np.real(xzero(0, -1))))
@@ -293,16 +288,6 @@ def test_CN_operator_parenthesis():
 
     x1 = CN(1)
     x1.unserialize([1.0, 2.0])
-
-    # In bounds
-    assert (x1(0) == 1.0)
-    assert (x1(1) == 2.0)
-    assert (x1(-1) == 2.0)
-    assert (x1(-2) == 1.0)
-
-    # Out of bounds
-    assert (np.isnan(x1(-3)))
-    assert (np.isnan(x1(2)))
 
     # In bounds
     assert (x1(0, 0) == complex(1.0, 0.0))
@@ -330,20 +315,6 @@ def test_CN_operator_parenthesis():
 
     x2 = CN(2)
     x2.unserialize([1.0, 2.0, 3.0, 4.0])
-
-    # In bounds
-    assert (x2(0) == 1.0)
-    assert (x2(1) == 2.0)
-    assert (x2(2) == 3.0)
-    assert (x2(3) == 4.0)
-    assert (x2(-1) == 4.0)
-    assert (x2(-2) == 3.0)
-    assert (x2(-3) == 2.0)
-    assert (x2(-4) == 1.0)
-
-    # Out of bounds
-    assert (np.isnan(x2(-5)))
-    assert (np.isnan(x2(4)))
 
     # In bounds
     assert (x2(0, 0) == complex(1.0, 0.0))
@@ -382,16 +353,16 @@ def test_CN_operator_parenthesis():
 def test_CN_operator_bracket():
     from lielab.domain import CN
 
-    xzero = CN.from_shape(0)
+    xzero = CN.identity(0)
     xzero.unserialize([])
 
     # Out of bounds
-    assert (np.isnan(np.real(xzero[-1])))
-    assert (np.isnan(np.imag(xzero[-1])))
-    assert (np.isnan(np.real(xzero[0])))
-    assert (np.isnan(np.imag(xzero[0])))
-    assert (np.isnan(np.real(xzero[1])))
-    assert (np.isnan(np.imag(xzero[1])))
+    with pytest.raises(RuntimeError): xzero[-1]
+    with pytest.raises(RuntimeError): xzero[-1]
+    with pytest.raises(RuntimeError): xzero[0]
+    with pytest.raises(RuntimeError): xzero[0]
+    with pytest.raises(RuntimeError): xzero[1]
+    with pytest.raises(RuntimeError): xzero[1]
 
     x1 = CN(1)
     x1.unserialize([1.0, 2.0])
@@ -401,10 +372,10 @@ def test_CN_operator_bracket():
     assert (x1[-1] == complex(1.0, 2.0))
 
     # Out of bounds
-    assert (np.isnan(np.real(x1[-2])))
-    assert (np.isnan(np.imag(x1[-2])))
-    assert (np.isnan(np.real(x1[1])))
-    assert (np.isnan(np.imag(x1[1])))
+    with pytest.raises(RuntimeError): x1[-2]
+    with pytest.raises(RuntimeError): x1[-2]
+    with pytest.raises(RuntimeError): x1[1]
+    with pytest.raises(RuntimeError): x1[1]
 
     x2 = CN(2)
     x2.unserialize([1.0, 2.0, 3.0, 4.0])
@@ -416,10 +387,10 @@ def test_CN_operator_bracket():
     assert (x2[-2] == complex(1.0, 2.0))
 
     # Out of bounds
-    assert (np.isnan(np.real(x2[-3])))
-    assert (np.isnan(np.imag(x2[-3])))
-    assert (np.isnan(np.real(x2[2])))
-    assert (np.isnan(np.imag(x2[2])))
+    with pytest.raises(RuntimeError): x2[-3]
+    with pytest.raises(RuntimeError): x2[-3]
+    with pytest.raises(RuntimeError): x2[2]
+    with pytest.raises(RuntimeError): x2[2]
 
 def test_CN_math_ops_CN():
     from lielab.domain import CN
@@ -533,7 +504,7 @@ def test_CN_project():
     from lielab.domain import CN
 
     rand_2_2 = np.random.rand(2, 2) + 1j*np.random.rand(2, 2)
-    proj_2_2 = CN.project(rand_2_2)
+    proj_2_2 = CN.project(rand_2_2).get_matrix()
 
     assert (proj_2_2.shape[0] == 2)
     assert (proj_2_2.shape[1] == 2)
@@ -543,7 +514,7 @@ def test_CN_project():
     assert (proj_2_2[1, 1] == complex(1.0, 0.0))
 
     rand_3_3 = np.random.rand(3, 3) + 1j*np.random.rand(3, 3)
-    proj_3_3 = CN.project(rand_3_3)
+    proj_3_3 = CN.project(rand_3_3).get_matrix()
 
     assert (proj_3_3.shape[0] == 3)
     assert (proj_3_3.shape[1] == 3)
@@ -558,7 +529,7 @@ def test_CN_project():
     assert (proj_3_3[2, 2] == complex(1.0, 0.0))
 
     rand_2_3 = np.random.rand(2, 3) + 1j*np.random.rand(2, 3)
-    proj_2_3 = CN.project(rand_2_3)
+    proj_2_3 = CN.project(rand_2_3).get_matrix()
 
     assert (proj_2_3.shape[0] == 2)
     assert (proj_2_3.shape[1] == 2)
@@ -568,7 +539,7 @@ def test_CN_project():
     assert (proj_2_3[1, 1] == complex(1.0, 0.0))
 
     rand_3_2 = np.random.rand(3, 2) + np.random.rand(3, 2)
-    proj_3_2 = CN.project(rand_3_2)
+    proj_3_2 = CN.project(rand_3_2).get_matrix()
 
     assert (proj_3_2.shape[0] == 2)
     assert (proj_3_2.shape[1] == 2)

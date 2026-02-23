@@ -86,9 +86,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python: [{executable: python3.8, tag: cp38},
-                 {executable: python3.9, tag: cp39},
-                 {executable: python3.10, tag: cp310},
+        python: [{executable: python3.10, tag: cp310},
                  {executable: python3.11, tag: cp311},
                  {executable: python3.12, tag: cp312},
                  {executable: python3.13, tag: cp313},
@@ -133,9 +131,7 @@ jobs:
     needs: build-wheels-linux-x86-64
     strategy:
       matrix:
-        python: [{executable: python3.8, tag: cp38},
-                 {executable: python3.9, tag: cp39},
-                 {executable: python3.10, tag: cp310},
+        python: [{executable: python3.10, tag: cp310},
                  {executable: python3.11, tag: cp311},
                  {executable: python3.12, tag: cp312},
                  {executable: python3.13, tag: cp313},

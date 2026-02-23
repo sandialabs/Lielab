@@ -1,22 +1,17 @@
-from lielab.testing import *
-
 def test_Ad():
     """
     Tests the Ad function.
     """
 
-    from lielab.domain import so, SO
+    from lielab.domain import so
     from lielab.functions import exp, Ad
+    from lielab.testing import check_almost_equal_tol
+    import numpy as np
 
-    u = so(3)
-    v = so(3)
-    w = so(3)
-    ansso = so(3)
-    Gso = SO(3)
+    u = so.from_vector([1.0, 0.0, 0.0])
+    v = so.from_vector([0.0, 1.0, 0.0])
+    w = so.from_vector([0.0, 0.0, 1.0])
 
-    u.set_vector([1,0,0])
-    v.set_vector([0,1,0])
-    w.set_vector([0,0,1])
     Gso = exp(v)
 
     # GuG^-1
@@ -25,12 +20,12 @@ def test_Ad():
                         [-0.841470984807897, 0, -0.540302305868140],
                         [0, 0.540302305868140, 0]])
     
-    assert_matrix(ansso.get_matrix(), truthso)
+    assert check_almost_equal_tol(ansso.get_matrix(), truthso)
 
     # GvG^-1 = v when G = exp(v)
     ansso = Ad(Gso, v)
     
-    assert_matrix(ansso.get_matrix(), v.get_matrix())
+    assert check_almost_equal_tol(ansso.get_matrix(), v.get_matrix())
 
     # GwG^-1
     ansso = Ad(Gso, w)
@@ -38,4 +33,4 @@ def test_Ad():
                         [0.540302305868140, 0, -0.841470984807897],
                         [0, 0.841470984807897, 0]])
     
-    assert_matrix(ansso.get_matrix(), truthso)
+    assert check_almost_equal_tol(ansso.get_matrix(), truthso)

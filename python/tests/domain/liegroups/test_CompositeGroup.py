@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 
 def complex(a,b):
     return a + b*1j
@@ -16,7 +17,7 @@ def _make_cgroup():
     yRN1 = lielab.domain.RN(2)
     yRN1.unserialize([17.0, 18.0])
     ySE1 = lielab.domain.SE(2)
-    ySE1.unserialize([19.0, 20.0, 21.0, 22.0, 23.0, 24.0, 25.0, 26.0, 27.0])
+    ySE1.unserialize([19.0, 20.0, 21.0, 22.0, 23.0, 24.0])
     ySO1 = lielab.domain.SO(2)
     ySO1.unserialize([28.0, 29.0, 30.0, 31.0])
     ySP1 = lielab.domain.SP(2)
@@ -40,28 +41,28 @@ def test_CompositeGroup_main_initializer():
     assert (xblank.get_dimension() == 0)
 
     x0 = CompositeGroup(0)
-    assert (x0.get_dimension() == 0)
+    assert (len(x0) == 0)
     x1 = CompositeGroup(1)
-    assert (x1.get_dimension() == 2)
+    assert (len(x1) == 1)
     x10 = CompositeGroup(10)
-    assert (x10.get_dimension() == 200)
+    assert (len(x10) == 10)
 
-def test_CompositeGroup_from_shape_initializer():
+def test_CompositeGroup_identity_initializer():
     from lielab.domain import CompositeGroup
 
-    x0 = CompositeGroup.from_shape(0)
+    x0 = CompositeGroup.identity(0)
     assert (x0.get_dimension() == 0)
     x0hat = x0.get_matrix()
     assert (x0hat.shape[0] == 0)
     assert (x0hat.shape[1] == 0)
 
-    x1 = CompositeGroup.from_shape(1)
+    x1 = CompositeGroup.identity(1)
     assert (x1.get_dimension() == 2)
     x1hat = x1.get_matrix()
     assert (x1hat.shape[0] == 1)
     assert (x1hat.shape[1] == 1)
 
-    x2 = CompositeGroup.from_shape(2)
+    x2 = CompositeGroup.identity(2)
     assert (x2.get_dimension() == 8)
     x2hat = x2.get_matrix()
     assert (x2hat.shape[0] == 2)
@@ -70,15 +71,15 @@ def test_CompositeGroup_from_shape_initializer():
 def test_CompositeGroup_get_dimension():
     from lielab.domain import CompositeGroup
 
-    zero = CompositeGroup(0)
-    one = CompositeGroup(1)
-    two = CompositeGroup(2)
-    three = CompositeGroup(3)
-    four = CompositeGroup(4)
-    five = CompositeGroup(5)
-    six = CompositeGroup(6)
-    seven = CompositeGroup(7)
-    eight = CompositeGroup(8)
+    zero = CompositeGroup.identity(0)
+    one = CompositeGroup.identity(1)
+    two = CompositeGroup.identity(2)
+    three = CompositeGroup.identity(3)
+    four = CompositeGroup.identity(4)
+    five = CompositeGroup.identity(5)
+    six = CompositeGroup.identity(6)
+    seven = CompositeGroup.identity(7)
+    eight = CompositeGroup.identity(8)
 
     # Dimensions
     assert (zero.get_dimension() == 0)
@@ -109,15 +110,15 @@ def test_CompositeGroup_get_dimension():
 def test_CompositeGroup_get_size():
     from lielab.domain import CompositeGroup
 
-    zero = CompositeGroup(0)
-    one = CompositeGroup(1)
-    two = CompositeGroup(2)
-    three = CompositeGroup(3)
-    four = CompositeGroup(4)
-    five = CompositeGroup(5)
-    six = CompositeGroup(6)
-    seven = CompositeGroup(7)
-    eight = CompositeGroup(8)
+    zero = CompositeGroup.identity(0)
+    one = CompositeGroup.identity(1)
+    two = CompositeGroup.identity(2)
+    three = CompositeGroup.identity(3)
+    four = CompositeGroup.identity(4)
+    five = CompositeGroup.identity(5)
+    six = CompositeGroup.identity(6)
+    seven = CompositeGroup.identity(7)
+    eight = CompositeGroup.identity(8)
 
     # Dimensions
     assert (zero.get_size() == 0)
@@ -138,12 +139,12 @@ def test_CompositeGroup_get_size():
     assert (sizes[1] == 8)
     assert (sizes[2] == 4)
     assert (sizes[3] == 2)
-    assert (sizes[4] == 9)
+    assert (sizes[4] == 6)
     assert (sizes[5] == 4)
     assert (sizes[6] == 4)
     assert (sizes[7] == 8)
 
-    assert (y1.get_size() == 43)
+    assert (y1.get_size() == 40)
 
 def test_CompositeGroup_serialize_unserialize():
     """
@@ -155,10 +156,10 @@ def test_CompositeGroup_serialize_unserialize():
     y1 = _make_cgroup()
     y1.unserialize([43.0, 42.0, 41.0, 40.0, 39.0, 38.0, 37.0, 36.0, 35.0, 34.0, 33.0, 32.0, 31.0, 30.0,
                     29.0, 28.0, 27.0, 26.0, 25.0, 24.0, 23.0, 22.0, 21.0, 20.0, 19.0, 18.0, 17.0, 16.0,
-                    15.0, 14.0, 13.0, 12.0, 11.0, 10.0, 9.0, 8.0, 7.0, 6.0, 5.0, 4.0, 3.0, 2.0, 1.0])
+                    15.0, 14.0, 13.0, 12.0, 11.0, 10.0, 9.0, 8.0, 7.0, 6.0, 5.0, 4.0])
     
     y1bar = y1.serialize()
-    assert (y1bar.size == 43)
+    assert (y1bar.size == 40)
     assert (y1bar[0] == 43.0)
     assert (y1bar[1] == 42.0)
     assert (y1bar[2] == 41.0)
@@ -199,9 +200,6 @@ def test_CompositeGroup_serialize_unserialize():
     assert (y1bar[37] == 6.0)
     assert (y1bar[38] == 5.0)
     assert (y1bar[39] == 4.0)
-    assert (y1bar[40] == 3.0)
-    assert (y1bar[41] == 2.0)
-    assert (y1bar[42] == 1.0)
 
 def test_CompositeGroup_get_matrix():
     """
@@ -286,24 +284,24 @@ def test_CompositeGroup_operator_parenthesis():
     assert (y1(-10, -10) == complex(1.0, 0.0))
 
     # In bounds SE component
-    assert (y1(10, 10) == complex(19.0, 0.0))
-    assert (y1(10, 11) == complex(20.0, 0.0))
-    assert (y1(10, 12) == complex(21.0, 0.0))
-    assert (y1(11, 10) == complex(22.0, 0.0))
-    assert (y1(11, 11) == complex(23.0, 0.0))
-    assert (y1(11, 12) == complex(24.0, 0.0))
-    assert (y1(12, 10) == complex(25.0, 0.0))
-    assert (y1(12, 11) == complex(26.0, 0.0))
-    assert (y1(12, 12) == complex(27.0, 0.0))
-    assert (y1(-9, -9) == complex(19.0, 0.0))
-    assert (y1(-9, -8) == complex(20.0, 0.0))
-    assert (y1(-9, -7) == complex(21.0, 0.0))
-    assert (y1(-8, -9) == complex(22.0, 0.0))
-    assert (y1(-8, -8) == complex(23.0, 0.0))
-    assert (y1(-8, -7) == complex(24.0, 0.0))
-    assert (y1(-7, -9) == complex(25.0, 0.0))
-    assert (y1(-7, -8) == complex(26.0, 0.0))
-    assert (y1(-7, -7) == complex(27.0, 0.0))
+    assert (y1(10, 10) == complex(21.0, 0.0))
+    assert (y1(10, 11) == complex(22.0, 0.0))
+    assert (y1(10, 12) == complex(19.0, 0.0))
+    assert (y1(11, 10) == complex(23.0, 0.0))
+    assert (y1(11, 11) == complex(24.0, 0.0))
+    assert (y1(11, 12) == complex(20.0, 0.0))
+    assert (y1(12, 10) == complex(0.0, 0.0))
+    assert (y1(12, 11) == complex(0.0, 0.0))
+    assert (y1(12, 12) == complex(1.0, 0.0))
+    assert (y1(-9, -9) == complex(21.0, 0.0))
+    assert (y1(-9, -8) == complex(22.0, 0.0))
+    assert (y1(-9, -7) == complex(19.0, 0.0))
+    assert (y1(-8, -9) == complex(23.0, 0.0))
+    assert (y1(-8, -8) == complex(24.0, 0.0))
+    assert (y1(-8, -7) == complex(20.0, 0.0))
+    assert (y1(-7, -9) == complex(0.0, 0.0))
+    assert (y1(-7, -8) == complex(0.0, 0.0))
+    assert (y1(-7, -7) == complex(1.0, 0.0))
 
     # In bounds SO component
     assert (y1(13, 13) == complex(28.0, 0.0))
@@ -371,7 +369,7 @@ def test_CompositeGroup_math_ops_CompositeGroup():
     y2 = _make_cgroup()
 
     y1_prod_y2 = y1*y2
-    assert (len(y1_prod_y2.space) == len(y1.space))
+    assert (len(y1_prod_y2.point) == len(y1.point))
 
     y1_prod_y2_0bar = y1_prod_y2[0].serialize()
     assert (y1_prod_y2_0bar.size == 4)
@@ -404,16 +402,13 @@ def test_CompositeGroup_math_ops_CompositeGroup():
     assert (y1_prod_y2_3bar[1] == 36.0)
 
     y1_prod_y2_4bar = y1_prod_y2[4].serialize()
-    assert (y1_prod_y2_4bar.size == 9)
-    assert (y1_prod_y2_4bar[0] == 1326.0)
-    assert (y1_prod_y2_4bar[1] == 1386.0)
-    assert (y1_prod_y2_4bar[2] == 1446.0)
-    assert (y1_prod_y2_4bar[3] == 1524.0)
-    assert (y1_prod_y2_4bar[4] == 1593.0)
-    assert (y1_prod_y2_4bar[5] == 1662.0)
-    assert (y1_prod_y2_4bar[6] == 1722.0)
-    assert (y1_prod_y2_4bar[7] == 1800.0)
-    assert (y1_prod_y2_4bar[8] == 1878.0)
+    assert (y1_prod_y2_4bar.size == 6)
+    assert (y1_prod_y2_4bar[0] == 858.0)
+    assert (y1_prod_y2_4bar[1] == 937.0)
+    assert (y1_prod_y2_4bar[2] == 947.0)
+    assert (y1_prod_y2_4bar[3] == 990.0)
+    assert (y1_prod_y2_4bar[4] == 1035.0)
+    assert (y1_prod_y2_4bar[5] == 1082.0)
 
     y1_prod_y2_5bar = y1_prod_y2[5].serialize()
     assert (y1_prod_y2_5bar.size == 4)
@@ -441,7 +436,7 @@ def test_CompositeGroup_math_ops_CompositeGroup():
     assert (y1_prod_y2_7bar[7] == 6730.0)
 
     y1 *= y2
-    assert (len(y1.space) == len(y2.space))
+    assert (len(y1.point) == len(y2.point))
 
     y1_iprod_y2_0bar = y1[0].serialize()
     assert (y1_iprod_y2_0bar.size == 4)
@@ -474,16 +469,13 @@ def test_CompositeGroup_math_ops_CompositeGroup():
     assert (y1_iprod_y2_3bar[1] == 36.0)
 
     y1_iprod_y2_4bar = y1[4].serialize()
-    assert (y1_iprod_y2_4bar.size == 9)
-    assert (y1_iprod_y2_4bar[0] == 1326.0)
-    assert (y1_iprod_y2_4bar[1] == 1386.0)
-    assert (y1_iprod_y2_4bar[2] == 1446.0)
-    assert (y1_iprod_y2_4bar[3] == 1524.0)
-    assert (y1_iprod_y2_4bar[4] == 1593.0)
-    assert (y1_iprod_y2_4bar[5] == 1662.0)
-    assert (y1_iprod_y2_4bar[6] == 1722.0)
-    assert (y1_iprod_y2_4bar[7] == 1800.0)
-    assert (y1_iprod_y2_4bar[8] == 1878.0)
+    assert (y1_iprod_y2_4bar.size == 6)
+    assert (y1_iprod_y2_4bar[0] == 858.0)
+    assert (y1_iprod_y2_4bar[1] == 937.0)
+    assert (y1_iprod_y2_4bar[2] == 947.0)
+    assert (y1_iprod_y2_4bar[3] == 990.0)
+    assert (y1_iprod_y2_4bar[4] == 1035.0)
+    assert (y1_iprod_y2_4bar[5] == 1082.0)
 
     y1_iprod_y2_5bar = y1[5].serialize()
     assert (y1_iprod_y2_5bar.size == 4)
@@ -513,7 +505,7 @@ def test_CompositeGroup_math_ops_CompositeGroup():
     y1 = _make_cgroup()
 
     y1_inv = y1.inverse()
-    assert (len(y1_inv.space) == len(y1.space))
+    assert (len(y1_inv.point) == len(y1.point))
 
     y1_inv_0bar = y1_inv[0].serialize()
     assert (y1_inv_0bar.size == 4)
@@ -546,17 +538,13 @@ def test_CompositeGroup_math_ops_CompositeGroup():
     assert (y1_inv_3bar[1] == -18.0)
 
     y1_inv_4bar = y1_inv[4].serialize()
-    assert (y1_inv_4bar.size == 9)
-    # TODO: Change default values to something more reasonable
-    # assert (y1_inv_4bar[0] == 1326.0)
-    # assert (y1_inv_4bar[1] == 1386.0)
-    # assert (y1_inv_4bar[2] == 1446.0)
-    # assert (y1_inv_4bar[3] == 1524.0)
-    # assert (y1_inv_4bar[4] == 1593.0)
-    # assert (y1_inv_4bar[5] == 1662.0)
-    # assert (y1_inv_4bar[6] == 1722.0)
-    # assert (y1_inv_4bar[7] == 1800.0)
-    # assert (y1_inv_4bar[8] == 1878.0)
+    assert (y1_inv_4bar.size == 6)
+    assert (y1_inv_4bar[0] == -859.0)
+    assert (y1_inv_4bar[1] == -898.0)
+    assert (y1_inv_4bar[2] == 21.0)
+    assert (y1_inv_4bar[3] == 23.0)
+    assert (y1_inv_4bar[4] == 22.0)
+    assert (y1_inv_4bar[5] == 24.0)
 
     y1_inv_5bar = y1_inv[5].serialize()
     assert (y1_inv_5bar.size == 4)
@@ -623,8 +611,8 @@ def test_CompositeGroup_operator_bracket():
     assert (x1m1.to_string() == "SU(2)")
 
     # Out of bounds
-    x18 = x1[8]
-    x1m9 = x1[-9]
-
-    assert (x18.to_string() == "GL(0, C)")
-    assert (x1m9.to_string() == "GL(0, C)")
+    with pytest.raises(RuntimeError):
+        x18 = x1[8]
+    
+    with pytest.raises(RuntimeError):
+        x1m9 = x1[-9]

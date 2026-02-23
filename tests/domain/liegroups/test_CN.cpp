@@ -1,13 +1,13 @@
-#include <Lielab.hpp>
+#include <Lielab/domain/liegroups/CN.hpp>
 #include <iostream>
 
 #include <catch2/catch_all.hpp>
 
 TEST_CASE("CN to_string", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::CN;
 
-    const CN xzero = CN::from_shape(0);
+    const CN xzero = CN::identity(0);
     CHECK(xzero.to_string() == "C^nan");
     const CN x0 = CN(0);
     CHECK(x0.to_string() == "C^0");
@@ -19,7 +19,7 @@ TEST_CASE("CN to_string", "[domain]")
 
 TEST_CASE("CN main_initializer", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::CN;
 
     const CN xblank = CN();
     CHECK(xblank.get_dimension() == 0);
@@ -34,7 +34,7 @@ TEST_CASE("CN main_initializer", "[domain]")
 
 TEST_CASE("CN matrix_initializer", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::CN;
 
     const CN x0 = CN(Eigen::MatrixXcd::Random(0, 0));
     CHECK(x0.get_shape() == 0);
@@ -49,23 +49,23 @@ TEST_CASE("CN matrix_initializer", "[domain]")
     CHECK_THROWS(CN(Eigen::MatrixXcd::Random(3, 2)));
 }
 
-TEST_CASE("CN from_shape_initializer", "[domain]")
+TEST_CASE("CN identity_initializer", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::CN;
 
-    const CN x0 = CN::from_shape(0);
+    const CN x0 = CN::identity(0);
     CHECK(x0.get_dimension() == 0);
     const Eigen::MatrixXcd x0hat = x0.get_matrix();
     CHECK(x0hat.rows() == 0);
     CHECK(x0hat.cols() == 0);
 
-    const CN x1 = CN::from_shape(1);
+    const CN x1 = CN::identity(1);
     CHECK(x1.get_dimension() == 0);
     const Eigen::MatrixXcd x1hat = x1.get_matrix();
     CHECK(x1hat.rows() == 1);
     CHECK(x1hat.cols() == 1);
 
-    const CN x2 = CN::from_shape(2);
+    const CN x2 = CN::identity(2);
     CHECK(x2.get_dimension() == 2);
     const Eigen::MatrixXcd x2hat = x2.get_matrix();
     CHECK(x2hat.rows() == 2);
@@ -74,9 +74,9 @@ TEST_CASE("CN from_shape_initializer", "[domain]")
 
 TEST_CASE("CN get_dimension", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::CN;
 
-    CN veryzero = CN::from_shape(0);
+    CN veryzero = CN::identity(0);
     CN zero(0), one(1), two(2), three(3), four(4), five(5), six(6), seven(7), eight(8);
 
     CHECK(veryzero.get_dimension() == 0);
@@ -97,9 +97,9 @@ TEST_CASE("CN serialize/unserialize", "[domain]")
     * Tests the serialize/unserialize operation.
     */
 
-    using namespace Lielab::domain;
+    using Lielab::domain::CN;
 
-    CN xzero = CN::from_shape(0);
+    CN xzero = CN::identity(0);
     xzero.unserialize({});
     Eigen::VectorXd xzerobar = xzero.serialize();
 
@@ -168,9 +168,9 @@ TEST_CASE("CN get_matrix", "[domain]")
     * Tests the get_matrix operation.
     */
 
-    using namespace Lielab::domain;
+    using Lielab::domain::CN;
 
-    CN xzero = CN::from_shape(0);
+    CN xzero = CN::identity(0);
     xzero.unserialize({});
     Eigen::MatrixXcd xzerohat = xzero.get_matrix();
 
@@ -268,15 +268,10 @@ TEST_CASE("CN get_matrix", "[domain]")
 
 TEST_CASE("CN operator()", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::CN;
 
-    CN xzero = CN::from_shape(0);
+    CN xzero = CN::identity(0);
     xzero.unserialize({});
-
-    // Out of bounds
-    CHECK(std::isnan(xzero(-1)));
-    CHECK(std::isnan(xzero(0)));
-    CHECK(std::isnan(xzero(1)));
 
     // Out of bounds
     CHECK(std::isnan(xzero(0, -1).real()));
@@ -296,16 +291,6 @@ TEST_CASE("CN operator()", "[domain]")
 
     CN x1 = CN(1);
     x1.unserialize({1.0, 2.0});
-
-    // In bounds
-    CHECK(x1(0) == 1.0);
-    CHECK(x1(1) == 2.0);
-    CHECK(x1(-1) == 2.0);
-    CHECK(x1(-2) == 1.0);
-
-    // Out of bounds
-    CHECK(std::isnan(x1(-3)));
-    CHECK(std::isnan(x1(2)));
 
     // In bounds
     CHECK(x1(0, 0) == std::complex<double>(1.0, 0.0));
@@ -333,20 +318,6 @@ TEST_CASE("CN operator()", "[domain]")
 
     CN x2 = CN(2);
     x2.unserialize({1.0, 2.0, 3.0, 4.0});
-
-    // In bounds
-    CHECK(x2(0) == 1.0);
-    CHECK(x2(1) == 2.0);
-    CHECK(x2(2) == 3.0);
-    CHECK(x2(3) == 4.0);
-    CHECK(x2(-1) == 4.0);
-    CHECK(x2(-2) == 3.0);
-    CHECK(x2(-3) == 2.0);
-    CHECK(x2(-4) == 1.0);
-
-    // Out of bounds
-    CHECK(std::isnan(x2(-5)));
-    CHECK(std::isnan(x2(4)));
 
     // In bounds
     CHECK(x2(0, 0) == std::complex<double>(1.0, 0.0));
@@ -385,18 +356,18 @@ TEST_CASE("CN operator()", "[domain]")
 
 TEST_CASE("CN operator[]", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::CN;
 
-    CN xzero = CN::from_shape(0);
+    CN xzero = CN::identity(0);
     xzero.unserialize({});
 
     // Out of bounds
-    CHECK(std::isnan(xzero[-1].real()));
-    CHECK(std::isnan(xzero[-1].imag()));
-    CHECK(std::isnan(xzero[0].real()));
-    CHECK(std::isnan(xzero[0].imag()));
-    CHECK(std::isnan(xzero[1].real()));
-    CHECK(std::isnan(xzero[1].imag()));
+    CHECK_THROWS(xzero[-1]);
+    CHECK_THROWS(xzero[-1]);
+    CHECK_THROWS(xzero[0]);
+    CHECK_THROWS(xzero[0]);
+    CHECK_THROWS(xzero[1]);
+    CHECK_THROWS(xzero[1]);
 
     CN x1 = CN(1);
     x1.unserialize({1.0, 2.0});
@@ -406,10 +377,10 @@ TEST_CASE("CN operator[]", "[domain]")
     CHECK(x1[-1] == std::complex<double>(1.0, 2.0));
 
     // Out of bounds
-    CHECK(std::isnan(x1[-2].real()));
-    CHECK(std::isnan(x1[-2].imag()));
-    CHECK(std::isnan(x1[1].real()));
-    CHECK(std::isnan(x1[1].imag()));
+    CHECK_THROWS(x1[-2]);
+    CHECK_THROWS(x1[-2]);
+    CHECK_THROWS(x1[1]);
+    CHECK_THROWS(x1[1]);
 
     CN x2 = CN(2);
     x2.unserialize({1.0, 2.0, 3.0, 4.0});
@@ -421,15 +392,15 @@ TEST_CASE("CN operator[]", "[domain]")
     CHECK(x2[-2] == std::complex<double>(1.0, 2.0));
 
     // Out of bounds
-    CHECK(std::isnan(x2[-3].real()));
-    CHECK(std::isnan(x2[-3].imag()));
-    CHECK(std::isnan(x2[2].real()));
-    CHECK(std::isnan(x2[2].imag()));
+    CHECK_THROWS(x2[-3]);
+    CHECK_THROWS(x2[-3]);
+    CHECK_THROWS(x2[2]);
+    CHECK_THROWS(x2[2]);
 }
 
 TEST_CASE("CN math_ops_CN", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::CN;
 
     CN x1(2), x2(2);
     x1.unserialize({1.0, 2.0, 3.0, 4.0});
@@ -468,7 +439,7 @@ TEST_CASE("CN from_vector", "[domain]")
     * Tests the from_vector operation.
     */
 
-    using namespace Lielab::domain;
+    using Lielab::domain::CN;
 
     const CN x0 = CN::from_vector({});
     const Eigen::VectorXd x0bar = x0.serialize();
@@ -509,7 +480,7 @@ TEST_CASE("CN from/to_complex_vector", "[domain]")
     * Tests the from/to_complex_vector operations.
     */
 
-    using namespace Lielab::domain;
+    using Lielab::domain::CN;
     const std::complex<double> j(0.0, 1.0);
 
     const CN x0 = CN::from_complex_vector({});
@@ -543,10 +514,10 @@ TEST_CASE("CN from/to_complex_vector", "[domain]")
 
 TEST_CASE("CN project", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::CN;
 
     const Eigen::MatrixXcd rand_2_2 = Eigen::MatrixXcd::Random(2, 2);
-    const Eigen::MatrixXcd proj_2_2 = CN::project(rand_2_2);
+    const Eigen::MatrixXcd proj_2_2 = CN::project(rand_2_2).get_matrix();
 
     REQUIRE(proj_2_2.rows() == 2);
     REQUIRE(proj_2_2.cols() == 2);
@@ -556,7 +527,7 @@ TEST_CASE("CN project", "[domain]")
     CHECK(proj_2_2(1, 1) == std::complex<double>(1.0, 0.0));
 
     const Eigen::MatrixXcd rand_3_3 = Eigen::MatrixXcd::Random(3, 3);
-    const Eigen::MatrixXcd proj_3_3 = CN::project(rand_3_3);
+    const Eigen::MatrixXcd proj_3_3 = CN::project(rand_3_3).get_matrix();
 
     REQUIRE(proj_3_3.rows() == 3);
     REQUIRE(proj_3_3.cols() == 3);
@@ -571,7 +542,7 @@ TEST_CASE("CN project", "[domain]")
     CHECK(proj_3_3(2, 2) == std::complex<double>(1.0, 0.0));
 
     const Eigen::MatrixXcd rand_2_3 = Eigen::MatrixXcd::Random(2, 3);
-    const Eigen::MatrixXcd proj_2_3 = CN::project(rand_2_3);
+    const Eigen::MatrixXcd proj_2_3 = CN::project(rand_2_3).get_matrix();
 
     REQUIRE(proj_2_3.rows() == 2);
     REQUIRE(proj_2_3.cols() == 2);
@@ -581,7 +552,7 @@ TEST_CASE("CN project", "[domain]")
     CHECK(proj_2_3(1, 1) == std::complex<double>(1.0, 0.0));
 
     const Eigen::MatrixXcd rand_3_2 = Eigen::MatrixXcd::Random(3, 2);
-    const Eigen::MatrixXcd proj_3_2 = CN::project(rand_3_2);
+    const Eigen::MatrixXcd proj_3_2 = CN::project(rand_3_2).get_matrix();
 
     REQUIRE(proj_3_2.rows() == 2);
     REQUIRE(proj_3_2.cols() == 2);

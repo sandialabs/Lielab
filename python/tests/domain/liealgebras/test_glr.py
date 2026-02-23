@@ -81,22 +81,22 @@ def test_glr_basis_initializer():
     assert (x02bar[2] == 0.0)
     assert (x02bar[3] == 0.0)
 
-def test_glr_from_shape_initializer():
+def test_glr_zero_initializer():
     from lielab.domain import glr
 
-    x0 = glr.from_shape(0)
+    x0 = glr.zero(0)
     assert (x0.get_dimension() == 0)
     x0hat = x0.get_matrix()
     assert (x0hat.shape[0] == 0)
     assert (x0hat.shape[1] == 0)
 
-    x1 = glr.from_shape(1)
+    x1 = glr.zero(1)
     assert (x1.get_dimension() == 1)
     x1hat = x1.get_matrix()
     assert (x1hat.shape[0] == 1)
     assert (x1hat.shape[1] == 1)
 
-    x2 = glr.from_shape(2)
+    x2 = glr.zero(2)
     assert (x2.get_dimension() == 4)
     x2hat = x2.get_matrix()
     assert (x2hat.shape[0] == 2)
@@ -253,7 +253,7 @@ def test_glr_get_matrix():
 def test_glr_operator_parenthesis():
     from lielab.domain import glr
 
-    x0 = glr.from_shape(0)
+    x0 = glr.zero(0)
     x0.set_vector([])
 
     # Out of bounds
@@ -469,7 +469,7 @@ def test_glr_project():
     from lielab.domain import glr
 
     rand_2_2 = np.random.rand(2, 2)
-    proj_2_2 = glr.project(rand_2_2)
+    proj_2_2 = glr.project(rand_2_2).get_matrix()
 
     assert (proj_2_2.shape[0] == 2)
     assert (proj_2_2.shape[1] == 2)
@@ -479,7 +479,7 @@ def test_glr_project():
     assert (proj_2_2[1, 1] == rand_2_2[1, 1])
 
     rand_3_3 = np.random.rand(3, 3)
-    proj_3_3 = glr.project(rand_3_3)
+    proj_3_3 = glr.project(rand_3_3).get_matrix()
 
     assert (proj_3_3.shape[0] == 3)
     assert (proj_3_3.shape[1] == 3)
@@ -494,7 +494,7 @@ def test_glr_project():
     assert (proj_3_3[2, 2] == rand_3_3[2, 2])
 
     rand_2_3 = np.random.rand(2, 3)
-    proj_2_3 = glr.project(rand_2_3)
+    proj_2_3 = glr.project(rand_2_3).get_matrix()
 
     assert (proj_2_3.shape[0] == 2)
     assert (proj_2_3.shape[1] == 2)
@@ -504,7 +504,7 @@ def test_glr_project():
     assert (proj_2_3[1, 1] == rand_2_3[1, 1])
 
     rand_3_2 = np.random.rand(3, 2)
-    proj_3_2 = glr.project(rand_3_2)
+    proj_3_2 = glr.project(rand_3_2).get_matrix()
 
     assert (proj_3_2.shape[0] == 2)
     assert (proj_3_2.shape[1] == 2)

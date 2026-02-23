@@ -1,13 +1,13 @@
-#include <Lielab.hpp>
+#include <Lielab/domain/liealgebras/se.hpp>
 #include <iostream>
 
 #include <catch2/catch_all.hpp>
 
 TEST_CASE("se to_string", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::se;
 
-    const se xzero = se::from_shape(0);
+    const se xzero = se::zero(0);
     CHECK(xzero.to_string() == "se(nan)");
     const se x0 = se(0);
     CHECK(x0.to_string() == "se(0)");
@@ -19,7 +19,7 @@ TEST_CASE("se to_string", "[domain]")
 
 TEST_CASE("se main_initializer", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::se;
 
     const se xblank = se();
     CHECK(xblank.get_dimension() == 0);
@@ -34,7 +34,7 @@ TEST_CASE("se main_initializer", "[domain]")
 
 TEST_CASE("se matrix_initializer", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::se;
 
     const se x0 = se(Eigen::MatrixXd::Random(0, 0));
     CHECK(x0.get_shape() == 0);
@@ -51,7 +51,7 @@ TEST_CASE("se matrix_initializer", "[domain]")
 
 TEST_CASE("se basis_initializer", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::se;
 
     const se xm10 = se::basis(-1, 0);
     CHECK(xm10.get_dimension() == 0);
@@ -95,23 +95,23 @@ TEST_CASE("se basis_initializer", "[domain]")
     CHECK(x02bar(2) == 0.0);
 }
 
-TEST_CASE("se from_shape_initializer", "[domain]")
+TEST_CASE("se zero_initializer", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::se;
 
-    const se x0 = se::from_shape(0);
+    const se x0 = se::zero(0);
     CHECK(x0.get_dimension() == 0);
     const Eigen::MatrixXd x0hat = x0.get_matrix();
     CHECK(x0hat.rows() == 0);
     CHECK(x0hat.cols() == 0);
 
-    const se x1 = se::from_shape(1);
+    const se x1 = se::zero(1);
     CHECK(x1.get_dimension() == 0);
     const Eigen::MatrixXd x1hat = x1.get_matrix();
     CHECK(x1hat.rows() == 1);
     CHECK(x1hat.cols() == 1);
 
-    const se x2 = se::from_shape(2);
+    const se x2 = se::zero(2);
     CHECK(x2.get_dimension() == 1);
     const Eigen::MatrixXd x2hat = x2.get_matrix();
     CHECK(x2hat.rows() == 2);
@@ -120,9 +120,9 @@ TEST_CASE("se from_shape_initializer", "[domain]")
 
 TEST_CASE("se get_dimension", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::se;
 
-    se veryzero = se::from_shape(0);
+    se veryzero = se::zero(0);
     se zero(0), one(1), two(2), three(3), four(4), five(5), six(6), seven(7), eight(8);
 
     // Dimensions
@@ -144,9 +144,9 @@ TEST_CASE("se set/get_vector", "[domain]")
     * Tests the set/get_vector operation.
     */
 
-    using namespace Lielab::domain;
+    using Lielab::domain::se;
 
-    se xzero = se::from_shape(0);
+    se xzero = se::zero(0);
     xzero.set_vector({});
     Eigen::VectorXd xzerobar = xzero.get_vector();
 
@@ -224,9 +224,10 @@ TEST_CASE("se get_matrix", "[domain]")
     * Tests the get_matrix operation.
     */
 
-    using namespace Lielab::domain;
+    using Lielab::domain::se;
+    using Lielab::domain::so;
 
-    se xzero = se::from_shape(0);
+    se xzero = se::zero(0);
     xzero.set_vector({});
     Eigen::MatrixXd xzerohat = xzero.get_matrix();
 
@@ -325,9 +326,10 @@ TEST_CASE("se get_matrix", "[domain]")
 
 TEST_CASE("se operator()", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::se;
+    using Lielab::domain::so;
 
-    se xzero = se::from_shape(0);
+    se xzero = se::zero(0);
     xzero.set_vector({});
 
     // Out of bounds
@@ -422,7 +424,7 @@ TEST_CASE("se operator()", "[domain]")
 
 TEST_CASE("se math_ops_double", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::se;
 
     se x1(2);
     x1.set_vector({1.25, 2.5, 3.75});
@@ -457,7 +459,7 @@ TEST_CASE("se math_ops_double", "[domain]")
 
 TEST_CASE("se math_ops_se", "[domain]")
 {
-    using namespace Lielab::domain;
+    using Lielab::domain::se;
 
     se x1(2), x2(2);
     x1.set_vector({1.0, 2.0, 3.0});
@@ -493,56 +495,55 @@ TEST_CASE("se math_ops_se", "[domain]")
     CHECK(x1_unary_sub(2) == -3.0);
 }
 
-// TODO: Test projection once it uses so projection
-// TEST_CASE("se project", "[domain]")
-// {
-//     using namespace Lielab::domain;
+TEST_CASE("se project", "[domain]")
+{
+    using Lielab::domain::se;
 
-//     const Eigen::MatrixXd rand_2_2 = Eigen::MatrixXd::Random(2, 2);
-//     const Eigen::MatrixXd proj_2_2 = rn::project(rand_2_2);
+    const Eigen::MatrixXd rand_2_2 = Eigen::MatrixXd::Random(2, 2);
+    const Eigen::MatrixXd proj_2_2 = se::project(rand_2_2).get_matrix();
 
-//     REQUIRE(proj_2_2.rows() == 2);
-//     REQUIRE(proj_2_2.cols() == 2);
-//     CHECK(proj_2_2(0, 0) == 0.0);
-//     CHECK(proj_2_2(0, 1) == rand_2_2(0, 1));
-//     CHECK(proj_2_2(1, 0) == 0.0);
-//     CHECK(proj_2_2(1, 1) == 0.0);
+    REQUIRE(proj_2_2.rows() == 2);
+    REQUIRE(proj_2_2.cols() == 2);
+    CHECK(proj_2_2(0, 0) == 0.0);
+    CHECK(proj_2_2(0, 1) == rand_2_2(0, 1));
+    CHECK(proj_2_2(1, 0) == 0.0);
+    CHECK(proj_2_2(1, 1) == 0.0);
 
-//     const Eigen::MatrixXd rand_3_3 = Eigen::MatrixXd::Random(3, 3);
-//     const Eigen::MatrixXd proj_3_3 = rn::project(rand_3_3);
+    const Eigen::MatrixXd rand_3_3 = Eigen::MatrixXd::Random(3, 3);
+    const Eigen::MatrixXd proj_3_3 = se::project(rand_3_3).get_matrix();
 
-//     REQUIRE(proj_3_3.rows() == 3);
-//     REQUIRE(proj_3_3.cols() == 3);
-//     CHECK(proj_3_3(0, 0) == 0.0);
-//     CHECK(proj_3_3(0, 1) == 0.0);
-//     CHECK(proj_3_3(0, 2) == rand_3_3(0, 2));
-//     CHECK(proj_3_3(1, 0) == 0.0);
-//     CHECK(proj_3_3(1, 1) == 0.0);
-//     CHECK(proj_3_3(1, 2) == rand_3_3(1, 2));
-//     CHECK(proj_3_3(2, 0) == 0.0);
-//     CHECK(proj_3_3(2, 1) == 0.0);
-//     CHECK(proj_3_3(2, 2) == 0.0);
+    REQUIRE(proj_3_3.rows() == 3);
+    REQUIRE(proj_3_3.cols() == 3);
+    CHECK(proj_3_3(0, 0) == 0.0);
+    CHECK(proj_3_3(0, 1) == -proj_3_3(1, 0));
+    CHECK(proj_3_3(0, 2) == rand_3_3(0, 2));
+    CHECK(proj_3_3(1, 0) == -proj_3_3(0, 1));
+    CHECK(proj_3_3(1, 1) == 0.0);
+    CHECK(proj_3_3(1, 2) == rand_3_3(1, 2));
+    CHECK(proj_3_3(2, 0) == 0.0);
+    CHECK(proj_3_3(2, 1) == 0.0);
+    CHECK(proj_3_3(2, 2) == 0.0);
 
-//     const Eigen::MatrixXd rand_2_3 = Eigen::MatrixXd::Random(2, 3);
-//     const Eigen::MatrixXd proj_2_3 = rn::project(rand_2_3);
+    const Eigen::MatrixXd rand_2_3 = Eigen::MatrixXd::Random(2, 3);
+    const Eigen::MatrixXd proj_2_3 = se::project(rand_2_3).get_matrix();
 
-//     REQUIRE(proj_2_3.rows() == 2);
-//     REQUIRE(proj_2_3.cols() == 2);
-//     CHECK(proj_2_3(0, 0) == 0.0);
-//     CHECK(proj_2_3(0, 1) == rand_2_3(0, 1));
-//     CHECK(proj_2_3(1, 0) == 0.0);
-//     CHECK(proj_2_3(1, 1) == 0.0);
+    REQUIRE(proj_2_3.rows() == 2);
+    REQUIRE(proj_2_3.cols() == 2);
+    CHECK(proj_2_3(0, 0) == 0.0);
+    CHECK(proj_2_3(0, 1) == rand_2_3(0, 1));
+    CHECK(proj_2_3(1, 0) == 0.0);
+    CHECK(proj_2_3(1, 1) == 0.0);
 
-//     const Eigen::MatrixXd rand_3_2 = Eigen::MatrixXd::Random(3, 2);
-//     const Eigen::MatrixXd proj_3_2 = rn::project(rand_3_2);
+    const Eigen::MatrixXd rand_3_2 = Eigen::MatrixXd::Random(3, 2);
+    const Eigen::MatrixXd proj_3_2 = se::project(rand_3_2).get_matrix();
 
-//     REQUIRE(proj_3_2.rows() == 2);
-//     REQUIRE(proj_3_2.cols() == 2);
-//     CHECK(proj_3_2(0, 0) == 0.0);
-//     CHECK(proj_3_2(0, 1) == rand_3_2(0, 1));
-//     CHECK(proj_3_2(1, 0) == 0.0);
-//     CHECK(proj_3_2(1, 1) == 0.0);
-// }
+    REQUIRE(proj_3_2.rows() == 2);
+    REQUIRE(proj_3_2.cols() == 2);
+    CHECK(proj_3_2(0, 0) == 0.0);
+    CHECK(proj_3_2(0, 1) == rand_3_2(0, 1));
+    CHECK(proj_3_2(1, 0) == 0.0);
+    CHECK(proj_3_2(1, 1) == 0.0);
+}
 
 TEST_CASE("se get/from_vector", "[domain]")
 {
@@ -550,7 +551,7 @@ TEST_CASE("se get/from_vector", "[domain]")
     * Tests the get/from_vector operation.
     */
 
-    using namespace Lielab::domain;
+    using Lielab::domain::se;
 
     const se x0 = se::from_vector({});
     const Eigen::VectorXd x0bar = x0.get_vector();

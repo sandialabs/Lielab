@@ -1,8 +1,7 @@
 #ifndef LIELAB_DOMAIN_LIEALGEBRAS_cn_HPP
 #define LIELAB_DOMAIN_LIEALGEBRAS_cn_HPP
 
-#include "glc.hpp"
-#include "LieAlgebra.hpp"
+#include "../VirtualManifolds.hpp"
 
 #include <Eigen/Core>
 #include <unsupported/Eigen/MatrixFunctions>
@@ -13,39 +12,64 @@
 namespace Lielab::domain
 {
 
-class cn : public glc
+class cn : public VirtualLieAlgebra<std::complex<double>>
 {
     public:
+    // Manifold typing
+    using point_t = Eigen::VectorXcd;
+    
+    // Manifold storage
+    point_t point;
 
-    // Storage and typing
-    using data_t = Eigen::VectorXcd;
-    data_t data;
+    // cn storage
+    int _shape;
 
-    // Lie Algebra class information
-    bool is_abelian() const override;
-    std::string to_string() const override;
-
-    // Constructors and destructors
+    // Manifold constructors
     cn();
-    cn(const size_t n);
-    template<typename OtherDerived> cn(const Eigen::MatrixBase<OtherDerived>& other);
-    static cn basis(const ptrdiff_t i, const size_t n);
-    static cn from_shape(const size_t shape);
+    // ~cn();
 
-    // Lie algebra object information
-    size_t get_dimension() const override;
+    // Lie algebra constructors
+    cn(const matrix_t& matrix);
+    static cn basis(const int index, const int shape);
+    static cn zero(const int shape);
+    static cn from_vector(const Eigen::VectorXd& other);
+    static cn from_vector(std::initializer_list<double> other);
+    static cn project(const matrix_t& matrix);
 
-    // IO and data manipulation
-    cn::matrix_t get_matrix() const override;
+    // cn constructors
+    cn(const int n);
+    static cn from_complex_vector(const Eigen::VectorXcd& other);
+    static cn from_complex_vector(std::initializer_list<std::complex<double>> other);
+
+    // Manifold information
+    std::string to_string() const override;
+    int get_dimension() const override;
+    int get_size() const override;
+
+    // Lie algebra information
+    bool is_abelian() const override;
+    int get_shape() const override;
+
+    // Manifold IO
+    point_t get_point() const;
+    Eigen::VectorXd serialize() const override;
+    void unserialize(const Eigen::VectorXd& serialized) override;
+    void unserialize(std::initializer_list<double> serialized) override;
+
+    // Lie algebra IO
+    matrix_t get_matrix() const;
     Eigen::VectorXd get_vector() const override;
     void set_vector(const Eigen::VectorXd& vector) override;
-    void set_vector(std::initializer_list<double> vector);
-    
-    double operator()(const ptrdiff_t index) const;
-    std::complex<double> operator()(const ptrdiff_t index1, const ptrdiff_t index2) const;
-    std::complex<double> operator[](const ptrdiff_t index) const;
+    void set_vector(std::initializer_list<double> vector) override;
+    double operator()(const int index) const;
+    field_t operator()(const int index1, const int index2) const;
 
-    // Lie algebra math operations
+    // cn IO
+    Eigen::VectorXcd to_complex_vector() const; // TODO: Remove in favor of get_point()
+    const field_t& operator[](const int index) const;
+    field_t& operator[](const int index);
+
+    // Lie algebra math
     cn operator+(const cn& other) const;
     cn& operator+=(const cn& other);
     cn operator-(const cn& other) const;
@@ -53,34 +77,23 @@ class cn : public glc
     cn operator-() const;
     cn operator*(const double other) const;
     friend cn operator*(const double other, const cn& rhs);
+    cn& operator*=(const double other);
+    cn operator/(const double other) const;
+    cn& operator/=(const double other);
+
+    // cn math
     cn operator*(const std::complex<int> other) const;
     cn operator*(const std::complex<double> other) const;
     friend cn operator*(const std::complex<int> other, const cn& rhs);
     friend cn operator*(const std::complex<double> other, const cn& rhs);
-    cn& operator*=(const double other);
     cn& operator*=(const std::complex<int> other);
     cn& operator*=(const std::complex<double> other);
-    cn operator/(const double other) const;
     cn operator/(const std::complex<int> other) const;
     cn operator/(const std::complex<double> other) const;
-    cn& operator/=(const double other);
     cn& operator/=(const std::complex<int> other);
     cn& operator/=(const std::complex<double> other);
-
-    // Extra methods
-    static cn from_vector(const Eigen::VectorXd& other);
-    static cn from_vector(std::initializer_list<double> other);
-    static cn from_complex_vector(const Eigen::VectorXcd& other);
-    static cn from_complex_vector(std::initializer_list<std::complex<double>> other);
-    Eigen::VectorXcd to_complex_vector() const;
-
-    static Eigen::MatrixXcd project(const Eigen::MatrixXcd& other);
-
-    friend std::ostream& operator<<(std::ostream& os, const cn& other);
 };
 
 }
-
-#include "cn.tpp"
 
 #endif

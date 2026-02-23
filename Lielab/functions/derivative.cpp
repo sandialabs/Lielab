@@ -1,6 +1,6 @@
 #include "derivative.hpp"
 
-#include "log.hpp"
+#include "exponential.hpp"
 
 #include "Lielab/domain.hpp"
 
@@ -18,7 +18,7 @@ Lielab::domain::CompositeAlgebra forward_difference(std::function<Lielab::domain
     @param[in] fun Function mapping R -> G.
     @param[in] t Location to take derivative at.
     @param[in] dt Finite difference distance.
-    @param[out] out Derivative of input function at T_t G = g.
+    @param[out] out Derivative of input function at T_t G = g|_t.
 
     References
     ----------
@@ -46,7 +46,7 @@ Lielab::domain::CompositeAlgebra backward_difference(std::function<Lielab::domai
     @param[in] fun Function mapping R -> G.
     @param[in] t Location to take derivative at.
     @param[in] dt Finite difference distance.
-    @param[out] out Derivative of input function at T_t G = g.
+    @param[out] out Derivative of input function at T_t G = g|_t.
 
     References
     ----------
@@ -74,7 +74,7 @@ Lielab::domain::CompositeAlgebra central_difference(std::function<Lielab::domain
     @param[in] fun Function mapping R -> G.
     @param[in] t Location to take derivative at.
     @param[in] dt Finite difference distance.
-    @param[out] out Derivative of input function at T_t G = g.
+    @param[out] out Derivative of input function at T_t G = g|_t.
 
     References
     ----------
