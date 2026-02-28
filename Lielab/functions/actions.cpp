@@ -5,7 +5,7 @@
 #include "Lielab/domain.hpp"
 #include "Lielab/testing/assertions.hpp"
 
-#include <format>
+#include "fmt/core.h"
 
 namespace Lielab::functions
 {
@@ -27,7 +27,7 @@ Lielab::domain::CompositeManifold left_Lie_group_action(const Lielab::domain::Co
     using namespace Lielab::domain;
 
     // Simple error checking on the inputs
-    lielab_assert(g.point.size() == y.point.size(), std::format("CompositeGroup and CompositeManifold must be the same size ({} != {}).", g.point.size(), y.point.size()));
+    lielab_assert(g.point.size() == y.point.size(), fmt::format("CompositeGroup and CompositeManifold must be the same size ({} != {}).", g.point.size(), y.point.size()));
 
     // TODO: Somehow check the topology here
 
@@ -96,7 +96,7 @@ Lielab::domain::CompositeManifold right_Lie_group_action(const Lielab::domain::C
     using namespace Lielab::domain;
 
     // Simple error checking on the inputs
-    lielab_assert(g.point.size() == y.point.size(), std::format("CompositeGroup and CompositeManifold must be the same size ({} != {}).", g.point.size(), y.point.size()));
+    lielab_assert(g.point.size() == y.point.size(), fmt::format("CompositeGroup and CompositeManifold must be the same size ({} != {}).", g.point.size(), y.point.size()));
 
     // TODO: Somehow check the topology here
 

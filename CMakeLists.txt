@@ -18,6 +18,10 @@ if (NOT DEFINED Eigen3_FOUND)
     find_package(Eigen3 REQUIRED)
 endif()
 
+if (NOT DEFINED fmt_FOUND)
+    find_package(fmt REQUIRED)
+endif()
+
 ################################
 # GLobal project options
 ################################
@@ -163,6 +167,7 @@ add_library(Lielab::Lielab ALIAS Lielab)
 set_target_properties(Lielab PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 
 target_link_libraries(Lielab PUBLIC Eigen3::Eigen)
+target_link_libraries(Lielab PRIVATE fmt::fmt)
 target_link_libraries(Lielab PRIVATE Lielab::options)
 
 # Link options

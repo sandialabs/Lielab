@@ -8,7 +8,6 @@
 #include <Eigen/Dense>
 #include <unsupported/Eigen/MatrixFunctions>
 
-#include <format>
 #include <tuple>
 
 namespace Lielab::functions

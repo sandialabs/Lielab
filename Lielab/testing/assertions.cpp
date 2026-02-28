@@ -2,9 +2,10 @@
 
 #include "Lielab/domain.hpp"
 
+#include "fmt/core.h"
+
 #include <cmath>
 #include <filesystem>
-#include <format>
 #include <limits>
 #include <stdexcept>
 #include <vector>
@@ -373,9 +374,9 @@ void assert_handler(const char* expr, const std::string why, const char* file, c
     const std::string filename = filepath.filename().string();
 
     std::string msg = "\x1b[31mLielab runtime error\n";
-    msg += std::format("Pass condition: {}\n", expr);
-    msg += std::format("Reason: {}\n", why);
-    msg += std::format("Where: {}() located in {} (Line {})", func, filename, line);
+    msg += fmt::format("Pass condition: {}\n", expr);
+    msg += fmt::format("Reason: {}\n", why);
+    msg += fmt::format("Where: {}() located in {} (Line {})", func, filename, line);
     msg += "\x1b[0m";
     throw std::runtime_error(msg);
 }

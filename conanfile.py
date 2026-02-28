@@ -32,6 +32,7 @@ class LielabConan(ConanFile):
 
     def requirements(self):
         self.requires("eigen/[>=5.0.0 <6]", transitive_headers=True)
+        self.requires("fmt/[>=12.0.0 <13]")
         if self.options.get_safe("with_tests"):
             self.requires("catch2/3.11.0")
         if self.options.get_safe("with_python"):
