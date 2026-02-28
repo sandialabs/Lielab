@@ -29,7 +29,7 @@ jobs:
       - name: Install Lielab dependencies
         run: |
           source ~/.venv/bin/activate
-          conan install . -s:a build_type=Release -s:a compiler.cppstd=gnu20 -o:a "&:with_python=True"
+          conan install . -s:a build_type=Release -s:a compiler.cppstd=gnu20 -o:a "&:with_python=True" --build=missing
       - name: CMake Configure
         run: |
           source ~/.venv/bin/activate
@@ -107,7 +107,7 @@ jobs:
       - name: Detect Conan profile
         run: conan profile detect --force
       - name: Install Lielab dependencies
-        run: conan install . -s:a build_type=Release -s:a compiler.cppstd=gnu20 -o:a "&:with_python=True"
+        run: conan install . -s:a build_type=Release -s:a compiler.cppstd=gnu20 -o:a "&:with_python=True" --build=missing
       - name: CMake Configure
         run: cmake --preset conan-release -DPYTHON_EXECUTABLE=${{matrix.python.executable}}
       - name: CMake Build
