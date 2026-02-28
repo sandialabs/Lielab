@@ -388,7 +388,6 @@ const cn::field_t& cn::operator[](const int index) const
     *
     */
 
-    const double nan = std::numeric_limits<double>::quiet_NaN();
     const int dim = this->get_dimension();
 
     // If input index is negative, index from the back of the array
@@ -406,7 +405,6 @@ cn::field_t& cn::operator[](const int index)
     *
     */
 
-    const double nan = std::numeric_limits<double>::quiet_NaN();
     const int dim = this->get_dimension();
 
     // If input index is negative, index from the back of the array
