@@ -47,7 +47,7 @@ jobs:
       - name: CMake configure, returning info for cppcheck
         run: cmake --preset conan-debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
       - name: Run cppcheck
-        run: cppcheck --enable=all --project=./build/Debug/compile_commands.json --output-file=cppcheck_results.txt
+        run: cppcheck --project=./build/Debug/compile_commands.json --output-file=cppcheck_results.txt --enable=all --suppress=missingIncludeSystem --suppress=missingInclude
       - name: Archive scan
         uses: actions/upload-artifact@v4
         with:
