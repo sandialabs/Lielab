@@ -11,7 +11,7 @@ jobs:
     runs-on: macos-14
     env:
       python-executable: python3
-      python-tag: cp313
+      python-tag: cp314
     steps:
       - uses: actions/checkout@v4
         with:
@@ -37,7 +37,7 @@ jobs:
       - name: CMake Build
         run: |
           source ~/.venv/bin/activate
-          cmake --build . --preset conan-release
+          cmake --build ./build/Release --preset conan-release
       - name: Make Python wheel
         working-directory: ./python
         run: |
@@ -90,7 +90,8 @@ jobs:
                  {executable: python3.11, tag: cp311},
                  {executable: python3.12, tag: cp312},
                  {executable: python3.13, tag: cp313},
-                 {executable: python3.14, tag: cp314}]
+                 {executable: python3.14, tag: cp314},
+                 {executable: python3.15, tag: cp315}]
     container:
       image: quay.io/pypa/manylinux_2_28_x86_64
       options: --cpus 1
@@ -101,7 +102,7 @@ jobs:
       - name: Ensure pip is installed
         run: python3 -m ensurepip --upgrade
       - name: Get dependencies for building and packaging
-        run: ${{matrix.python.executable}} -m pip install conan build auditwheel
+        run: ${{matrix.python.executable}} -m pip install build auditwheel
       - name: Get Conan for dependencies
         run: pip3 install conan
       - name: Detect Conan profile
@@ -111,7 +112,7 @@ jobs:
       - name: CMake Configure
         run: cmake --preset conan-release -DPYTHON_EXECUTABLE=${{matrix.python.executable}}
       - name: CMake Build
-        run: cmake --build . --preset conan-release
+        run: cmake --build ./build/Release --preset conan-release
       - name: Make Python wheels
         working-directory: ./python
         run: |
