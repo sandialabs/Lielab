@@ -54,7 +54,7 @@ jobs:
     needs: build-wheels-macosx-arm64
     env:
       python-executable: python3
-      python-tag: cp313
+      python-tag: cp314
     steps:
       - uses: actions/checkout@v4
         with:
